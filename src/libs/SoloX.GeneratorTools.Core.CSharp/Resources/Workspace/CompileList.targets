@@ -1,0 +1,7 @@
+﻿<Project>
+
+  <Target Name="CompileList">
+    <Message Importance="high" Text="@(Compile)" />
+  </Target>
+
+</Project>

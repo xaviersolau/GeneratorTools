@@ -1,0 +1,7 @@
+﻿<Project>
+
+  <Target Name="PackageReferenceList">
+    <Message Importance="high" Text="@(PackageReference)" />
+  </Target>
+
+</Project>

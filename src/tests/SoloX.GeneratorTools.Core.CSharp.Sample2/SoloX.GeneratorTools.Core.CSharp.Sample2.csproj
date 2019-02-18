@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="1.0.0-rc.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.CSharp.Sample1\SoloX.GeneratorTools.Core.CSharp.Sample1.csproj" />
+  </ItemGroup>
+
+</Project>
