@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         [Fact]
         public void BasicCSharpFileTest()
         {
-            var file = "./Resources/Workspace/LoadClassTest.cs";
+            var file = "./Resources/Workspace/BasicClass.cs";
 
             var csFile = new CSharpFile(file);
 
@@ -30,25 +31,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         }
 
         [Theory]
-        [InlineData("./Resources/Workspace/LoadClassTest.cs", typeof(ClassDeclaration))]
-        [InlineData("./Resources/Workspace/LoadEnumTest.cs", typeof(EnumDeclaration))]
-        [InlineData("./Resources/Workspace/LoadInterfaceTest.cs", typeof(InterfaceDeclaration))]
-        [InlineData("./Resources/Workspace/LoadStructTest.cs", typeof(StructDeclaration))]
-        public void LoadCSharpFileTest(string declarationFile, Type expectedDeclarationType)
+        [InlineData("./Resources/Workspace/BasicClass.cs", nameof(BasicClass), typeof(ClassDeclaration))]
+        [InlineData("./Resources/Workspace/BasicEnum.cs", nameof(BasicEnum), typeof(EnumDeclaration))]
+        [InlineData("./Resources/Workspace/BasicInterface.cs", nameof(BasicInterface), typeof(InterfaceDeclaration))]
+        [InlineData("./Resources/Workspace/BasicStruct.cs", nameof(BasicStruct), typeof(StructDeclaration))]
+        public void LoadCSharpFileTest(string declarationFile, string name, Type expectedDeclarationType)
         {
             var csFile = new CSharpFile(declarationFile);
 
             csFile.Load();
 
             Assert.Single(csFile.Declarations);
+            var decl = csFile.Declarations.Single();
 
-            Assert.Equal(expectedDeclarationType, csFile.Declarations.Single().GetType());
+            Assert.Equal(expectedDeclarationType, decl.GetType());
+            Assert.Equal(name, decl.Name);
         }
 
         [Fact]
         public void LoadCSharpFileNameSpaceDeclarationTest()
         {
-            var file = "./Resources/Workspace/LoadNameSapceTest.cs";
+            var file = "./Resources/Workspace/MultiNameSapces.cs";
 
             var csFile = new CSharpFile(file);
 

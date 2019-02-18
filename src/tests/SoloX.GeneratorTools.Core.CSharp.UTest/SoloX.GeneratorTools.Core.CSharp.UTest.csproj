@@ -27,19 +27,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Workspace\LoadStructTest.cs">
+    <Compile Update="Resources\Workspace\BasicStruct.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Workspace\LoadEnumTest.cs">
+    <Compile Update="Resources\Workspace\BasicEnum.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Workspace\LoadInterfaceTest.cs">
+    <Compile Update="Resources\Workspace\BasicInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Workspace\LoadNameSapceTest.cs">
+    <Compile Update="Resources\Workspace\MultiNameSapces.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Workspace\LoadClassTest.cs">
+    <Compile Update="Resources\Workspace\BasicClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="LoadStructTest.cs" company="SoloX Software">
+// <copyright file="BasicStruct.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ using System.Text;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace
 {
-    public struct LoadStructTest
+    public struct BasicStruct
     {
     }
 }
