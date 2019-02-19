@@ -30,7 +30,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             factoryMock.Setup(f => f.CreateProject(It.IsAny<string>()))
                 .Returns<string>(f => Mock.Of<ICSharpProject>());
 
-            var workspace = new CSharpWorkspace(factoryMock.Object);
+            var loaderMock = new Mock<ICSharpLoader>();
+
+            var workspace = new CSharpWorkspace(factoryMock.Object, loaderMock.Object);
 
             var project1 = workspace.RegisterProject(projectName1);
             var project2 = workspace.RegisterProject(projectName1);
@@ -43,6 +45,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             factoryMock.Verify(f => f.CreateProject(Path.Combine(workingDir, projectName1)));
             factoryMock.Verify(f => f.CreateProject(Path.Combine(workingDir, projectName2)));
+
+            loaderMock.Verify(l => l.Load(workspace, project1));
+            loaderMock.Verify(l => l.Load(workspace, project3));
         }
     }
 }

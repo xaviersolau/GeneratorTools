@@ -17,17 +17,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpWorkspace : ICSharpWorkspace
     {
-        private Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
-        private Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
-        private ICSharpFactory factory;
+        private readonly ICSharpFactory factory;
+        private readonly ICSharpLoader loader;
+
+        private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
+        private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.
         /// </summary>
         /// <param name="factory">The factory to create File and Project object.</param>
-        public CSharpWorkspace(ICSharpFactory factory)
+        /// <param name="loader">The File and Project loader.</param>
+        public CSharpWorkspace(ICSharpFactory factory, ICSharpLoader loader)
         {
             this.factory = factory;
+            this.loader = loader;
         }
 
         /// <inheritdoc/>
@@ -45,6 +49,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 csFile = this.factory.CreateFile(file);
                 this.files.Add(file, csFile);
+
+                this.loader.Load(this, csFile);
             }
 
             return csFile;
@@ -59,6 +65,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 csProject = this.factory.CreateProject(projectFile);
                 this.projects.Add(projectFile, csProject);
+
+                this.loader.Load(this, csProject);
             }
 
             return csProject;
