@@ -9,20 +9,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
     /// <summary>
-    /// Struct declaration implementation.
+    /// Structure declaration implementation.
     /// </summary>
     public class StructDeclaration : AGenericDeclaration, IStructDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StructDeclaration"/> class.
         /// </summary>
-        /// <param name="nameSpace">The struct declaration name space.</param>
-        /// <param name="syntaxNode">The struct syntax node.</param>
-        /// <param name="usingDirectives">The current using directive available for this struct.</param>
+        /// <param name="nameSpace">The structure declaration name space.</param>
+        /// <param name="syntaxNode">The structure syntax node.</param>
+        /// <param name="usingDirectives">The current using directive available for this structure.</param>
         public StructDeclaration(string nameSpace, StructDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives)
             : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives)
         {
@@ -31,5 +32,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public StructDeclarationSyntax StructDeclarationSyntax { get; }
+
+        /// <inheritdoc/>
+        protected override void LoadImpl(IDeclarationResolver resolver)
+        {
+            this.LoadGenericParameters();
+            this.LoadExtends(resolver, this.StructDeclarationSyntax.BaseList);
+        }
     }
 }

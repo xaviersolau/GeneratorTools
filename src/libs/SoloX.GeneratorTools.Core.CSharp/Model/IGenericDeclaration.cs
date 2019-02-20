@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
@@ -21,5 +22,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the generic parameters syntax node.
         /// </summary>
         TypeParameterListSyntax TypeParameterListSyntax { get; }
+
+        /// <summary>
+        /// Gets the generic parameters.
+        /// </summary>
+        IReadOnlyCollection<IGenericParameterDeclaration> GenericParameters { get; }
+
+        /// <summary>
+        /// Gets the extends list.
+        /// </summary>
+        IReadOnlyCollection<IDeclarationUse> Extends { get; }
     }
 }

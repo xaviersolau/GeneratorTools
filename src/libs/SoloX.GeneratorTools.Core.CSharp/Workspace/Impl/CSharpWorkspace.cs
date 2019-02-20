@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 {
@@ -70,6 +72,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
 
             return csProject;
+        }
+
+        /// <inheritdoc/>
+        public void DeepLoad()
+        {
+            var resolver = new DeclarationResolver(this.Files.SelectMany(f => f.Declarations), this.loader.Load);
+
+            foreach (var csFile in this.Files)
+            {
+                foreach (var declaration in csFile.Declarations)
+                {
+                    this.loader.Load(resolver, declaration);
+                }
+            }
         }
     }
 }

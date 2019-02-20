@@ -8,6 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 {
@@ -26,6 +29,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public void Load(ICSharpWorkspace workspace, ICSharpFile file)
         {
             ((CSharpFile)file).Load();
+        }
+
+        /// <inheritdoc/>
+        public void Load(IDeclarationResolver resolver, IDeclaration declaration)
+        {
+            ((ADeclaration)declaration).Load(resolver);
         }
     }
 }

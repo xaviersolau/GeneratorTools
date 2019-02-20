@@ -39,5 +39,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="file">The CSharp file.</param>
         /// <returns>The matching or created ICSharpFile.</returns>
         ICSharpFile RegisterFile(string file);
+
+        /// <summary>
+        /// Deep load the workspace.
+        /// </summary>
+        void DeepLoad();
     }
 }

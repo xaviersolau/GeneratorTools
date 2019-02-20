@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
@@ -17,6 +18,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// </summary>
     public abstract class ADeclaration : IDeclaration
     {
+        private bool isLoaded = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ADeclaration"/> class.
         /// </summary>
@@ -43,5 +46,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public IReadOnlyList<string> UsingDirectives { get; }
+
+        /// <summary>
+        /// Load the declaration.
+        /// </summary>
+        /// <param name="resolver">The resolver to resolve dependencies.</param>
+        public void Load(IDeclarationResolver resolver)
+        {
+            if (this.isLoaded)
+            {
+                return;
+            }
+
+            this.isLoaded = true;
+
+            this.LoadImpl(resolver);
+        }
+
+        /// <summary>
+        /// Implementation of the declaration loading.
+        /// </summary>
+        /// <param name="resolver">The resolver to resolve dependencies.</param>
+        protected abstract void LoadImpl(IDeclarationResolver resolver);
     }
 }

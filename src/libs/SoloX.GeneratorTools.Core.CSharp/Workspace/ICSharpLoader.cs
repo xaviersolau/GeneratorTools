@@ -8,6 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
 {
@@ -29,5 +31,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="workspace">The context workspace.</param>
         /// <param name="file">The file to load.</param>
         void Load(ICSharpWorkspace workspace, ICSharpFile file);
+
+        /// <summary>
+        /// Load the given CSharp declaration.
+        /// </summary>
+        /// <param name="resolver">The declaration resolver to resolve declaration dependencies.</param>
+        /// <param name="declaration">The Declaration to load.</param>
+        void Load(IDeclarationResolver resolver, IDeclaration declaration);
     }
 }

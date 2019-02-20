@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
@@ -31,5 +32,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public EnumDeclarationSyntax EnumDeclarationSyntax { get; }
+
+        /// <inheritdoc/>
+        protected override void LoadImpl(IDeclarationResolver resolver)
+        {
+            // Nothing to load...
+        }
     }
 }
