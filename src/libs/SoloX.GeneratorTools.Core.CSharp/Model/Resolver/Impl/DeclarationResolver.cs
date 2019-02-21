@@ -28,7 +28,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// </summary>
         /// <param name="declarations">The declaration list the resolver is based on.</param>
         /// <param name="loader">The loader delegate to load a declaration is needed.</param>
-        public DeclarationResolver(IEnumerable<IDeclaration> declarations, Action<IDeclarationResolver, IDeclaration> loader)
+        public DeclarationResolver(
+            IEnumerable<IDeclaration> declarations, Action<IDeclarationResolver, IDeclaration> loader)
         {
             this.loader = loader;
 
@@ -42,7 +43,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IGenericDeclaration Resolve(string identifier, IReadOnlyList<IDeclarationUse> genericParameters, IDeclaration declarationContext)
+        public IGenericDeclaration Resolve(
+            string identifier, IReadOnlyList<IDeclarationUse> genericParameters, IDeclaration declarationContext)
         {
             throw new NotImplementedException();
         }

@@ -13,6 +13,7 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 
@@ -21,9 +22,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
     public class ClassLoadingTest
     {
         [Theory]
-        [InlineData("./Resources/Model/SimpleClass.cs", null)]
-        [InlineData("./Resources/Model/GenericClass.cs", "T")]
-        public void LoadCSharpClassTest(string file, string typeParameterName)
+        [InlineData("./Resources/Model/SimpleClass.cs", null, null)]
+        [InlineData("./Resources/Model/SimpleClassWithBase.cs", null, "SimpleClass")]
+        [InlineData("./Resources/Model/GenericClass.cs", "T", null)]
+        public void LoadCSharpClassTest(string file, string typeParameterName, string baseClassName)
         {
             var csFile = new CSharpFile(file);
             csFile.Load();
@@ -48,7 +50,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
                 Assert.Equal(typeParameterName, paramDecl.Name);
             }
 
-            Assert.Empty(classDecl.Extends);
+            if (string.IsNullOrEmpty(baseClassName))
+            {
+                Assert.Empty(classDecl.Extends);
+            }
+            else
+            {
+                var baseClass = Assert.Single(classDecl.Extends);
+                Assert.Equal(baseClassName, baseClass.Declaration.Name);
+            }
         }
     }
 }

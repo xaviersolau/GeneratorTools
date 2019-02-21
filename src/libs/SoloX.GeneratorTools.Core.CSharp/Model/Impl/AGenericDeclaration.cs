@@ -81,12 +81,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                     var baseWalker = new DeclarationUseWalker(resolver, this);
                     var use = baseWalker.Visit(node);
                     uses.Add(use);
-
-                    // var iuse = use as IInterfaceUse;
-                    // if (iuse != null)
-                    // {
-                    //     iuse.Interface.RegisterReverseExtends(this);
-                    // }
                 }
 
                 this.Extends = uses;
