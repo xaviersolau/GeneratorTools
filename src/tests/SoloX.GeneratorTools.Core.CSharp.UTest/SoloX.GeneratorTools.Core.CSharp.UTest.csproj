@@ -53,8 +53,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Model\Use\" />
-  </ItemGroup>
-
 </Project>

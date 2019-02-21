@@ -19,9 +19,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
     internal class DeclarationUseWalker : CSharpSyntaxVisitor<IDeclarationUse>
     {
         private readonly IDeclarationResolver resolver;
-        private readonly AGenericDeclaration genericDeclaration;
+        private readonly IGenericDeclaration genericDeclaration;
 
-        public DeclarationUseWalker(IDeclarationResolver resolver, AGenericDeclaration genericDeclaration)
+        public DeclarationUseWalker(IDeclarationResolver resolver, IGenericDeclaration genericDeclaration)
         {
             this.resolver = resolver;
             this.genericDeclaration = genericDeclaration;
