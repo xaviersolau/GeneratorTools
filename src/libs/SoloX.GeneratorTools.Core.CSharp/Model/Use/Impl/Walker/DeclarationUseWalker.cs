@@ -78,5 +78,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             return new UnknownDeclarationUse(node, new UnknownDeclaration(identifier));
         }
+
+        public override IDeclarationUse VisitPredefinedType(PredefinedTypeSyntax node)
+        {
+            return new PredefinedDeclarationUse(node, node.Keyword.Text);
+        }
     }
 }

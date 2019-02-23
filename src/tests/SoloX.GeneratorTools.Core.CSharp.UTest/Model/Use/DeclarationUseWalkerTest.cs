@@ -10,7 +10,9 @@ using System.Collections.Generic;
 using System.Text;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -20,31 +22,116 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
 {
     public class DeclarationUseWalkerTest
     {
-        [Theory]
-        [InlineData("TName")]
-        public void GenericParameterDeclarationUseLoadingTest(string declarationUseStatement)
+        [Fact]
+        public void GenericParameterDeclarationUseLoadingTest()
         {
-            var resolverMock = new Mock<IDeclarationResolver>();
-            var declarationContextMock = new Mock<IGenericDeclaration>();
+            var declarationUseStatement = "TName";
+            IGenericParameterDeclaration genericParameterDeclaration = null;
 
-            var genericParameterDeclarationMock = new Mock<IGenericParameterDeclaration>();
-            genericParameterDeclarationMock
-                .SetupGet(d => d.Name)
-                .Returns(declarationUseStatement);
-
-            declarationContextMock
-                .SetupGet(d => d.GenericParameters)
-                .Returns(new[] { genericParameterDeclarationMock.Object });
-
-            var walker = new DeclarationUseWalker(resolverMock.Object, declarationContextMock.Object);
+            var walker = SetupDeclarationUseWalker(ctx =>
+            {
+                genericParameterDeclaration = SetupGenericParameterDeclaration(ctx, declarationUseStatement);
+            });
 
             var node = SyntaxTreeHelper.GetTypeSyntax(declarationUseStatement);
 
             var declarationUse = walker.Visit(node);
 
             Assert.NotNull(declarationUse);
-            var gpdu = Assert.IsType<GenericParameterDeclarationUse>(declarationUse);
-            Assert.Same(genericParameterDeclarationMock.Object, gpdu.Declaration);
+            Assert.IsType<GenericParameterDeclarationUse>(declarationUse);
+            Assert.Same(genericParameterDeclaration, declarationUse.Declaration);
+        }
+
+        [Fact]
+        public void UnknownDeclarationUseLoadingTest()
+        {
+            var walker = SetupDeclarationUseWalker();
+
+            var node = SyntaxTreeHelper.GetTypeSyntax("Unknown");
+
+            var declarationUse = walker.Visit(node);
+
+            Assert.NotNull(declarationUse);
+            Assert.IsType<UnknownDeclarationUse>(declarationUse);
+            Assert.NotNull(declarationUse.Declaration);
+            Assert.IsType<UnknownDeclaration>(declarationUse.Declaration);
+        }
+
+        [Theory]
+        [InlineData("AName", "", 0)]
+        [InlineData("AName", "<int>", 1)]
+        [InlineData("AName", "<int, double>", 2)]
+        public void GenericDeclarationUseLoadingTest(string declarationName, string genericParametersText, int genericParams)
+        {
+            var declarationMock = new Mock<IClassDeclaration>();
+
+            var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
+            {
+                resolver
+                    .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse>>(), It.IsAny<IDeclaration>()))
+                    .Returns(declarationMock.Object);
+            });
+
+            var node = SyntaxTreeHelper.GetTypeSyntax($"{declarationName}{genericParametersText}");
+
+            var declarationUse = walker.Visit(node);
+
+            Assert.NotNull(declarationUse);
+            Assert.Same(declarationMock.Object, declarationUse.Declaration);
+
+            var genericDeclarationUse = Assert.IsType<GenericDeclarationUse>(declarationUse);
+            Assert.NotNull(genericDeclarationUse.GenericParameters);
+            Assert.Equal(genericParams, genericDeclarationUse.GenericParameters.Count);
+
+            foreach (var genericParameter in genericDeclarationUse.GenericParameters)
+            {
+                Assert.IsType<PredefinedDeclarationUse>(genericParameter);
+            }
+        }
+
+        private static DeclarationUseWalker SetupDeclarationUseWalker(
+            Action<Mock<IGenericDeclaration>> contextSetup = null,
+            Action<Mock<IDeclarationResolver>> resolverSetup = null)
+        {
+            var resolverMock = new Mock<IDeclarationResolver>();
+            resolverSetup?.Invoke(resolverMock);
+
+            var declarationContextMock = new Mock<IGenericDeclaration>();
+            if (contextSetup != null)
+            {
+                contextSetup(declarationContextMock);
+            }
+            else
+            {
+                SetupGenericParameterDeclaration(declarationContextMock, null);
+            }
+
+            return new DeclarationUseWalker(resolverMock.Object, declarationContextMock.Object);
+        }
+
+        /// <summary>
+        /// Setup a IGenericParameterDeclaration on the given generic declaration mock.
+        /// </summary>
+        private static IGenericParameterDeclaration SetupGenericParameterDeclaration(Mock<IGenericDeclaration> genericDeclarationMock, string parameterName)
+        {
+            if (parameterName != null)
+            {
+                var genericParameterDeclarationMock = new Mock<IGenericParameterDeclaration>();
+                genericParameterDeclarationMock
+                    .SetupGet(d => d.Name)
+                    .Returns(parameterName);
+
+                genericDeclarationMock
+                    .SetupGet(d => d.GenericParameters)
+                    .Returns(new[] { genericParameterDeclarationMock.Object });
+                return genericParameterDeclarationMock.Object;
+            }
+
+            genericDeclarationMock
+                .SetupGet(d => d.GenericParameters)
+                .Returns(Array.Empty<IGenericParameterDeclaration>());
+
+            return null;
         }
     }
 }
