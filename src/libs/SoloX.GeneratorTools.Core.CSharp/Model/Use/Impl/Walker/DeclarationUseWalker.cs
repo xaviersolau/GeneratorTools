@@ -62,7 +62,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 return new GenericParameterDeclarationUse(node, declaration);
             }
 
-            declaration = this.resolver.Resolve(identifier, null, this.genericDeclaration);
+            declaration = this.resolver.Resolve(identifier, this.genericDeclaration);
 
             if (declaration != null)
             {

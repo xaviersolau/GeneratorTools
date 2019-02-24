@@ -40,14 +40,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
             var currentNameSpace = this.nameSpace.Peek();
-            if (string.IsNullOrEmpty(currentNameSpace))
-            {
-                this.nameSpace.Push(node.Name.ToString());
-            }
-            else
-            {
-                this.nameSpace.Push($"{currentNameSpace}.{node.Name.ToString()}");
-            }
+
+            this.nameSpace.Push(ADeclaration.GetFullName(currentNameSpace, node.Name.ToString()));
 
             var currentUsingDirectives = this.usingDirectives.Peek();
             this.usingDirectives.Push(new List<string>(currentUsingDirectives));

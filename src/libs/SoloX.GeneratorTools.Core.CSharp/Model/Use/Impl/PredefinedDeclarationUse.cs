@@ -41,6 +41,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         public string Name { get; }
 
         /// <inheritdoc/>
+        public string FullName => this.Name;
+
+        /// <inheritdoc/>
         public IReadOnlyList<string> UsingDirectives => Array.Empty<string>();
     }
 }

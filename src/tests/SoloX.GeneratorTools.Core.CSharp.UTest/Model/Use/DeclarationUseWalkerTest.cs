@@ -67,9 +67,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
 
             var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
             {
-                resolver
-                    .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse>>(), It.IsAny<IDeclaration>()))
-                    .Returns(declarationMock.Object);
+                if (genericParams == 0)
+                {
+                    resolver
+                        .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration>()))
+                        .Returns(declarationMock.Object);
+                    resolver
+                        .Setup(r => r.Resolve(declarationName, Array.Empty<IDeclarationUse>(), It.IsAny<IDeclaration>()))
+                        .Returns(declarationMock.Object);
+                }
+                else
+                {
+                    resolver
+                        .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse>>(), It.IsAny<IDeclaration>()))
+                        .Returns(declarationMock.Object);
+                }
             });
 
             var node = SyntaxTreeHelper.GetTypeSyntax($"{declarationName}{genericParametersText}");

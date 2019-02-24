@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 
@@ -37,29 +38,96 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IEnumerable<IDeclaration> Find(string fullName)
-        {
-            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
-        }
-
-        /// <inheritdoc/>
         public IGenericDeclaration Resolve(
             string identifier, IReadOnlyList<IDeclarationUse> genericParameters, IDeclaration declarationContext)
         {
-            throw new NotImplementedException();
+            var declarations = this.FindDeclarations(identifier, declarationContext);
+            if (declarations != null)
+            {
+                var tParamCount = genericParameters == null ? 0 : genericParameters.Count;
+                foreach (var declarationItem in declarations)
+                {
+                    if (declarationItem is IGenericDeclaration gd && tParamCount == gd.GenericParameters.Count)
+                    {
+                        // TODO take into account the type parameter constraints.
+                        return gd;
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <inheritdoc/>
         public IDeclaration Resolve(string identifier, IDeclaration declarationContext)
         {
-            throw new NotImplementedException();
+            var declarations = this.FindDeclarations(identifier, declarationContext);
+            if (declarations != null)
+            {
+                foreach (var declarationItem in declarations)
+                {
+                    if (declarationItem is IGenericDeclaration gd)
+                    {
+                        if (gd.GenericParameters.Count == 0)
+                        {
+                            return gd;
+                        }
+                    }
+                    else
+                    {
+                        return declarationItem;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Find all declarations matching the given lookup name.
+        /// </summary>
+        /// <param name="fullName">The full name to lookup.</param>
+        /// <returns>The declaration list.</returns>
+        internal IEnumerable<IDeclaration> Find(string fullName)
+        {
+            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
+        }
+
+        private IEnumerable<IDeclaration> FindDeclarations(
+            string identifier, IDeclaration declarationContext)
+        {
+            List<IDeclaration> declarations;
+            foreach (var usingDirective in declarationContext.UsingDirectives)
+            {
+                var lookupName = ADeclaration.GetFullName(usingDirective, identifier);
+
+                if (this.declarationMap.TryGetValue(lookupName, out declarations))
+                {
+                    return declarations;
+                }
+            }
+
+            if (this.declarationMap.TryGetValue(
+                ADeclaration.GetFullName(declarationContext.DeclarationNameSpace, identifier),
+                out declarations))
+            {
+                return declarations;
+            }
+
+            if (this.declarationMap.TryGetValue(identifier, out declarations))
+            {
+                return declarations;
+            }
+
+            return null;
         }
 
         private void Setup(IEnumerable<IDeclaration> declarations)
         {
             foreach (var declaration in declarations)
             {
-                var fullName = $"{declaration.DeclarationNameSpace}.{declaration.Name}";
+                var fullName = ADeclaration.GetFullName(declaration.DeclarationNameSpace, declaration.Name);
+
                 if (!this.declarationMap.TryGetValue(fullName, out var list))
                 {
                     list = new List<IDeclaration>();

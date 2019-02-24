@@ -33,6 +33,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             this.Name = name;
             this.SyntaxNode = syntaxNode;
             this.UsingDirectives = usingDirectives;
+            this.FullName = GetFullName(nameSpace, name);
         }
 
         /// <inheritdoc/>
@@ -40,6 +41,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public string Name { get; }
+
+        /// <inheritdoc/>
+        public string FullName { get; }
 
         /// <inheritdoc/>
         public CSharpSyntaxNode SyntaxNode { get; }
@@ -62,6 +66,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
             this.LoadImpl(resolver);
         }
+
+        /// <summary>
+        /// Compute the full name from the name space and the name of the declaration.
+        /// </summary>
+        /// <param name="nameSpace">The declaration name space.</param>
+        /// <param name="name">The declaration name.</param>
+        /// <returns>The declaration full name.</returns>
+        internal static string GetFullName(string nameSpace, string name)
+            => string.IsNullOrEmpty(nameSpace) ? name : $"{nameSpace}.{name}";
 
         /// <summary>
         /// Implementation of the declaration loading.

@@ -28,6 +28,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         string Name { get; }
 
         /// <summary>
+        /// Gets the declaration full name.
+        /// </summary>
+        string FullName { get; }
+
+        /// <summary>
         /// Gets the declaration syntax node.
         /// </summary>
         CSharpSyntaxNode SyntaxNode { get; }

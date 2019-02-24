@@ -13,6 +13,7 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
@@ -62,9 +63,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var workspace = new CSharpWorkspace(factoryMock.Object, loaderMock.Object);
 
             var fileMock = new Mock<ICSharpFile>();
-            var declarationMock = new Mock<IDeclaration>();
 
-            fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration[] { declarationMock.Object });
+            var declaration = DeclarationHelper.SetupDeclaration("nameSpace", "name");
+
+            fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration[] { declaration });
 
             factoryMock.Setup(f => f.CreateFile(It.IsAny<string>()))
                 .Returns<string>(f => fileMock.Object);
@@ -73,7 +75,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             workspace.DeepLoad();
 
-            loaderMock.Verify(l => l.Load(It.IsAny<IDeclarationResolver>(), declarationMock.Object));
+            loaderMock.Verify(l => l.Load(It.IsAny<IDeclarationResolver>(), declaration));
         }
     }
 }
