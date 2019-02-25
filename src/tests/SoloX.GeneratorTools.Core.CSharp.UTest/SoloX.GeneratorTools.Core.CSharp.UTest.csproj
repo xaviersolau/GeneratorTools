@@ -27,13 +27,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Model\GenericClass.cs">
+    <Compile Update="Resources\Model\Basic\GenericClassWithGenericBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\SimpleClassWithBase.cs">
+    <Compile Update="Resources\Model\Basic\GenericClassWithBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\SimpleClass.cs">
+    <Compile Update="Resources\Model\Basic\GenericClass.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\SimpleClassWithGenericBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\SimpleClassWithBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\SimpleClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Workspace\BasicStruct.cs">
