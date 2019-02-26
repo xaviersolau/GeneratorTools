@@ -49,7 +49,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 return new GenericDeclarationUse(node, genericDeclaration, tparams);
             }
 
-            return new UnknownDeclarationUse(node, new UnknownDeclaration(identifier));
+            return new UnknownGenericDeclarationUse(node, new UnknownDeclaration(identifier), tparams);
         }
 
         public override IDeclarationUse VisitIdentifierName(IdentifierNameSyntax node)
