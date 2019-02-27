@@ -43,7 +43,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             Assert.Single(project.Files);
 
             var csFile = project.Files.Single();
-            Assert.Equal("Class1.cs", csFile.FileName);
+            Assert.Equal("Sample2Class1.cs", csFile.FileName);
         }
     }
 }
