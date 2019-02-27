@@ -38,6 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         {
             this.LoadGenericParameters();
             this.LoadExtends(resolver, this.StructDeclarationSyntax.BaseList);
+            this.LoadMembers(resolver);
         }
     }
 }

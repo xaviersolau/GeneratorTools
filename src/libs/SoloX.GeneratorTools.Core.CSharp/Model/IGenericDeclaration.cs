@@ -32,5 +32,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the extends list.
         /// </summary>
         IReadOnlyCollection<IDeclarationUse> Extends { get; }
+
+        /// <summary>
+        /// Gets the member list.
+        /// </summary>
+        IReadOnlyCollection<IMemberDeclaration> Members { get; }
     }
 }

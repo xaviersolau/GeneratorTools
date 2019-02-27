@@ -15,6 +15,8 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 
@@ -23,15 +25,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
     public class ClassLoadingTest
     {
         [Theory]
-        [InlineData("./Resources/Model/Basic/SimpleClass.cs", null, null)]
-        [InlineData("./Resources/Model/Basic/SimpleClassWithBase.cs", null, "SimpleClass")]
-        [InlineData("./Resources/Model/Basic/SimpleClassWithGenericBase.cs", null, "GenericClass")]
-        [InlineData("./Resources/Model/Basic/GenericClass.cs", "T", null)]
-        [InlineData("./Resources/Model/Basic/GenericClassWithBase.cs", "T", "SimpleClass")]
-        [InlineData("./Resources/Model/Basic/GenericClassWithGenericBase.cs", "T", "GenericClass")]
-        public void LoadCSharpClassTest(string file, string typeParameterName, string baseClassName)
+        [InlineData(nameof(SimpleClass), null, null)]
+        [InlineData(nameof(SimpleClassWithBase), null, nameof(SimpleClass))]
+        [InlineData(nameof(SimpleClassWithGenericBase), null, nameof(GenericClass<object>))]
+        [InlineData(nameof(GenericClass<object>), "T", null)]
+        [InlineData(nameof(GenericClassWithBase<object>), "T", nameof(SimpleClass))]
+        [InlineData(nameof(GenericClassWithGenericBase<object>), "T", nameof(GenericClass<object>))]
+        public void LoadCSharpClassTest(string className, string typeParameterName, string baseClassName)
         {
-            var csFile = new CSharpFile(file);
+            var csFile = new CSharpFile(className.ToBasicPath());
             csFile.Load();
 
             Assert.Single(csFile.Declarations);
@@ -66,27 +68,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
         }
 
         [Theory]
-        [InlineData("./Resources/Model/Basic/GenericClassWithBase.cs", "./Resources/Model/Basic/SimpleClass.cs")]
-        [InlineData("./Resources/Model/Basic/GenericClassWithGenericBase.cs", "./Resources/Model/Basic/GenericClass.cs")]
-        public void LoadExtendsTest(string file, string baseFile)
+        [InlineData(nameof(GenericClassWithBase<object>), nameof(SimpleClass))]
+        [InlineData(nameof(GenericClassWithGenericBase<object>), nameof(GenericClass<object>))]
+        public void LoadExtendsTest(string className, string baseClassName)
         {
-            var csBaseFile = new CSharpFile(baseFile);
-            csBaseFile.Load();
-            var baseDeclarationSingle = Assert.Single(csBaseFile.Declarations);
-            var baseDeclaration = Assert.IsType<ClassDeclaration>(baseDeclarationSingle);
-
-            var csFile = new CSharpFile(file);
+            var csFile = new CSharpFile(className.ToBasicPath());
             csFile.Load();
 
             var declaration = Assert.Single(csFile.Declarations);
 
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            declarationResolverMock.Setup(dr => dr.Resolve(baseDeclaration.Name, declaration)).Returns(baseDeclaration);
-            declarationResolverMock.Setup(dr => dr.Resolve(baseDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse>>(), declaration)).Returns(baseDeclaration);
+            var declarationResolver = SetupDeclarationResolver(
+                declaration,
+                baseClassName);
 
             var classDecl = Assert.IsType<ClassDeclaration>(declaration);
 
-            classDecl.Load(declarationResolverMock.Object);
+            classDecl.Load(declarationResolver);
 
             Assert.NotNull(classDecl.GenericParameters);
             Assert.NotNull(classDecl.Extends);
@@ -94,7 +91,67 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
             var extendsSingle = Assert.Single(classDecl.Extends);
 
             var genDeclUse = Assert.IsType<GenericDeclarationUse>(extendsSingle);
-            Assert.Same(baseDeclaration, genDeclUse.Declaration);
+            Assert.Equal(baseClassName, genDeclUse.Declaration.Name);
+        }
+
+        [Fact]
+        public void LoadMemberListTest()
+        {
+            var file = nameof(ClassWithProperties).ToBasicPath();
+
+            var csFile = new CSharpFile(file);
+            csFile.Load();
+
+            var declaration = Assert.Single(csFile.Declarations);
+
+            var declarationResolver = SetupDeclarationResolver(
+                declaration,
+                nameof(SimpleClass));
+
+            var decl = Assert.IsType<ClassDeclaration>(declaration);
+
+            decl.Load(declarationResolver);
+
+            Assert.Empty(decl.GenericParameters);
+            Assert.Empty(decl.Extends);
+
+            Assert.NotEmpty(decl.Members);
+            Assert.Equal(2, decl.Members.Count);
+
+            var mClass = Assert.Single(decl.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
+            var pClass = Assert.IsType<PropertyDeclaration>(mClass);
+            Assert.IsType<GenericDeclarationUse>(pClass.PropertyType);
+            Assert.Equal(nameof(SimpleClass), pClass.PropertyType.Declaration.Name);
+
+            var mInt = Assert.Single(decl.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
+            var pInt = Assert.IsType<PropertyDeclaration>(mInt);
+            Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
+            Assert.Equal("int", pInt.PropertyType.Declaration.Name);
+        }
+
+        private static IDeclarationResolver SetupDeclarationResolver(IDeclaration contextDeclaration, params string[] classNames)
+        {
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            foreach (var className in classNames)
+            {
+                var classFile = new CSharpFile(className.ToBasicPath());
+                classFile.Load();
+                var classDeclarationSingle = Assert.Single(classFile.Declarations);
+                if (classDeclarationSingle is AGenericDeclaration genericDeclaration && genericDeclaration.TypeParameterListSyntax != null)
+                {
+                    declarationResolverMock
+                        .Setup(dr => dr.Resolve(genericDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse>>(), contextDeclaration))
+                        .Returns(genericDeclaration);
+                }
+                else
+                {
+                    declarationResolverMock
+                        .Setup(dr => dr.Resolve(classDeclarationSingle.Name, contextDeclaration))
+                        .Returns(classDeclarationSingle);
+                }
+            }
+
+            return declarationResolverMock.Object;
         }
     }
 }

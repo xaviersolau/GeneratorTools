@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model
+namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic
 {
     public class SimpleClassWithBase : SimpleClass
     {

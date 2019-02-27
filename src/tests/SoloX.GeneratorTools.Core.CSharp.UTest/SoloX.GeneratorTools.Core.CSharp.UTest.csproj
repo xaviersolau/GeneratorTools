@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Model\Basic\ClassWithProperties.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources\Model\Basic\GenericClassWithGenericBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

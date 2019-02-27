@@ -7,9 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
@@ -43,6 +46,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public IReadOnlyCollection<IDeclarationUse> Extends { get; private set; }
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<IMemberDeclaration> Members { get; private set; }
 
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
@@ -89,6 +95,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             {
                 this.Extends = Array.Empty<IDeclarationUse>();
             }
+        }
+
+        /// <summary>
+        /// Load member list.
+        /// </summary>
+        /// <param name="resolver">The resolver to resolve dependencies.</param>
+        protected void LoadMembers(IDeclarationResolver resolver)
+        {
+            var memberList = new List<IMemberDeclaration>();
+            var membersWalker = new MembersWalker(resolver, this, memberList);
+
+            membersWalker.Visit(this.SyntaxNode);
+
+            this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
         }
     }
 }
