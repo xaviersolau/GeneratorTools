@@ -81,10 +81,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         {
             if (baseListSyntax != null)
             {
+                var baseWalker = new DeclarationUseWalker(resolver, this);
                 var uses = new List<IDeclarationUse>();
+
                 foreach (var node in baseListSyntax.ChildNodes())
                 {
-                    var baseWalker = new DeclarationUseWalker(resolver, this);
                     var use = baseWalker.Visit(node);
                     uses.Add(use);
                 }
