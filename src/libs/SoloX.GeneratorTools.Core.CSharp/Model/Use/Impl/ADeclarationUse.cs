@@ -33,5 +33,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 
         /// <inheritdoc/>
         public IDeclaration Declaration { get; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"U {this.Declaration.Name}";
+        }
     }
 }
