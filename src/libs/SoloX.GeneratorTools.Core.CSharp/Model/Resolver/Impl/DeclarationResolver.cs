@@ -89,6 +89,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             return null;
         }
 
+        /// <inheritdoc/>
+        public IEnumerable<IDeclaration> Find(string fullName)
+        {
+            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
+        }
+
         /// <summary>
         /// Load all declarations.
         /// </summary>
@@ -102,16 +108,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                     this.loader(this, declaration);
                 }
             }
-        }
-
-        /// <summary>
-        /// Find all declarations matching the given lookup name.
-        /// </summary>
-        /// <param name="fullName">The full name to lookup.</param>
-        /// <returns>The declaration list.</returns>
-        internal IEnumerable<IDeclaration> Find(string fullName)
-        {
-            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
         }
 
         private IEnumerable<IDeclaration> FindDeclarations(

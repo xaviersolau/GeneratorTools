@@ -25,7 +25,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 
             Assert.NotEmpty(ws.Files);
 
-            ws.DeepLoad();
+            var resolver = ws.DeepLoad();
+
+            var sample1Class1 = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
+
+            Assert.NotNull(sample1Class1.Name);
         }
 
         [Fact]
@@ -40,7 +44,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 
             Assert.NotEmpty(ws.Files);
 
-            ws.DeepLoad();
+            var resolver = ws.DeepLoad();
+
+            var sample2Class1 = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample2.Sample2Class1"));
+            var sample1Class1 = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
+
+            Assert.NotNull(sample2Class1.Name);
+            Assert.NotNull(sample1Class1.Name);
         }
     }
 }

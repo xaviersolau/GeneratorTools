@@ -37,5 +37,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver
         /// <param name="declarationContext">The declaration context.</param>
         /// <returns>The matching declaration or null if no match.</returns>
         IDeclaration Resolve(string identifier, IDeclaration declarationContext);
+
+        /// <summary>
+        /// Find all declarations matching the given lookup name.
+        /// </summary>
+        /// <param name="fullName">The full name to lookup.</param>
+        /// <returns>The declaration list.</returns>
+        IEnumerable<IDeclaration> Find(string fullName);
     }
 }

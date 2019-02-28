@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
@@ -75,11 +76,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public void DeepLoad()
+        public IDeclarationResolver DeepLoad()
         {
             var resolver = new DeclarationResolver(this.Files.SelectMany(f => f.Declarations), this.loader.Load);
 
             resolver.Load();
+
+            return resolver;
         }
     }
 }

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
 {
@@ -43,6 +44,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <summary>
         /// Deep load the workspace.
         /// </summary>
-        void DeepLoad();
+        /// <returns>The resulting declaration resolver.</returns>
+        IDeclarationResolver DeepLoad();
     }
 }
