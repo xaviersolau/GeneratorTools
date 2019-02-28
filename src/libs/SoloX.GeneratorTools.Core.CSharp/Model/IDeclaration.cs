@@ -41,5 +41,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the using directives for the current declaration.
         /// </summary>
         IReadOnlyList<string> UsingDirectives { get; }
+
+        /// <summary>
+        /// Gets the location on the file system.
+        /// </summary>
+        string Location { get; }
     }
 }

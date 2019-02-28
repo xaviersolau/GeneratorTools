@@ -47,6 +47,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         public IReadOnlyList<string> UsingDirectives => Array.Empty<string>();
 
         /// <inheritdoc/>
+        public string Location { get; }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"U {this.Name}";

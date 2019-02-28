@@ -34,8 +34,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="syntaxNode">The declaration syntax node.</param>
         /// <param name="typeParameterListSyntax">The type parameter list syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
-        protected AGenericDeclaration(string nameSpace, string name, CSharpSyntaxNode syntaxNode, TypeParameterListSyntax typeParameterListSyntax, IReadOnlyList<string> usingDirectives)
-            : base(nameSpace, name, syntaxNode, usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        protected AGenericDeclaration(string nameSpace, string name, CSharpSyntaxNode syntaxNode, TypeParameterListSyntax typeParameterListSyntax, IReadOnlyList<string> usingDirectives, string location)
+            : base(nameSpace, name, syntaxNode, usingDirectives, location)
         {
             this.TypeParameterListSyntax = typeParameterListSyntax;
         }

@@ -59,7 +59,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             this.isLoaded = true;
 
             var declarations = new List<IDeclaration>();
-            CSharpFileReader.Read(Path.Combine(this.FilePath, this.FileName), new DeclarationWalker(declarations));
+            var location = Path.Combine(this.FilePath, this.FileName);
+            CSharpFileReader.Read(location, new DeclarationWalker(declarations, location));
 
             this.Declarations = declarations;
         }

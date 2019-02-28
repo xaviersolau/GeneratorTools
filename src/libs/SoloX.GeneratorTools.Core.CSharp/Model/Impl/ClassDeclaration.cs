@@ -24,8 +24,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="nameSpace">The class declaration name space.</param>
         /// <param name="syntaxNode">The class syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
-        public ClassDeclaration(string nameSpace, ClassDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives)
-            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        public ClassDeclaration(string nameSpace, ClassDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives, string location)
+            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives, location)
         {
             this.ClassDeclarationSyntax = syntaxNode;
         }

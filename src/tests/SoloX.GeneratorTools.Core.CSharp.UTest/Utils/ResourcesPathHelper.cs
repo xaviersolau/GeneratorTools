@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
@@ -23,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <returns>The class file path in Resources/Model/Basic.</returns>
         public static string ToBasicPath(this string className)
         {
-            return $"./Resources/Model/Basic/{className}.cs";
+            return Path.Combine(".", "Resources", "Model", "Basic", $"{className}.cs");
         }
     }
 }

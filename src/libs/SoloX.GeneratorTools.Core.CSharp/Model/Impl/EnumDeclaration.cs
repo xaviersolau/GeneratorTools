@@ -24,8 +24,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="nameSpace">The enum declaration name space.</param>
         /// <param name="syntaxNode">The enum syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this enum.</param>
-        public EnumDeclaration(string nameSpace, EnumDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives)
-            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        public EnumDeclaration(string nameSpace, EnumDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives, string location)
+            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, usingDirectives, location)
         {
             this.EnumDeclarationSyntax = syntaxNode;
         }

@@ -24,8 +24,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="nameSpace">The interface declaration name space.</param>
         /// <param name="syntaxNode">The interface syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this interface.</param>
-        public InterfaceDeclaration(string nameSpace, InterfaceDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives)
-            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        public InterfaceDeclaration(string nameSpace, InterfaceDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives, string location)
+            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives, location)
         {
             this.InterfaceDeclarationSyntax = syntaxNode;
         }

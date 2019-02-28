@@ -21,11 +21,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly Stack<List<string>> usingDirectives =
             new Stack<List<string>>(new[] { new List<string>() });
 
-        private IList<IDeclaration> declarations;
+        private readonly IList<IDeclaration> declarations;
 
-        public DeclarationWalker(IList<IDeclaration> declarations)
+        private readonly string location;
+
+        public DeclarationWalker(IList<IDeclaration> declarations, string location)
         {
             this.declarations = declarations;
+            this.location = location;
         }
 
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
@@ -57,7 +60,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var interfaceDeclaration = new InterfaceDeclaration(currentNameSpace, node, currentUsingDirectives);
+            var interfaceDeclaration = new InterfaceDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
 
             this.declarations.Add(interfaceDeclaration);
         }
@@ -67,7 +70,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var classDeclaration = new ClassDeclaration(currentNameSpace, node, currentUsingDirectives);
+            var classDeclaration = new ClassDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
 
             this.declarations.Add(classDeclaration);
         }
@@ -77,7 +80,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var structDeclaration = new StructDeclaration(currentNameSpace, node, currentUsingDirectives);
+            var structDeclaration = new StructDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
 
             this.declarations.Add(structDeclaration);
         }
@@ -87,7 +90,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var enumDeclaration = new EnumDeclaration(currentNameSpace, node, currentUsingDirectives);
+            var enumDeclaration = new EnumDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
 
             this.declarations.Add(enumDeclaration);
         }

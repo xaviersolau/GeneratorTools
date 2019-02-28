@@ -33,11 +33,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
         [InlineData(nameof(GenericClassWithGenericBase<object>), "T", nameof(GenericClass<object>))]
         public void LoadCSharpClassTest(string className, string typeParameterName, string baseClassName)
         {
-            var csFile = new CSharpFile(className.ToBasicPath());
+            var location = className.ToBasicPath();
+            var csFile = new CSharpFile(location);
             csFile.Load();
 
             Assert.Single(csFile.Declarations);
             var declaration = csFile.Declarations.Single();
+
+            Assert.Equal(location, declaration.Location);
 
             var classDecl = Assert.IsType<ClassDeclaration>(declaration);
 

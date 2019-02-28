@@ -27,13 +27,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="name">The declaration name.</param>
         /// <param name="syntaxNode">The declaration syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
-        protected ADeclaration(string nameSpace, string name, CSharpSyntaxNode syntaxNode, IReadOnlyList<string> usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        protected ADeclaration(string nameSpace, string name, CSharpSyntaxNode syntaxNode, IReadOnlyList<string> usingDirectives, string location)
         {
             this.DeclarationNameSpace = nameSpace;
             this.Name = name;
             this.SyntaxNode = syntaxNode;
             this.UsingDirectives = usingDirectives;
             this.FullName = GetFullName(nameSpace, name);
+            this.Location = location;
         }
 
         /// <inheritdoc/>
@@ -50,6 +52,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public IReadOnlyList<string> UsingDirectives { get; }
+
+        /// <inheritdoc/>
+        public string Location { get; }
 
         /// <summary>
         /// Load the declaration.

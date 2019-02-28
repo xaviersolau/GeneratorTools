@@ -23,7 +23,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="name">The name of the unknown declaration.</param>
         public UnknownDeclaration(string name)
-            : base(string.Empty, name, null, Array.Empty<string>())
+            : base(string.Empty, name, null, Array.Empty<string>(), null)
         {
         }
 

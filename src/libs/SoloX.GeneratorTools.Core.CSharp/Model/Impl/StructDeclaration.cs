@@ -24,8 +24,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="nameSpace">The structure declaration name space.</param>
         /// <param name="syntaxNode">The structure syntax node.</param>
         /// <param name="usingDirectives">The current using directive available for this structure.</param>
-        public StructDeclaration(string nameSpace, StructDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives)
-            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives)
+        /// <param name="location">The location of the declaration.</param>
+        public StructDeclaration(string nameSpace, StructDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives, string location)
+            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, syntaxNode.TypeParameterList, usingDirectives, location)
         {
             this.StructDeclarationSyntax = syntaxNode;
         }

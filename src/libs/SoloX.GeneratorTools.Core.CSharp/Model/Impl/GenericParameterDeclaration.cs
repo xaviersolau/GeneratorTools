@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="name">The declaration name.</param>
         /// <param name="syntaxNode">The declaration syntax node.</param>
         public GenericParameterDeclaration(string name, TypeParameterSyntax syntaxNode)
-            : base(string.Empty, name, syntaxNode, Array.Empty<string>())
+            : base(string.Empty, name, syntaxNode, Array.Empty<string>(), null)
         {
         }
 
