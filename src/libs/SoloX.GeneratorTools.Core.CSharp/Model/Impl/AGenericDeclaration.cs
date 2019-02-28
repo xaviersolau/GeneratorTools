@@ -24,6 +24,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// </summary>
     public abstract class AGenericDeclaration : ADeclaration, IGenericDeclaration
     {
+        private readonly List<IGenericDeclaration> extendedBy = new List<IGenericDeclaration>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AGenericDeclaration"/> class.
         /// </summary>
@@ -48,7 +50,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public IReadOnlyCollection<IDeclarationUse> Extends { get; private set; }
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<IGenericDeclaration> ExtendedBy => this.extendedBy;
+
+        /// <inheritdoc/>
         public IReadOnlyCollection<IMemberDeclaration> Members { get; private set; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            if (this.Extends?.Any() ?? false)
+            {
+                return $"{base.ToString()}: {string.Join(", ", this.Extends?.Select(e => e.ToString()))}";
+            }
+
+            return base.ToString();
+        }
 
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
@@ -87,6 +103,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 foreach (var node in baseListSyntax.ChildNodes())
                 {
                     var use = baseWalker.Visit(node);
+
+                    if (use.Declaration is AGenericDeclaration agd)
+                    {
+                        agd.AddExtendedBy(this);
+                    }
+
                     uses.Add(use);
                 }
 
@@ -110,6 +132,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             membersWalker.Visit(this.SyntaxNode);
 
             this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
+        }
+
+        private void AddExtendedBy(AGenericDeclaration declaration)
+        {
+            this.extendedBy.Add(declaration);
         }
     }
 }

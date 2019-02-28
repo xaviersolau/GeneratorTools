@@ -67,6 +67,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             this.LoadImpl(resolver);
         }
 
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"D {this.Name}";
+        }
+
         /// <summary>
         /// Compute the full name from the name space and the name of the declaration.
         /// </summary>
