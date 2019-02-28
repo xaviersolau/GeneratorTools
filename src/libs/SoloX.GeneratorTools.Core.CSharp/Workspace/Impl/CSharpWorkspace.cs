@@ -79,13 +79,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             var resolver = new DeclarationResolver(this.Files.SelectMany(f => f.Declarations), this.loader.Load);
 
-            foreach (var csFile in this.Files)
-            {
-                foreach (var declaration in csFile.Declarations)
-                {
-                    this.loader.Load(resolver, declaration);
-                }
-            }
+            resolver.Load();
         }
     }
 }

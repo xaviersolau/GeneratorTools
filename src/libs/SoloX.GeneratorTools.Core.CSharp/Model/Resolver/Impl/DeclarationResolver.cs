@@ -47,6 +47,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 var tParamCount = genericParameters == null ? 0 : genericParameters.Count;
                 foreach (var declarationItem in declarations)
                 {
+                    // Make sure the declaration is loaded
+                    this.loader(this, declarationItem);
+
                     if (declarationItem is IGenericDeclaration gd && tParamCount == gd.GenericParameters.Count)
                     {
                         // TODO take into account the type parameter constraints.
@@ -66,6 +69,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             {
                 foreach (var declarationItem in declarations)
                 {
+                    // Make sure the declaration is loaded
+                    this.loader(this, declarationItem);
+
                     if (declarationItem is IGenericDeclaration gd)
                     {
                         if (gd.GenericParameters.Count == 0)
@@ -81,6 +87,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Load all declarations.
+        /// </summary>
+        internal void Load()
+        {
+            foreach (var declarationItem in this.declarationMap)
+            {
+                var declarationList = declarationItem.Value;
+                foreach (var declaration in declarationList)
+                {
+                    this.loader(this, declaration);
+                }
+            }
         }
 
         /// <summary>

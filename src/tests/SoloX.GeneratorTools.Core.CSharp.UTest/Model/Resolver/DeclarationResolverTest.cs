@@ -52,7 +52,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
                 m.SetupGet(d => d.UsingDirectives).Returns(usingDirectives);
             });
 
-            var declResolver = new DeclarationResolver(new[] { declaration }, null);
+            var declResolver = new DeclarationResolver(new[] { declaration }, (r, d) => { });
 
             var resolvedDecl = declResolver.Resolve(nameToResolve, contextDeclaration);
 
