@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
     /// <summary>
     /// Declaration use base implementation.
     /// </summary>
-    public abstract class ADeclarationUse : IDeclarationUse
+    public abstract class ADeclarationUse : IDeclarationUse, IArrayDeclarationUseImpl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ADeclarationUse"/> class.
@@ -33,6 +33,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 
         /// <inheritdoc/>
         public IDeclaration Declaration { get; }
+
+        /// <inheritdoc/>
+        public IArraySpecification ArraySpecification { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()

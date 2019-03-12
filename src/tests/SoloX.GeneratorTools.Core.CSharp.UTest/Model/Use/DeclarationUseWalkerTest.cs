@@ -58,6 +58,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         }
 
         [Theory]
+        [InlineData("AName", "[]", 1)]
+        [InlineData("AName", "[][]", 2)]
+        public void ArrayDeclarationUseLoadingTest(string declarationName, string arrayText, int dimCount)
+        {
+            var declaration = Mock.Of<IClassDeclaration>();
+
+            var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
+            {
+                resolver
+                    .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration>()))
+                    .Returns(declaration);
+            });
+
+            var node = SyntaxTreeHelper.GetTypeSyntax($"{declarationName}{arrayText}");
+
+            var declarationUse = walker.Visit(node);
+
+            Assert.NotNull(declarationUse);
+            Assert.Same(declaration, declarationUse.Declaration);
+
+            Assert.NotNull(declarationUse.ArraySpecification);
+            Assert.Equal(dimCount, declarationUse.ArraySpecification.SyntaxNode.Count);
+        }
+
+        [Theory]
         [InlineData("AName", "", 0)]
         [InlineData("AName", "<int>", 1)]
         [InlineData("AName", "<int, double>", 2)]

@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
     /// <summary>
     /// Predefined declaration use definition.
     /// </summary>
-    public class PredefinedDeclarationUse : IPredefinedDeclarationUse, IPredefinedDeclaration
+    public class PredefinedDeclarationUse : IPredefinedDeclarationUse, IPredefinedDeclaration, IArrayDeclarationUseImpl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PredefinedDeclarationUse"/> class.
@@ -36,6 +36,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 
         /// <inheritdoc/>
         public IDeclaration Declaration => this;
+
+        /// <inheritdoc/>
+        public IArraySpecification ArraySpecification { get; set; }
 
         /// <inheritdoc/>
         public string Name { get; }

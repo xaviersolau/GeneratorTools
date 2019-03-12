@@ -97,10 +97,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
             Assert.Equal(baseClassName, genDeclUse.Declaration.Name);
         }
 
-        [Fact]
-        public void LoadMemberListTest()
+        [Theory]
+        [InlineData(nameof(ClassWithProperties), false)]
+        [InlineData(nameof(ClassWithArrayProperties), true)]
+        public void LoadMemberListTest(string className, bool isArray)
         {
-            var file = nameof(ClassWithProperties).ToBasicPath();
+            var file = className.ToBasicPath();
 
             var csFile = new CSharpFile(file);
             csFile.Load();
@@ -130,6 +132,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
             Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
             Assert.Equal("int", pInt.PropertyType.Declaration.Name);
+
+            if (isArray)
+            {
+                Assert.NotNull(pClass.PropertyType.ArraySpecification);
+                Assert.NotNull(pInt.PropertyType.ArraySpecification);
+            }
+            else
+            {
+                Assert.Null(pClass.PropertyType.ArraySpecification);
+                Assert.Null(pInt.PropertyType.ArraySpecification);
+            }
         }
 
         private static IDeclarationResolver SetupDeclarationResolver(IDeclaration contextDeclaration, params string[] classNames)
@@ -140,7 +153,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
                 var classFile = new CSharpFile(className.ToBasicPath());
                 classFile.Load();
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
-                if (classDeclarationSingle is AGenericDeclaration genericDeclaration && genericDeclaration.TypeParameterListSyntax != null)
+                if (classDeclarationSingle is IGenericDeclaration genericDeclaration && genericDeclaration.TypeParameterListSyntax != null)
                 {
                     declarationResolverMock
                         .Setup(dr => dr.Resolve(genericDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse>>(), contextDeclaration))
