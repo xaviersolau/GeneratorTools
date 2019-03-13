@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
   </ItemGroup>
 
 </Project>

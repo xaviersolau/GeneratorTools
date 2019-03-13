@@ -57,7 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
         private void Run()
         {
-            var prjFile = "../../../../../libs/SoloX.GeneratorTools.Core.CSharp/SoloX.GeneratorTools.Core.CSharp.csproj";
+            var prjFile = "../../../SoloX.GeneratorTools.Core.CSharp.Examples.csproj";
 
             this.logger.LogInformation($"Loading {Path.GetFileName(prjFile)}...");
 
@@ -67,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             var resolver = csws.DeepLoad();
 
-            var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Model.IDeclaration").Single() as IGenericDeclaration;
+            var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.IEntityBase").Single() as IGenericDeclaration;
 
             foreach (var extendedByItem in declaration.ExtendedBy)
             {
