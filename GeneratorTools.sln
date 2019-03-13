@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.UTest", "src\tests\SoloX.GeneratorTools.Core.CSharp.UTest\SoloX.GeneratorTools.Core.CSharp.UTest.csproj", "{13DC9B11-F929-4796-9E81-8E4291E917BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Core.CSharp.ITest", "src\tests\SoloX.GeneratorTools.Core.CSharp.ITest\SoloX.GeneratorTools.Core.CSharp.ITest.csproj", "{424CFBC6-56E1-44A7-819C-038FFA969CC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.ITest", "src\tests\SoloX.GeneratorTools.Core.CSharp.ITest\SoloX.GeneratorTools.Core.CSharp.ITest.csproj", "{424CFBC6-56E1-44A7-819C-038FFA969CC9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.Examples", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples\SoloX.GeneratorTools.Core.CSharp.Examples.csproj", "{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{424CFBC6-56E1-44A7-819C-038FFA969CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{424CFBC6-56E1-44A7-819C-038FFA969CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{424CFBC6-56E1-44A7-819C-038FFA969CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
