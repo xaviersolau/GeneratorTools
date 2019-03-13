@@ -5,6 +5,7 @@ obj
 
 
 src/libs/SoloX.GeneratorTools.Core.CSharp/SoloX.GeneratorTools.Core.CSharp.xml
+src/libs/SoloX.GeneratorTools.Core/SoloX.GeneratorTools.Core.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.UTest/SoloX.GeneratorTools.Core.CSharp.UTest.xml
