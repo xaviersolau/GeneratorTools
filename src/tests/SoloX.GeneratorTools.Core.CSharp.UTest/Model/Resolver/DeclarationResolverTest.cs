@@ -41,6 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         [InlineData("a.b.c", "name", "ctxNameSpace", null, "a.b.c.name", true)]
         [InlineData("a.b.c", "name", "ctxNameSpace", null, "name", false)]
         [InlineData("a.b.c", "name", "ctxNameSpace", "a.b.c", "unknown", false)]
+        [InlineData("ctxNameSpace", "name", "ctxNameSpace.a", null, "name", true)]
         public void ResolveDeclarationTest(
             string nameSpace, string name, string ctxNameSpace, string usingNameSpace, string nameToResolve, bool expectedMatch)
         {

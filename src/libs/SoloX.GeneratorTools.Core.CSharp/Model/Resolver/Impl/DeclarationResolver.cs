@@ -110,6 +110,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
         }
 
+        private static IEnumerable<string> GetParentNameSpaces(string declarationNameSpace)
+        {
+            var nameSpace = declarationNameSpace;
+            while (!string.IsNullOrEmpty(nameSpace))
+            {
+                yield return nameSpace;
+                var index = nameSpace.LastIndexOf('.');
+                nameSpace = index >= 0 ? nameSpace.Substring(0, index) : null;
+            }
+        }
+
         private IEnumerable<IDeclaration> FindDeclarations(
             string identifier, IDeclaration declarationContext)
         {
@@ -124,11 +135,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 }
             }
 
-            if (this.declarationMap.TryGetValue(
-                ADeclaration.GetFullName(declarationContext.DeclarationNameSpace, identifier),
-                out declarations))
+            foreach (var nameSpace in GetParentNameSpaces(declarationContext.DeclarationNameSpace))
             {
-                return declarations;
+                if (this.declarationMap.TryGetValue(
+                    ADeclaration.GetFullName(nameSpace, identifier),
+                    out declarations))
+                {
+                    return declarations;
+                }
             }
 
             if (this.declarationMap.TryGetValue(identifier, out declarations))
