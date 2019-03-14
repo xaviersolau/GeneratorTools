@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core", "src\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj", "{CD41BBD2-3AB6-4C78-ABD8-DC551620C572}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj", "{D8C335A7-9779-4F01-B481-6BFF3050179A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{CD41BBD2-3AB6-4C78-ABD8-DC551620C572}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD41BBD2-3AB6-4C78-ABD8-DC551620C572}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD41BBD2-3AB6-4C78-ABD8-DC551620C572}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8C335A7-9779-4F01-B481-6BFF3050179A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8C335A7-9779-4F01-B481-6BFF3050179A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8C335A7-9779-4F01-B481-6BFF3050179A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8C335A7-9779-4F01-B481-6BFF3050179A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

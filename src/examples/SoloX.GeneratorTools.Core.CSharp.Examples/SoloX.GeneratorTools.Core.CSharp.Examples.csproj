@@ -14,6 +14,16 @@
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Patterns\Impl\EntityPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Itf\IEntityPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

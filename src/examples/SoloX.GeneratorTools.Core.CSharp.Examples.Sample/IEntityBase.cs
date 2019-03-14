@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples
+namespace SoloX.GeneratorTools.Core.CSharp.Examples.Sample
 {
     /// <summary>
     /// IEntityBase is the base entity interface what will be used by the generator to find all entity to generate.

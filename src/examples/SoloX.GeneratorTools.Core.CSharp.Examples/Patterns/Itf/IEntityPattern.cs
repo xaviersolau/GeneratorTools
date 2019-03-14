@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IEntity1.cs" company="SoloX Software">
+// <copyright file="IEntityPattern.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,17 +8,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Examples.Sample;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples.Model
+namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf
 {
     /// <summary>
-    /// IEntity1 is the entity interface what will be used as base to generate the implementation.
+    /// Entity interface pattern used by the implementation pattern.
     /// </summary>
-    public interface IEntity1 : IEntityBase
+    public interface IEntityPattern : IEntityBase
     {
         /// <summary>
-        /// Gets the property that will be implemented by the generator.
+        /// Gets or sets property declaration pattern.
         /// </summary>
-        int PropertyA { get; }
+        object PropertyPattern { get; set; }
     }
 }

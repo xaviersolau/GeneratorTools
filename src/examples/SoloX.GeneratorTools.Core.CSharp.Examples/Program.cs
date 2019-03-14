@@ -57,7 +57,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
         private void Run()
         {
-            var prjFile = "../../../SoloX.GeneratorTools.Core.CSharp.Examples.csproj";
+            var prjFolder = "../../../../SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
+            var prjFile = Path.Combine(prjFolder, "SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj");
 
             this.logger.LogInformation($"Loading {Path.GetFileName(prjFile)}...");
 
@@ -67,11 +68,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             var resolver = csws.DeepLoad();
 
-            var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.IEntityBase").Single() as IGenericDeclaration;
+            var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Sample.IEntityBase").Single() as IGenericDeclaration;
+
+            var generator = new EntityImplementationGenerator(prjFolder);
 
             foreach (var extendedByItem in declaration.ExtendedBy)
             {
                 this.logger.LogInformation(extendedByItem.FullName);
+
+                generator.Generate((IInterfaceDeclaration)extendedByItem);
             }
         }
     }

@@ -3,6 +3,8 @@
 bin
 obj
 
+*.generated.cs
+
 
 src/libs/SoloX.GeneratorTools.Core.CSharp/SoloX.GeneratorTools.Core.CSharp.xml
 src/libs/SoloX.GeneratorTools.Core/SoloX.GeneratorTools.Core.xml
@@ -11,3 +13,4 @@ src/tests/SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSh
 src/tests/SoloX.GeneratorTools.Core.CSharp.UTest/SoloX.GeneratorTools.Core.CSharp.UTest.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.ITest/SoloX.GeneratorTools.Core.CSharp.ITest.xml
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples/SoloX.GeneratorTools.Core.CSharp.Examples.xml
+src/examples/SoloX.GeneratorTools.Core.CSharp.Examples.Sample/SoloX.GeneratorTools.Core.CSharp.Examples.Sample.xml
