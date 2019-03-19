@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="EntityImplementationGenerator.cs" company="SoloX Software">
+// <copyright file="ImplementationGenerator.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,29 +8,29 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SoloX.GeneratorTools.Core.CSharp.Examples.Walker;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples
+namespace SoloX.GeneratorTools.Core.CSharp.Generator
 {
     /// <summary>
     /// Entity implementation generator example.
     /// </summary>
-    public class EntityImplementationGenerator
+    public class ImplementationGenerator
     {
         private readonly IGenerator fileGenerator;
         private readonly IInterfaceDeclaration itfPattern;
         private readonly IGenericDeclaration implPattern;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EntityImplementationGenerator"/> class.
+        /// Initializes a new instance of the <see cref="ImplementationGenerator"/> class.
         /// </summary>
         /// <param name="itfPattern">The interface pattern to use for the generator.</param>
         /// <param name="implPattern">The implementation pattern to use for the generator.</param>
         /// <param name="generationRootFolder">The root folder where to generate the implementation entities.</param>
-        public EntityImplementationGenerator(IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern, string generationRootFolder)
+        public ImplementationGenerator(IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern, string generationRootFolder)
         {
             this.fileGenerator = new FileGenerator(generationRootFolder);
             this.itfPattern = itfPattern;
@@ -46,7 +46,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var entityName = GetEntityName(declaration.Name);
             this.fileGenerator.Generate(@"Model/Impl", entityName, writer =>
             {
-                var generatorWalker = new GeneratorWalker(writer, this.itfPattern, this.implPattern, declaration, entityName);
+                var generatorWalker = new ImplementationGeneratorWalker(writer, this.itfPattern, this.implPattern, declaration, entityName);
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
         }

@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="GeneratorWalker.cs" company="SoloX Software">
+// <copyright file="ImplementationGeneratorWalker.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,9 +15,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
+namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
 {
-    internal class GeneratorWalker : CSharpSyntaxWalker
+    /// <summary>
+    /// Generator walker that generates the given interface declaration implementation using a interface and implementation pattern.
+    /// </summary>
+    internal class ImplementationGeneratorWalker : CSharpSyntaxWalker
     {
         private readonly TextWriter writer;
         private readonly Func<string, string> textSubstitutionHandler;
@@ -26,36 +29,42 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
         private readonly IInterfaceDeclaration declaration;
         private readonly string implName;
 
-        public GeneratorWalker(
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
+        /// </summary>
+        /// <param name="writer">The writer where to write generated code.</param>
+        /// <param name="itfPattern">Interface pattern.</param>
+        /// <param name="implPattern">Implementation pattern.</param>
+        /// <param name="itfDeclaration">Interface declaration to implement.</param>
+        /// <param name="implName">Implementation name.</param>
+        /// <param name="textSubstitutionHandler">Optional text substitution handler.</param>
+        public ImplementationGeneratorWalker(
             TextWriter writer,
             IInterfaceDeclaration itfPattern,
             IGenericDeclaration implPattern,
-            IInterfaceDeclaration declaration,
+            IInterfaceDeclaration itfDeclaration,
             string implName,
             Func<string, string> textSubstitutionHandler = null)
         {
             this.writer = writer;
             this.itfPattern = itfPattern;
             this.implPattern = implPattern;
-            this.declaration = declaration;
+            this.declaration = itfDeclaration;
             this.implName = implName;
             this.textSubstitutionHandler = textSubstitutionHandler ?? SameText;
         }
 
-        public override void Visit(SyntaxNode node)
-        {
-            base.Visit(node);
-        }
-
+        /// <inheritdoc/>
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
         {
             var txt = node.ToFullString()
-                .Replace(this.implPattern.Name, this.implName, StringComparison.InvariantCulture)
-                .Replace(this.itfPattern.DeclarationNameSpace, this.declaration.DeclarationNameSpace, StringComparison.InvariantCulture);
+                .Replace(this.implPattern.Name, this.implName)
+                .Replace(this.itfPattern.DeclarationNameSpace, this.declaration.DeclarationNameSpace);
 
             this.Write(txt);
         }
 
+        /// <inheritdoc/>
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
             this.Write(node.NamespaceKeyword.ToFullString());
@@ -71,13 +80,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
             this.Write(node.CloseBraceToken.ToFullString());
         }
 
+        /// <inheritdoc/>
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             this.Write(node.AttributeLists.ToFullString());
             this.Write(node.Modifiers.ToFullString());
             this.Write(node.Keyword.ToFullString());
             this.Write(node.Identifier.ToFullString()
-                .Replace(this.implPattern.Name, this.implName, StringComparison.InvariantCulture));
+                .Replace(this.implPattern.Name, this.implName));
 
             if (node.TypeParameterList != null)
             {
@@ -85,7 +95,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
             }
 
             this.Write(node.BaseList.ToFullString()
-                .Replace(this.itfPattern.Name, this.declaration.Name, StringComparison.InvariantCulture));
+                .Replace(this.itfPattern.Name, this.declaration.Name));
             this.Write(node.ConstraintClauses.ToFullString());
 
             this.Write(node.OpenBraceToken.ToFullString());
@@ -98,6 +108,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
             this.Write(node.CloseBraceToken.ToFullString());
         }
 
+        /// <inheritdoc/>
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             var itfProperty = this.itfPattern.Members.Single();
@@ -108,8 +119,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Walker
                 var txt = node.ToFullString();
                 foreach (var item in this.declaration.Members)
                 {
-                    this.Write(txt
-                        .Replace(propertyName, item.Name, StringComparison.InvariantCulture));
+                    this.Write(txt.Replace(propertyName, item.Name));
                 }
             }
             else
