@@ -17,8 +17,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Sample.Model
     public interface IEntity1 : IEntityBase
     {
         /// <summary>
-        /// Gets the property that will be implemented by the generator.
+        /// Gets the propertyA that will be implemented by the generator.
         /// </summary>
         int PropertyA { get; }
+
+        /// <summary>
+        /// Gets the propertyB that will be implemented by the generator.
+        /// </summary>
+        string PropertyB { get; }
     }
 }

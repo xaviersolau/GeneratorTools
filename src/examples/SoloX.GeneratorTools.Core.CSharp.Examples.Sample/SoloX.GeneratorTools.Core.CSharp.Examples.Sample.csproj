@@ -8,4 +8,8 @@
     <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0-rc.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\Impl\" />
+  </ItemGroup>
+
 </Project>

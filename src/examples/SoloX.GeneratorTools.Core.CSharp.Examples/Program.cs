@@ -65,14 +65,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var csws = this.Service.GetService<ICSharpWorkspace>();
 
             csws.RegisterProject(prjFile);
+            csws.RegisterFile("./Patterns/Itf/IEntityPattern.cs");
+            csws.RegisterFile("./Patterns/Impl/EntityPattern.cs");
 
             var resolver = csws.DeepLoad();
 
             var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Sample.IEntityBase").Single() as IGenericDeclaration;
+            var itfPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf.IEntityPattern").Single() as IInterfaceDeclaration;
+            var implPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl.EntityPattern").Single() as IGenericDeclaration;
 
-            var generator = new EntityImplementationGenerator(prjFolder);
+            var generator = new EntityImplementationGenerator(itfPatternDeclaration, implPatternDeclaration, prjFolder);
 
-            foreach (var extendedByItem in declaration.ExtendedBy)
+            foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d.Name != "IEntityPattern"))
             {
                 this.logger.LogInformation(extendedByItem.FullName);
 

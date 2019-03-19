@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Examples.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
@@ -20,14 +21,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     public class EntityImplementationGenerator
     {
         private readonly IGenerator fileGenerator;
+        private readonly IInterfaceDeclaration itfPattern;
+        private readonly IGenericDeclaration implPattern;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityImplementationGenerator"/> class.
         /// </summary>
+        /// <param name="itfPattern">The interface pattern to use for the generator.</param>
+        /// <param name="implPattern">The implementation pattern to use for the generator.</param>
         /// <param name="generationRootFolder">The root folder where to generate the implementation entities.</param>
-        public EntityImplementationGenerator(string generationRootFolder)
+        public EntityImplementationGenerator(IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern, string generationRootFolder)
         {
             this.fileGenerator = new FileGenerator(generationRootFolder);
+            this.itfPattern = itfPattern;
+            this.implPattern = implPattern;
         }
 
         /// <summary>
@@ -37,9 +44,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
         public void Generate(IInterfaceDeclaration declaration)
         {
             var entityName = GetEntityName(declaration.Name);
-            this.fileGenerator.Generate(@"Model", entityName, writer =>
+            this.fileGenerator.Generate(@"Model/Impl", entityName, writer =>
             {
-                writer.WriteLine($"// Hello {entityName}!");
+                var generatorWalker = new GeneratorWalker(writer, this.itfPattern, this.implPattern, declaration, entityName);
+                generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
         }
 
