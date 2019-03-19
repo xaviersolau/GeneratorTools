@@ -17,7 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core", "src\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj", "{CD41BBD2-3AB6-4C78-ABD8-DC551620C572}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj", "{D8C335A7-9779-4F01-B481-6BFF3050179A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj", "{D8C335A7-9779-4F01-B481-6BFF3050179A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{79744D96-CD07-4319-89CE-32347E6C1482}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C6B09C62-ABA8-44EA-9459-2F2E67A22706}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{411B11DF-0D32-4F3C-AD60-7EA9D87A240D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +66,16 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{00C1A1CF-5231-481F-A3B9-A83A6DEF4B72} = {79744D96-CD07-4319-89CE-32347E6C1482}
+		{E53BA4EC-3ABB-46BC-ABF0-B441B27A07E5} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
+		{CA580971-054E-4627-8067-F70DB3E6A65C} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
+		{13DC9B11-F929-4796-9E81-8E4291E917BB} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
+		{424CFBC6-56E1-44A7-819C-038FFA969CC9} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
+		{BE23BAE7-2C29-4D02-B25C-EDD7EA039F55} = {C6B09C62-ABA8-44EA-9459-2F2E67A22706}
+		{CD41BBD2-3AB6-4C78-ABD8-DC551620C572} = {79744D96-CD07-4319-89CE-32347E6C1482}
+		{D8C335A7-9779-4F01-B481-6BFF3050179A} = {C6B09C62-ABA8-44EA-9459-2F2E67A22706}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3EEBCA9-F083-4143-96F7-99A6AB364E24}
