@@ -28,6 +28,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
         private readonly IGenericDeclaration implPattern;
         private readonly IInterfaceDeclaration declaration;
         private readonly string implName;
+        private readonly string implNameSpace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
@@ -37,6 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
         /// <param name="implPattern">Implementation pattern.</param>
         /// <param name="itfDeclaration">Interface declaration to implement.</param>
         /// <param name="implName">Implementation name.</param>
+        /// <param name="implNameSpace">Implementation name space.</param>
         /// <param name="textSubstitutionHandler">Optional text substitution handler.</param>
         public ImplementationGeneratorWalker(
             TextWriter writer,
@@ -44,6 +46,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
             IGenericDeclaration implPattern,
             IInterfaceDeclaration itfDeclaration,
             string implName,
+            string implNameSpace,
             Func<string, string> textSubstitutionHandler = null)
         {
             this.writer = writer;
@@ -51,6 +54,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
             this.implPattern = implPattern;
             this.declaration = itfDeclaration;
             this.implName = implName;
+            this.implNameSpace = implNameSpace;
             this.textSubstitutionHandler = textSubstitutionHandler ?? SameText;
         }
 
@@ -68,7 +72,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
             this.Write(node.NamespaceKeyword.ToFullString());
-            this.Write(node.Name.ToFullString());
+            this.Write(node.Name.ToFullString()
+                .Replace(this.implPattern.DeclarationNameSpace, this.implNameSpace));
             this.Write(node.OpenBraceToken.ToFullString());
             this.Write(node.Usings.ToFullString());
 

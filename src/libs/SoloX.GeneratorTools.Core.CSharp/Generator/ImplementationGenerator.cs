@@ -20,33 +20,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
     /// </summary>
     public class ImplementationGenerator
     {
-        private readonly IGenerator fileGenerator;
+        private readonly IGenerator generator;
         private readonly IInterfaceDeclaration itfPattern;
         private readonly IGenericDeclaration implPattern;
+        private readonly string projectNameSpace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGenerator"/> class.
         /// </summary>
+        /// <param name="generator">The generator to use to generate the output.</param>
+        /// <param name="projectNameSpace">The project name space where to generate the classes.</param>
         /// <param name="itfPattern">The interface pattern to use for the generator.</param>
         /// <param name="implPattern">The implementation pattern to use for the generator.</param>
-        /// <param name="generationRootFolder">The root folder where to generate the implementation entities.</param>
-        public ImplementationGenerator(IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern, string generationRootFolder)
+        public ImplementationGenerator(IGenerator generator, string projectNameSpace, IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern)
         {
-            this.fileGenerator = new FileGenerator(generationRootFolder);
+            this.generator = generator;
             this.itfPattern = itfPattern;
             this.implPattern = implPattern;
+            this.projectNameSpace = projectNameSpace;
         }
 
         /// <summary>
-        /// Generate the implementation of the given entity.
+        /// Generate the implementation of the given interface declaration.
         /// </summary>
-        /// <param name="declaration">The entity interface.</param>
-        public void Generate(IInterfaceDeclaration declaration)
+        /// <param name="itfDeclaration">The interface declaration to implement.</param>
+        public void Generate(IInterfaceDeclaration itfDeclaration)
         {
-            var entityName = GetEntityName(declaration.Name);
-            this.fileGenerator.Generate(@"Model/Impl", entityName, writer =>
+            var implName = GetEntityName(itfDeclaration.Name);
+            var implNS = $"{this.projectNameSpace}.Model.Impl";
+            this.generator.Generate(@"Model/Impl", implName, writer =>
             {
-                var generatorWalker = new ImplementationGeneratorWalker(writer, this.itfPattern, this.implPattern, declaration, entityName);
+                var generatorWalker = new ImplementationGeneratorWalker(writer, this.itfPattern, this.implPattern, itfDeclaration, implName, implNS);
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
         }

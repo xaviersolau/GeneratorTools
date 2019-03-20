@@ -27,14 +27,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         /// <param name="walker">The walker to apply.</param>
         public static void Read(string file, CSharpSyntaxWalker walker)
         {
-            SyntaxTree syntaxTree;
+            walker.Visit(Parse(file).GetRoot());
+        }
+
+        /// <summary>
+        /// Parse the given file and compute the syntax tree.
+        /// </summary>
+        /// <param name="file">The file to parse.</param>
+        /// <returns>The resulting syntax tree.</returns>
+        public static SyntaxTree Parse(string file)
+        {
             using (var srcFile = File.OpenRead(file))
             {
                 var src = SourceText.From(srcFile);
-                syntaxTree = CSharpSyntaxTree.ParseText(src);
+                return CSharpSyntaxTree.ParseText(src);
             }
-
-            walker.Visit(syntaxTree.GetRoot());
         }
     }
 }

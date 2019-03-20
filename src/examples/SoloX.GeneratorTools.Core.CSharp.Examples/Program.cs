@@ -14,6 +14,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.Generator;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -61,6 +62,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var prjFolder = "../../../../SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
             var prjFile = Path.Combine(prjFolder, "SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj");
 
+            var projectNameSpace = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
+
             this.logger.LogInformation($"Loading {Path.GetFileName(prjFile)}...");
 
             var csws = this.Service.GetService<ICSharpWorkspace>();
@@ -75,7 +78,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var itfPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf.IEntityPattern").Single() as IInterfaceDeclaration;
             var implPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl.EntityPattern").Single() as IGenericDeclaration;
 
-            var generator = new ImplementationGenerator(itfPatternDeclaration, implPatternDeclaration, prjFolder);
+            var generator = new ImplementationGenerator(new FileGenerator(prjFolder), projectNameSpace, itfPatternDeclaration, implPatternDeclaration);
 
             foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d.Name != "IEntityPattern"))
             {

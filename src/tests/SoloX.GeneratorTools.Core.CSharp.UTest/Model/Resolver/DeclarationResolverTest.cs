@@ -23,7 +23,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         [Fact]
         public void FindDeclarationTest()
         {
-            var declaration = DeclarationHelper.SetupDeclaration("ns", "name");
+            var declaration = DeclarationHelper.SetupDeclaration<IDeclaration>("ns", "name");
 
             var declResolver = new DeclarationResolver(new[] { declaration }, null);
 
@@ -45,9 +45,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         public void ResolveDeclarationTest(
             string nameSpace, string name, string ctxNameSpace, string usingNameSpace, string nameToResolve, bool expectedMatch)
         {
-            var declaration = DeclarationHelper.SetupDeclaration(nameSpace, name);
+            var declaration = DeclarationHelper.SetupDeclaration<IDeclaration>(nameSpace, name);
 
-            var contextDeclaration = DeclarationHelper.SetupDeclaration(ctxNameSpace, "ctxName", m =>
+            var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration>(ctxNameSpace, "ctxName", m =>
             {
                 var usingDirectives = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
                 m.SetupGet(d => d.UsingDirectives).Returns(usingDirectives);

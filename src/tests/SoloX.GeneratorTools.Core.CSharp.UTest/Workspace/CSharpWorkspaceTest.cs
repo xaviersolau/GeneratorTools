@@ -64,7 +64,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var fileMock = new Mock<ICSharpFile>();
 
-            var declaration = DeclarationHelper.SetupDeclaration("nameSpace", "name");
+            var declaration = DeclarationHelper.SetupDeclaration<IDeclaration>("nameSpace", "name");
 
             fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration[] { declaration });
 
