@@ -19,15 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Generator\Patterns\Simple\Itf\ISimplePattern.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Generator\Patterns\Simple\Impl\SimplePattern.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Generator\Samples\Simple\ISimpleSample.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
     <Compile Update="Resources\Model\Basic\ClassWithArrayProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

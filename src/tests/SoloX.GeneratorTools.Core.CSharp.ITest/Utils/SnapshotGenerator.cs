@@ -11,7 +11,7 @@ using System.IO;
 using System.Text;
 using SoloX.GeneratorTools.Core.Generator;
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Utils
 {
     public class SnapshotGenerator : IGenerator
     {

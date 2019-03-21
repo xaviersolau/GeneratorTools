@@ -12,7 +12,7 @@ using System.Text;
 using SoloX.GeneratorTools.Core.Generator;
 using Xunit;
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Utils
 {
     public static class SnapshotHelper
     {
