@@ -57,6 +57,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public IReadOnlyCollection<IMemberDeclaration> Members { get; private set; }
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<IPropertyDeclaration> Properties { get; private set; }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             if (this.Extends?.Any() ?? false)
@@ -133,6 +136,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             membersWalker.Visit(this.SyntaxNode);
 
             this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
+            this.Properties = this.Members.OfType<IPropertyDeclaration>().ToArray();
         }
 
         private void AddExtendedBy(AGenericDeclaration declaration)

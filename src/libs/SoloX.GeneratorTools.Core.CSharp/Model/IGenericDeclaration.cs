@@ -42,5 +42,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the member list.
         /// </summary>
         IReadOnlyCollection<IMemberDeclaration> Members { get; }
+
+        /// <summary>
+        /// Gets the property list.
+        /// </summary>
+        IReadOnlyCollection<IPropertyDeclaration> Properties { get; }
     }
 }
