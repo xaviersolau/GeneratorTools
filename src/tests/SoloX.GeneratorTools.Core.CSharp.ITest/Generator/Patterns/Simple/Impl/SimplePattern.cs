@@ -14,6 +14,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Impl
 {
     public class SimplePattern : ISimplePattern
     {
-        public object PatternProperty { get; set; }
+        private object patternProperty;
+
+        public object PatternProperty
+        {
+            get { return this.patternProperty; }
+            set { this.patternProperty = value; }
+        }
     }
 }

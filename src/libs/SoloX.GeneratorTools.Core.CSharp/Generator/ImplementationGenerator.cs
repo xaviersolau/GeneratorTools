@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Walker;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
@@ -46,11 +47,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <param name="itfDeclaration">The interface declaration to implement.</param>
         public void Generate(IInterfaceDeclaration itfDeclaration)
         {
+            var propertyWriter = new NodeWriter(
+                this.itfPattern,
+                itfDeclaration);
+
             var implName = GetEntityName(itfDeclaration.Name);
             var implNS = $"{this.projectNameSpace}.Model.Impl";
             this.generator.Generate(@"Model/Impl", implName, writer =>
             {
-                var generatorWalker = new ImplementationGeneratorWalker(writer, this.itfPattern, this.implPattern, itfDeclaration, implName, implNS);
+                var generatorWalker = new ImplementationGeneratorWalker(
+                    writer,
+                    this.itfPattern,
+                    this.implPattern,
+                    itfDeclaration,
+                    implName,
+                    implNS,
+                    new WriterSelector(propertyWriter));
+
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
         }

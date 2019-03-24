@@ -17,8 +17,20 @@ namespace Target.NameSpace.Model.Impl
 {
     public class SimpleSample : ISimpleSample
     {
-        public object Property1 { get; set; }
-        public object Property2 { get; set; }
+        private int property1;
+        private double property2;
+
+        public int Property1
+        {
+            get { return this.property1; }
+            set { this.property1 = value; }
+        }
+
+        public double Property2
+        {
+            get { return this.property2; }
+            set { this.property2 = value; }
+        }
     }
 }
 

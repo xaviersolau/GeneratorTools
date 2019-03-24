@@ -15,6 +15,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples.Simple
     {
         int Property1 { get; }
 
-        int Property2 { get; }
+        double Property2 { get; }
     }
 }

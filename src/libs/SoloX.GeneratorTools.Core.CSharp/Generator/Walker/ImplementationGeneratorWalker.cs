@@ -13,6 +13,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Writer;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
@@ -29,6 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
         private readonly IInterfaceDeclaration declaration;
         private readonly string implName;
         private readonly string implNameSpace;
+        private readonly IWriterSelector writerSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
@@ -39,6 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
         /// <param name="itfDeclaration">Interface declaration to implement.</param>
         /// <param name="implName">Implementation name.</param>
         /// <param name="implNameSpace">Implementation name space.</param>
+        /// <param name="writerSelector">Writer selector.</param>
         /// <param name="textSubstitutionHandler">Optional text substitution handler.</param>
         public ImplementationGeneratorWalker(
             TextWriter writer,
@@ -47,6 +50,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
             IInterfaceDeclaration itfDeclaration,
             string implName,
             string implNameSpace,
+            IWriterSelector writerSelector,
             Func<string, string> textSubstitutionHandler = null)
         {
             this.writer = writer;
@@ -55,6 +59,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
             this.declaration = itfDeclaration;
             this.implName = implName;
             this.implNameSpace = implNameSpace;
+            this.writerSelector = writerSelector;
             this.textSubstitutionHandler = textSubstitutionHandler ?? SameText;
         }
 
@@ -107,30 +112,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
 
             foreach (var member in node.Members)
             {
-                this.Visit(member);
+                if (!this.writerSelector.SelectAndProcessWriter(member, this.Write))
+                {
+                    this.Write(member.ToFullString());
+                }
             }
 
             this.Write(node.CloseBraceToken.ToFullString());
-        }
-
-        /// <inheritdoc/>
-        public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
-        {
-            var itfProperty = this.itfPattern.Members.Single();
-            var propertyName = itfProperty.Name;
-
-            if (node.Identifier.Text == propertyName)
-            {
-                var txt = node.ToFullString();
-                foreach (var item in this.declaration.Members)
-                {
-                    this.Write(txt.Replace(propertyName, item.Name));
-                }
-            }
-            else
-            {
-                this.Write(node.ToFullString());
-            }
         }
 
         private static string SameText(string s) => s;
