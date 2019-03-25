@@ -19,21 +19,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
     /// </summary>
     public class WriterSelector : IWriterSelector
     {
-        private readonly IEnumerable<NodeWriter> propertyWriters;
+        private readonly IEnumerable<INodeWriter> writers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WriterSelector"/> class.
         /// </summary>
-        /// <param name="propertyWriters">The property writers.</param>
-        public WriterSelector(params NodeWriter[] propertyWriters)
+        /// <param name="writers">The node writers.</param>
+        public WriterSelector(params INodeWriter[] writers)
         {
-            this.propertyWriters = propertyWriters;
+            this.writers = writers;
         }
 
         /// <inheritdoc/>
         public bool SelectAndProcessWriter(CSharpSyntaxNode node, Action<string> write)
         {
-            return this.propertyWriters.Select(w => w.Write(node, write)).FirstOrDefault();
+            return this.writers.Select(w => w.Write(node, write)).FirstOrDefault();
         }
     }
 }

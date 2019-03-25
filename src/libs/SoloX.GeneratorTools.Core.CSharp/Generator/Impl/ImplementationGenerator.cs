@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
@@ -44,9 +45,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <inheritdoc/>
         public void Generate(IInterfaceDeclaration itfDeclaration)
         {
-            var propertyWriter = new NodeWriter(
-                this.itfPattern,
-                itfDeclaration);
+            var propertyWriter = new PropertyWriter(
+                this.itfPattern.Properties.Single(),
+                itfDeclaration.Properties);
 
             var implName = GetEntityName(itfDeclaration.Name);
             var implNS = $"{this.projectNameSpace}.Model.Impl";
