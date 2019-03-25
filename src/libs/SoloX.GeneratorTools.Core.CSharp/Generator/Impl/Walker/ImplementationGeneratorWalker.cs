@@ -16,7 +16,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Generator.Walker
+namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
     /// <summary>
     /// Generator walker that generates the given interface declaration implementation using a interface and implementation pattern.

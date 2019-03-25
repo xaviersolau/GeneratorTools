@@ -8,18 +8,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Walker;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Generator
+namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 {
     /// <summary>
     /// Entity implementation generator example.
     /// </summary>
-    public class ImplementationGenerator
+    public class ImplementationGenerator : IImplementationGenerator
     {
         private readonly IGenerator generator;
         private readonly IInterfaceDeclaration itfPattern;
@@ -41,10 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
             this.projectNameSpace = projectNameSpace;
         }
 
-        /// <summary>
-        /// Generate the implementation of the given interface declaration.
-        /// </summary>
-        /// <param name="itfDeclaration">The interface declaration to implement.</param>
+        /// <inheritdoc/>
         public void Generate(IInterfaceDeclaration itfDeclaration)
         {
             var propertyWriter = new NodeWriter(

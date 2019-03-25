@@ -9,17 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Generator;
-using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Impl;
-using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Itf;
-using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples.Simple;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 

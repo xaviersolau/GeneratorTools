@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SoloX.GeneratorTools.Core.CSharp.Generator;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
