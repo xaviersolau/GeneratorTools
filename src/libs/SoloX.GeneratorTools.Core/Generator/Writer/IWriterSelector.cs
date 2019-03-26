@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="INodeWriter.cs" company="SoloX Software">
+// <copyright file="IWriterSelector.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,22 +9,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer
+namespace SoloX.GeneratorTools.Core.Generator.Writer
 {
     /// <summary>
-    /// Interface to write a property or other nodes.
+    /// Writer selector interface.
     /// </summary>
-    public interface INodeWriter
+    public interface IWriterSelector
     {
         /// <summary>
-        /// Write the code.
+        /// Select and process the writer for the given node.
         /// </summary>
         /// <param name="node">The node to write.</param>
         /// <param name="write">The write delegate.</param>
-        /// <returns>True if the node is written.</returns>
-        bool Write(SyntaxNode node, Action<string> write);
+        /// <returns>The selected Writer.</returns>
+        bool SelectAndProcessWriter(SyntaxNode node, Action<string> write);
     }
 }

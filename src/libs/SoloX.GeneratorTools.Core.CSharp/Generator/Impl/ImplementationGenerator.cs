@@ -12,8 +12,8 @@ using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 {

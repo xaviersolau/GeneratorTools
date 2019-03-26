@@ -13,8 +13,8 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Writer;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {

@@ -9,10 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
+namespace SoloX.GeneratorTools.Core.Generator.Writer.Impl
 {
     /// <summary>
     /// Write selector.
@@ -31,7 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         }
 
         /// <inheritdoc/>
-        public bool SelectAndProcessWriter(CSharpSyntaxNode node, Action<string> write)
+        public bool SelectAndProcessWriter(SyntaxNode node, Action<string> write)
         {
             return this.writers.Select(w => w.Write(node, write)).FirstOrDefault();
         }
