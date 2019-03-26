@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -24,6 +25,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer
         /// <param name="node">The node to write.</param>
         /// <param name="write">The write delegate.</param>
         /// <returns>True if the node is written.</returns>
-        bool Write(CSharpSyntaxNode node, Action<string> write);
+        bool Write(SyntaxNode node, Action<string> write);
     }
 }

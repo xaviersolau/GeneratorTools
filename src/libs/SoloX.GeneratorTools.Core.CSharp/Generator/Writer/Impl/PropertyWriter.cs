@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -40,7 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         }
 
         /// <inheritdoc/>
-        public bool Write(CSharpSyntaxNode node, Action<string> write)
+        public bool Write(SyntaxNode node, Action<string> write)
         {
             this.write = write;
             var res = this.Visit(node);
@@ -70,6 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 this.write(node.Identifier.ToFullString()
                     .Replace(propertyName, itemPropertyName));
                 this.write(node.AccessorList.ToFullString()
+                    .Replace(propertyName, itemPropertyName)
                     .Replace(lowPropertyName, lowItemPropertyName));
             }
 
@@ -86,7 +88,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
             var variableName = variableNode.Identifier.Text;
 
-            if (!variableName.Contains(propertyName) && variableName != lowPropertyName)
+            if (!variableName.Contains(propertyName) && !variableName.StartsWith(lowPropertyName, StringComparison.InvariantCulture))
             {
                 return false;
             }

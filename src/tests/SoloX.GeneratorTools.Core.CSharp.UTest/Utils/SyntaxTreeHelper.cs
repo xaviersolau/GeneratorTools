@@ -31,7 +31,46 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             return field.Declaration.Type;
         }
 
-        private static SyntaxNode GetSyntaxNode(string text)
+        /// <summary>
+        /// Generate a property declaration syntax as if it was declared in a class implementation.
+        /// </summary>
+        /// <param name="type">The property type.</param>
+        /// <param name="name">The property name.</param>
+        /// <param name="field">The field to get or set.</param>
+        /// <returns>The PropertyDeclarationSyntax node.</returns>
+        public static SyntaxNode GetPropertyImplSyntax(string type, string name, string field = null)
+        {
+            var getImpl = "get;";
+            var setImpl = "set;";
+
+            if (!string.IsNullOrEmpty(field))
+            {
+                getImpl = $"get {{ return {field}; }}";
+                setImpl = $"set {{ {field} = value; }}";
+            }
+
+            var syntaxNode = GetSyntaxNode($"public {type} {name} {{ {getImpl} {setImpl} }}");
+            return (PropertyDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
+        /// <summary>
+        /// Generate a field declaration syntax as if it was declared in a class implementation.
+        /// </summary>
+        /// <param name="type">The field type.</param>
+        /// <param name="name">The field name.</param>
+        /// <returns>The FieldDeclarationSyntax node.</returns>
+        public static SyntaxNode GetFieldSyntax(string type, string name)
+        {
+            var syntaxNode = GetSyntaxNode($"public {type} {name};");
+            return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
+        /// <summary>
+        /// Parse the given input.
+        /// </summary>
+        /// <param name="text">The input text to parse.</param>
+        /// <returns>The CompilationUnitSyntax node.</returns>
+        public static SyntaxNode GetSyntaxNode(string text)
         {
             var src = SourceText.From(text);
             var syntaxTree = CSharpSyntaxTree.ParseText(src);
