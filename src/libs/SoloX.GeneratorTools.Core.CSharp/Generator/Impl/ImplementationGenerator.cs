@@ -25,21 +25,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         private readonly IGenerator generator;
         private readonly IInterfaceDeclaration itfPattern;
         private readonly IGenericDeclaration implPattern;
-        private readonly string projectNameSpace;
+        private readonly ILocator locator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGenerator"/> class.
         /// </summary>
         /// <param name="generator">The generator to use to generate the output.</param>
-        /// <param name="projectNameSpace">The project name space where to generate the classes.</param>
+        /// <param name="locator">Code generation locator.</param>
         /// <param name="itfPattern">The interface pattern to use for the generator.</param>
         /// <param name="implPattern">The implementation pattern to use for the generator.</param>
-        public ImplementationGenerator(IGenerator generator, string projectNameSpace, IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern)
+        public ImplementationGenerator(IGenerator generator, ILocator locator, IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern)
         {
             this.generator = generator;
             this.itfPattern = itfPattern;
             this.implPattern = implPattern;
-            this.projectNameSpace = projectNameSpace;
+            this.locator = locator;
         }
 
         /// <inheritdoc/>
@@ -50,8 +50,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                 itfDeclaration.Properties);
 
             var implName = GetEntityName(itfDeclaration.Name);
-            var implNS = $"{this.projectNameSpace}.Model.Impl";
-            this.generator.Generate(@"Model/Impl", implName, writer =>
+
+            var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);
+
+            this.generator.Generate(location, implName, writer =>
             {
                 var generatorWalker = new ImplementationGeneratorWalker(
                     writer,
@@ -59,7 +61,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     this.implPattern,
                     itfDeclaration,
                     implName,
-                    implNS,
+                    nameSpace,
                     new WriterSelector(propertyWriter));
 
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());

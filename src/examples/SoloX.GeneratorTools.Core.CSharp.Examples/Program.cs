@@ -15,6 +15,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Generator.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -78,7 +79,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var itfPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf.IEntityPattern").Single() as IInterfaceDeclaration;
             var implPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl.EntityPattern").Single() as IGenericDeclaration;
 
-            var generator = new ImplementationGenerator(new FileGenerator(prjFolder), projectNameSpace, itfPatternDeclaration, implPatternDeclaration);
+            var locator = new RelativeLocator(prjFolder, projectNameSpace, suffix: "Impl");
+
+            var generator = new ImplementationGenerator(
+                new FileGenerator(),
+                locator,
+                itfPatternDeclaration,
+                implPatternDeclaration);
 
             foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d.Name != "IEntityPattern"))
             {

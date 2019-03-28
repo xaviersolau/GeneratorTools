@@ -13,6 +13,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.Generator.Impl;
 using Xunit;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
@@ -31,9 +32,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
                 .Declarations.First() as IClassDeclaration;
 
             var declarationResolver = ws.DeepLoad();
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+            var locator = new RelativeLocator(string.Empty, targetNameSpace);
 
             var snapshotGenerator = new SnapshotGenerator();
-            var implGenerator = new ImplementationGenerator(snapshotGenerator, "Target.NameSpace", itfPatternDeclaration, implPatternDeclaration);
+            var implGenerator = new ImplementationGenerator(snapshotGenerator, locator, itfPatternDeclaration, implPatternDeclaration);
 
             implGenerator.Generate(itfDeclaration);
 
