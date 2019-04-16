@@ -22,7 +22,15 @@ namespace SoloX.GeneratorTools.Core.Generator.Writer
         /// </summary>
         /// <param name="node">The node to write.</param>
         /// <param name="write">The write delegate.</param>
-        /// <returns>The selected Writer.</returns>
+        /// <returns>True if a writer actually wrote the code.</returns>
         bool SelectAndProcessWriter(SyntaxNode node, Action<string> write);
+
+        /// <summary>
+        /// Select and process the writer for the given token.
+        /// </summary>
+        /// <param name="token">The token to write.</param>
+        /// <param name="write">The write delegate.</param>
+        /// <returns>True if a writer actually wrote the code.</returns>
+        bool SelectAndProcessWriter(SyntaxToken token, Action<string> write);
     }
 }

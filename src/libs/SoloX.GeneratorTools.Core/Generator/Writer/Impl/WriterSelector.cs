@@ -32,7 +32,19 @@ namespace SoloX.GeneratorTools.Core.Generator.Writer.Impl
         /// <inheritdoc/>
         public bool SelectAndProcessWriter(SyntaxNode node, Action<string> write)
         {
-            return this.writers.Select(w => w.Write(node, write)).FirstOrDefault();
+            return (from w in this.writers
+                    let writen = w.Write(node, write)
+                    where writen
+                    select writen).FirstOrDefault();
+        }
+
+        /// <inheritdoc/>
+        public bool SelectAndProcessWriter(SyntaxToken token, Action<string> write)
+        {
+            return (from w in this.writers
+                    let writen = w.Write(token, write)
+                    where writen
+                    select writen).FirstOrDefault();
         }
     }
 }
