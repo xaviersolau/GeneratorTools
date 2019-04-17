@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator
 {
@@ -20,7 +21,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <summary>
         /// Generate the implementation of the given interface declaration.
         /// </summary>
+        /// <param name="writerSelector">The writer selector to use to actually write the code.</param>
         /// <param name="itfDeclaration">The interface declaration to implement.</param>
-        void Generate(IInterfaceDeclaration itfDeclaration);
+        /// <param name="implName">The class implementation name.</param>
+        void Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName);
     }
 }

@@ -32,6 +32,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly string implNameSpace;
         private readonly IWriterSelector writerSelector;
 
+        private bool isPackStatements = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
         /// </summary>
@@ -70,7 +72,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 .Replace(this.implPattern.Name, this.implName)
                 .Replace(this.itfPattern.DeclarationNameSpace, this.declaration.DeclarationNameSpace);
 
-            this.Write(txt);
+            if (!txt.Contains("SoloX.GeneratorTools.Core.CSharp.Generator.Attributes"))
+            {
+                this.Write(txt);
+            }
         }
 
         /// <inheritdoc/>
@@ -112,16 +117,140 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             foreach (var member in node.Members)
             {
-                if (!this.writerSelector.SelectAndProcessWriter(member, this.Write))
-                {
-                    this.Write(member.ToFullString());
-                }
+                this.Visit(member);
             }
 
             this.Write(node.CloseBraceToken.ToFullString());
         }
 
+        public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            var previousIsPackStatement = this.isPackStatements;
+            try
+            {
+                if (node.AttributeLists != null)
+                {
+                    foreach (var attrList in node.AttributeLists)
+                    {
+                        foreach (var attr in attrList.Attributes)
+                        {
+                            var attrName = attr.Name.ToString();
+                            if (attrName == "PackStatements" || attrName == "PackStatementsAttribute")
+                            {
+                                this.isPackStatements = true;
+                            }
+                            else
+                            {
+                                this.WriteNode(attr);
+                            }
+                        }
+                    }
+                }
+
+                this.Write(node.Modifiers.ToFullString());
+                this.WriteNode(node.ReturnType);
+
+                this.WriteNode(node.ExplicitInterfaceSpecifier);
+
+                this.WriteToken(node.Identifier);
+
+                this.WriteNode(node.TypeParameterList);
+                this.WriteNode(node.ParameterList);
+                this.Visit(node.Body);
+                this.Visit(node.ExpressionBody);
+                this.Write(node.SemicolonToken.ToFullString());
+            }
+            finally
+            {
+                this.isPackStatements = previousIsPackStatement;
+            }
+        }
+
+        public override void VisitBlock(BlockSyntax node)
+        {
+            this.Write(node.OpenBraceToken.ToFullString());
+            foreach (var statement in node.Statements)
+            {
+                this.Visit(statement);
+            }
+
+            this.Write(node.CloseBraceToken.ToFullString());
+        }
+
+        public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitExpressionStatement(ExpressionStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitReturnStatement(ReturnStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitIfStatement(IfStatementSyntax node)
+        {
+            if (this.isPackStatements)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.Write(node.IfKeyword.ToFullString());
+                this.Write(node.OpenParenToken.ToFullString());
+                this.WriteNode(node.Condition);
+                this.Write(node.CloseParenToken.ToFullString());
+                this.Visit(node.Statement);
+                if (node.Else != null)
+                {
+                    this.Visit(node.Else);
+                }
+            }
+        }
+
+        public override void VisitElseClause(ElseClauseSyntax node)
+        {
+            this.Write(node.ElseKeyword.ToFullString());
+            this.Visit(node.Statement);
+        }
+
         private static string SameText(string s) => s;
+
+        private void WriteNode(SyntaxNode node)
+        {
+            if (node != null)
+            {
+                if (!this.writerSelector.SelectAndProcessWriter(node, this.Write))
+                {
+                    this.Write(node.ToFullString());
+                }
+            }
+        }
+
+        private void WriteToken(SyntaxToken token)
+        {
+            if (token != null)
+            {
+                if (!this.writerSelector.SelectAndProcessWriter(token, this.Write))
+                {
+                    this.Write(token.ToFullString());
+                }
+            }
+        }
 
         private void Write(string text)
         {

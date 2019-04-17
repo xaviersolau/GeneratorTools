@@ -11,11 +11,13 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Generator.Impl;
+using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -91,7 +93,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             {
                 this.logger.LogInformation(extendedByItem.FullName);
 
-                generator.Generate((IInterfaceDeclaration)extendedByItem);
+                var propertyWriter = new PropertyWriter(
+                    itfPatternDeclaration.Properties.Single(),
+                    declaration.Properties);
+
+                var implName = "SimpleSample";
+
+                var itfNameWriter = new StringReplaceWriter(itfPatternDeclaration.Name, declaration.Name);
+                var implNameWriter = new StringReplaceWriter(implPatternDeclaration.Name, implName);
+
+                var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
+
+                generator.Generate(writerSelector, (IInterfaceDeclaration)extendedByItem, implName);
             }
         }
     }

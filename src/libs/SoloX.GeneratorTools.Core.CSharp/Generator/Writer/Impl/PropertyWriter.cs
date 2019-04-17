@@ -51,6 +51,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         }
 
         /// <inheritdoc/>
+        public bool Write(SyntaxToken token, Action<string> write)
+        {
+            return false;
+        }
+
+        /// <inheritdoc/>
         public override bool VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             var propertyName = this.itfPatternProperty.Name;
@@ -68,7 +74,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
                 this.write(node.AttributeLists.ToFullString());
                 this.write(node.Modifiers.ToFullString());
-                this.write($"{itemProperties.PropertyType.SyntaxNode.ToString()} ");
+
+                var implType = node.Type.ToFullString();
+                var itfType = this.itfPatternProperty.PropertyType.SyntaxNode.ToString();
+
+                var declType = itemProperties.PropertyType.SyntaxNode.ToString();
+
+                this.write(implType.Replace(itfType, declType));
+
                 this.write(node.Identifier.ToFullString()
                     .Replace(propertyName, itemPropertyName));
                 this.write(node.AccessorList.ToFullString()
@@ -101,7 +114,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
                 this.write(node.AttributeLists.ToFullString());
                 this.write(node.Modifiers.ToFullString());
-                this.write($"{itemProperties.PropertyType.SyntaxNode.ToString()} ");
+
+                var implType = node.Declaration.Type.ToFullString();
+                var itfType = this.itfPatternProperty.PropertyType.SyntaxNode.ToString();
+
+                var declType = itemProperties.PropertyType.SyntaxNode.ToString();
+
+                this.write(implType.Replace(itfType, declType));
+
                 this.write(variableNode.Identifier.ToFullString()
                     .Replace(propertyName, itemPropertyName)
                     .Replace(lowPropertyName, lowItemPropertyName));
@@ -116,9 +136,52 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             return true;
         }
 
+        /// <inheritdoc/>
+        public override bool VisitExpressionStatement(ExpressionStatementSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
+        /// <inheritdoc/>
+        public override bool VisitIfStatement(IfStatementSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
+        /// <inheritdoc/>
+        public override bool VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
         private static string GetFirstCharLoweredName(string name)
         {
             return $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
+        }
+
+        private bool VisitStatement(SyntaxNode node)
+        {
+            var propertyName = this.itfPatternProperty.Name;
+            var lowPropertyName = GetFirstCharLoweredName(propertyName);
+
+            var txt = node.ToFullString();
+
+            if (!txt.Contains(lowPropertyName) && !txt.Contains(propertyName))
+            {
+                return false;
+            }
+
+            foreach (var itemProperties in this.declarationProperties)
+            {
+                var itemPropertyName = itemProperties.Name;
+                var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
+
+                this.write(txt
+                    .Replace(propertyName, itemPropertyName)
+                    .Replace(lowPropertyName, lowItemPropertyName));
+            }
+
+            return true;
         }
     }
 }

@@ -13,6 +13,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Generator.Writer;
 using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
@@ -43,14 +44,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         }
 
         /// <inheritdoc/>
-        public void Generate(IInterfaceDeclaration itfDeclaration)
+        public void Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName)
         {
-            var propertyWriter = new PropertyWriter(
-                this.itfPattern.Properties.Single(),
-                itfDeclaration.Properties);
-
-            var implName = GetEntityName(itfDeclaration.Name);
-
             var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);
 
             this.generator.Generate(location, implName, writer =>
@@ -62,22 +57,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     itfDeclaration,
                     implName,
                     nameSpace,
-                    new WriterSelector(propertyWriter));
+                    writerSelector);
 
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
-        }
-
-        private static string GetEntityName(string name)
-        {
-            if (name.Length > 1 && name[0] == 'I' && char.IsUpper(name[1]))
-            {
-                return name.Substring(1);
-            }
-            else
-            {
-                return $"{name}Entity";
-            }
         }
     }
 }
