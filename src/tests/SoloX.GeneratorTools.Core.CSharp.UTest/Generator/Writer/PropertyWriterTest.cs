@@ -24,20 +24,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
     {
         private const string PatternPropName = "PropertyPattern";
         private const string PatternPropType = "object";
-        private const string DeclPropName = "PropA";
-        private const string DeclPropType = "int";
+        private const string PatternFieldName = "propertyPattern";
+
+        private const string DeclPropName1 = "PropA";
+        private const string DeclPropType1 = "int";
+        private const string DeclFieldName1 = "propA";
+
+        private const string DeclPropName2 = "PropB";
+        private const string DeclPropType2 = "string";
+        private const string DeclFieldName2 = "propB";
 
         [Fact]
         public void SimplePropertyWriterTest()
         {
-            var pw = SetupPropertyWriter();
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
 
             var implPatternPropNode = SyntaxTreeHelper.GetPropertyImplSyntax(PatternPropType, PatternPropName);
 
-            var generatedProperty = WriteAndAssertSingleMemberOfType<PropertyDeclarationSyntax>(pw, implPatternPropNode);
+            var generatedProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<PropertyDeclarationSyntax>(pw, implPatternPropNode);
 
-            Assert.Equal(DeclPropName, generatedProperty.Identifier.Text);
-            Assert.Equal(DeclPropType, generatedProperty.Type.ToString());
+            Assert.Equal(DeclPropName1, generatedProperty.Identifier.Text);
+            Assert.Equal(DeclPropType1, generatedProperty.Type.ToString());
         }
 
         [Theory]
@@ -46,14 +53,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         [InlineData("propertyPatternTest", "propATest")]
         public void SimpleFieldWriterTest(string patternFieldName, string implPropName)
         {
-            var pw = SetupPropertyWriter();
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
 
             var implPatternPropNode = SyntaxTreeHelper.GetFieldSyntax(PatternPropType, patternFieldName);
 
-            var fieldProperty = WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(pw, implPatternPropNode);
+            var fieldProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(pw, implPatternPropNode);
 
             Assert.Equal(implPropName, fieldProperty.Declaration.Variables.Single().Identifier.Text);
-            Assert.Equal(DeclPropType, fieldProperty.Declaration.Type.ToString());
+            Assert.Equal(DeclPropType1, fieldProperty.Declaration.Type.ToString());
         }
 
         [Theory]
@@ -63,41 +70,67 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         [InlineData("this.propertyPattern", "this.propA")]
         public void PropertyWithAccessorsWriterTest(string patternFieldName, string implPropName)
         {
-            var pw = SetupPropertyWriter();
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
 
             var implPatternPropNode = SyntaxTreeHelper.GetPropertyImplSyntax(PatternPropType, PatternPropName, patternFieldName);
 
-            var generatedProperty = WriteAndAssertSingleMemberOfType<PropertyDeclarationSyntax>(pw, implPatternPropNode);
+            var generatedProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<PropertyDeclarationSyntax>(pw, implPatternPropNode);
 
-            Assert.Equal(DeclPropName, generatedProperty.Identifier.Text);
-            Assert.Equal(DeclPropType, generatedProperty.Type.ToString());
+            Assert.Equal(DeclPropName1, generatedProperty.Identifier.Text);
+            Assert.Equal(DeclPropType1, generatedProperty.Type.ToString());
             Assert.Contains(implPropName, generatedProperty.AccessorList.ToFullString(), StringComparison.InvariantCulture);
             Assert.DoesNotContain(patternFieldName, generatedProperty.AccessorList.ToFullString(), StringComparison.InvariantCulture);
         }
 
-        private static PropertyWriter SetupPropertyWriter()
+        [Theory]
+        [InlineData("object", "int")]
+        [InlineData("GenType<object>", "GenType<int>")]
+        [InlineData("string", "string")]
+        public void PropertyTypeWriterTest(string patternImplFieldType, string expectedGeneratedFieldName)
         {
-            var itfPatternProp = DeclarationHelper.SetupPropertyDeclaration(PatternPropType, PatternPropName);
-            var itfDeclProp = DeclarationHelper.SetupPropertyDeclaration(DeclPropType, DeclPropName);
-            return new PropertyWriter(itfPatternProp, new[] { itfDeclProp });
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
+
+            var implPatternFieldNode = SyntaxTreeHelper.GetFieldSyntax(patternImplFieldType, PatternFieldName);
+
+            var generatedField = NodeWriterHelper.WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(pw, implPatternFieldNode);
+
+            Assert.Equal(expectedGeneratedFieldName, generatedField.Declaration.Type.ToString());
         }
 
-        private static T WriteAndAssertSingleMemberOfType<T>(PropertyWriter propertyWriter, SyntaxNode implPatternPropNode)
-            where T : SyntaxNode
+        [Fact]
+        public void MultiPropertyDeclarationWriterTest()
         {
-            var output = new StringBuilder();
-            propertyWriter.Write(implPatternPropNode, s => output.Append(s));
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1), (DeclPropType2, DeclPropName2));
 
-            return AssertSingleMemberOfType<T>(output);
+            var implPatternFieldNode = SyntaxTreeHelper.GetFieldSyntax(PatternPropType, PatternFieldName);
+
+            var generatedFields = NodeWriterHelper.WriteAndAssertMultiMemberOfType<FieldDeclarationSyntax>(pw, implPatternFieldNode);
+
+            Assert.Equal(2, generatedFields.Count);
+
+            Assert.Equal(DeclPropType1, generatedFields[0].Declaration.Type.ToString());
+            var v1 = Assert.Single(generatedFields[0].Declaration.Variables);
+            Assert.Equal(DeclFieldName1, v1.Identifier.ValueText);
+
+            Assert.Equal(DeclPropType2, generatedFields[1].Declaration.Type.ToString());
+            var v2 = Assert.Single(generatedFields[1].Declaration.Variables);
+            Assert.Equal(DeclFieldName2, v2.Identifier.ValueText);
         }
 
-        private static T AssertSingleMemberOfType<T>(StringBuilder output)
-            where T : SyntaxNode
+        private static PropertyWriter SetupPropertyWriter(
+            string itfPatternPropertyType,
+            string itfPatternPropertyName,
+            params (string propertyType, string propertyName)[] itfDeclarations)
         {
-            var resultingNode = SyntaxTreeHelper.GetSyntaxNode(output.ToString());
-            var cun = Assert.IsType<CompilationUnitSyntax>(resultingNode);
-            var member = Assert.Single(cun.Members);
-            return Assert.IsType<T>(member);
+            var itfPatternProp = DeclarationHelper.SetupPropertyDeclaration(itfPatternPropertyType, itfPatternPropertyName);
+            var itfDeclProps = new List<IPropertyDeclaration>();
+            foreach (var itfDeclaration in itfDeclarations)
+            {
+                var itfDeclProp = DeclarationHelper.SetupPropertyDeclaration(itfDeclaration.propertyType, itfDeclaration.propertyName);
+                itfDeclProps.Add(itfDeclProp);
+            }
+
+            return new PropertyWriter(itfPatternProp, itfDeclProps);
         }
     }
 }
