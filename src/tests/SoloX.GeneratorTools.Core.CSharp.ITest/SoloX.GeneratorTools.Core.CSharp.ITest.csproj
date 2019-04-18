@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,13 +23,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Generator\Patterns\Simple\Impl\SimplePattern.cs">
+    <Compile Update="Generator\Patterns\Impl\MethodPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Patterns\Simple\Itf\ISimplePattern.cs">
+    <Compile Update="Generator\Patterns\Impl\MethodWithPackStatementsPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Samples\Simple\ISimpleSample.cs">
+    <Compile Update="Generator\Patterns\Impl\SimplePattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Patterns\Itf\ISimplePattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Samples\ISimpleSample.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

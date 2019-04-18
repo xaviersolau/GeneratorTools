@@ -13,8 +13,10 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator.Impl;
+using SoloX.GeneratorTools.Core.Generator.Writer;
 using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 using Xunit;
 
@@ -25,24 +27,93 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
         [Fact]
         public void GenerateSimpleTest()
         {
-            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
-            var itfDeclaration = ws.RegisterFile(@"Generator/Samples/Simple/ISimpleSample.cs")
-                .Declarations.First() as IInterfaceDeclaration;
-            var itfPatternDeclaration = ws.RegisterFile(@"Generator/Patterns/Simple/Itf/ISimplePattern.cs")
-                .Declarations.First() as IInterfaceDeclaration;
-            var implPatternDeclaration = ws.RegisterFile(@"Generator/Patterns/Simple/Impl/SimplePattern.cs")
-                .Declarations.First() as IClassDeclaration;
-
-            var declarationResolver = ws.DeepLoad();
+            var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Patterns/Impl/SimplePattern.cs";
+            var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+            var implName = "SimpleSample";
+
+            GenerateAndAssertSnapshot(
+                patternInterfaceFile,
+                patternImplementationFile,
+                declarationInterfaceFile,
+                targetNameSpace,
+                implName,
+                nameof(this.GenerateSimpleTest));
+        }
+
+        [Fact]
+        public void GenerateMethodTest()
+        {
+            var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Patterns/Impl/MethodPattern.cs";
+            var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+            var implName = "MethodSample";
+
+            GenerateAndAssertSnapshot(
+                patternInterfaceFile,
+                patternImplementationFile,
+                declarationInterfaceFile,
+                targetNameSpace,
+                implName,
+                nameof(this.GenerateMethodTest));
+        }
+
+        [Fact]
+        public void GenerateMethodWithPackStatementsTest()
+        {
+            var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Patterns/Impl/MethodWithPackStatementsPattern.cs";
+            var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+            var implName = "MethodWithPackStatementsSample";
+
+            GenerateAndAssertSnapshot(
+                patternInterfaceFile,
+                patternImplementationFile,
+                declarationInterfaceFile,
+                targetNameSpace,
+                implName,
+                nameof(this.GenerateMethodWithPackStatementsTest));
+        }
+
+        private static void GenerateAndAssertSnapshot(
+            string patternInterfaceFile,
+            string patternImplementationFile,
+            string declarationInterfaceFile,
+            string targetNameSpace,
+            string implName,
+            string snapshotName)
+        {
+            LoadWorkSpace(
+                patternInterfaceFile,
+                patternImplementationFile,
+                declarationInterfaceFile,
+                out var itfDeclaration,
+                out var itfPatternDeclaration,
+                out var implPatternDeclaration);
+
             var locator = new RelativeLocator(string.Empty, targetNameSpace);
 
             var snapshotGenerator = new SnapshotGenerator();
 
-            var implName = "SimpleSample";
+            var implGenerator = new ImplementationGenerator(
+                snapshotGenerator, locator, itfPatternDeclaration, implPatternDeclaration);
 
-            var implGenerator = new ImplementationGenerator(snapshotGenerator, locator, itfPatternDeclaration, implPatternDeclaration);
+            var writerSelector = SetupWriterSolector(itfPatternDeclaration, implPatternDeclaration, itfDeclaration, implName);
 
+            implGenerator.Generate(writerSelector, itfDeclaration, implName);
+
+            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, "Generator");
+        }
+
+        private static IWriterSelector SetupWriterSolector(
+            IInterfaceDeclaration itfPatternDeclaration,
+            IClassDeclaration implPatternDeclaration,
+            IInterfaceDeclaration itfDeclaration,
+            string implName)
+        {
             var propertyWriter = new PropertyWriter(
                 itfPatternDeclaration.Properties.Single(),
                 itfDeclaration.Properties.ToArray());
@@ -50,11 +121,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
             var itfNameWriter = new StringReplaceWriter(itfPatternDeclaration.Name, itfDeclaration.Name);
             var implNameWriter = new StringReplaceWriter(implPatternDeclaration.Name, implName);
 
-            var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
+            return new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
+        }
 
-            implGenerator.Generate(writerSelector, itfDeclaration, implName);
+        private static IDeclarationResolver LoadWorkSpace(
+            string patternInterfaceFile,
+            string patternImplementationFile,
+            string declarationInterfaceFile,
+            out IInterfaceDeclaration itfDeclaration,
+            out IInterfaceDeclaration itfPatternDeclaration,
+            out IClassDeclaration implPatternDeclaration)
+        {
+            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
+            itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
+                .Declarations.First() as IInterfaceDeclaration;
+            itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)
+                .Declarations.First() as IInterfaceDeclaration;
+            implPatternDeclaration = ws.RegisterFile(patternImplementationFile)
+                .Declarations.First() as IClassDeclaration;
 
-            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), nameof(this.GenerateSimpleTest), "Generator");
+            return ws.DeepLoad();
         }
     }
 }

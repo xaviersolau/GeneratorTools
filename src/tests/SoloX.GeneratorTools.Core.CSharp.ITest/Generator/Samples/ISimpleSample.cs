@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples.Simple
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
 {
     public interface ISimpleSample
     {

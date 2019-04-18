@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Itf
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Itf
 {
     public interface ISimplePattern
     {

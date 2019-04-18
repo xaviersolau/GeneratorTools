@@ -1,8 +1,8 @@
 ---------------------
-SimpleSample
+MethodSample
 ---------------------
 // ----------------------------------------------------------------------
-// <copyright file="SimpleSample.cs" company="SoloX Software">
+// <copyright file="MethodSample.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,21 +15,18 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
 {
-    public class SimpleSample : ISimpleSample
+    public class MethodSample : ISimpleSample
     {
-        private int property1;
-        private double property2;
+        public int Property1 { get; set; }
+        public double Property2 { get; set; }
 
-        public int Property1
+        public void PatternMethodForMethodSample(bool withSomeArguments)
         {
-            get { return this.property1; }
-            set { this.property1 = value; }
-        }
-
-        public double Property2
-        {
-            get { return this.property2; }
-            set { this.property2 = value; }
+            if (withSomeArguments)
+            {
+                this.Property1 = default;
+                this.Property2 = default;
+            }
         }
     }
 }

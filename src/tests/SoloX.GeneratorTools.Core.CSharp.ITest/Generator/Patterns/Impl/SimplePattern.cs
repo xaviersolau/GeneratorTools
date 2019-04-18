@@ -8,9 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Itf;
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Itf;
 
-namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Simple.Impl
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
 {
     public class SimplePattern : ISimplePattern
     {
