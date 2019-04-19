@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Generator\Patterns\Impl\MethodPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\IfStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Patterns\Impl\MethodWithPackStatementsPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\PackedIfStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Generator\Patterns\Impl\SimplePattern.cs">

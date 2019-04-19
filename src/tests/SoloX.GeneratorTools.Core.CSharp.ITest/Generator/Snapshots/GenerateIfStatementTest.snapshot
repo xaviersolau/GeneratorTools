@@ -1,8 +1,8 @@
 ---------------------
-MethodSample
+IfStatementSample
 ---------------------
 // ----------------------------------------------------------------------
-// <copyright file="MethodSample.cs" company="SoloX Software">
+// <copyright file="IfStatementSample.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,12 +15,12 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
 {
-    public class MethodSample : ISimpleSample
+    public class IfStatementSample : ISimpleSample
     {
         public int Property1 { get; set; }
         public double Property2 { get; set; }
 
-        public void PatternMethodForMethodSample(bool withSomeArguments)
+        public void PatternMethodForIfStatementSample(bool withSomeArguments)
         {
             if (withSomeArguments)
             {
