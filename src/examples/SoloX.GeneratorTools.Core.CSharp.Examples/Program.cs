@@ -18,6 +18,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -89,15 +90,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
                 itfPatternDeclaration,
                 implPatternDeclaration);
 
-            foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d.Name != "IEntityPattern"))
+            foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d != itfPatternDeclaration))
             {
                 this.logger.LogInformation(extendedByItem.FullName);
 
                 var propertyWriter = new PropertyWriter(
                     itfPatternDeclaration.Properties.Single(),
-                    declaration.Properties);
+                    extendedByItem.Properties);
 
-                var implName = "SimpleSample";
+                var implName = GeneratorHelper.ComputeClassName(extendedByItem.Name);
 
                 var itfNameWriter = new StringReplaceWriter(itfPatternDeclaration.Name, declaration.Name);
                 var implNameWriter = new StringReplaceWriter(implPatternDeclaration.Name, implName);
