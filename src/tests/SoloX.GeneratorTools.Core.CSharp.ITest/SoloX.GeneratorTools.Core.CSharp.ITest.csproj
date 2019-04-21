@@ -23,6 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Generator\Patterns\Impl\PackedForEachStatementPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Patterns\Impl\ForEachStatementPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Generator\Patterns\Impl\IfStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

@@ -42,14 +42,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
                 nameof(this.GenerateSimpleTest));
         }
 
-        [Fact]
-        public void GenerateIfStatementTest()
+        [Theory]
+        [InlineData("IfStatement")]
+        [InlineData("PackedIfStatement")]
+        [InlineData("ForEachStatement")]
+        [InlineData("PackedForEachStatement")]
+        public void GenerateStatementTest(string statement)
         {
             var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
-            var patternImplementationFile = @"Generator/Patterns/Impl/IfStatementPattern.cs";
+            var patternImplementationFile = $@"Generator/Patterns/Impl/{statement}Pattern.cs";
             var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
-            var implName = "IfStatementSample";
+            var implName = $"{statement}Sample";
 
             GenerateAndAssertSnapshot(
                 patternInterfaceFile,
@@ -57,25 +61,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
                 declarationInterfaceFile,
                 targetNameSpace,
                 implName,
-                nameof(this.GenerateIfStatementTest));
-        }
-
-        [Fact]
-        public void GeneratePackedIfStatementTest()
-        {
-            var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
-            var patternImplementationFile = @"Generator/Patterns/Impl/PackedIfStatementPattern.cs";
-            var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
-            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
-            var implName = "PackedIfStatementSample";
-
-            GenerateAndAssertSnapshot(
-                patternInterfaceFile,
-                patternImplementationFile,
-                declarationInterfaceFile,
-                targetNameSpace,
-                implName,
-                nameof(this.GeneratePackedIfStatementTest));
+                $"Generate{statement}Test");
         }
 
         private static void GenerateAndAssertSnapshot(

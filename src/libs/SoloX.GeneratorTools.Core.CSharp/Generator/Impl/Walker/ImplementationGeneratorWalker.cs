@@ -133,24 +133,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var previousIsPackStatement = this.isPackStatements;
             try
             {
-                if (node.AttributeLists != null)
-                {
-                    foreach (var attrList in node.AttributeLists)
-                    {
-                        foreach (var attr in attrList.Attributes)
-                        {
-                            var attrName = attr.Name.ToString();
-                            if (attrName == "PackStatements" || attrName == "PackStatementsAttribute")
-                            {
-                                this.isPackStatements = true;
-                            }
-                            else
-                            {
-                                this.WriteNode(attr);
-                            }
-                        }
-                    }
-                }
+                this.WriteAttributeLists(node.AttributeLists, out this.isPackStatements);
 
                 this.Write(node.Modifiers.ToFullString());
                 this.WriteNode(node.ReturnType);
@@ -222,6 +205,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
         }
 
+        public override void VisitForEachStatement(ForEachStatementSyntax node)
+        {
+            if (this.isPackStatements)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.Write(node.ForEachKeyword.ToFullString());
+                this.Write(node.OpenParenToken.ToFullString());
+                this.WriteNode(node.Type);
+                this.Write(node.Identifier.ToFullString());
+                this.Write(node.InKeyword.ToFullString());
+                this.WriteNode(node.Expression);
+                this.Write(node.CloseParenToken.ToFullString());
+                this.Visit(node.Statement);
+            }
+        }
+
         public override void VisitElseClause(ElseClauseSyntax node)
         {
             this.Write(node.ElseKeyword.ToFullString());
@@ -255,6 +257,48 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private void Write(string text)
         {
             this.writer.Write(this.textSubstitutionHandler(text));
+        }
+
+        private void WriteAttributeLists(SyntaxList<AttributeListSyntax> attributeLists, out bool isPackStatements)
+        {
+            isPackStatements = false;
+
+            if (attributeLists != null)
+            {
+                foreach (var attrList in attributeLists)
+                {
+                    bool found = false;
+                    foreach (var attr in attrList.Attributes)
+                    {
+                        var attrName = attr.Name.ToString();
+                        if (attrName == "PackStatements" || attrName == "PackStatementsAttribute")
+                        {
+                            isPackStatements = true;
+                        }
+                        else
+                        {
+                            if (!found)
+                            {
+                                this.Write(attrList.OpenBracketToken.ToFullString());
+                                found = true;
+                            }
+
+                            this.WriteNode(attr);
+                        }
+                    }
+
+                    if (found)
+                    {
+                        this.Write(attrList.CloseBracketToken.ToFullString());
+                    }
+                    else
+                    {
+                        var line = attrList.OpenBracketToken.ToFullString().Replace("[", string.Empty)
+                            + attrList.CloseBracketToken.ToFullString().Replace("]", string.Empty);
+                        this.Write(line.Replace("        \r\n", string.Empty));
+                    }
+                }
+            }
         }
     }
 }
