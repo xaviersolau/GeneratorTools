@@ -68,13 +68,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <inheritdoc/>
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
         {
-            var txt = node.ToFullString()
-                .Replace(this.implPattern.Name, this.implName)
-                .Replace(this.itfPattern.DeclarationNameSpace, this.declaration.DeclarationNameSpace);
-
-            if (!txt.Contains("SoloX.GeneratorTools.Core.CSharp.Generator.Attributes"))
+            if (!this.writerSelector.SelectAndProcessWriter(node, this.Write))
             {
-                this.Write(txt);
+                var txt = node.ToFullString()
+                    .Replace(this.implPattern.Name, this.implName)
+                    .Replace(this.itfPattern.DeclarationNameSpace, this.declaration.DeclarationNameSpace);
+
+                if (!txt.Contains("SoloX.GeneratorTools.Core.CSharp.Generator.Attributes"))
+                {
+                    this.Write(txt);
+                }
             }
         }
 
@@ -109,8 +112,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 this.Write(node.TypeParameterList.ToFullString());
             }
 
-            this.Write(node.BaseList.ToFullString()
-                .Replace(this.itfPattern.Name, this.declaration.Name));
+            if (node.BaseList != null)
+            {
+                this.Write(node.BaseList.ToFullString()
+                    .Replace(this.itfPattern.Name, this.declaration.Name));
+            }
+
             this.Write(node.ConstraintClauses.ToFullString());
 
             this.Write(node.OpenBraceToken.ToFullString());
@@ -121,6 +128,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
 
             this.Write(node.CloseBraceToken.ToFullString());
+        }
+
+        public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+        {
+            var previousIsPackStatement = this.isPackStatements;
+            try
+            {
+                this.WriteAttributeLists(node.AttributeLists, out this.isPackStatements);
+                this.Write(node.Modifiers.ToFullString());
+                this.WriteToken(node.Identifier);
+                this.WriteNode(node.ParameterList);
+                this.Visit(node.Body);
+            }
+            finally
+            {
+                this.isPackStatements = previousIsPackStatement;
+            }
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
@@ -144,6 +168,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
                 this.WriteNode(node.TypeParameterList);
                 this.WriteNode(node.ParameterList);
+                foreach (var constraintClauses in node.ConstraintClauses)
+                {
+                    this.WriteNode(constraintClauses);
+                }
+
                 this.Visit(node.Body);
                 this.Visit(node.ExpressionBody);
                 this.Write(node.SemicolonToken.ToFullString());
