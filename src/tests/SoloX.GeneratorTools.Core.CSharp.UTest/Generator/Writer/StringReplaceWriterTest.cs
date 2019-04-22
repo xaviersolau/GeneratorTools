@@ -35,9 +35,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
             Assert.Equal(genType, generatedProperty.Type.ToString());
         }
 
+        [Fact]
+        public void MultiPropertyWriterTest()
+        {
+            var srw = SetupStringReplaceWriter("PatternClassName", new[] { "NewClassString1", "NewClassString2" });
+
+            var implPatternPropNode = SyntaxTreeHelper.GetPropertyImplSyntax("object", "PatternClassName");
+
+            var generatedProperties = NodeWriterHelper.WriteAndAssertMultiMemberOfType<PropertyDeclarationSyntax>(srw, implPatternPropNode);
+
+            Assert.Equal(2, generatedProperties.Count);
+            Assert.Equal("NewClassString1", generatedProperties[0].Identifier.Text);
+            Assert.Equal("NewClassString2", generatedProperties[1].Identifier.Text);
+        }
+
         private static StringReplaceWriter SetupStringReplaceWriter(string oldString, string newString)
         {
             return new StringReplaceWriter(oldString, newString);
+        }
+
+        private static StringReplaceWriter SetupStringReplaceWriter(string oldString, IReadOnlyList<string> newStringList)
+        {
+            return new StringReplaceWriter(oldString, newStringList);
         }
     }
 }

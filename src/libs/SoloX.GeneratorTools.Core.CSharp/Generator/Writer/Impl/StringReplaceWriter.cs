@@ -9,9 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
@@ -22,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
     public class StringReplaceWriter : INodeWriter
     {
         private string oldString;
-        private string newString;
+        private IReadOnlyList<string> newStringList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringReplaceWriter"/> class.
@@ -32,7 +29,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         public StringReplaceWriter(string oldString, string newString)
         {
             this.oldString = oldString;
-            this.newString = newString;
+            this.newStringList = new[] { newString };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringReplaceWriter"/> class.
+        /// </summary>
+        /// <remarks>The pattern string substitution will be repeated for every new string in the newStringList.</remarks>
+        /// <param name="oldString">The string to be replaced.</param>
+        /// <param name="newStringList">The string list to use instead.</param>
+        public StringReplaceWriter(string oldString, IReadOnlyList<string> newStringList)
+        {
+            this.oldString = oldString;
+            this.newStringList = newStringList;
         }
 
         /// <inheritdoc/>
@@ -42,7 +51,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
             if (txt.Contains(this.oldString))
             {
-                write(txt.Replace(this.oldString, this.newString));
+                foreach (var newString in this.newStringList)
+                {
+                    write(txt.Replace(this.oldString, newString));
+                }
+
                 return true;
             }
 
@@ -56,7 +69,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
             if (txt.Contains(this.oldString))
             {
-                write(txt.Replace(this.oldString, this.newString));
+                foreach (var newString in this.newStringList)
+                {
+                    write(txt.Replace(this.oldString, newString));
+                }
+
                 return true;
             }
 
