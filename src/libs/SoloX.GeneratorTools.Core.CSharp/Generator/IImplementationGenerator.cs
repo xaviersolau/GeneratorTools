@@ -24,6 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <param name="writerSelector">The writer selector to use to actually write the code.</param>
         /// <param name="itfDeclaration">The interface declaration to implement.</param>
         /// <param name="implName">The class implementation name.</param>
-        void Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName);
+        /// <returns>The generated tuple class name space / name.</returns>
+        (string nameSpace, string name) Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName);
     }
 }

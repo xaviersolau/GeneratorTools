@@ -44,7 +44,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         }
 
         /// <inheritdoc/>
-        public void Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName)
+        public (string nameSpace, string name) Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName)
         {
             var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);
 
@@ -61,6 +61,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 
                 generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
             });
+            return (nameSpace, implName);
         }
     }
 }
