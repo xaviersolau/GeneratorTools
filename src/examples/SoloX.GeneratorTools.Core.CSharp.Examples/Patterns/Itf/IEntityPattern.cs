@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SoloX.GeneratorTools.Core.CSharp.Examples.Sample;
+using SoloX.GeneratorTools.Core.CSharp.Examples.Core;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf
 {

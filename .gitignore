@@ -15,3 +15,4 @@ src/tests/SoloX.GeneratorTools.Core.CSharp.UTest/SoloX.GeneratorTools.Core.CShar
 src/tests/SoloX.GeneratorTools.Core.CSharp.ITest/SoloX.GeneratorTools.Core.CSharp.ITest.xml
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples/SoloX.GeneratorTools.Core.CSharp.Examples.xml
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples.Sample/SoloX.GeneratorTools.Core.CSharp.Examples.Sample.xml
+src/examples/SoloX.GeneratorTools.Core.CSharp.Examples.Core/SoloX.GeneratorTools.Core.CSharp.Examples.Core.xml

@@ -10,20 +10,13 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
-using SoloX.GeneratorTools.Core.Generator;
-using SoloX.GeneratorTools.Core.Generator.Impl;
-using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
-using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
     /// <summary>
-    /// Example program.
+    /// Example program entry point.
     /// </summary>
     public sealed class Program : IDisposable
     {
@@ -31,6 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
         private Program()
         {
+            // Setup service provider.
             IServiceCollection sc = new ServiceCollection();
 
             sc.AddLogging(b => b.AddConsole());
@@ -38,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             sc.AddSingleton<ICSharpFactory, CSharpFactory>();
             sc.AddSingleton<ICSharpLoader, CSharpLoader>();
             sc.AddTransient<ICSharpWorkspace, CSharpWorkspace>();
-
+            sc.AddTransient<GeneratorExample, GeneratorExample>();
             this.Service = sc.BuildServiceProvider();
 
             this.logger = this.Service.GetService<ILogger<Program>>();
@@ -63,50 +57,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
         private void Run()
         {
+            // Set the project folder/file we want to work on.
             var prjFolder = "../../../../SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
             var prjFile = Path.Combine(prjFolder, "SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj");
 
+            // Set the project default namespace.
             var projectNameSpace = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
 
-            this.logger.LogInformation($"Loading {Path.GetFileName(prjFile)}...");
+            // Get the generator example that will generate .
+            var generator = this.Service.GetService<GeneratorExample>();
 
-            var csws = this.Service.GetService<ICSharpWorkspace>();
-
-            csws.RegisterProject(prjFile);
-            csws.RegisterFile("./Patterns/Itf/IEntityPattern.cs");
-            csws.RegisterFile("./Patterns/Impl/EntityPattern.cs");
-
-            var resolver = csws.DeepLoad();
-
-            var declaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Sample.IEntityBase").Single() as IGenericDeclaration;
-            var itfPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf.IEntityPattern").Single() as IInterfaceDeclaration;
-            var implPatternDeclaration = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl.EntityPattern").Single() as IGenericDeclaration;
-
-            var locator = new RelativeLocator(prjFolder, projectNameSpace, suffix: "Impl");
-
-            var generator = new ImplementationGenerator(
-                new FileGenerator(),
-                locator,
-                itfPatternDeclaration,
-                implPatternDeclaration);
-
-            foreach (var extendedByItem in declaration.ExtendedBy.Where(d => d != itfPatternDeclaration))
-            {
-                this.logger.LogInformation(extendedByItem.FullName);
-
-                var propertyWriter = new PropertyWriter(
-                    itfPatternDeclaration.Properties.Single(),
-                    extendedByItem.Properties);
-
-                var implName = GeneratorHelper.ComputeClassName(extendedByItem.Name);
-
-                var itfNameWriter = new StringReplaceWriter(itfPatternDeclaration.Name, declaration.Name);
-                var implNameWriter = new StringReplaceWriter(implPatternDeclaration.Name, implName);
-
-                var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
-
-                generator.Generate(writerSelector, (IInterfaceDeclaration)extendedByItem, implName);
-            }
+            // Generate implementation in the given project file.
+            generator.Generate(prjFile, projectNameSpace);
         }
     }
 }

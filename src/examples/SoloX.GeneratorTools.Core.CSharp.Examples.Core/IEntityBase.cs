@@ -9,11 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples.Sample
+namespace SoloX.GeneratorTools.Core.CSharp.Examples.Core
 {
     /// <summary>
-    /// IEntityBase is the base entity interface what will be used by the generator to find all entity to generate.
+    /// IEntityBase is the base entity interface that will be:
+    /// - extended by all entity interfaces.
+    /// - used by the generator to find all entity to generate.
     /// </summary>
+    /// <remarks>In this example, the base interface is empty but base methods and properties can be declared here.</remarks>
 #pragma warning disable CA1040 // Avoid empty interfaces
     public interface IEntityBase
 #pragma warning restore CA1040 // Avoid empty interfaces
