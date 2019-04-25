@@ -29,14 +29,14 @@ jobs:
             dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
             cd ../../..
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.UTest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
+            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
             cd ../../..
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.ITest
             dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
             cd ../../..
             mkdir coverage
             cp result.opencover.xml coverage/result.opencover.xml
-            echo coveralls/csmacnz.Coveralls --opencover -i coverage/result.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --useRelativePaths --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor $CIRCLE_USERNAME --jobId $CIRCLE_BUILD_NUM --serviceName circleci
+            coveralls/csmacnz.Coveralls --opencover -i coverage/result.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --useRelativePaths --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor $CIRCLE_USERNAME --jobId $CIRCLE_BUILD_NUM --serviceName circleci
       - store_artifacts:
           path: coverage
       - run:
