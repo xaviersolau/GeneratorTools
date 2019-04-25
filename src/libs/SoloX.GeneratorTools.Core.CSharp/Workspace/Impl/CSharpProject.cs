@@ -35,7 +35,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (!File.Exists(file))
             {
-                throw new FileNotFoundException();
+                throw new FileNotFoundException(file);
             }
 
             this.ProjectFile = Path.GetFileName(file);
