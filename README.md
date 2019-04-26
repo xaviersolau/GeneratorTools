@@ -1,4 +1,4 @@
-# GeneratorTools
+# GeneratorTools [![CircleCI](https://circleci.com/gh/xaviersolau/GeneratorTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/GeneratorTools) [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 GeneratorTools is a project that helps you to automate C# code generation. It is written in C# and thanks to .Net Standard, it is cross platform.
 
