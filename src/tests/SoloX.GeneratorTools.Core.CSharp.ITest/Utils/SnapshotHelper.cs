@@ -48,7 +48,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Utils
                     File.WriteAllText(snapshotFile, generated);
                 }
 
-                Assert.Equal(generatedRef, generated);
+                Assert.Equal(
+                    generatedRef.Replace("\r\n", "\n", StringComparison.InvariantCulture),
+                    generated.Replace("\r\n", "\n", StringComparison.InvariantCulture));
             }
         }
 

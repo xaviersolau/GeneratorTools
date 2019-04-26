@@ -20,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         [Fact]
         public void LoadCSharpProjectTest()
         {
-            var projectFile = @"..\..\..\..\SoloX.GeneratorTools.Core.CSharp.Sample2\SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
+            var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
 
             var workspaceMock = new Mock<ICSharpWorkspace>();
 

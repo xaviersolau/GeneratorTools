@@ -17,7 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         [Fact]
         public void ProjectLoadTest()
         {
-            var projectFile = @"..\..\..\..\SoloX.GeneratorTools.Core.CSharp.Sample1\SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
+            var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
 
             var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
             ws.RegisterProject(projectFile);
@@ -37,7 +37,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         [Fact]
         public void ProjectLoadWithDependenciesTest()
         {
-            var projectFile = @"..\..\..\..\SoloX.GeneratorTools.Core.CSharp.Sample2\SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
+            var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
 
             var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
             ws.RegisterProject(projectFile);
