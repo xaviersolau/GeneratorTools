@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IEntityPattern.cs" company="SoloX Software">
+// <copyright file="IModelBase.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,18 +8,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SoloX.GeneratorTools.Core.CSharp.Examples.Core;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf
+namespace SoloX.GeneratorTools.Core.CSharp.Examples.Core
 {
     /// <summary>
-    /// Entity pattern interface used by the Entity pattern implementation.
+    /// Model base interface that defines a IsDirty property.
     /// </summary>
-    public interface IEntityPattern : IEntityBase
+    public interface IModelBase
     {
         /// <summary>
-        /// Gets or sets property declaration pattern.
+        /// Gets a value indicating whether the model is dirty or not.
+        /// The model is going to be dirty as soon as one of its property is set.
         /// </summary>
-        object PropertyPattern { get; set; }
+        bool IsDirty { get; }
     }
 }

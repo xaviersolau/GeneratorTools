@@ -2,6 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <PackageId>SoloX.GeneratorTools.Core</PackageId>
+
+    <Version>1.0.0-alpha.1</Version>
+    <Authors>Xavier Solau</Authors>
+    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/GeneratorTools/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/xaviersolau/GeneratorTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xaviersolau/GeneratorTools.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>code generation, parse, netstandard, pattern</PackageTags>
+    <PackageReleaseNotes>- Generate C# code from a source code pattern.</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
