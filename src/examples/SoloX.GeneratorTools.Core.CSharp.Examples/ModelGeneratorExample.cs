@@ -68,7 +68,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var resolver = this.workspace.DeepLoad();
 
             // Get the base interface in order to find all extended interfaces that need to be implemented.
-            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IModelBase").Single() as IGenericDeclaration;
+            var modelBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IModelBase").Single() as IGenericDeclaration;
 
             // Setup a locator that will tell the location where the generated classes must be written.
             var locator = new RelativeLocator(projectFolder, projectNameSpace, suffix: "Impl");
@@ -81,27 +81,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
                 patternImplementationDeclaration);
 
             // Loop on all interface extending the base interface.
-            foreach (var extendedByItem in entityBaseInterface.ExtendedBy.Where(d => d != patternInterfaceDeclaration))
+            foreach (var modelInterface in modelBaseInterface.ExtendedBy.Where(d => d != patternInterfaceDeclaration))
             {
-                this.logger.LogInformation(extendedByItem.FullName);
+                this.logger.LogInformation(modelInterface.FullName);
 
-                var implName = GeneratorHelper.ComputeClassName(extendedByItem.Name);
+                var implName = GeneratorHelper.ComputeClassName(modelInterface.Name);
 
-                // Create the property writer what will extract all properties from the interface to generate and write
-                // the corresponding code depending on the given patterns.
+                // Create the property writer what will use all properties from the model interface to generate
+                // and write the corresponding code depending on the given patterns.
                 var propertyWriter = new PropertyWriter(
                     patternInterfaceDeclaration.Properties.Single(),
-                    extendedByItem.Properties);
+                    modelInterface.Properties);
 
                 // Setup some basic text replacement writer.
-                var itfNameWriter = new StringReplaceWriter(patternInterfaceDeclaration.Name, extendedByItem.Name);
+                var itfNameWriter = new StringReplaceWriter(patternInterfaceDeclaration.Name, modelInterface.Name);
                 var implNameWriter = new StringReplaceWriter(patternImplementationDeclaration.Name, implName);
 
                 // Create the writer selector.
                 var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
 
                 // And generate the class implementation.
-                generator.Generate(writerSelector, (IInterfaceDeclaration)extendedByItem, implName);
+                generator.Generate(writerSelector, (IInterfaceDeclaration)modelInterface, implName);
             }
         }
     }

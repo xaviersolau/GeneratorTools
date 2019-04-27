@@ -1,4 +1,8 @@
-# GeneratorTools [![CircleCI](https://circleci.com/gh/xaviersolau/GeneratorTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/GeneratorTools) [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+# GeneratorTools
+[![CircleCI](https://circleci.com/gh/xaviersolau/GeneratorTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/GeneratorTools)
+[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.GeneratorTools.Core.CSharp.svg)](https://www.nuget.org/packages/SoloX.GeneratorTools.Core.CSharp)
 
 GeneratorTools is a project that helps you to automate C# code generation.
 It is written in C# and thanks to .Net Standard, it is cross platform.
@@ -15,7 +19,22 @@ GeneratorTools project is written by Xavier Solau. It's licensed under the MIT l
 
 ## Installation
 
-You can checkout this Github repository or use the NuGet package that will be available soon.
+You can checkout this Github repository or you can use the NuGet package:
+
+**Install using the command line from the Package Manager:**
+```bash
+Install-Package SoloX.GeneratorTools.Core.CSharp -version 1.0.0-alpha.1
+```
+
+**Install using the .Net CLI:**
+```bash
+dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.1
+```
+
+**Install editing your project file (csproj):**
+```xml
+<PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.1" />
+```
 
 ## How to use it
 
@@ -118,7 +137,7 @@ a pattern you can define in C# :
     }
 ```
 
-The result of the generated implementation for `IMyModel` could be something like this:
+The result of the generated implementation for `IMyModel` is going to be like this:
 
 ```csharp
     /// <summary>
@@ -165,10 +184,114 @@ The result of the generated implementation for `IMyModel` could be something lik
     }
 ```
 
+### Dependency injection
+
+First if you are using dependency injection, you need to use the method extension to register the services:
+
+```csharp
+using SoloX.GeneratorTools.Core.CSharp;
+
+void Setup(IServiceCollection serviceCollection)
+{
+	serviceCollection.AddCSharpToolsGenerator();
+}
+```
+
 ### Parse your existing C# projects and source files
 
+In order to load and parse a C# project you need to use a `SoloX.GeneratorTools.Core.CSharp.Workspace.ICSharpWorkspace`.
+
+Let's define a `ModelGenerator` with a `ICSharpWorkspace` constructor argument:
+
+```csharp
+    /// <summary>
+    /// The model generator.
+    /// </summary>
+    public class ModelGenerator
+    {
+        private ICSharpWorkspace workspace;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelGenerator"/> class.
+        /// </summary>
+        /// <param name="workspace">The workspace to use to load the project data.</param>
+        public ModelGeneratorExample(ICSharpWorkspace workspace)
+        {
+            this.workspace = workspace;
+        }
+	}
+```
+
+Now we can use the `workspace` to register a project with the pattern we need and we can load the sources.
+
+```csharp
+    // First we need to register the project.
+    this.workspace.RegisterProject(projectFile);
+
+    // Register the pattern interface.
+    var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IModelPattern.cs")
+        .Declarations.Single() as IInterfaceDeclaration;
+
+    // Register the pattern implementation.
+    var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/ModelPattern.cs")
+        .Declarations.Single() as IGenericDeclaration;
+
+    // Load the project and its project dependencies. (Note that for now we only load the sources.
+    // The binary assembly dependencies are not taken into account)
+    var resolver = this.workspace.DeepLoad();
+```
+
+Once all is loaded we can get the `IModelBase` descriptor and get all interfaces extending it:
+
+```csharp
+    // Get the base interface in order to find all extended interfaces that need to be implemented.
+    var modelBaseInterface = resolver.Find("IModelBase").Single() as IGenericDeclaration;
+
+	var allModelInterfaces = modelBaseInterface.ExtendedBy;
+```
 
 ### Generate your class implementation from a given interface and the pattern
 
+The GeneratorTools project provides a `ImplementationGenerator` that can generate a class implementation from
+the pattern and the model interface:
 
+```csharp
+    // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
+    var generator = new ImplementationGenerator(
+		// Tells that we want to write the implementation in a file.
+        new FileGenerator(),
+		// Tells that we want the implementation class to be located at the same location than its model interface.
+        new RelativeLocator(projectFolder, projectNameSpace),
+		// The pattern interface we loaded previously.
+        patternInterfaceDeclaration,
+		// The pattern implementation we loaded previously.
+        patternImplementationDeclaration);
+```
+
+With this created instance we can call the `Generate` method with the model interface we want to implement and the name of the implementation class.
+It also requires a `WriterSelector` initialized with a `INodeWriter` collection:
+
+```csharp
+    // Loop on all interface extending the base model interface.
+    foreach (var modelInterface in allModelInterfaces)
+    {
+        var implName = GeneratorHelper.ComputeClassName(modelInterface.Name);
+
+        // Create the property writer what will use all properties from the model interface to generate
+        // and write the corresponding code depending on the given pattern property.
+        var propertyWriter = new PropertyWriter(
+            patternInterfaceDeclaration.Properties.Single(),
+            modelInterface.Properties);
+
+        // Setup some basic text replacement writer.
+        var itfNameWriter = new StringReplaceWriter(patternInterfaceDeclaration.Name, modelInterface.Name);
+        var implNameWriter = new StringReplaceWriter(patternImplementationDeclaration.Name, implName);
+
+        // Create the writer selector.
+        var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
+
+        // And generate the class implementation.
+        generator.Generate(writerSelector, (IInterfaceDeclaration)modelInterface, implName);
+    }
+```
 
