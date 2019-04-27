@@ -193,7 +193,7 @@ using SoloX.GeneratorTools.Core.CSharp;
 
 void Setup(IServiceCollection serviceCollection)
 {
-	serviceCollection.AddCSharpToolsGenerator();
+    serviceCollection.AddCSharpToolsGenerator();
 }
 ```
 
@@ -219,7 +219,7 @@ Let's define a `ModelGenerator` with a `ICSharpWorkspace` constructor argument:
         {
             this.workspace = workspace;
         }
-	}
+    }
 ```
 
 Now we can use the `workspace` to register a project with the pattern we need and we can load the sources.
@@ -247,7 +247,7 @@ Once all is loaded we can get the `IModelBase` descriptor and get all interfaces
     // Get the base interface in order to find all extended interfaces that need to be implemented.
     var modelBaseInterface = resolver.Find("IModelBase").Single() as IGenericDeclaration;
 
-	var allModelInterfaces = modelBaseInterface.ExtendedBy;
+    var allModelInterfaces = modelBaseInterface.ExtendedBy;
 ```
 
 ### Generate your class implementation from a given interface and the pattern
@@ -258,13 +258,13 @@ the pattern and the model interface:
 ```csharp
     // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
     var generator = new ImplementationGenerator(
-		// Tells that we want to write the implementation in a file.
+        // Tells that we want to write the implementation in a file.
         new FileGenerator(),
-		// Tells that we want the implementation class to be located at the same location than its model interface.
+        // Tells that we want the implementation class to be located at the same location than its model interface.
         new RelativeLocator(projectFolder, projectNameSpace),
-		// The pattern interface we loaded previously.
+        // The pattern interface we loaded previously.
         patternInterfaceDeclaration,
-		// The pattern implementation we loaded previously.
+        // The pattern implementation we loaded previously.
         patternImplementationDeclaration);
 ```
 
