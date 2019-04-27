@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Impl\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SoloX.GeneratorTools.Core.CSharp.Examples.Core\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj" />
   </ItemGroup>
 

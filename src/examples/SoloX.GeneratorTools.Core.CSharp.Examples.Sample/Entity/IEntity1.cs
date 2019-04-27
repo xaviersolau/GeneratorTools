@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Examples.Core;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Examples.Sample.Model
+namespace SoloX.GeneratorTools.Core.CSharp.Examples.Sample.Entity
 {
     /// <summary>
     /// IEntity1 is the entity interface what will be used as base to generate the implementation.

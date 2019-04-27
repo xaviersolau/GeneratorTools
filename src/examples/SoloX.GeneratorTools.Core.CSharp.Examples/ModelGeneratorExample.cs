@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="GeneratorExample.cs" company="SoloX Software">
+// <copyright file="ModelGeneratorExample.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -23,19 +23,19 @@ using SoloX.GeneratorTools.Core.Utils;
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
     /// <summary>
-    /// Generator example class to show a simple use case of a pattern based class generator.
+    /// The model example generator.
     /// </summary>
-    public class GeneratorExample
+    public class ModelGeneratorExample
     {
-        private ILogger<GeneratorExample> logger;
+        private ILogger<ModelGeneratorExample> logger;
         private ICSharpWorkspace workspace;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeneratorExample"/> class.
+        /// Initializes a new instance of the <see cref="ModelGeneratorExample"/> class.
         /// </summary>
         /// <param name="logger">The logger to log the output messages.</param>
         /// <param name="workspace">The workspace to use to load the project data.</param>
-        public GeneratorExample(ILogger<GeneratorExample> logger, ICSharpWorkspace workspace)
+        public ModelGeneratorExample(ILogger<ModelGeneratorExample> logger, ICSharpWorkspace workspace)
         {
             this.logger = logger;
             this.workspace = workspace;
@@ -56,11 +56,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             this.workspace.RegisterProject(projectFile);
 
             // Register the pattern interface.
-            var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IEntityPattern.cs")
+            var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IModelPattern.cs")
                 .Declarations.Single() as IInterfaceDeclaration;
 
             // Register the pattern implementation.
-            var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/EntityPattern.cs")
+            var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/ModelPattern.cs")
                 .Declarations.Single() as IGenericDeclaration;
 
             // Load the project and its project dependencies. (Note that for now we only load the sources.
@@ -68,7 +68,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var resolver = this.workspace.DeepLoad();
 
             // Get the base interface in order to find all extended interfaces that need to be implemented.
-            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IEntityBase").Single() as IGenericDeclaration;
+            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IModelBase").Single() as IGenericDeclaration;
 
             // Setup a locator that will tell the location where the generated classes must be written.
             var locator = new RelativeLocator(projectFolder, projectNameSpace, suffix: "Impl");

@@ -32,7 +32,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             sc.AddSingleton<ICSharpFactory, CSharpFactory>();
             sc.AddSingleton<ICSharpLoader, CSharpLoader>();
             sc.AddTransient<ICSharpWorkspace, CSharpWorkspace>();
-            sc.AddTransient<GeneratorExample, GeneratorExample>();
+            sc.AddTransient<ModelGeneratorExample, ModelGeneratorExample>();
+            sc.AddTransient<EntityGeneratorExample, EntityGeneratorExample>();
             this.Service = sc.BuildServiceProvider();
 
             this.logger = this.Service.GetService<ILogger<Program>>();
@@ -64,11 +65,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             // Set the project default namespace.
             var projectNameSpace = "SoloX.GeneratorTools.Core.CSharp.Examples.Sample";
 
-            // Get the generator example that will generate .
-            var generator = this.Service.GetService<GeneratorExample>();
+            // Get the entity generator example and generate the entity implementations in the given C# project.
+            this.Service.GetService<EntityGeneratorExample>().Generate(prjFile, projectNameSpace);
 
-            // Generate implementation in the given project file.
-            generator.Generate(prjFile, projectNameSpace);
+            // Get the model generator example and generate the model implementations in the given C# project.
+            this.Service.GetService<ModelGeneratorExample>().Generate(prjFile, projectNameSpace);
         }
     }
 }
