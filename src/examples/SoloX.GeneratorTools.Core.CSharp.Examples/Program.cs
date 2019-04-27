@@ -10,8 +10,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
-using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -29,9 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             sc.AddLogging(b => b.AddConsole());
 
-            sc.AddSingleton<ICSharpFactory, CSharpFactory>();
-            sc.AddSingleton<ICSharpLoader, CSharpLoader>();
-            sc.AddTransient<ICSharpWorkspace, CSharpWorkspace>();
+            sc.AddCSharpToolsGenerator();
             sc.AddTransient<ModelGeneratorExample, ModelGeneratorExample>();
             sc.AddTransient<EntityGeneratorExample, EntityGeneratorExample>();
             this.Service = sc.BuildServiceProvider();
