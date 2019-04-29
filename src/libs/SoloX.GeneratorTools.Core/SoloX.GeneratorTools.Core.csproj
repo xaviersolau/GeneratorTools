@@ -5,7 +5,7 @@
 
     <PackageId>SoloX.GeneratorTools.Core</PackageId>
 
-    <Version>1.0.0-alpha.1</Version>
+    <Version>1.0.0-alpha.2</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/GeneratorTools/master/LICENSE</PackageLicenseUrl>
