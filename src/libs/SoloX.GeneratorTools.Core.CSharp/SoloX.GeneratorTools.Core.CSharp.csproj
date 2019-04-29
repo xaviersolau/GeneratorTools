@@ -5,7 +5,7 @@
 
     <PackageId>SoloX.GeneratorTools.Core.CSharp</PackageId>
 
-    <Version>1.0.0-alpha.1</Version>
+    <Version>1.0.0-alpha.2</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/GeneratorTools/master/LICENSE</PackageLicenseUrl>
@@ -24,16 +24,18 @@
     <None Remove="Resources\Workspace\CompileList.targets" />
     <None Remove="Resources\Workspace\PackageReferenceList.targets" />
     <None Remove="Resources\Workspace\ProjectReferenceList.targets" />
+    <None Remove="Resources\Workspace\ProjectRootNameSpace.targets" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Workspace\PackageReferenceList.targets" />
+    <EmbeddedResource Include="Resources\Workspace\ProjectRootNameSpace.targets" />
     <EmbeddedResource Include="Resources\Workspace\ProjectReferenceList.targets" />
     <EmbeddedResource Include="Resources\Workspace\CompileList.targets" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0-rc.4" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />

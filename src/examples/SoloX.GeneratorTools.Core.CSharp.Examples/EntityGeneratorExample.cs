@@ -45,15 +45,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
         /// Process the generator.
         /// </summary>
         /// <param name="projectFile">The project file to work from.</param>
-        /// <param name="projectNameSpace">The project name space.</param>
-        public void Generate(string projectFile, string projectNameSpace)
+        public void Generate(string projectFile)
         {
             this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
 
             var projectFolder = Path.GetDirectoryName(projectFile);
 
             // First we need to register the project.
-            this.workspace.RegisterProject(projectFile);
+            var project = this.workspace.RegisterProject(projectFile);
 
             // Register the pattern interface.
             var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IEntityPattern.cs")
@@ -71,7 +70,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IEntityBase").Single() as IGenericDeclaration;
 
             // Setup a locator that will tell the location where the generated classes must be written.
-            var locator = new RelativeLocator(projectFolder, projectNameSpace, suffix: "Impl");
+            var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
 
             // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
             var generator = new ImplementationGenerator(
