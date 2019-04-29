@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0-rc.4" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
 
