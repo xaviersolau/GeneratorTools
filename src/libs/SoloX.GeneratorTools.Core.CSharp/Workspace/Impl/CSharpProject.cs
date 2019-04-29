@@ -22,6 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     {
         private const string CompileList = "CompileList";
         private const string ProjectReferenceList = "ProjectReferenceList";
+        private const string ProjectRootNameSpace = "ProjectRootNameSpace";
 
         private const string DotNet = "dotnet";
 
@@ -49,6 +50,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public string ProjectPath { get; }
 
         /// <inheritdoc/>
+        public string RootNameSpace { get; private set; }
+
+        /// <inheritdoc/>
         public IReadOnlyCollection<ICSharpProject> ProjectReferences { get; private set; }
 
         /// <inheritdoc/>
@@ -66,6 +70,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
 
             this.isLoaded = true;
+
+            // Get the project root name space
+            this.RootNameSpace = this.DeployAndRunTarget(ProjectRootNameSpace).Trim();
 
             // Get the project references.
             var projectReferenceList = this.DeployAndRunTarget(ProjectReferenceList);

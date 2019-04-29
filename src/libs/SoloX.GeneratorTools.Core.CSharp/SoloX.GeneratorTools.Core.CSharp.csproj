@@ -24,10 +24,12 @@
     <None Remove="Resources\Workspace\CompileList.targets" />
     <None Remove="Resources\Workspace\PackageReferenceList.targets" />
     <None Remove="Resources\Workspace\ProjectReferenceList.targets" />
+    <None Remove="Resources\Workspace\ProjectRootNameSpace.targets" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Workspace\PackageReferenceList.targets" />
+    <EmbeddedResource Include="Resources\Workspace\ProjectRootNameSpace.targets" />
     <EmbeddedResource Include="Resources\Workspace\ProjectReferenceList.targets" />
     <EmbeddedResource Include="Resources\Workspace\CompileList.targets" />
   </ItemGroup>

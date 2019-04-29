@@ -44,6 +44,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var csFile = project.Files.Single();
             Assert.Equal("Sample2Class1.cs", csFile.FileName);
+
+            var ns = project.RootNameSpace;
+            Assert.Equal("SoloX.GeneratorTools.Core.CSharp.Sample2", ns);
         }
     }
 }

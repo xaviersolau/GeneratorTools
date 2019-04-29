@@ -27,6 +27,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         string ProjectPath { get; }
 
         /// <summary>
+        /// Gets the project root name space.
+        /// </summary>
+        string RootNameSpace { get; }
+
+        /// <summary>
         /// Gets the project references.
         /// </summary>
         IReadOnlyCollection<ICSharpProject> ProjectReferences { get; }

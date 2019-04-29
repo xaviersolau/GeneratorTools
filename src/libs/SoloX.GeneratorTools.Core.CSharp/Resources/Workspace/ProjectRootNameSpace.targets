@@ -1,0 +1,7 @@
+﻿<Project>
+
+  <Target Name="ProjectRootNameSpace">
+    <Message Importance="high" Text="$(RootNamespace)" />
+  </Target>
+
+</Project>
