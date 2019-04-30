@@ -155,6 +155,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         }
 
         /// <inheritdoc/>
+        public override bool VisitThrowStatement(ThrowStatementSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
+        /// <inheritdoc/>
         public override bool VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             return this.VisitStatement(node);

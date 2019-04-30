@@ -47,6 +47,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
         [InlineData("PackedIfStatement")]
         [InlineData("ForEachStatement")]
         [InlineData("PackedForEachStatement")]
+        [InlineData("ThrowStatement")]
         public void GenerateStatementTest(string statement)
         {
             var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";

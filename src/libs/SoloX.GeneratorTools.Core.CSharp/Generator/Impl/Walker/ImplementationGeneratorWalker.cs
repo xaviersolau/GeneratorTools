@@ -209,6 +209,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node);
         }
 
+        public override void VisitThrowStatement(ThrowStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
             this.WriteNode(node);
