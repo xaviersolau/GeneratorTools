@@ -46,6 +46,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
         [InlineData("IfStatement")]
         [InlineData("PackedIfStatement")]
         [InlineData("ForEachStatement")]
+        [InlineData("ForStatement")]
         [InlineData("PackedForEachStatement")]
         [InlineData("ThrowStatement")]
         public void GenerateStatementTest(string statement)
