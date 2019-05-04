@@ -209,6 +209,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node);
         }
 
+        public override void VisitThrowStatement(ThrowStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
             this.WriteNode(node);
@@ -234,6 +239,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
         }
 
+        public override void VisitElseClause(ElseClauseSyntax node)
+        {
+            this.Write(node.ElseKeyword.ToFullString());
+            this.Visit(node.Statement);
+        }
+
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
             if (this.isPackStatements)
@@ -253,10 +264,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
         }
 
-        public override void VisitElseClause(ElseClauseSyntax node)
+        public override void VisitForStatement(ForStatementSyntax node)
         {
-            this.Write(node.ElseKeyword.ToFullString());
-            this.Visit(node.Statement);
+            if (this.isPackStatements)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.Write(node.ForKeyword.ToFullString());
+                this.Write(node.OpenParenToken.ToFullString());
+                this.WriteNode(node.Declaration);
+                this.Write(node.FirstSemicolonToken.ToFullString());
+                this.WriteNode(node.Condition);
+                this.Write(node.SecondSemicolonToken.ToFullString());
+                foreach (var incrementor in node.Incrementors)
+                {
+                    this.WriteNode(incrementor);
+                }
+
+                this.Write(node.CloseParenToken.ToFullString());
+                this.Visit(node.Statement);
+            }
         }
 
         private static string SameText(string s) => s;

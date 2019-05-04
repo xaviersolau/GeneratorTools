@@ -43,17 +43,32 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
         }
 
         [Theory]
-        [InlineData("IfStatement")]
-        [InlineData("PackedIfStatement")]
-        [InlineData("ForEachStatement")]
-        [InlineData("PackedForEachStatement")]
+        [InlineData("Condition")]
+        public void GenerateExpressionTest(string expression)
+        {
+            GenerateSimpleSample(expression, "Expression");
+        }
+
+        [Theory]
+        [InlineData("If")]
+        [InlineData("PackedIf")]
+        [InlineData("ForEach")]
+        [InlineData("For")]
+        [InlineData("PackedForEach")]
+        [InlineData("Throw")]
         public void GenerateStatementTest(string statement)
         {
+            GenerateSimpleSample(statement, "Statement");
+        }
+
+        private static void GenerateSimpleSample(string name, string group)
+        {
+            var code = $"{name}{group}";
             var patternInterfaceFile = @"Generator/Patterns/Itf/ISimplePattern.cs";
-            var patternImplementationFile = $@"Generator/Patterns/Impl/{statement}Pattern.cs";
+            var patternImplementationFile = $@"Generator/Patterns/Impl/{group}/{code}Pattern.cs";
             var declarationInterfaceFile = @"Generator/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
-            var implName = $"{statement}Sample";
+            var implName = $"{code}Sample";
 
             GenerateAndAssertSnapshot(
                 patternInterfaceFile,
@@ -61,7 +76,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
                 declarationInterfaceFile,
                 targetNameSpace,
                 implName,
-                $"Generate{statement}Test");
+                $"Generate{code}Test");
         }
 
         private static void GenerateAndAssertSnapshot(

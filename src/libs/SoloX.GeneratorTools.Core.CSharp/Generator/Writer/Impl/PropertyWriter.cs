@@ -137,6 +137,60 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         }
 
         /// <inheritdoc/>
+        public override bool VisitBinaryExpression(BinaryExpressionSyntax node)
+        {
+            var propertyName = this.itfPatternProperty.Name;
+            var lowPropertyName = GetFirstCharLoweredName(propertyName);
+
+            var leftTxt = node.Left.ToFullString();
+            var rightTxt = node.Right.ToFullString();
+
+            var leftMatch = leftTxt.Contains(lowPropertyName) || leftTxt.Contains(propertyName);
+            var rightMatch = rightTxt.Contains(lowPropertyName) || rightTxt.Contains(propertyName);
+
+            if ((!leftMatch && !rightMatch) || (leftMatch && rightMatch))
+            {
+                return false;
+            }
+
+            if (rightMatch)
+            {
+                this.write(leftTxt);
+
+                foreach (var itemProperties in this.declarationProperties)
+                {
+                    this.write(node.OperatorToken.ToFullString());
+
+                    var itemPropertyName = itemProperties.Name;
+                    var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
+
+                    this.write(rightTxt
+                        .Replace(propertyName, itemPropertyName)
+                        .Replace(lowPropertyName, lowItemPropertyName));
+                }
+            }
+
+            if (leftMatch)
+            {
+                foreach (var itemProperties in this.declarationProperties)
+                {
+                    var itemPropertyName = itemProperties.Name;
+                    var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
+
+                    this.write(leftTxt
+                        .Replace(propertyName, itemPropertyName)
+                        .Replace(lowPropertyName, lowItemPropertyName));
+
+                    this.write(node.OperatorToken.ToFullString());
+                }
+
+                this.write(rightTxt);
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
         public override bool VisitExpressionStatement(ExpressionStatementSyntax node)
         {
             return this.VisitStatement(node);
@@ -150,6 +204,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
         /// <inheritdoc/>
         public override bool VisitForEachStatement(ForEachStatementSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
+        /// <inheritdoc/>
+        public override bool VisitThrowStatement(ThrowStatementSyntax node)
         {
             return this.VisitStatement(node);
         }

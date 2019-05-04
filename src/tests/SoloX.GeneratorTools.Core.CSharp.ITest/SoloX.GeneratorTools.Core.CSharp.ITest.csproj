@@ -27,16 +27,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Generator\Patterns\Impl\PackedForEachStatementPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\Statement\ForStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Patterns\Impl\ForEachStatementPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\Expression\ConditionExpressionPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Patterns\Impl\IfStatementPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\Statement\ThrowStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Generator\Patterns\Impl\PackedIfStatementPattern.cs">
+    <Compile Update="Generator\Patterns\Impl\Statement\PackedForEachStatementPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Patterns\Impl\Statement\ForEachStatementPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Patterns\Impl\Statement\IfStatementPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Generator\Patterns\Impl\Statement\PackedIfStatementPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Generator\Patterns\Impl\SimplePattern.cs">
