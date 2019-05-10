@@ -15,9 +15,11 @@ jobs:
             cd src/tests/SoloX.GeneratorTools.Core.UTest
             dotnet test -c Release
             cd ../../..
+
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.UTest
             dotnet test -c Release
             cd ../../..
+
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.ITest
             dotnet test -c Release
             cd ../../..
@@ -25,15 +27,19 @@ jobs:
           name: Run Code coverage
           command: |
             dotnet tool install coveralls.net --version 1.0.0 --tool-path coveralls
+
             cd src/tests/SoloX.GeneratorTools.Core.UTest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
+            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
             cd ../../..
+
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.UTest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
+            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
             cd ../../..
+
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.ITest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
+            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.ITest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
             cd ../../..
+
             mkdir coverage
             cp result.opencover.xml coverage/result.opencover.xml
             coveralls/csmacnz.Coveralls --opencover -i coverage/result.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --useRelativePaths --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor $CIRCLE_USERNAME --jobId $CIRCLE_BUILD_NUM --serviceName circleci
