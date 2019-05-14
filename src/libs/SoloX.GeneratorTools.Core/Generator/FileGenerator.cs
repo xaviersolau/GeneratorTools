@@ -18,10 +18,21 @@ namespace SoloX.GeneratorTools.Core.Generator
     /// </summary>
     public class FileGenerator : IGenerator
     {
+        private string fileSufix;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileGenerator"/> class.
+        /// </summary>
+        /// <param name="fileSufix">The file suffix to use (like '.cs' or '.generated.cs').</param>
+        public FileGenerator(string fileSufix)
+        {
+            this.fileSufix = fileSufix;
+        }
+
         /// <inheritdoc/>
         public void Generate(string location, string name, Action<TextWriter> generator)
         {
-            var file = $"{name}.generated.cs";
+            var file = $"{name}{this.fileSufix}";
 
             if (!Directory.Exists(location))
             {
