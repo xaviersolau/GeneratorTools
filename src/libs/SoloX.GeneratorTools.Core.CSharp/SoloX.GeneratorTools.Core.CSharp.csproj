@@ -5,10 +5,12 @@
 
     <PackageId>SoloX.GeneratorTools.Core.CSharp</PackageId>
 
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+
     <Version>1.0.0-alpha.3</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/GeneratorTools/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/GeneratorTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/GeneratorTools.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

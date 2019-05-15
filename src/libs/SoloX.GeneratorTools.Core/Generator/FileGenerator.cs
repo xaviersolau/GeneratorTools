@@ -18,10 +18,24 @@ namespace SoloX.GeneratorTools.Core.Generator
     /// </summary>
     public class FileGenerator : IGenerator
     {
+        private string fileSufix;
+        private Action<string> generateCallBack;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileGenerator"/> class.
+        /// </summary>
+        /// <param name="fileSufix">The file suffix to use (like '.cs' or '.generated.cs').</param>
+        /// <param name="generateCallBack">The callback to use we generating a new file.</param>
+        public FileGenerator(string fileSufix, Action<string> generateCallBack = null)
+        {
+            this.fileSufix = fileSufix;
+            this.generateCallBack = generateCallBack;
+        }
+
         /// <inheritdoc/>
         public void Generate(string location, string name, Action<TextWriter> generator)
         {
-            var file = $"{name}.generated.cs";
+            var file = $"{name}{this.fileSufix}";
 
             if (!Directory.Exists(location))
             {
@@ -35,6 +49,8 @@ namespace SoloX.GeneratorTools.Core.Generator
             {
                 generator(writer);
             }
+
+            this.generateCallBack?.Invoke(filePath);
         }
     }
 }
