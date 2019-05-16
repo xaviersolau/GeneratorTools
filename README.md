@@ -23,17 +23,17 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.GeneratorTools.Core.CSharp -version 1.0.0-alpha.3
+Install-Package SoloX.GeneratorTools.Core.CSharp -version 1.0.0-alpha.4
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.3
+dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.4
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.3" />
+<PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.4" />
 ```
 
 ## How to use it
@@ -259,7 +259,7 @@ the pattern and the model interface:
     // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
     var generator = new ImplementationGenerator(
         // Tells that we want to write the implementation in a file.
-        new FileGenerator(),
+        new FileGenerator(".generated.cs"),
         // Tells that we want the implementation class to be located at the same location than its model interface.
         new RelativeLocator(projectFolder, projectNameSpace),
         // The pattern interface we loaded previously.
