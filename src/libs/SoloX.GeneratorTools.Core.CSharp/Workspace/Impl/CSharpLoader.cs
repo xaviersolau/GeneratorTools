@@ -32,6 +32,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
+        public void Load(ICSharpWorkspace cSharpWorkspace, ICSharpAssembly assembly)
+        {
+            ((CSharpAssembly)assembly).Load();
+        }
+
+        /// <inheritdoc/>
         public void Load(IDeclarationResolver resolver, IDeclaration declaration)
         {
             ((ADeclaration)declaration).Load(resolver);

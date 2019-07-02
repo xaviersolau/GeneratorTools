@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -28,6 +29,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         IReadOnlyCollection<ICSharpFile> Files { get; }
 
         /// <summary>
+        /// Gets the workspace SCharp assembly dependencies.
+        /// </summary>
+        IReadOnlyCollection<ICSharpAssembly> Assemblies { get; }
+
+        /// <summary>
         /// Register the project associated to the given project file.
         /// </summary>
         /// <param name="projectFile">The project file.</param>
@@ -40,6 +46,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="file">The CSharp file.</param>
         /// <returns>The matching or created ICSharpFile.</returns>
         ICSharpFile RegisterFile(string file);
+
+        /// <summary>
+        /// Register the ICSharpAssembly associated to the given assembly.
+        /// </summary>
+        /// <param name="assemblyFile">The CSharp assembly file.</param>
+        /// <returns>The matching or created ICSharpAssembly.</returns>
+        ICSharpAssembly RegisterAssembly(string assemblyFile);
 
         /// <summary>
         /// Deep load the workspace.

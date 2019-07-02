@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AGenericDeclaration.cs" company="SoloX Software">
+// <copyright file="ATypeGenericDeclaration.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,43 +8,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
+namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection
 {
     /// <summary>
-    /// Base abstract generic declaration implementation.
+    /// Base abstract generic declaration from Type reflection implementation.
     /// </summary>
-    public abstract class AGenericDeclaration : ADeclaration, IGenericDeclaration
+    public abstract class ATypeGenericDeclaration : ADeclaration, IGenericDeclaration
     {
         private readonly List<IGenericDeclaration> extendedBy = new List<IGenericDeclaration>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AGenericDeclaration"/> class.
+        /// Initializes a new instance of the <see cref="ATypeGenericDeclaration"/> class.
         /// </summary>
-        /// <param name="nameSpace">The class declaration name space.</param>
-        /// <param name="name">The declaration name.</param>
-        /// <param name="syntaxNode">The declaration syntax node.</param>
-        /// <param name="typeParameterListSyntax">The type parameter list syntax node.</param>
-        /// <param name="usingDirectives">The current using directive available for this class.</param>
-        /// <param name="location">The location of the declaration.</param>
-        protected AGenericDeclaration(
-            string nameSpace,
-            string name,
-            CSharpSyntaxNode syntaxNode,
-            TypeParameterListSyntax typeParameterListSyntax,
-            IReadOnlyList<string> usingDirectives,
-            string location)
-            : base(nameSpace, name, syntaxNode, usingDirectives, location)
+        /// <param name="type">Type to load the declaration from.</param>
+        protected ATypeGenericDeclaration(Type type)
+            : base(type.Namespace, GetNameWithoutGeneric(type.Name), null, null, type.Assembly.Location)
         {
-            this.TypeParameterListSyntax = typeParameterListSyntax;
+            this.DeclarationType = type;
+            this.TypeParameterListSyntax = null;
         }
 
         /// <inheritdoc/>
@@ -65,6 +54,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <inheritdoc/>
         public IReadOnlyCollection<IPropertyDeclaration> Properties { get; private set; }
 
+        /// <summary>
+        /// Gets the declaration type.
+        /// </summary>
+        public Type DeclarationType { get; }
+
         /// <inheritdoc/>
         public override string ToString()
         {
@@ -76,18 +70,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             return base.ToString();
         }
 
+        internal static string GetNameWithoutGeneric(string name)
+        {
+            var genericIdx = name.IndexOf('`');
+            if (genericIdx >= 0)
+            {
+                return name.Substring(0, genericIdx);
+            }
+
+            return name;
+        }
+
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
         protected void LoadGenericParameters()
         {
-            var parameterList = this.TypeParameterListSyntax;
-            if (parameterList != null)
+            if (this.DeclarationType.IsGenericTypeDefinition)
             {
                 var parameterSet = new List<IGenericParameterDeclaration>();
-                foreach (var parameter in parameterList.Parameters)
+
+                foreach (var parameter in this.DeclarationType.GetTypeInfo().GenericTypeParameters)
                 {
-                    parameterSet.Add(new GenericParameterDeclaration(parameter.Identifier.Text, parameter));
+                    parameterSet.Add(new GenericParameterDeclaration(parameter.Name, null));
                 }
 
                 this.GenericParameters = parameterSet;
@@ -102,24 +107,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// Load extends statement list.
         /// </summary>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        /// <param name="baseListSyntax">The base list syntax.</param>
-        protected void LoadExtends(IDeclarationResolver resolver, BaseListSyntax baseListSyntax)
+        protected void LoadExtends(IDeclarationResolver resolver)
         {
-            if (baseListSyntax != null)
+            var extendedInterfaces = this.DeclarationType.GetInterfaces();
+            if (extendedInterfaces != null && extendedInterfaces.Any())
             {
-                var baseWalker = new DeclarationUseWalker(resolver, this);
                 var uses = new List<IDeclarationUse>();
 
-                foreach (var node in baseListSyntax.ChildNodes())
+                foreach (var extendedInterface in extendedInterfaces)
                 {
-                    var use = baseWalker.Visit(node);
-
-                    if (use.Declaration is AGenericDeclaration agd)
-                    {
-                        agd.AddExtendedBy(this);
-                    }
-
-                    uses.Add(use);
+                    uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
                 }
 
                 this.Extends = uses;
@@ -137,12 +134,52 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         protected void LoadMembers(IDeclarationResolver resolver)
         {
             var memberList = new List<IMemberDeclaration>();
-            var membersWalker = new MembersWalker(resolver, this, memberList);
 
-            membersWalker.Visit(this.SyntaxNode);
+            foreach (var property in this.DeclarationType.GetProperties())
+            {
+                memberList.Add(
+                    new PropertyDeclaration(
+                        property.Name,
+                        GetDeclarationUseFrom(property.PropertyType, resolver),
+                        null));
+            }
 
             this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
             this.Properties = this.Members.OfType<IPropertyDeclaration>().ToArray();
+        }
+
+        private static IDeclarationUse GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
+        {
+            if (type.IsPrimitive)
+            {
+                return new PredefinedDeclarationUse(null, type.Name);
+            }
+
+            var interfaceDeclaration = resolver.Resolve(type);
+
+            if (interfaceDeclaration == null)
+            {
+                return new UnknownDeclarationUse(null, new UnknownDeclaration(type.Name));
+            }
+
+            IReadOnlyCollection<IDeclarationUse> genericParameters;
+
+            if (type.IsGenericType)
+            {
+                var uses = new List<IDeclarationUse>();
+                foreach (var typeArg in type.GenericTypeArguments)
+                {
+                    uses.Add(GetDeclarationUseFrom(typeArg, resolver));
+                }
+
+                genericParameters = uses;
+            }
+            else
+            {
+                genericParameters = Array.Empty<IDeclarationUse>();
+            }
+
+            return new GenericDeclarationUse(null, interfaceDeclaration, genericParameters);
         }
 
         private void AddExtendedBy(AGenericDeclaration declaration)

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
@@ -16,6 +17,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpFactory : ICSharpFactory
     {
+        /// <inheritdoc/>
+        public ICSharpAssembly CreateAssembly(Assembly assembly)
+        {
+            return new CSharpAssembly(assembly);
+        }
+
         /// <inheritdoc/>
         public ICSharpFile CreateFile(string file)
         {
