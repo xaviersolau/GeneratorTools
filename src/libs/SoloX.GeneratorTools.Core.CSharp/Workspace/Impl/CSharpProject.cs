@@ -99,10 +99,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 var assemblyFile = GetAssemblyFile(projectAssets, compileItem);
 
-                if (assemblyFile != null)
-                {
-                    assemblies.Add(workspace.RegisterAssembly(assemblyFile));
-                }
+                assemblies.Add(workspace.RegisterAssembly(assemblyFile));
             }
 
             this.Assemblies = assemblies;
@@ -138,7 +135,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 }
             }
 
-            return null;
+            throw new FileNotFoundException(
+                $"Unable to find a file ({assemblyFile}) from [{string.Join(";", projectAssets.PackageFolder)}]",
+                assemblyFile);
         }
 
         private string DeployAndRunTarget(string target)
