@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
 {
@@ -31,6 +32,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="workspace">The context workspace.</param>
         /// <param name="file">The file to load.</param>
         void Load(ICSharpWorkspace workspace, ICSharpFile file);
+
+        /// <summary>
+        /// Load the given assembly.
+        /// </summary>
+        /// <param name="workspace">The context workspace.</param>
+        /// <param name="assembly">The assembly to load.</param>
+        void Load(ICSharpWorkspace workspace, ICSharpAssembly assembly);
 
         /// <summary>
         /// Load the given CSharp declaration.

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -29,5 +30,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="file">The CSharp file.</param>
         /// <returns>The created file object.</returns>
         ICSharpFile CreateFile(string file);
+
+        /// <summary>
+        /// Create a ICSharpAssembly.
+        /// </summary>
+        /// <param name="assembly">The CSharp assembly.</param>
+        /// <returns>The created assembly object.</returns>
+        ICSharpAssembly CreateAssembly(Assembly assembly);
     }
 }

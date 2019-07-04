@@ -7,6 +7,7 @@
 
 using System;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 
@@ -15,18 +16,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
     public class CSharpWorkspaceTest
     {
         [Fact]
-        public void ProjectLoadTest()
+        public void SimpleProjectLoadTest()
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
 
-            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
-            ws.RegisterProject(projectFile);
-
-            Assert.Equal(1, ws.Projects.Count);
-
-            Assert.NotEmpty(ws.Files);
-
-            var resolver = ws.DeepLoad();
+            var resolver = LoadAndGetResolver(projectFile, 1);
 
             var sample1Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
 
@@ -35,18 +29,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         }
 
         [Fact]
+        public void ProjectDependencyAssemblyLoadTest()
+        {
+            var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
+
+            var resolver = LoadAndGetResolver(projectFile, 1);
+
+            var jsonDecl = resolver.Find("Newtonsoft.Json.IArrayPool");
+
+            Assert.NotNull(jsonDecl);
+            Assert.NotEmpty(jsonDecl);
+        }
+
+        [Fact]
         public void ProjectLoadWithDependenciesTest()
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
 
-            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
-            ws.RegisterProject(projectFile);
-
-            Assert.Equal(2, ws.Projects.Count);
-
-            Assert.NotEmpty(ws.Files);
-
-            var resolver = ws.DeepLoad();
+            var resolver = LoadAndGetResolver(projectFile, 2);
 
             var sample2Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample2.Sample2Class1"));
             var sample1Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
@@ -62,6 +62,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 
             var extendedBy = Assert.Single(sample1Class1.ExtendedBy);
             Assert.Same(sample2Class1Decl, extendedBy);
+        }
+
+        private static IDeclarationResolver LoadAndGetResolver(string projectFile, int expectedProjectCount)
+        {
+            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
+            ws.RegisterProject(projectFile);
+
+            Assert.Equal(expectedProjectCount, ws.Projects.Count);
+
+            Assert.NotEmpty(ws.Files);
+
+            return ws.DeepLoad();
         }
     }
 }

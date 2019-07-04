@@ -7,9 +7,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 
@@ -45,6 +47,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             if (declarations != null)
             {
                 var tParamCount = genericParameters == null ? 0 : genericParameters.Count;
+                foreach (var declarationItem in declarations)
+                {
+                    // Make sure the declaration is loaded
+                    this.loader(this, declarationItem);
+
+                    if (declarationItem is IGenericDeclaration gd && tParamCount == gd.GenericParameters.Count)
+                    {
+                        // TODO take into account the type parameter constraints.
+                        return gd;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public IGenericDeclaration Resolve(Type type)
+        {
+            var fullName = type.FullName;
+            if (fullName == null)
+            {
+                return null;
+            }
+
+            fullName = ATypeGenericDeclaration.GetNameWithoutGeneric(fullName);
+
+            var declarations = this.FindDeclarations(fullName, null);
+            if (declarations != null)
+            {
+                var tParamCount = type.GetTypeInfo().GenericTypeParameters.Length;
                 foreach (var declarationItem in declarations)
                 {
                     // Make sure the declaration is loaded
@@ -125,23 +158,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             string identifier, IDeclaration declarationContext)
         {
             List<IDeclaration> declarations;
-            foreach (var usingDirective in declarationContext.UsingDirectives)
+            if (declarationContext != null)
             {
-                var lookupName = ADeclaration.GetFullName(usingDirective, identifier);
-
-                if (this.declarationMap.TryGetValue(lookupName, out declarations))
+                foreach (var usingDirective in declarationContext.UsingDirectives)
                 {
-                    return declarations;
+                    var lookupName = ADeclaration.GetFullName(usingDirective, identifier);
+
+                    if (this.declarationMap.TryGetValue(lookupName, out declarations))
+                    {
+                        return declarations;
+                    }
                 }
-            }
 
-            foreach (var nameSpace in GetParentNameSpaces(declarationContext.DeclarationNameSpace))
-            {
-                if (this.declarationMap.TryGetValue(
-                    ADeclaration.GetFullName(nameSpace, identifier),
-                    out declarations))
+                foreach (var nameSpace in GetParentNameSpaces(declarationContext.DeclarationNameSpace))
                 {
-                    return declarations;
+                    if (this.declarationMap.TryGetValue(
+                        ADeclaration.GetFullName(nameSpace, identifier),
+                        out declarations))
+                    {
+                        return declarations;
+                    }
                 }
             }
 

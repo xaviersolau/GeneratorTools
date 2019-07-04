@@ -40,5 +40,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Gets the project SCharp files.
         /// </summary>
         IReadOnlyCollection<ICSharpFile> Files { get; }
+
+        /// <summary>
+        /// Gets the project SCharp assembly dependencies.
+        /// </summary>
+        IReadOnlyCollection<ICSharpAssembly> Assemblies { get; }
     }
 }

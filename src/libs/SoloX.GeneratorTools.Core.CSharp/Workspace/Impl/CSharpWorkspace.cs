@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
@@ -25,6 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
         private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
+        private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.
@@ -42,6 +44,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
         /// <inheritdoc/>
         public IReadOnlyCollection<ICSharpFile> Files => this.files.Values;
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<ICSharpAssembly> Assemblies => this.assemblies.Values;
 
         /// <inheritdoc/>
         public ICSharpFile RegisterFile(string file)
@@ -76,9 +81,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
+        public ICSharpAssembly RegisterAssembly(string assemblyFile)
+        {
+            if (!this.assemblies.TryGetValue(assemblyFile, out var csAssembly))
+            {
+                var assembly = Assembly.LoadFrom(assemblyFile);
+                csAssembly = this.factory.CreateAssembly(assembly);
+                this.assemblies.Add(assemblyFile, csAssembly);
+
+                this.loader.Load(this, csAssembly);
+            }
+
+            return csAssembly;
+        }
+
+        /// <inheritdoc/>
         public IDeclarationResolver DeepLoad()
         {
-            var resolver = new DeclarationResolver(this.Files.SelectMany(f => f.Declarations), this.loader.Load);
+            var declarations = this.Assemblies.SelectMany(a => a.Declarations)
+                .Concat(this.Files.SelectMany(f => f.Declarations));
+            var resolver = new DeclarationResolver(declarations, this.loader.Load);
 
             resolver.Load();
 
