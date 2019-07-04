@@ -19,6 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
     public class ProjectAssets
     {
         private Dictionary<string, TargetAssets> targets = new Dictionary<string, TargetAssets>();
+        private Dictionary<string, LibraryAssets> libraries = new Dictionary<string, LibraryAssets>();
         private List<string> packageFolder = new List<string>();
 
         /// <summary>
@@ -32,6 +33,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         public IReadOnlyDictionary<string, TargetAssets> Targets => this.targets;
 
         /// <summary>
+        /// Gets libraries.
+        /// </summary>
+        public IReadOnlyDictionary<string, LibraryAssets> Libraries => this.libraries;
+
+        /// <summary>
         /// Gets the package folders.
         /// </summary>
         public IReadOnlyList<string> PackageFolder => this.packageFolder;
@@ -39,6 +45,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         internal void AddTarget(TargetAssets targetAssets)
         {
             this.targets.Add(targetAssets.Name, targetAssets);
+        }
+
+        internal void AddLibrary(LibraryAssets libraryAssets)
+        {
+            this.libraries.Add(libraryAssets.Name, libraryAssets);
         }
 
         internal void AddPackageFolder(string folder)

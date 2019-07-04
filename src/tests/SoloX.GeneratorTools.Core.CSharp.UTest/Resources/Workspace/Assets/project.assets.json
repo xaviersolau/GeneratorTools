@@ -62,30 +62,26 @@
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
       },
-      "SoloX.CodeQuality.Prod/1.0.0": {
+      "Newtonsoft.Json/12.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "SoloX.CodeQuality.Test/1.0.0": {
         "type": "package",
         "build": {
-          "build/SoloX.CodeQuality.Prod.props": {}
+          "build/SoloX.CodeQuality.Test.props": {}
         },
         "buildMultiTargeting": {
-          "buildMultiTargeting/SoloX.CodeQuality.Prod.props": {}
+          "buildMultiTargeting/SoloX.CodeQuality.Test.props": {}
         }
       },
       "StyleCop.Analyzers/1.1.118": {
         "type": "package"
-      },
-      "SoloX.GeneratorTools.Core.CSharp.Examples.Core/1.0.0": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v2.0",
-        "dependencies": {
-          "SoloX.CodeQuality.Prod": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/SoloX.GeneratorTools.Core.CSharp.Examples.Core.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/SoloX.GeneratorTools.Core.CSharp.Examples.Core.dll": {}
-        }
       }
     }
   },
@@ -412,18 +408,48 @@
         "netstandard.library.nuspec"
       ]
     },
-    "SoloX.CodeQuality.Prod/1.0.0": {
-      "sha512": "23iLHrJfmia1c6P2Em/u80wnrwRLJhO50/ljWIuNZqULRwsAPbcdPR9cWidPMZmYo+t71jqvXZrfWMHU8/ws1A==",
+    "Newtonsoft.Json/12.0.2": {
+      "sha512": "rTK0s2EKlfHsQsH6Yx2smvcTCeyoDNgCW7FEYyV01drPlh2T243PR2DiDXqtC5N4GDm4Ma/lkxfW5a/4793vbA==",
       "type": "package",
-      "path": "solox.codequality.prod/1.0.0",
+      "path": "newtonsoft.json/12.0.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "build/SoloX.CodeQuality.Prod.props",
-        "buildMultiTargeting/SoloX.CodeQuality.Prod.props",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.12.0.2.nupkg.sha512",
+        "newtonsoft.json.nuspec"
+      ]
+    },
+    "SoloX.CodeQuality.Test/1.0.0": {
+      "sha512": "as/5nCnOttq9gjucVZMXeJWRYldpmsT0v09CMlsa7Uv6iH9O1KdBHOO92Ny01Zd/Le2GsyU6QF1kod3W2Rxu/g==",
+      "type": "package",
+      "path": "solox.codequality.test/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/SoloX.CodeQuality.Test.props",
+        "buildMultiTargeting/SoloX.CodeQuality.Test.props",
         "resources/stylecop.json",
-        "solox.codequality.prod.1.0.0.nupkg.sha512",
-        "solox.codequality.prod.nuspec"
+        "solox.codequality.test.1.0.0.nupkg.sha512",
+        "solox.codequality.test.nuspec"
       ]
     },
     "StyleCop.Analyzers/1.1.118": {
@@ -450,19 +476,14 @@
         "tools/install.ps1",
         "tools/uninstall.ps1"
       ]
-    },
-    "SoloX.GeneratorTools.Core.CSharp.Examples.Core/1.0.0": {
-      "type": "project",
-      "path": "../SoloX.GeneratorTools.Core.CSharp.Examples.Core/SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj",
-      "msbuildProject": "../SoloX.GeneratorTools.Core.CSharp.Examples.Core/SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
       "Microsoft.CodeAnalysis.FxCopAnalyzers >= 2.9.2",
       "NETStandard.Library >= 2.0.3",
-      "SoloX.CodeQuality.Prod >= 1.0.0",
-      "SoloX.GeneratorTools.Core.CSharp.Examples.Core >= 1.0.0",
+      "Newtonsoft.Json >= 12.0.2",
+      "SoloX.CodeQuality.Test >= 1.0.0",
       "StyleCop.Analyzers >= 1.1.118"
     ]
   },
@@ -474,11 +495,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Work\\Net\\GeneratorTools\\src\\examples\\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj",
-      "projectName": "SoloX.GeneratorTools.Core.CSharp.Examples.Sample",
-      "projectPath": "C:\\Work\\Net\\GeneratorTools\\src\\examples\\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\\SoloX.GeneratorTools.Core.CSharp.Examples.Sample.csproj",
+      "projectUniqueName": "C:\\Work\\Net\\GeneratorTools\\src\\tests\\SoloX.GeneratorTools.Core.CSharp.Sample1\\SoloX.GeneratorTools.Core.CSharp.Sample1.csproj",
+      "projectName": "SoloX.GeneratorTools.Core.CSharp.Sample1",
+      "projectPath": "C:\\Work\\Net\\GeneratorTools\\src\\tests\\SoloX.GeneratorTools.Core.CSharp.Sample1\\SoloX.GeneratorTools.Core.CSharp.Sample1.csproj",
       "packagesPath": "C:\\Users\\Xavier\\.nuget\\packages\\",
-      "outputPath": "C:\\Work\\Net\\GeneratorTools\\src\\examples\\SoloX.GeneratorTools.Core.CSharp.Examples.Sample\\obj\\",
+      "outputPath": "C:\\Work\\Net\\GeneratorTools\\src\\tests\\SoloX.GeneratorTools.Core.CSharp.Sample1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\",
@@ -498,11 +519,7 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "projectReferences": {
-            "C:\\Work\\Net\\GeneratorTools\\src\\examples\\SoloX.GeneratorTools.Core.CSharp.Examples.Core\\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj": {
-              "projectPath": "C:\\Work\\Net\\GeneratorTools\\src\\examples\\SoloX.GeneratorTools.Core.CSharp.Examples.Core\\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {
@@ -527,7 +544,11 @@
             "version": "[2.0.3, )",
             "autoReferenced": true
           },
-          "SoloX.CodeQuality.Prod": {
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[12.0.2, )"
+          },
+          "SoloX.CodeQuality.Test": {
             "target": "Package",
             "version": "[1.0.0, )"
           },

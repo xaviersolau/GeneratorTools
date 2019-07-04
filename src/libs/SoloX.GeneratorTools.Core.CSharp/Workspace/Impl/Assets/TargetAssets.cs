@@ -43,11 +43,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         /// <summary>
         /// Gets all package compile items.
         /// </summary>
-        public IEnumerable<string> AllPackageCompileItems => this.TargetItems.Values
+        /// <param name="projectAssets">The project assets.</param>
+        /// <returns>All package compile items.</returns>
+        public IEnumerable<string> GetAllPackageCompileItems(ProjectAssets projectAssets) => this.TargetItems.Values
             .Where(v => v.ItemType == "package")
             .SelectMany(
                 v => v.CompileItems.Where(s => !s.EndsWith("_._", StringComparison.InvariantCulture)),
-                (v, s) => Path.Combine(v.Name, s));
+                (v, s) => Path.Combine(projectAssets.Libraries[v.Name].Path, s));
 
         internal void AddTargetItem(TargetItemAssets targetItemAssets)
         {
