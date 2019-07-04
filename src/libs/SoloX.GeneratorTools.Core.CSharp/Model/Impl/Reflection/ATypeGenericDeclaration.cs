@@ -81,6 +81,40 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection
             return name;
         }
 
+        internal static IDeclarationUse GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
+        {
+            if (type.Namespace == "System" && (type.IsPrimitive || type == typeof(string) || type == typeof(object)))
+            {
+                return new PredefinedDeclarationUse(null, type.Name);
+            }
+
+            var interfaceDeclaration = resolver.Resolve(type);
+
+            if (interfaceDeclaration == null)
+            {
+                return new UnknownDeclarationUse(null, new UnknownDeclaration(type.Name));
+            }
+
+            IReadOnlyCollection<IDeclarationUse> genericParameters;
+
+            if (type.IsGenericType)
+            {
+                var uses = new List<IDeclarationUse>();
+                foreach (var typeArg in type.GenericTypeArguments)
+                {
+                    uses.Add(GetDeclarationUseFrom(typeArg, resolver));
+                }
+
+                genericParameters = uses;
+            }
+            else
+            {
+                genericParameters = Array.Empty<IDeclarationUse>();
+            }
+
+            return new GenericDeclarationUse(null, interfaceDeclaration, genericParameters);
+        }
+
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
@@ -146,40 +180,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection
 
             this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
             this.Properties = this.Members.OfType<IPropertyDeclaration>().ToArray();
-        }
-
-        private static IDeclarationUse GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
-        {
-            if (type.IsPrimitive)
-            {
-                return new PredefinedDeclarationUse(null, type.Name);
-            }
-
-            var interfaceDeclaration = resolver.Resolve(type);
-
-            if (interfaceDeclaration == null)
-            {
-                return new UnknownDeclarationUse(null, new UnknownDeclaration(type.Name));
-            }
-
-            IReadOnlyCollection<IDeclarationUse> genericParameters;
-
-            if (type.IsGenericType)
-            {
-                var uses = new List<IDeclarationUse>();
-                foreach (var typeArg in type.GenericTypeArguments)
-                {
-                    uses.Add(GetDeclarationUseFrom(typeArg, resolver));
-                }
-
-                genericParameters = uses;
-            }
-            else
-            {
-                genericParameters = Array.Empty<IDeclarationUse>();
-            }
-
-            return new GenericDeclarationUse(null, interfaceDeclaration, genericParameters);
         }
 
         private void AddExtendedBy(AGenericDeclaration declaration)
