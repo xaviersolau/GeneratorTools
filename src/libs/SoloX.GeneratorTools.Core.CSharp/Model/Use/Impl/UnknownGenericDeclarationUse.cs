@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 {
@@ -24,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <param name="declaration">The declaration in use.</param>
         /// <param name="genericParameters">The generic parameters.</param>
         public UnknownGenericDeclarationUse(
-            CSharpSyntaxNode syntaxNode, IDeclaration declaration, IReadOnlyCollection<IDeclarationUse> genericParameters)
+            SimpleNameSyntax syntaxNode, IDeclaration<SyntaxNode> declaration, IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters)
             : base(syntaxNode, declaration, genericParameters)
         {
         }

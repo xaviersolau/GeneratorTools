@@ -9,11 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
 {
@@ -22,9 +22,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
     /// </summary>
     public class DeclarationResolver : IDeclarationResolver
     {
-        private readonly Action<IDeclarationResolver, IDeclaration> loader;
+        private readonly Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader;
 
-        private readonly Dictionary<string, List<IDeclaration>> declarationMap = new Dictionary<string, List<IDeclaration>>();
+        private readonly Dictionary<string, List<IDeclaration<SyntaxNode>>> declarationMap = new Dictionary<string, List<IDeclaration<SyntaxNode>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeclarationResolver"/> class.
@@ -32,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// <param name="declarations">The declaration list the resolver is based on.</param>
         /// <param name="loader">The loader delegate to load a declaration is needed.</param>
         public DeclarationResolver(
-            IEnumerable<IDeclaration> declarations, Action<IDeclarationResolver, IDeclaration> loader)
+            IEnumerable<IDeclaration<SyntaxNode>> declarations, Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader)
         {
             this.loader = loader;
 
@@ -40,8 +40,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IGenericDeclaration Resolve(
-            string identifier, IReadOnlyList<IDeclarationUse> genericParameters, IDeclaration declarationContext)
+        public IGenericDeclaration<SyntaxNode> Resolve(
+            string identifier, IReadOnlyList<IDeclarationUse<SyntaxNode>> genericParameters, IDeclaration<SyntaxNode> declarationContext)
         {
             var declarations = this.FindDeclarations(identifier, declarationContext);
             if (declarations != null)
@@ -52,7 +52,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                     // Make sure the declaration is loaded
                     this.loader(this, declarationItem);
 
-                    if (declarationItem is IGenericDeclaration gd && tParamCount == gd.GenericParameters.Count)
+                    if (declarationItem is IGenericDeclaration<SyntaxNode> gd && tParamCount == gd.GenericParameters.Count)
                     {
                         // TODO take into account the type parameter constraints.
                         return gd;
@@ -64,7 +64,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IGenericDeclaration Resolve(Type type)
+        public IGenericDeclaration<SyntaxNode> Resolve(Type type)
         {
             var fullName = type.FullName;
             if (fullName == null)
@@ -72,7 +72,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 return null;
             }
 
-            fullName = ATypeGenericDeclaration.GetNameWithoutGeneric(fullName);
+            fullName = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(fullName);
 
             var declarations = this.FindDeclarations(fullName, null);
             if (declarations != null)
@@ -83,7 +83,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                     // Make sure the declaration is loaded
                     this.loader(this, declarationItem);
 
-                    if (declarationItem is IGenericDeclaration gd && tParamCount == gd.GenericParameters.Count)
+                    if (declarationItem is IGenericDeclaration<SyntaxNode> gd && tParamCount == gd.GenericParameters.Count)
                     {
                         // TODO take into account the type parameter constraints.
                         return gd;
@@ -95,7 +95,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IDeclaration Resolve(string identifier, IDeclaration declarationContext)
+        public IDeclaration<SyntaxNode> Resolve(string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
             var declarations = this.FindDeclarations(identifier, declarationContext);
             if (declarations != null)
@@ -105,7 +105,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                     // Make sure the declaration is loaded
                     this.loader(this, declarationItem);
 
-                    if (declarationItem is IGenericDeclaration gd)
+                    if (declarationItem is IGenericDeclaration<SyntaxNode> gd)
                     {
                         if (gd.GenericParameters.Count == 0)
                         {
@@ -123,7 +123,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IEnumerable<IDeclaration> Find(string fullName)
+        public IEnumerable<IDeclaration<SyntaxNode>> Find(string fullName)
         {
             return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
         }
@@ -154,15 +154,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
         }
 
-        private IEnumerable<IDeclaration> FindDeclarations(
-            string identifier, IDeclaration declarationContext)
+        private IEnumerable<IDeclaration<SyntaxNode>> FindDeclarations(
+            string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
-            List<IDeclaration> declarations;
+            List<IDeclaration<SyntaxNode>> declarations;
             if (declarationContext != null)
             {
                 foreach (var usingDirective in declarationContext.UsingDirectives)
                 {
-                    var lookupName = ADeclaration.GetFullName(usingDirective, identifier);
+                    var lookupName = ADeclaration<SyntaxNode>.GetFullName(usingDirective, identifier);
 
                     if (this.declarationMap.TryGetValue(lookupName, out declarations))
                     {
@@ -173,7 +173,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 foreach (var nameSpace in GetParentNameSpaces(declarationContext.DeclarationNameSpace))
                 {
                     if (this.declarationMap.TryGetValue(
-                        ADeclaration.GetFullName(nameSpace, identifier),
+                        ADeclaration<SyntaxNode>.GetFullName(nameSpace, identifier),
                         out declarations))
                     {
                         return declarations;
@@ -189,15 +189,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             return null;
         }
 
-        private void Setup(IEnumerable<IDeclaration> declarations)
+        private void Setup(IEnumerable<IDeclaration<SyntaxNode>> declarations)
         {
             foreach (var declaration in declarations)
             {
-                var fullName = ADeclaration.GetFullName(declaration.DeclarationNameSpace, declaration.Name);
+                var fullName = ADeclaration<SyntaxNode>.GetFullName(declaration.DeclarationNameSpace, declaration.Name);
 
                 if (!this.declarationMap.TryGetValue(fullName, out var list))
                 {
-                    list = new List<IDeclaration>();
+                    list = new List<IDeclaration<SyntaxNode>>();
                     this.declarationMap.Add(fullName, list);
                 }
 

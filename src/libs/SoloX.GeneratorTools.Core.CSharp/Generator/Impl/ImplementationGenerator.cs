@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -25,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
     {
         private readonly IGenerator generator;
         private readonly IInterfaceDeclaration itfPattern;
-        private readonly IGenericDeclaration implPattern;
+        private readonly IGenericDeclaration<SyntaxNode> implPattern;
         private readonly ILocator locator;
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <param name="locator">Code generation locator.</param>
         /// <param name="itfPattern">The interface pattern to use for the generator.</param>
         /// <param name="implPattern">The implementation pattern to use for the generator.</param>
-        public ImplementationGenerator(IGenerator generator, ILocator locator, IInterfaceDeclaration itfPattern, IGenericDeclaration implPattern)
+        public ImplementationGenerator(IGenerator generator, ILocator locator, IInterfaceDeclaration itfPattern, IGenericDeclaration<SyntaxNode> implPattern)
         {
             this.generator = generator;
             this.itfPattern = itfPattern;

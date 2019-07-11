@@ -17,7 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Generic parameter declaration.
     /// </summary>
-    public class GenericParameterDeclaration : ADeclaration, IGenericParameterDeclaration
+    public class GenericParameterDeclaration : ADeclaration<TypeParameterSyntax>, IGenericParameterDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericParameterDeclaration"/> class.

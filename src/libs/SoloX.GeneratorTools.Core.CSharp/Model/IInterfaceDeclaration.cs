@@ -15,11 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Interface declaration interface.
     /// </summary>
-    public interface IInterfaceDeclaration : IGenericDeclaration
+    public interface IInterfaceDeclaration : IGenericDeclaration<InterfaceDeclarationSyntax>
     {
-        /// <summary>
-        /// Gets the InterfaceDeclarationSyntax.
-        /// </summary>
-        InterfaceDeclarationSyntax InterfaceDeclarationSyntax { get; }
     }
 }

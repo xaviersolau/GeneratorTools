@@ -15,11 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Struct declaration interface.
     /// </summary>
-    public interface IStructDeclaration : IGenericDeclaration
+    public interface IStructDeclaration : IGenericDeclaration<StructDeclarationSyntax>
     {
-        /// <summary>
-        /// Gets the StructDeclarationSyntax.
-        /// </summary>
-        StructDeclarationSyntax StructDeclarationSyntax { get; }
     }
 }

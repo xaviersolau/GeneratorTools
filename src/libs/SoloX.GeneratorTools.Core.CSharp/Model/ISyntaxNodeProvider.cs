@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IDeclarationUse.cs" company="SoloX Software">
+// <copyright file="ISyntaxNodeProvider.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,30 +9,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
+namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
     /// <summary>
-    /// Declaration use interface.
+    /// Syntax node provider interface.
     /// </summary>
     /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
-    public interface IDeclarationUse<out TNode>
+    public interface ISyntaxNodeProvider<out TNode>
         where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the declaration use syntax node.
+        /// Gets the syntax node.
         /// </summary>
         TNode SyntaxNode { get; }
-
-        /// <summary>
-        /// Gets the declaration in use.
-        /// </summary>
-        IDeclaration<SyntaxNode> Declaration { get; }
-
-        /// <summary>
-        /// Gets array specification.
-        /// </summary>
-        IArraySpecification ArraySpecification { get; }
     }
 }

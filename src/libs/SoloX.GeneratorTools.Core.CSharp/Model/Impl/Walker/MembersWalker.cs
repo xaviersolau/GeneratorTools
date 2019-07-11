@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -18,10 +19,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
     internal class MembersWalker : CSharpSyntaxWalker
     {
         private readonly IDeclarationResolver resolver;
-        private readonly List<IMemberDeclaration> memberList;
-        private readonly IGenericDeclaration genericDeclaration;
+        private readonly List<IMemberDeclaration<SyntaxNode>> memberList;
+        private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
-        public MembersWalker(IDeclarationResolver resolver, IGenericDeclaration genericDeclaration, List<IMemberDeclaration> memberList)
+        public MembersWalker(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration, List<IMemberDeclaration<SyntaxNode>> memberList)
         {
             this.resolver = resolver;
             this.memberList = memberList;

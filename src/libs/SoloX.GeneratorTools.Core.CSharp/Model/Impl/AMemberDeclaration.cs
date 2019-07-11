@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
@@ -15,14 +16,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Base abstract member declaration implementation.
     /// </summary>
-    public class AMemberDeclaration : IMemberDeclaration
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public class AMemberDeclaration<TNode> : IMemberDeclaration<TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AMemberDeclaration"/> class.
+        /// Initializes a new instance of the <see cref="AMemberDeclaration{TNode}"/> class.
         /// </summary>
         /// <param name="name">The member name.</param>
         /// <param name="syntaxNode">The member syntax.</param>
-        protected AMemberDeclaration(string name, CSharpSyntaxNode syntaxNode)
+        protected AMemberDeclaration(string name, TNode syntaxNode)
         {
             this.SyntaxNode = syntaxNode;
             this.Name = name;
@@ -32,6 +35,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public string Name { get; }
 
         /// <inheritdoc/>
-        public CSharpSyntaxNode SyntaxNode { get; }
+        public TNode SyntaxNode { get; }
+
+        /// <inheritdoc/>
+        public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
     }
 }

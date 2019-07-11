@@ -8,13 +8,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
     /// <summary>
     /// Generic parameter declaration.
     /// </summary>
-    public interface IGenericParameterDeclaration : IDeclaration
+    public interface IGenericParameterDeclaration : IDeclaration<TypeParameterSyntax>
     {
     }
 }

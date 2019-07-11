@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
@@ -67,7 +68,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
             {
                 resolver
-                    .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration>()))
+                    .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration<SyntaxNode>>()))
                     .Returns(declaration);
             });
 
@@ -95,16 +96,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
                 if (genericParams == 0)
                 {
                     resolver
-                        .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration>()))
+                        .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration<SyntaxNode>>()))
                         .Returns(declarationMock.Object);
                     resolver
-                        .Setup(r => r.Resolve(declarationName, Array.Empty<IDeclarationUse>(), It.IsAny<IDeclaration>()))
+                        .Setup(r => r.Resolve(declarationName, Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
                         .Returns(declarationMock.Object);
                 }
                 else
                 {
                     resolver
-                        .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse>>(), It.IsAny<IDeclaration>()))
+                        .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
                         .Returns(declarationMock.Object);
                 }
             });
@@ -127,13 +128,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         }
 
         private static DeclarationUseWalker SetupDeclarationUseWalker(
-            Action<Mock<IGenericDeclaration>> contextSetup = null,
+            Action<Mock<IGenericDeclaration<SyntaxNode>>> contextSetup = null,
             Action<Mock<IDeclarationResolver>> resolverSetup = null)
         {
             var resolverMock = new Mock<IDeclarationResolver>();
             resolverSetup?.Invoke(resolverMock);
 
-            var declarationContextMock = new Mock<IGenericDeclaration>();
+            var declarationContextMock = new Mock<IGenericDeclaration<SyntaxNode>>();
             if (contextSetup != null)
             {
                 contextSetup(declarationContextMock);
@@ -149,7 +150,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         /// <summary>
         /// Setup a IGenericParameterDeclaration on the given generic declaration mock.
         /// </summary>
-        private static IGenericParameterDeclaration SetupGenericParameterDeclaration(Mock<IGenericDeclaration> genericDeclarationMock, string parameterName)
+        private static IGenericParameterDeclaration SetupGenericParameterDeclaration(Mock<IGenericDeclaration<SyntaxNode>> genericDeclarationMock, string parameterName)
         {
             if (parameterName != null)
             {

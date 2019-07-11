@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Enum declaration implementation.
     /// </summary>
-    public class EnumDeclaration : ADeclaration, IEnumDeclaration
+    public class EnumDeclaration : ADeclaration<EnumDeclarationSyntax>, IEnumDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EnumDeclaration"/> class.

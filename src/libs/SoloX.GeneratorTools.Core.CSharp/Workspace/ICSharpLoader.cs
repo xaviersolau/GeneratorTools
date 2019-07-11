@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -45,6 +46,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// </summary>
         /// <param name="resolver">The declaration resolver to resolve declaration dependencies.</param>
         /// <param name="declaration">The Declaration to load.</param>
-        void Load(IDeclarationResolver resolver, IDeclaration declaration);
+        void Load(IDeclarationResolver resolver, IDeclaration<SyntaxNode> declaration);
     }
 }

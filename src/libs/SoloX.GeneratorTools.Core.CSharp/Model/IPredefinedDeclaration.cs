@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
     /// <summary>
     /// Predefined declaration.
     /// </summary>
-    public interface IPredefinedDeclaration : IDeclaration
+    public interface IPredefinedDeclaration : IDeclaration<PredefinedTypeSyntax>
     {
     }
 }

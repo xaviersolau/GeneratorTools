@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
@@ -16,27 +17,27 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 {
-    internal class DeclarationUseWalker : CSharpSyntaxVisitor<IDeclarationUse>
+    internal class DeclarationUseWalker : CSharpSyntaxVisitor<IDeclarationUse<SyntaxNode>>
     {
         private readonly IDeclarationResolver resolver;
-        private readonly IGenericDeclaration genericDeclaration;
+        private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
-        public DeclarationUseWalker(IDeclarationResolver resolver, IGenericDeclaration genericDeclaration)
+        public DeclarationUseWalker(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
             this.resolver = resolver;
             this.genericDeclaration = genericDeclaration;
         }
 
-        public override IDeclarationUse VisitSimpleBaseType(SimpleBaseTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode> VisitSimpleBaseType(SimpleBaseTypeSyntax node)
         {
             return this.Visit(node.Type);
         }
 
-        public override IDeclarationUse VisitGenericName(GenericNameSyntax node)
+        public override IDeclarationUse<SyntaxNode> VisitGenericName(GenericNameSyntax node)
         {
             var identifier = node.Identifier.Text;
 
-            var tparams = new List<IDeclarationUse>();
+            var tparams = new List<IDeclarationUse<SyntaxNode>>();
             foreach (var item in node.TypeArgumentList.Arguments)
             {
                 tparams.Add(item.Accept(this));
@@ -52,11 +53,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return new UnknownGenericDeclarationUse(node, new UnknownDeclaration(identifier), tparams);
         }
 
-        public override IDeclarationUse VisitIdentifierName(IdentifierNameSyntax node)
+        public override IDeclarationUse<SyntaxNode> VisitIdentifierName(IdentifierNameSyntax node)
         {
             var identifier = node.Identifier.Text;
 
-            IDeclaration declaration = this.genericDeclaration.GenericParameters.FirstOrDefault(p => p.Name == identifier);
+            IDeclaration<SyntaxNode> declaration = this.genericDeclaration.GenericParameters.FirstOrDefault(p => p.Name == identifier);
             if (declaration != null)
             {
                 return new GenericParameterDeclarationUse(node, declaration);
@@ -66,9 +67,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             if (declaration != null)
             {
-                if (declaration is IGenericDeclaration genericDeclaration)
+                if (declaration is IGenericDeclaration<SyntaxNode> genericDeclaration)
                 {
-                    return new GenericDeclarationUse(node, genericDeclaration, Array.Empty<IDeclarationUse>());
+                    return new GenericDeclarationUse(node, genericDeclaration, Array.Empty<IDeclarationUse<SyntaxNode>>());
                 }
                 else
                 {
@@ -79,7 +80,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return new UnknownDeclarationUse(node, new UnknownDeclaration(identifier));
         }
 
-        public override IDeclarationUse VisitArrayType(ArrayTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode> VisitArrayType(ArrayTypeSyntax node)
         {
             var elementDeclarationUse = this.Visit(node.ElementType);
 
@@ -88,7 +89,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return elementDeclarationUse;
         }
 
-        public override IDeclarationUse VisitPredefinedType(PredefinedTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode> VisitPredefinedType(PredefinedTypeSyntax node)
         {
             return new PredefinedDeclarationUse(node, node.Keyword.Text);
         }

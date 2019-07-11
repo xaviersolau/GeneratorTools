@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -26,6 +27,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <summary>
         /// Gets the assembly declarations.
         /// </summary>
-        IReadOnlyCollection<IDeclaration> Declarations { get; }
+        IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; }
     }
 }

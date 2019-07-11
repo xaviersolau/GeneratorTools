@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 {
@@ -22,20 +24,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// </summary>
         /// <param name="syntaxNode">The predefined syntax node.</param>
         /// <param name="name">Predefined type name.</param>
-        public PredefinedDeclarationUse(CSharpSyntaxNode syntaxNode, string name)
+        public PredefinedDeclarationUse(PredefinedTypeSyntax syntaxNode, string name)
         {
             this.SyntaxNode = syntaxNode;
             this.Name = name;
         }
 
         /// <inheritdoc/>
-        public CSharpSyntaxNode SyntaxNode { get; }
+        public PredefinedTypeSyntax SyntaxNode { get; }
+
+        /// <inheritdoc/>
+        public ISyntaxNodeProvider<PredefinedTypeSyntax> SyntaxNodeProvider { get; }
 
         /// <inheritdoc/>
         public string DeclarationNameSpace => string.Empty;
 
         /// <inheritdoc/>
-        public IDeclaration Declaration => this;
+        public IDeclaration<SyntaxNode> Declaration => this;
 
         /// <inheritdoc/>
         public IArraySpecification ArraySpecification { get; set; }

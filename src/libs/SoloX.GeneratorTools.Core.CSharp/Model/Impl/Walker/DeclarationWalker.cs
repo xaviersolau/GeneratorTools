@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 {
@@ -21,11 +23,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly Stack<List<string>> usingDirectives =
             new Stack<List<string>>(new[] { new List<string>() });
 
-        private readonly IList<IDeclaration> declarations;
+        private readonly IList<IDeclaration<SyntaxNode>> declarations;
 
         private readonly string location;
 
-        public DeclarationWalker(IList<IDeclaration> declarations, string location)
+        public DeclarationWalker(IList<IDeclaration<SyntaxNode>> declarations, string location)
         {
             this.declarations = declarations;
             this.location = location;
@@ -44,7 +46,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         {
             var currentNameSpace = this.nameSpace.Peek();
 
-            this.nameSpace.Push(ADeclaration.GetFullName(currentNameSpace, node.Name.ToString()));
+            this.nameSpace.Push(ADeclaration<SyntaxNode>.GetFullName(currentNameSpace, node.Name.ToString()));
 
             var currentUsingDirectives = this.usingDirectives.Peek();
             this.usingDirectives.Push(new List<string>(currentUsingDirectives));
@@ -60,7 +62,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var interfaceDeclaration = new InterfaceDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
+            var interfaceDeclaration = new InterfaceDeclaration(
+                currentNameSpace,
+                node.Identifier.ToString(),
+                node,
+                currentUsingDirectives,
+                this.location,
+                ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
 
             this.declarations.Add(interfaceDeclaration);
         }
@@ -70,7 +78,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var classDeclaration = new ClassDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
+            var classDeclaration = new ClassDeclaration(
+                currentNameSpace,
+                node.Identifier.ToString(),
+                node,
+                currentUsingDirectives,
+                this.location,
+                ParserGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
 
             this.declarations.Add(classDeclaration);
         }
@@ -80,7 +94,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var structDeclaration = new StructDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
+            var structDeclaration = new StructDeclaration(
+                currentNameSpace,
+                node.Identifier.ToString(),
+                node,
+                currentUsingDirectives,
+                this.location,
+                ParserGenericDeclarationLoader<StructDeclarationSyntax>.Shared);
 
             this.declarations.Add(structDeclaration);
         }

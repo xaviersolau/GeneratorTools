@@ -8,9 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using Xunit;
@@ -28,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         {
             var resolverMock = new Mock<IDeclarationResolver>();
 
-            var use = ATypeGenericDeclaration.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -43,7 +44,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             var type = typeof(List<object>);
             var resolverMock = new Mock<IDeclarationResolver>();
 
-            var use = ATypeGenericDeclaration.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -56,11 +57,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         public void ResolvedTypeDeclarationUseTest()
         {
             var type = typeof(TypeGenericDeclarationUseTest);
-            var resolvedDeclaration = Mock.Of<IGenericDeclaration>();
+            var resolvedDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
             var resolverMock = new Mock<IDeclarationResolver>();
             resolverMock.Setup(r => r.Resolve(type)).Returns(resolvedDeclaration);
 
-            var use = ATypeGenericDeclaration.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);

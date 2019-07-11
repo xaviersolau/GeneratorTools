@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -64,9 +65,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var fileMock = new Mock<ICSharpFile>();
 
-            var declaration = DeclarationHelper.SetupDeclaration<IDeclaration>("nameSpace", "name");
+            var declaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>("nameSpace", "name");
 
-            fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration[] { declaration });
+            fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration<SyntaxNode>[] { declaration });
 
             factoryMock.Setup(f => f.CreateFile(It.IsAny<string>()))
                 .Returns<string>(f => fileMock.Object);

@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
 {
     /// <summary>
     /// Unknown declaration use.
     /// </summary>
-    public interface IUnknownDeclarationUse : IDeclarationUse
+    public interface IUnknownDeclarationUse : IDeclarationUse<IdentifierNameSyntax>
     {
     }
 }

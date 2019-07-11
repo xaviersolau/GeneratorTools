@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
@@ -16,12 +17,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Generic declaration interface.
     /// </summary>
-    public interface IGenericDeclaration : IDeclaration
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public interface IGenericDeclaration<out TNode>
+         : IDeclaration<TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the generic parameters syntax node.
+        /// Gets the declaration syntax node provider.
         /// </summary>
-        TypeParameterListSyntax TypeParameterListSyntax { get; }
+        ISyntaxNodeProvider<TypeParameterListSyntax> TypeParameterListSyntaxProvider { get; }
 
         /// <summary>
         /// Gets the generic parameters.
@@ -31,17 +35,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// <summary>
         /// Gets the extends list.
         /// </summary>
-        IReadOnlyCollection<IDeclarationUse> Extends { get; }
+        IReadOnlyCollection<IDeclarationUse<SyntaxNode>> Extends { get; }
 
         /// <summary>
         /// Gets the extended by list.
         /// </summary>
-        IReadOnlyCollection<IGenericDeclaration> ExtendedBy { get; }
+        IReadOnlyCollection<IGenericDeclaration<SyntaxNode>> ExtendedBy { get; }
 
         /// <summary>
         /// Gets the member list.
         /// </summary>
-        IReadOnlyCollection<IMemberDeclaration> Members { get; }
+        IReadOnlyCollection<IMemberDeclaration<SyntaxNode>> Members { get; }
 
         /// <summary>
         /// Gets the property list.
