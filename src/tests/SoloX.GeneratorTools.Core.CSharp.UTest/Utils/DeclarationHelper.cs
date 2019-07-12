@@ -56,7 +56,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             if (typeSourceCode != null)
             {
                 var typeNode = SyntaxTreeHelper.GetTypeSyntax(typeSourceCode);
-                propertyTypeMock.Setup(t => t.SyntaxNode).Returns(typeNode);
+                var nodeProvider = SyntaxTreeHelper.GetSyntaxNodeProvider(typeNode);
+                propertyTypeMock.Setup(t => t.SyntaxNodeProvider).Returns(nodeProvider);
             }
 
             setup?.Invoke(propertyTypeMock);

@@ -22,16 +22,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="PredefinedDeclarationUse"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The predefined syntax node.</param>
+        /// <param name="syntaxNodeProvider">The predefined syntax node provider.</param>
         /// <param name="name">Predefined type name.</param>
-        public PredefinedDeclarationUse(PredefinedTypeSyntax syntaxNode, string name)
+        public PredefinedDeclarationUse(ISyntaxNodeProvider<PredefinedTypeSyntax> syntaxNodeProvider, string name)
         {
-            this.SyntaxNode = syntaxNode;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
             this.Name = name;
         }
-
-        /// <inheritdoc/>
-        public PredefinedTypeSyntax SyntaxNode { get; }
 
         /// <inheritdoc/>
         public ISyntaxNodeProvider<PredefinedTypeSyntax> SyntaxNodeProvider { get; }

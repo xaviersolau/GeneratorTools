@@ -23,9 +23,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// Initializes a new instance of the <see cref="GenericParameterDeclaration"/> class.
         /// </summary>
         /// <param name="name">The declaration name.</param>
-        /// <param name="syntaxNode">The declaration syntax node.</param>
-        public GenericParameterDeclaration(string name, TypeParameterSyntax syntaxNode)
-            : base(string.Empty, name, syntaxNode, Array.Empty<string>(), null)
+        /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
+        public GenericParameterDeclaration(string name, ISyntaxNodeProvider<TypeParameterSyntax> syntaxNodeProvider)
+            : base(string.Empty, name, syntaxNodeProvider, Array.Empty<string>(), null)
         {
         }
 

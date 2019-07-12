@@ -27,12 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         string Name { get; }
 
         /// <summary>
-        /// Gets the member declaration syntax node.
-        /// </summary>
-        TNode SyntaxNode { get; }
-
-        /// <summary>
-        /// Gets the declaration syntax node provider.
+        /// Gets the member declaration syntax node provider.
         /// </summary>
         ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
     }

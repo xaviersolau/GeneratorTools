@@ -24,21 +24,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="nameSpace">The interface declaration name space.</param>
         /// <param name="name">The interface name.</param>
-        /// <param name="syntaxNode">The interface syntax node.</param>
+        /// <param name="syntaxNodeProvider">The interface syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this interface.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="loader">The interface declaration loader.</param>
         public InterfaceDeclaration(
             string nameSpace,
             string name,
-            InterfaceDeclarationSyntax syntaxNode,
+            ISyntaxNodeProvider<InterfaceDeclarationSyntax> syntaxNodeProvider,
             IReadOnlyList<string> usingDirectives,
             string location,
             AGenericDeclarationLoader<InterfaceDeclarationSyntax> loader)
             : base(
                   nameSpace,
                   name,
-                  syntaxNode,
+                  syntaxNodeProvider,
                   usingDirectives,
                   location,
                   loader)

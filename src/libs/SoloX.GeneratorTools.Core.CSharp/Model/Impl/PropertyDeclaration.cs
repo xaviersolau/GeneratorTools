@@ -25,9 +25,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="name">The member name.</param>
         /// <param name="propertyType">The property type use.</param>
-        /// <param name="syntaxNode">The property syntax.</param>
-        public PropertyDeclaration(string name, IDeclarationUse<SyntaxNode> propertyType, PropertyDeclarationSyntax syntaxNode)
-            : base(name, syntaxNode)
+        /// <param name="syntaxNodeProvider">The property syntax provider.</param>
+        public PropertyDeclaration(
+            string name,
+            IDeclarationUse<SyntaxNode> propertyType,
+            ISyntaxNodeProvider<PropertyDeclarationSyntax> syntaxNodeProvider)
+            : base(name, syntaxNodeProvider)
         {
             this.PropertyType = propertyType;
         }

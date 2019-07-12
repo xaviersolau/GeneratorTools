@@ -22,14 +22,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericDeclarationUse"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The declaration use syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
         /// <param name="genericParameters">The generic parameters.</param>
         public GenericDeclarationUse(
-            SimpleNameSyntax syntaxNode,
+            ISyntaxNodeProvider<SimpleNameSyntax> syntaxNodeProvider,
             IDeclaration<SyntaxNode> declaration,
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters)
-            : base(syntaxNode, declaration)
+            : base(syntaxNodeProvider, declaration)
         {
             this.GenericParameters = genericParameters;
         }

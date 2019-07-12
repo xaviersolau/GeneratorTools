@@ -60,7 +60,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     nameSpace,
                     writerSelector);
 
-                generatorWalker.Visit(this.implPattern.SyntaxNode.SyntaxTree.GetRoot());
+                generatorWalker.Visit(this.implPattern.SyntaxNodeProvider.SyntaxNode.SyntaxTree.GetRoot());
             });
             return (nameSpace, implName);
         }

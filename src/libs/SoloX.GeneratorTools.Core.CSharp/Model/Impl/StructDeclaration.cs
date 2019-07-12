@@ -24,21 +24,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="nameSpace">The structure declaration name space.</param>
         /// <param name="name">The structure name.</param>
-        /// <param name="syntaxNode">The structure syntax node.</param>
+        /// <param name="syntaxNodeProvider">The structure syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this structure.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="loader">The class description loader.</param>
         public StructDeclaration(
             string nameSpace,
             string name,
-            StructDeclarationSyntax syntaxNode,
+            ISyntaxNodeProvider<StructDeclarationSyntax> syntaxNodeProvider,
             IReadOnlyList<string> usingDirectives,
             string location,
             AGenericDeclarationLoader<StructDeclarationSyntax> loader)
             : base(
                   nameSpace,
                   name,
-                  syntaxNode,
+                  syntaxNodeProvider,
                   usingDirectives,
                   location,
                   loader)

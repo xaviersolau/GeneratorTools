@@ -24,18 +24,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// Initializes a new instance of the <see cref="AMemberDeclaration{TNode}"/> class.
         /// </summary>
         /// <param name="name">The member name.</param>
-        /// <param name="syntaxNode">The member syntax.</param>
-        protected AMemberDeclaration(string name, TNode syntaxNode)
+        /// <param name="syntaxNodeProvider">The member syntax node provider.</param>
+        protected AMemberDeclaration(string name, ISyntaxNodeProvider<TNode> syntaxNodeProvider)
         {
-            this.SyntaxNode = syntaxNode;
             this.Name = name;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
         }
 
         /// <inheritdoc/>
         public string Name { get; }
-
-        /// <inheritdoc/>
-        public TNode SyntaxNode { get; }
 
         /// <inheritdoc/>
         public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }

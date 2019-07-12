@@ -13,6 +13,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
 {
@@ -76,6 +78,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             var syntaxTree = CSharpSyntaxTree.ParseText(src);
 
             return syntaxTree.GetRoot();
+        }
+
+        public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)
+            where TNode : SyntaxNode
+        {
+            var nodeProviderMock = new Mock<ISyntaxNodeProvider<TNode>>();
+            nodeProviderMock.Setup(p => p.SyntaxNode).Returns(node);
+            return nodeProviderMock.Object;
         }
     }
 }

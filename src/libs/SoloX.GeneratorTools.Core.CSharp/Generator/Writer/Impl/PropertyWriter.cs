@@ -76,9 +76,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Type.ToFullString();
-                var itfType = this.itfPatternProperty.PropertyType.SyntaxNode.ToString();
+                var itfType = this.itfPatternProperty.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
-                var declType = itemProperties.PropertyType.SyntaxNode.ToString();
+                var declType = itemProperties.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
                 this.write(implType.Replace(itfType, declType));
 
@@ -116,9 +116,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Declaration.Type.ToFullString();
-                var itfType = this.itfPatternProperty.PropertyType.SyntaxNode.ToString();
+                var itfType = this.itfPatternProperty.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
-                var declType = itemProperties.PropertyType.SyntaxNode.ToString();
+                var declType = itemProperties.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
                 this.write(implType.Replace(itfType, declType));
 

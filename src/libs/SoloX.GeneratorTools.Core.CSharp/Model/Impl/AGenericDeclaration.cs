@@ -35,18 +35,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="nameSpace">The class declaration name space.</param>
         /// <param name="name">The declaration name.</param>
-        /// <param name="syntaxNode">The declaration syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="loader">The loader to use when deep loading the declaration.</param>
         protected AGenericDeclaration(
             string nameSpace,
             string name,
-            TNode syntaxNode,
+            ISyntaxNodeProvider<TNode> syntaxNodeProvider,
             IReadOnlyList<string> usingDirectives,
             string location,
             AGenericDeclarationLoader<TNode> loader)
-            : base(nameSpace, name, syntaxNode, usingDirectives, location)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location)
         {
             this.loader = loader;
         }

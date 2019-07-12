@@ -62,7 +62,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(
             AGenericDeclaration<TNode> declaration)
         {
-            return new ParserSyntaxNodeProvider<TypeParameterListSyntax>(TypeParameterListGetter(declaration.SyntaxNode));
+            return new ParserSyntaxNodeProvider<TypeParameterListSyntax>(
+                TypeParameterListGetter(declaration.SyntaxNodeProvider.SyntaxNode));
         }
 
         /// <summary>
@@ -70,13 +71,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
         /// </summary>
         private void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
-            var parameterList = TypeParameterListGetter(declaration.SyntaxNode);
+            var parameterList = TypeParameterListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
             if (parameterList != null)
             {
                 var parameterSet = new List<IGenericParameterDeclaration>();
                 foreach (var parameter in parameterList.Parameters)
                 {
-                    parameterSet.Add(new GenericParameterDeclaration(parameter.Identifier.Text, parameter));
+                    parameterSet.Add(new GenericParameterDeclaration(
+                        parameter.Identifier.Text,
+                        new ParserSyntaxNodeProvider<TypeParameterSyntax>(parameter)));
                 }
 
                 declaration.GenericParameters = parameterSet;
@@ -96,7 +99,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
             AGenericDeclaration<TNode> declaration,
             IDeclarationResolver resolver)
         {
-            BaseListSyntax baseListSyntax = BaseListGetter(declaration.SyntaxNode);
+            BaseListSyntax baseListSyntax = BaseListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
 
             if (baseListSyntax != null)
             {
@@ -133,7 +136,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
             var memberList = new List<IMemberDeclaration<SyntaxNode>>();
             var membersWalker = new MembersWalker(resolver, declaration, memberList);
 
-            membersWalker.Visit(declaration.SyntaxNode);
+            membersWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }

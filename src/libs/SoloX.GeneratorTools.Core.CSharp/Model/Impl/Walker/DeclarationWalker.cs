@@ -64,8 +64,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var interfaceDeclaration = new InterfaceDeclaration(
                 currentNameSpace,
-                node.Identifier.ToString(),
-                node,
+                node.Identifier.Text,
+                new ParserSyntaxNodeProvider<InterfaceDeclarationSyntax>(node),
                 currentUsingDirectives,
                 this.location,
                 ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
@@ -81,7 +81,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var classDeclaration = new ClassDeclaration(
                 currentNameSpace,
                 node.Identifier.ToString(),
-                node,
+                new ParserSyntaxNodeProvider<ClassDeclarationSyntax>(node),
                 currentUsingDirectives,
                 this.location,
                 ParserGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
@@ -97,7 +97,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var structDeclaration = new StructDeclaration(
                 currentNameSpace,
                 node.Identifier.ToString(),
-                node,
+                new ParserSyntaxNodeProvider<StructDeclarationSyntax>(node),
                 currentUsingDirectives,
                 this.location,
                 ParserGenericDeclarationLoader<StructDeclarationSyntax>.Shared);
@@ -110,7 +110,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var enumDeclaration = new EnumDeclaration(currentNameSpace, node, currentUsingDirectives, this.location);
+            var enumDeclaration = new EnumDeclaration(
+                currentNameSpace,
+                node.Identifier.Text,
+                new ParserSyntaxNodeProvider<EnumDeclarationSyntax>(node),
+                currentUsingDirectives,
+                this.location);
 
             this.declarations.Add(enumDeclaration);
         }

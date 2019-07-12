@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
@@ -47,20 +48,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             if (genericDeclaration != null)
             {
-                return new GenericDeclarationUse(node, genericDeclaration, tparams);
+                return new GenericDeclarationUse(
+                    new ParserSyntaxNodeProvider<GenericNameSyntax>(node),
+                    genericDeclaration,
+                    tparams);
             }
 
-            return new UnknownGenericDeclarationUse(node, new UnknownDeclaration(identifier), tparams);
+            return new UnknownGenericDeclarationUse(
+                new ParserSyntaxNodeProvider<GenericNameSyntax>(node),
+                new UnknownDeclaration(identifier),
+                tparams);
         }
 
         public override IDeclarationUse<SyntaxNode> VisitIdentifierName(IdentifierNameSyntax node)
         {
             var identifier = node.Identifier.Text;
 
-            IDeclaration<SyntaxNode> declaration = this.genericDeclaration.GenericParameters.FirstOrDefault(p => p.Name == identifier);
+            IDeclaration<SyntaxNode> declaration = this.genericDeclaration.GenericParameters
+                .FirstOrDefault(p => p.Name == identifier);
             if (declaration != null)
             {
-                return new GenericParameterDeclarationUse(node, declaration);
+                return new GenericParameterDeclarationUse(
+                    new ParserSyntaxNodeProvider<IdentifierNameSyntax>(node),
+                    declaration);
             }
 
             declaration = this.resolver.Resolve(identifier, this.genericDeclaration);
@@ -69,15 +79,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             {
                 if (declaration is IGenericDeclaration<SyntaxNode> genericDeclaration)
                 {
-                    return new GenericDeclarationUse(node, genericDeclaration, Array.Empty<IDeclarationUse<SyntaxNode>>());
+                    return new GenericDeclarationUse(
+                        new ParserSyntaxNodeProvider<IdentifierNameSyntax>(node),
+                        genericDeclaration,
+                        Array.Empty<IDeclarationUse<SyntaxNode>>());
                 }
                 else
                 {
-                    return new BasicDeclarationUse(node, declaration);
+                    return new BasicDeclarationUse(new ParserSyntaxNodeProvider<IdentifierNameSyntax>(node), declaration);
                 }
             }
 
-            return new UnknownDeclarationUse(node, new UnknownDeclaration(identifier));
+            return new UnknownDeclarationUse(
+                new ParserSyntaxNodeProvider<IdentifierNameSyntax>(node),
+                new UnknownDeclaration(identifier));
         }
 
         public override IDeclarationUse<SyntaxNode> VisitArrayType(ArrayTypeSyntax node)
@@ -91,7 +106,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
         public override IDeclarationUse<SyntaxNode> VisitPredefinedType(PredefinedTypeSyntax node)
         {
-            return new PredefinedDeclarationUse(node, node.Keyword.Text);
+            return new PredefinedDeclarationUse(
+                new ParserSyntaxNodeProvider<PredefinedTypeSyntax>(node),
+                node.Keyword.Text);
         }
     }
 }

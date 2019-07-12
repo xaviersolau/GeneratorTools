@@ -17,9 +17,5 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// </summary>
     public interface IEnumDeclaration : IDeclaration<EnumDeclarationSyntax>
     {
-        /// <summary>
-        /// Gets the EnumDeclarationSyntax.
-        /// </summary>
-        EnumDeclarationSyntax EnumDeclarationSyntax { get; }
     }
 }

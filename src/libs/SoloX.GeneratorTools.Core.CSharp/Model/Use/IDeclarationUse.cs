@@ -21,9 +21,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
         where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the declaration use syntax node.
+        /// Gets the declaration use syntax node provider.
         /// </summary>
-        TNode SyntaxNode { get; }
+        ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <summary>
         /// Gets the declaration in use.

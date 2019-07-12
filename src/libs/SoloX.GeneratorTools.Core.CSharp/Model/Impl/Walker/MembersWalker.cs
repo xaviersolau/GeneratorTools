@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 
@@ -36,7 +37,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
 
-            this.memberList.Add(new PropertyDeclaration(identifier, use, node));
+            this.memberList.Add(new PropertyDeclaration(
+                identifier,
+                use,
+                new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(node)));
         }
     }
 }

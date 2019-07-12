@@ -23,16 +23,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="ADeclarationUse{TNode}"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The declaration use syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
-        protected ADeclarationUse(TNode syntaxNode, IDeclaration<SyntaxNode> declaration)
+        protected ADeclarationUse(ISyntaxNodeProvider<TNode> syntaxNodeProvider, IDeclaration<SyntaxNode> declaration)
         {
-            this.SyntaxNode = syntaxNode;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
             this.Declaration = declaration;
         }
 
         /// <inheritdoc/>
-        public TNode SyntaxNode { get; }
+        public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <inheritdoc/>
         public IDeclaration<SyntaxNode> Declaration { get; }

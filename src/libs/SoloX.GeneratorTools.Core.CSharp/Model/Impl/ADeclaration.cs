@@ -58,14 +58,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="nameSpace">The declaration name space.</param>
         /// <param name="name">The declaration name.</param>
-        /// <param name="syntaxNode">The declaration syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
-        protected ADeclaration(string nameSpace, string name, TNode syntaxNode, IReadOnlyList<string> usingDirectives, string location)
+        protected ADeclaration(
+            string nameSpace,
+            string name,
+            ISyntaxNodeProvider<TNode> syntaxNodeProvider,
+            IReadOnlyList<string> usingDirectives,
+            string location)
         {
             this.DeclarationNameSpace = nameSpace;
             this.Name = name;
-            this.SyntaxNode = syntaxNode;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
             this.UsingDirectives = usingDirectives;
             this.FullName = GetFullName(nameSpace, name);
             this.Location = location;
@@ -79,9 +84,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public string FullName { get; }
-
-        /// <inheritdoc/>
-        public TNode SyntaxNode { get; }
 
         /// <inheritdoc/>
         public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }

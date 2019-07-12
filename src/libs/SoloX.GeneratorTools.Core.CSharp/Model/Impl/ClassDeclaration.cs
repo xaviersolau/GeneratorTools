@@ -24,21 +24,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="nameSpace">The class declaration name space.</param>
         /// <param name="name">The class name.</param>
-        /// <param name="syntaxNode">The class syntax node.</param>
+        /// <param name="syntaxNodeProvider">The class syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="loader">The class description loader.</param>
         public ClassDeclaration(
             string nameSpace,
             string name,
-            ClassDeclarationSyntax syntaxNode,
+            ISyntaxNodeProvider<ClassDeclarationSyntax> syntaxNodeProvider,
             IReadOnlyList<string> usingDirectives,
             string location,
             AGenericDeclarationLoader<ClassDeclarationSyntax> loader)
             : base(
                   nameSpace,
                   name,
-                  syntaxNode,
+                  syntaxNodeProvider,
                   usingDirectives,
                   location,
                   loader)
