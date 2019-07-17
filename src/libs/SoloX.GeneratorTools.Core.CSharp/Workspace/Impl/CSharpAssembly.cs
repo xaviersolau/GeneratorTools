@@ -56,15 +56,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 if (type.IsInterface)
                 {
-                    var typeInterfaceDeclaration = new InterfaceDeclaration(
-                        type.Namespace,
-                        ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.GetNameWithoutGeneric(type.Name),
-                        null,
-                        Array.Empty<string>(),
-                        this.Assembly.Location,
-                        ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
-
-                    typeInterfaceDeclaration.DeclarationType = type;
+                    var typeInterfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(type);
 
                     declarations.Add(typeInterfaceDeclaration);
                 }

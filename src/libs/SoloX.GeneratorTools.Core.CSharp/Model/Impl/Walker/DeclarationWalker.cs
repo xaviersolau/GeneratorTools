@@ -62,13 +62,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var interfaceDeclaration = new InterfaceDeclaration(
+            var interfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(
                 currentNameSpace,
-                node.Identifier.Text,
-                new ParserSyntaxNodeProvider<InterfaceDeclarationSyntax>(node),
                 currentUsingDirectives,
-                this.location,
-                ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
+                node,
+                this.location);
 
             this.declarations.Add(interfaceDeclaration);
         }
@@ -78,13 +76,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var classDeclaration = new ClassDeclaration(
+            var classDeclaration = DeclarationFactory.CreateClassDeclaration(
                 currentNameSpace,
-                node.Identifier.ToString(),
-                new ParserSyntaxNodeProvider<ClassDeclarationSyntax>(node),
                 currentUsingDirectives,
-                this.location,
-                ParserGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
+                node,
+                this.location);
 
             this.declarations.Add(classDeclaration);
         }
@@ -94,13 +90,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var structDeclaration = new StructDeclaration(
+            var structDeclaration = DeclarationFactory.CreateStructDeclaration(
                 currentNameSpace,
-                node.Identifier.ToString(),
-                new ParserSyntaxNodeProvider<StructDeclarationSyntax>(node),
                 currentUsingDirectives,
-                this.location,
-                ParserGenericDeclarationLoader<StructDeclarationSyntax>.Shared);
+                node,
+                this.location);
 
             this.declarations.Add(structDeclaration);
         }
@@ -110,11 +104,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var enumDeclaration = new EnumDeclaration(
+            var enumDeclaration = DeclarationFactory.CreateEnumDeclaration(
                 currentNameSpace,
-                node.Identifier.Text,
-                new ParserSyntaxNodeProvider<EnumDeclarationSyntax>(node),
                 currentUsingDirectives,
+                node,
                 this.location);
 
             this.declarations.Add(enumDeclaration);
