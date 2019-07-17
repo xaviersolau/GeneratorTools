@@ -12,7 +12,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl

@@ -16,7 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
+namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 {
     internal class ReflectionGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
         where TNode : SyntaxNode

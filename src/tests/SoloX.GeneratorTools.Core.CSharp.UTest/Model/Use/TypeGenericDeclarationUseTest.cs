@@ -11,7 +11,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using Xunit;

@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker

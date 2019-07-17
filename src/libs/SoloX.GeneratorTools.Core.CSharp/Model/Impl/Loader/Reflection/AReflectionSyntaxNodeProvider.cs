@@ -18,7 +18,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader
+namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 {
     internal abstract class AReflectionSyntaxNodeProvider<TNode> : ISyntaxNodeProvider<TNode>
         where TNode : SyntaxNode

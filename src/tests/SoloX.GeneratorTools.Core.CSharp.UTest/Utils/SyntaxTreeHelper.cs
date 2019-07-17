@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
 {
