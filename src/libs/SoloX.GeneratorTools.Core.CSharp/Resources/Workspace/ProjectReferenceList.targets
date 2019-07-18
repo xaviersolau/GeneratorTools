@@ -1,7 +1,0 @@
-﻿<Project>
-
-  <Target Name="ProjectReferenceList">
-    <Message Importance="high" Text="@(ProjectReference)" />
-  </Target>
-
-</Project>
