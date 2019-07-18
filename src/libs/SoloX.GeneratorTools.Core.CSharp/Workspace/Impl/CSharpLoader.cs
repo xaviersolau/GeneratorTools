@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -38,7 +39,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public void Load(IDeclarationResolver resolver, IDeclaration declaration)
+        public void Load(IDeclarationResolver resolver, IDeclaration<SyntaxNode> declaration)
         {
             ((ADeclaration)declaration).Load(resolver);
         }

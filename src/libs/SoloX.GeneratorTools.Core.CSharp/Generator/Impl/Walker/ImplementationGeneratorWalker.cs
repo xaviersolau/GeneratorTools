@@ -26,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly TextWriter writer;
         private readonly Func<string, string> textSubstitutionHandler;
         private readonly IInterfaceDeclaration itfPattern;
-        private readonly IGenericDeclaration implPattern;
+        private readonly IGenericDeclaration<SyntaxNode> implPattern;
         private readonly IInterfaceDeclaration declaration;
         private readonly string implName;
         private readonly string implNameSpace;
@@ -48,7 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public ImplementationGeneratorWalker(
             TextWriter writer,
             IInterfaceDeclaration itfPattern,
-            IGenericDeclaration implPattern,
+            IGenericDeclaration<SyntaxNode> implPattern,
             IInterfaceDeclaration itfDeclaration,
             string implName,
             string implNameSpace,

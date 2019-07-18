@@ -5,10 +5,14 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 {
@@ -32,7 +36,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public Assembly Assembly { get; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IDeclaration> Declarations { get; private set; }
+        public IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; private set; }
 
         /// <summary>
         /// Load assembly declarations.
@@ -46,13 +50,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             this.isLoaded = true;
 
-            var declarations = new List<IDeclaration>();
+            var declarations = new List<IDeclaration<SyntaxNode>>();
 
             foreach (var type in this.Assembly.GetExportedTypes())
             {
                 if (type.IsInterface)
                 {
-                    var typeInterfaceDeclaration = new TypeInterfaceDeclaration(type);
+                    var typeInterfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(type);
+
                     declarations.Add(typeInterfaceDeclaration);
                 }
             }

@@ -1,7 +1,0 @@
-﻿<Project>
-
-  <Target Name="ProjectAssetsFilePath">
-    <Message Importance="high" Text="$(ProjectAssetsFile)" />
-  </Target>
-
-</Project>

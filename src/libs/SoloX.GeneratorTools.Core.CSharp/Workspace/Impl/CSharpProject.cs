@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets;
 
@@ -23,11 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpProject : ICSharpProject
     {
-        private const string CompileList = "CompileList";
-        private const string ProjectReferenceList = "ProjectReferenceList";
-        private const string ProjectRootNameSpace = "ProjectRootNameSpace";
-        private const string PackageReferenceList = "PackageReferenceList";
-        private const string ProjectAssetsFilePath = "ProjectAssetsFilePath";
+        private const string ProjectData = "ProjectData";
 
         private const string DotNet = "dotnet";
 
@@ -81,16 +78,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             this.DotNetRestore();
 
-            // Get the project root name space
-            this.RootNameSpace = this.DeployAndRunTarget(ProjectRootNameSpace).Trim();
+            // Get the project data.
+            var projectDataStr = this.DeployAndRunTarget(ProjectData);
+            projectDataStr = projectDataStr.Replace(@"\", @"/");
 
-            // Get the project references.
-            var projectReferenceList = this.DeployAndRunTarget(ProjectReferenceList);
+            var projectData = JsonConvert.DeserializeObject<CSharpProjectData>(projectDataStr);
 
-            // Get the project references.
-            var packageReferenceList = this.DeployAndRunTarget(PackageReferenceList);
+            this.RootNameSpace = projectData.RootNamespace;
 
-            var projectAssetsFilePath = this.DeployAndRunTarget(ProjectAssetsFilePath).Trim();
+            var projectAssetsFilePath = projectData.ProjectAssetsFile;
 
             var projectAssets = JsonConvert.DeserializeObject<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
 
@@ -104,10 +100,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             this.Assemblies = assemblies;
 
+            // Get the project references.
             this.ProjectReferences = (
-                from project in projectReferenceList.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                select workspace.RegisterProject(PathHelper.ResolveRelativePath(this.ProjectPath, project.Trim())))
-                .ToArray();
+               from project in projectData.ProjectReferences
+               select workspace.RegisterProject(PathHelper.ResolveRelativePath(this.ProjectPath, project)))
+               .ToArray();
 
             // Make sure the project references are loaded.
             foreach (var projectItem in this.ProjectReferences)
@@ -116,11 +113,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
 
             // Once project references are loaded, we can get the files to compile.
-            var fileList = this.DeployAndRunTarget(CompileList);
-
             this.Files = (
-                from file in fileList.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                select workspace.RegisterFile(PathHelper.ResolveRelativePath(this.ProjectPath, file.Trim())))
+                from file in projectData.CompileList
+                select workspace.RegisterFile(PathHelper.ResolveRelativePath(this.ProjectPath, file)))
                 .ToArray();
         }
 
@@ -185,7 +180,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                     throw new FormatException($"Unable to load project file: dotnet exit code is {process.ExitCode} ({rawError})");
                 }
 
-                return process.StandardOutput.ReadToEnd().TrimEnd('\n', '\r');
+                return process.StandardOutput.ReadToEnd();
             }
         }
 

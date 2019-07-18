@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
@@ -30,7 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             Assert.Same(assembly, csAssembly.Assembly);
             var decl = Assert.Single(csAssembly.Declarations.Where(d => d.Name == nameof(BasicInterface)));
 
-            var typeItfDecl = Assert.IsType<TypeInterfaceDeclaration>(decl);
+            var typeItfDecl = Assert.IsType<InterfaceDeclaration>(decl);
 
             Assert.Same(typeof(BasicInterface), typeItfDecl.DeclarationType);
         }

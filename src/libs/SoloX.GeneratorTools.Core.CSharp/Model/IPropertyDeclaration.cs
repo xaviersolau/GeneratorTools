@@ -8,6 +8,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
@@ -15,11 +17,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Property declaration interface.
     /// </summary>
-    public interface IPropertyDeclaration : IMemberDeclaration
+    public interface IPropertyDeclaration : IMemberDeclaration<PropertyDeclarationSyntax>
     {
         /// <summary>
         /// Gets the property type.
         /// </summary>
-        IDeclarationUse PropertyType { get; }
+        IDeclarationUse<SyntaxNode> PropertyType { get; }
     }
 }

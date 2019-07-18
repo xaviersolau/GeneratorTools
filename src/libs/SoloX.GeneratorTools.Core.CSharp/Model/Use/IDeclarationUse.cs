@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
@@ -15,17 +16,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
     /// <summary>
     /// Declaration use interface.
     /// </summary>
-    public interface IDeclarationUse
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public interface IDeclarationUse<out TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the declaration use syntax node.
+        /// Gets the declaration use syntax node provider.
         /// </summary>
-        CSharpSyntaxNode SyntaxNode { get; }
+        ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <summary>
         /// Gets the declaration in use.
         /// </summary>
-        IDeclaration Declaration { get; }
+        IDeclaration<SyntaxNode> Declaration { get; }
 
         /// <summary>
         /// Gets array specification.

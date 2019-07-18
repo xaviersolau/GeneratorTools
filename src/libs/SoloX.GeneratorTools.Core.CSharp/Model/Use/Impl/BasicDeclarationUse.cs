@@ -8,22 +8,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 {
     /// <summary>
     /// Basic declaration use implementation.
     /// </summary>
-    public class BasicDeclarationUse : ADeclarationUse, IBasicDeclarationUse
+    public class BasicDeclarationUse : ADeclarationUse<IdentifierNameSyntax>, IBasicDeclarationUse
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicDeclarationUse"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The declaration use syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
-        public BasicDeclarationUse(CSharpSyntaxNode syntaxNode, IDeclaration declaration)
-            : base(syntaxNode, declaration)
+        public BasicDeclarationUse(
+            ISyntaxNodeProvider<IdentifierNameSyntax> syntaxNodeProvider,
+            IDeclaration<SyntaxNode> declaration)
+            : base(syntaxNodeProvider, declaration)
         {
         }
     }

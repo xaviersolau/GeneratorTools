@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 {
@@ -20,12 +22,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="UnknownGenericDeclarationUse"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The declaration use syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
         /// <param name="genericParameters">The generic parameters.</param>
         public UnknownGenericDeclarationUse(
-            CSharpSyntaxNode syntaxNode, IDeclaration declaration, IReadOnlyCollection<IDeclarationUse> genericParameters)
-            : base(syntaxNode, declaration, genericParameters)
+            ISyntaxNodeProvider<SimpleNameSyntax> syntaxNodeProvider,
+            IDeclaration<SyntaxNode> declaration,
+            IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters)
+            : base(syntaxNodeProvider, declaration, genericParameters)
         {
         }
     }

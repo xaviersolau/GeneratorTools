@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
@@ -16,7 +17,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Member declaration base interface.
     /// </summary>
-    public interface IMemberDeclaration
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public interface IMemberDeclaration<out TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
         /// Gets the member name.
@@ -24,8 +27,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         string Name { get; }
 
         /// <summary>
-        /// Gets the member declaration syntax node.
+        /// Gets the member declaration syntax node provider.
         /// </summary>
-        CSharpSyntaxNode SyntaxNode { get; }
+        ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
     }
 }

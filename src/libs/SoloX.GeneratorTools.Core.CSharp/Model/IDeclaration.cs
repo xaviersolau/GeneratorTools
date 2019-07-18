@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
@@ -15,7 +16,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Base Declaration interface describing CSharp class, interface, enum...
     /// </summary>
-    public interface IDeclaration
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public interface IDeclaration<out TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
         /// Gets the declaration name space.
@@ -33,9 +36,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         string FullName { get; }
 
         /// <summary>
-        /// Gets the declaration syntax node.
+        /// Gets the declaration syntax node provider.
         /// </summary>
-        CSharpSyntaxNode SyntaxNode { get; }
+        ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <summary>
         /// Gets the using directives for the current declaration.

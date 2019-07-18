@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
@@ -15,24 +16,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
     /// <summary>
     /// Declaration use base implementation.
     /// </summary>
-    public abstract class ADeclarationUse : IDeclarationUse, IArrayDeclarationUseImpl
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public abstract class ADeclarationUse<TNode> : IDeclarationUse<TNode>, IArrayDeclarationUseImpl
+        where TNode : SyntaxNode
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ADeclarationUse"/> class.
+        /// Initializes a new instance of the <see cref="ADeclarationUse{TNode}"/> class.
         /// </summary>
-        /// <param name="syntaxNode">The declaration use syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
-        protected ADeclarationUse(CSharpSyntaxNode syntaxNode, IDeclaration declaration)
+        protected ADeclarationUse(ISyntaxNodeProvider<TNode> syntaxNodeProvider, IDeclaration<SyntaxNode> declaration)
         {
-            this.SyntaxNode = syntaxNode;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
             this.Declaration = declaration;
         }
 
         /// <inheritdoc/>
-        public CSharpSyntaxNode SyntaxNode { get; }
+        public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <inheritdoc/>
-        public IDeclaration Declaration { get; }
+        public IDeclaration<SyntaxNode> Declaration { get; }
 
         /// <inheritdoc/>
         public IArraySpecification ArraySpecification { get; set; }

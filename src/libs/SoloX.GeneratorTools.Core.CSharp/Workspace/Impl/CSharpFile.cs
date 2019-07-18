@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
@@ -44,7 +45,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public string FilePath { get; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IDeclaration> Declarations { get; private set; }
+        public IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; private set; }
 
         /// <summary>
         /// Load the CSharp file.
@@ -58,7 +59,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             this.isLoaded = true;
 
-            var declarations = new List<IDeclaration>();
+            var declarations = new List<IDeclaration<SyntaxNode>>();
             var location = Path.Combine(this.FilePath, this.FileName);
             CSharpFileReader.Read(location, new DeclarationWalker(declarations, location));
 

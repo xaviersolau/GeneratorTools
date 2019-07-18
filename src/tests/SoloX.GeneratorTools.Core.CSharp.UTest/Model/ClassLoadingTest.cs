@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
@@ -145,7 +146,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
             }
         }
 
-        private static IDeclarationResolver SetupDeclarationResolver(IDeclaration contextDeclaration, params string[] classNames)
+        private static IDeclarationResolver SetupDeclarationResolver(IDeclaration<SyntaxNode> contextDeclaration, params string[] classNames)
         {
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             foreach (var className in classNames)
@@ -153,10 +154,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
                 var classFile = new CSharpFile(className.ToBasicPath());
                 classFile.Load();
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
-                if (classDeclarationSingle is IGenericDeclaration genericDeclaration && genericDeclaration.TypeParameterListSyntax != null)
+                if (classDeclarationSingle is IGenericDeclaration<SyntaxNode> genericDeclaration
+                    && genericDeclaration.TypeParameterListSyntaxProvider.SyntaxNode != null)
                 {
                     declarationResolverMock
-                        .Setup(dr => dr.Resolve(genericDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse>>(), contextDeclaration))
+                        .Setup(dr => dr.Resolve(genericDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), contextDeclaration))
                         .Returns(genericDeclaration);
                 }
                 else

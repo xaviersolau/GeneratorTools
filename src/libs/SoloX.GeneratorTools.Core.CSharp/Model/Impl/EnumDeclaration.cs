@@ -16,23 +16,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Enum declaration implementation.
     /// </summary>
-    public class EnumDeclaration : ADeclaration, IEnumDeclaration
+    public class EnumDeclaration : ADeclaration<EnumDeclarationSyntax>, IEnumDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EnumDeclaration"/> class.
         /// </summary>
         /// <param name="nameSpace">The enum declaration name space.</param>
-        /// <param name="syntaxNode">The enum syntax node.</param>
+        /// <param name="name">The declaration name.</param>
+        /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this enum.</param>
         /// <param name="location">The location of the declaration.</param>
-        public EnumDeclaration(string nameSpace, EnumDeclarationSyntax syntaxNode, IReadOnlyList<string> usingDirectives, string location)
-            : base(nameSpace, syntaxNode.Identifier.ToString(), syntaxNode, usingDirectives, location)
+        public EnumDeclaration(
+            string nameSpace,
+            string name,
+            ISyntaxNodeProvider<EnumDeclarationSyntax> syntaxNodeProvider,
+            IReadOnlyList<string> usingDirectives,
+            string location)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location)
         {
-            this.EnumDeclarationSyntax = syntaxNode;
         }
-
-        /// <inheritdoc/>
-        public EnumDeclarationSyntax EnumDeclarationSyntax { get; }
 
         /// <inheritdoc/>
         protected override void LoadImpl(IDeclarationResolver resolver)

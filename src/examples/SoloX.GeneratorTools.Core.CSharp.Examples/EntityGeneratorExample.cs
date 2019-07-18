@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
@@ -60,14 +61,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             // Register the pattern implementation.
             var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/EntityPattern.cs")
-                .Declarations.Single() as IGenericDeclaration;
+                .Declarations.Single() as IGenericDeclaration<SyntaxNode>;
 
             // Load the project and its project dependencies. (Note that for now we only load the sources.
             // The binary assembly dependencies are not taken into account)
             var resolver = this.workspace.DeepLoad();
 
             // Get the base interface in order to find all extended interfaces that need to be implemented.
-            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IEntityBase").Single() as IGenericDeclaration;
+            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IEntityBase").Single() as IGenericDeclaration<SyntaxNode>;
 
             // Setup a locator that will tell the location where the generated classes must be written.
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");

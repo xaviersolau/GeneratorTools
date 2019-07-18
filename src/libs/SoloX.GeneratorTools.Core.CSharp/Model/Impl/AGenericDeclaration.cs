@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
@@ -22,48 +23,56 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Base abstract generic declaration implementation.
     /// </summary>
-    public abstract class AGenericDeclaration : ADeclaration, IGenericDeclaration
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public abstract class AGenericDeclaration<TNode> : ADeclaration<TNode>, IGenericDeclaration<TNode>, IGenericDeclarationImpl
+        where TNode : SyntaxNode
     {
-        private readonly List<IGenericDeclaration> extendedBy = new List<IGenericDeclaration>();
+        private readonly List<IGenericDeclaration<SyntaxNode>> extendedBy = new List<IGenericDeclaration<SyntaxNode>>();
+        private readonly AGenericDeclarationLoader<TNode> loader;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AGenericDeclaration"/> class.
+        /// Initializes a new instance of the <see cref="AGenericDeclaration{TNode}"/> class.
         /// </summary>
         /// <param name="nameSpace">The class declaration name space.</param>
         /// <param name="name">The declaration name.</param>
-        /// <param name="syntaxNode">The declaration syntax node.</param>
-        /// <param name="typeParameterListSyntax">The type parameter list syntax node.</param>
+        /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
+        /// <param name="loader">The loader to use when deep loading the declaration.</param>
         protected AGenericDeclaration(
             string nameSpace,
             string name,
-            CSharpSyntaxNode syntaxNode,
-            TypeParameterListSyntax typeParameterListSyntax,
+            ISyntaxNodeProvider<TNode> syntaxNodeProvider,
             IReadOnlyList<string> usingDirectives,
-            string location)
-            : base(nameSpace, name, syntaxNode, usingDirectives, location)
+            string location,
+            AGenericDeclarationLoader<TNode> loader)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location)
         {
-            this.TypeParameterListSyntax = typeParameterListSyntax;
+            this.loader = loader;
         }
 
         /// <inheritdoc/>
-        public TypeParameterListSyntax TypeParameterListSyntax { get; }
+        public ISyntaxNodeProvider<TypeParameterListSyntax> TypeParameterListSyntaxProvider
+            => this.loader.GetTypeParameterListSyntaxProvider(this);
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IGenericParameterDeclaration> GenericParameters { get; private set; }
+        public IReadOnlyCollection<IGenericParameterDeclaration> GenericParameters { get; internal set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IDeclarationUse> Extends { get; private set; }
+        public IReadOnlyCollection<IDeclarationUse<SyntaxNode>> Extends { get; internal set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IGenericDeclaration> ExtendedBy => this.extendedBy;
+        public IReadOnlyCollection<IGenericDeclaration<SyntaxNode>> ExtendedBy
+            => this.extendedBy;
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IMemberDeclaration> Members { get; private set; }
+        public IReadOnlyCollection<IMemberDeclaration<SyntaxNode>> Members { get; internal set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IPropertyDeclaration> Properties { get; private set; }
+        public IReadOnlyCollection<IPropertyDeclaration> Properties
+            => this.Members.OfType<IPropertyDeclaration>().ToArray();
+
+        internal Type DeclarationType { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -76,78 +85,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             return base.ToString();
         }
 
-        /// <summary>
-        /// Load the generic parameters from the type parameter list node.
-        /// </summary>
-        protected void LoadGenericParameters()
-        {
-            var parameterList = this.TypeParameterListSyntax;
-            if (parameterList != null)
-            {
-                var parameterSet = new List<IGenericParameterDeclaration>();
-                foreach (var parameter in parameterList.Parameters)
-                {
-                    parameterSet.Add(new GenericParameterDeclaration(parameter.Identifier.Text, parameter));
-                }
-
-                this.GenericParameters = parameterSet;
-            }
-            else
-            {
-                this.GenericParameters = Array.Empty<IGenericParameterDeclaration>();
-            }
-        }
-
-        /// <summary>
-        /// Load extends statement list.
-        /// </summary>
-        /// <param name="resolver">The resolver to resolve dependencies.</param>
-        /// <param name="baseListSyntax">The base list syntax.</param>
-        protected void LoadExtends(IDeclarationResolver resolver, BaseListSyntax baseListSyntax)
-        {
-            if (baseListSyntax != null)
-            {
-                var baseWalker = new DeclarationUseWalker(resolver, this);
-                var uses = new List<IDeclarationUse>();
-
-                foreach (var node in baseListSyntax.ChildNodes())
-                {
-                    var use = baseWalker.Visit(node);
-
-                    if (use.Declaration is AGenericDeclaration agd)
-                    {
-                        agd.AddExtendedBy(this);
-                    }
-
-                    uses.Add(use);
-                }
-
-                this.Extends = uses;
-            }
-            else
-            {
-                this.Extends = Array.Empty<IDeclarationUse>();
-            }
-        }
-
-        /// <summary>
-        /// Load member list.
-        /// </summary>
-        /// <param name="resolver">The resolver to resolve dependencies.</param>
-        protected void LoadMembers(IDeclarationResolver resolver)
-        {
-            var memberList = new List<IMemberDeclaration>();
-            var membersWalker = new MembersWalker(resolver, this, memberList);
-
-            membersWalker.Visit(this.SyntaxNode);
-
-            this.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration>();
-            this.Properties = this.Members.OfType<IPropertyDeclaration>().ToArray();
-        }
-
-        private void AddExtendedBy(AGenericDeclaration declaration)
+        /// <inheritdoc/>
+        public void AddExtendedBy(IGenericDeclaration<SyntaxNode> declaration)
         {
             this.extendedBy.Add(declaration);
+        }
+
+        /// <inheritdoc/>
+        protected override void LoadImpl(IDeclarationResolver resolver)
+        {
+            this.loader.Load(this, resolver);
         }
     }
 }

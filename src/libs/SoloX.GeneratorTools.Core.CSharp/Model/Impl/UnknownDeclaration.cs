@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -16,7 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Unknown declaration implementation.
     /// </summary>
-    public class UnknownDeclaration : ADeclaration
+    public class UnknownDeclaration : ADeclaration<SyntaxNode>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnknownDeclaration"/> class.

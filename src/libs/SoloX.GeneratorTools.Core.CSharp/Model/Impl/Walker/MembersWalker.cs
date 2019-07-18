@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 
@@ -18,10 +20,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
     internal class MembersWalker : CSharpSyntaxWalker
     {
         private readonly IDeclarationResolver resolver;
-        private readonly List<IMemberDeclaration> memberList;
-        private readonly IGenericDeclaration genericDeclaration;
+        private readonly List<IMemberDeclaration<SyntaxNode>> memberList;
+        private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
-        public MembersWalker(IDeclarationResolver resolver, IGenericDeclaration genericDeclaration, List<IMemberDeclaration> memberList)
+        public MembersWalker(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration, List<IMemberDeclaration<SyntaxNode>> memberList)
         {
             this.resolver = resolver;
             this.memberList = memberList;
@@ -35,7 +37,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
 
-            this.memberList.Add(new PropertyDeclaration(identifier, use, node));
+            this.memberList.Add(new PropertyDeclaration(
+                identifier,
+                use,
+                new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(node)));
         }
     }
 }

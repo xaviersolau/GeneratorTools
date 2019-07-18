@@ -13,6 +13,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
 {
@@ -25,7 +28,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <returns>The syntax node.</returns>
         public static TypeSyntax GetTypeSyntax(string typeStatement)
         {
-            var syntaxNode = GetSyntaxNode($"{typeStatement} a;");
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"{typeStatement} a;");
 
             var field = (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
             return field.Declaration.Type;
@@ -49,7 +53,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
                 setImpl = $"set {{ {field} = value; }}";
             }
 
-            var syntaxNode = GetSyntaxNode($"public {type} {name} {{ {getImpl} {setImpl} }}");
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"public {type} {name} {{ {getImpl} {setImpl} }}");
             return (PropertyDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
         }
 
@@ -61,21 +66,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <returns>The FieldDeclarationSyntax node.</returns>
         public static SyntaxNode GetFieldSyntax(string type, string name)
         {
-            var syntaxNode = GetSyntaxNode($"public {type} {name};");
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"public {type} {name};");
             return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
         }
 
-        /// <summary>
-        /// Parse the given input.
-        /// </summary>
-        /// <param name="text">The input text to parse.</param>
-        /// <returns>The CompilationUnitSyntax node.</returns>
-        public static SyntaxNode GetSyntaxNode(string text)
+        public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)
+            where TNode : SyntaxNode
         {
-            var src = SourceText.From(text);
-            var syntaxTree = CSharpSyntaxTree.ParseText(src);
-
-            return syntaxTree.GetRoot();
+            var nodeProviderMock = new Mock<ISyntaxNodeProvider<TNode>>();
+            nodeProviderMock.Setup(p => p.SyntaxNode).Returns(node);
+            return nodeProviderMock.Object;
         }
     }
 }

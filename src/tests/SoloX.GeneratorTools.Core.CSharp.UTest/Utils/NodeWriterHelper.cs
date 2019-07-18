@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 using Xunit;
 
@@ -54,7 +55,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         private static T AssertSingleMemberOfType<T>(StringBuilder output)
             where T : SyntaxNode
         {
-            var resultingNode = SyntaxTreeHelper.GetSyntaxNode(output.ToString());
+            var resultingNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode(output.ToString());
             var cun = Assert.IsType<CompilationUnitSyntax>(resultingNode);
             var member = Assert.Single(cun.Members);
             return Assert.IsType<T>(member);
@@ -63,7 +65,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         private static IReadOnlyList<T> AssertMultiMemberOfType<T>(StringBuilder output)
             where T : SyntaxNode
         {
-            var resultingNode = SyntaxTreeHelper.GetSyntaxNode(output.ToString());
+            var resultingNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode(output.ToString());
             var cun = Assert.IsType<CompilationUnitSyntax>(resultingNode);
             var results = new List<T>();
             foreach (var member in cun.Members)
