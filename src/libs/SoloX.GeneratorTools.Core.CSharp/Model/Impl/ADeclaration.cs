@@ -20,6 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     public abstract class ADeclaration
     {
         private bool isLoaded = false;
+        private Dictionary<Type, object> data;
 
         /// <summary>
         /// Load the declaration.
@@ -35,6 +36,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             this.isLoaded = true;
 
             this.LoadImpl(resolver);
+        }
+
+        internal void SetData<T>(T data)
+        {
+            if (this.data == null)
+            {
+                this.data = new Dictionary<Type, object>();
+            }
+
+            this.data.Add(typeof(T), data);
+        }
+
+        internal T GetData<T>()
+        {
+            if (this.data != null && this.data.TryGetValue(typeof(T), out var value))
+            {
+                return (T)value;
+            }
+
+            return default(T);
         }
 
         /// <summary>

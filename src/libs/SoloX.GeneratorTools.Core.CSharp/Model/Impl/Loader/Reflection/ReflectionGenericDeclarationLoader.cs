@@ -94,15 +94,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         }
 
         /// <summary>
+        /// Setup the given declaration to be loaded by reflection from the given type.
+        /// </summary>
+        /// <param name="decl">The declaration that will be loaded.</param>
+        /// <param name="type">The type to load the declaration from.</param>
+        internal void Setup(AGenericDeclaration<TNode> decl, Type type)
+        {
+            decl.SetData(type);
+        }
+
+        /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
         protected void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
-            if (declaration.DeclarationType.IsGenericTypeDefinition)
+            var declarationType = declaration.GetData<Type>();
+
+            if (declarationType.IsGenericTypeDefinition)
             {
                 var parameterSet = new List<IGenericParameterDeclaration>();
 
-                foreach (var parameter in declaration.DeclarationType.GetTypeInfo().GenericTypeParameters)
+                foreach (var parameter in declarationType.GetTypeInfo().GenericTypeParameters)
                 {
                     parameterSet.Add(new GenericParameterDeclaration(parameter.Name, null));
                 }
@@ -122,7 +134,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// <param name="resolver">The resolver to resolve dependencies.</param>
         protected void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            var extendedInterfaces = declaration.DeclarationType.GetInterfaces();
+            var extendedInterfaces = declaration.GetData<Type>().GetInterfaces();
             if (extendedInterfaces != null && extendedInterfaces.Any())
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
@@ -149,7 +161,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         {
             var memberList = new List<IMemberDeclaration<SyntaxNode>>();
 
-            foreach (var property in declaration.DeclarationType.GetProperties())
+            foreach (var property in declaration.GetData<Type>().GetProperties())
             {
                 memberList.Add(
                     new PropertyDeclaration(

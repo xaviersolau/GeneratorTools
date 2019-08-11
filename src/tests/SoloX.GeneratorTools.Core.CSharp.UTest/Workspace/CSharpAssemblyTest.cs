@@ -32,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var typeItfDecl = Assert.IsType<InterfaceDeclaration>(decl);
 
-            Assert.Same(typeof(BasicInterface), typeItfDecl.DeclarationType);
+            Assert.Same(typeof(BasicInterface), typeItfDecl.GetData<Type>());
         }
     }
 }

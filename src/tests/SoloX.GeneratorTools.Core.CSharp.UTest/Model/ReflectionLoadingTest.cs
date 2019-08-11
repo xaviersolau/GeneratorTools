@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using Xunit;
 
@@ -28,6 +30,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model
 
             Assert.NotNull(declaration.SyntaxNodeProvider);
             Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
+
+            Assert.Null(declaration.GenericParameters);
+            Assert.Null(declaration.Extends);
+            Assert.Null(declaration.Members);
+
+            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            classDeclaration.Load(declarationResolverMock.Object);
+
+            Assert.NotNull(declaration.GenericParameters);
+            Assert.NotNull(declaration.Extends);
+            Assert.NotNull(declaration.Members);
         }
     }
 }
