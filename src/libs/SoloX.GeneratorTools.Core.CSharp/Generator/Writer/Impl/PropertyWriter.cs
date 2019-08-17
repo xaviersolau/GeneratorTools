@@ -17,6 +17,7 @@ using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 {
+#pragma warning disable CA1062 // Valider les arguments de méthodes publiques
     /// <summary>
     /// Property writer implementation.
     /// </summary>
@@ -250,4 +251,5 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             return true;
         }
     }
+#pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 }

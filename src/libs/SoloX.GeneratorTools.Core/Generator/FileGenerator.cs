@@ -35,6 +35,11 @@ namespace SoloX.GeneratorTools.Core.Generator
         /// <inheritdoc/>
         public void Generate(string location, string name, Action<TextWriter> generator)
         {
+            if (generator == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(generator)} was null.");
+            }
+
             var file = $"{name}{this.fileSufix}";
 
             if (!Directory.Exists(location))

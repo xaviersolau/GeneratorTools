@@ -45,8 +45,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         }
 
         /// <inheritdoc/>
-        public (string nameSpace, string name) Generate(IWriterSelector writerSelector, IInterfaceDeclaration itfDeclaration, string implName)
+        public (string nameSpace, string name) Generate(
+            IWriterSelector writerSelector,
+            IInterfaceDeclaration itfDeclaration,
+            string implName)
         {
+            if (itfDeclaration == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(itfDeclaration)} was null.");
+            }
+
             var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);
 
             this.generator.Generate(location, implName, writer =>

@@ -32,8 +32,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// <param name="declarations">The declaration list the resolver is based on.</param>
         /// <param name="loader">The loader delegate to load a declaration is needed.</param>
         public DeclarationResolver(
-            IEnumerable<IDeclaration<SyntaxNode>> declarations, Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader)
+            IEnumerable<IDeclaration<SyntaxNode>> declarations,
+            Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader)
         {
+            if (declarations == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(declarations)} was null.");
+            }
+
             this.loader = loader;
 
             this.Setup(declarations);
@@ -66,6 +72,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// <inheritdoc/>
         public IGenericDeclaration<SyntaxNode> Resolve(Type type)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(type)} was null.");
+            }
+
             var fullName = type.FullName;
             if (fullName == null)
             {
