@@ -58,7 +58,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 type.Assembly.Location,
                 ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
 
-            decl.DeclarationType = type;
+            ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared.Setup(decl, type);
+
             return decl;
         }
 
@@ -100,7 +101,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 type.Assembly.Location,
                 ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
 
-            decl.DeclarationType = type;
+            ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Shared.Setup(decl, type);
+
             return decl;
         }
 

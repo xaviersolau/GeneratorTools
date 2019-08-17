@@ -72,8 +72,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public IReadOnlyCollection<IPropertyDeclaration> Properties
             => this.Members.OfType<IPropertyDeclaration>().ToArray();
 
-        internal Type DeclarationType { get; set; }
-
         /// <inheritdoc/>
         public override string ToString()
         {

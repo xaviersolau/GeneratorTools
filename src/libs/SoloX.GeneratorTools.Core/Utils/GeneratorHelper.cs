@@ -27,6 +27,11 @@ namespace SoloX.GeneratorTools.Core.Utils
         /// <returns>The implementation class name.</returns>
         public static string ComputeClassName(string interfaceName)
         {
+            if (interfaceName == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(interfaceName)} was null.");
+            }
+
             var len = interfaceName.Length;
             if (len > 1 && interfaceName[0] == 'I' && char.IsUpper(interfaceName[1]))
             {

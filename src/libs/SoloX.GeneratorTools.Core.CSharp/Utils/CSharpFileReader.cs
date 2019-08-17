@@ -27,6 +27,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         /// <param name="walker">The walker to apply.</param>
         public static void Read(string file, CSharpSyntaxWalker walker)
         {
+            if (walker == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(walker)} was null.");
+            }
+
             walker.Visit(Parse(file).GetRoot());
         }
 

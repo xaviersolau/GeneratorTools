@@ -47,6 +47,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         /// <inheritdoc/>
         public bool Write(SyntaxNode node, Action<string> write)
         {
+            if (node == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(node)} was null.");
+            }
+
             var txt = node.ToFullString();
 
             if (txt.Contains(this.oldString))

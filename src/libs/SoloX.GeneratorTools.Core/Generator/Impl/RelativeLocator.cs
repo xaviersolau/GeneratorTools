@@ -42,6 +42,11 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
         /// <inheritdoc/>
         public (string location, string nameSpace) ComputeTargetLocation(string declarationNameSpace)
         {
+            if (declarationNameSpace == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(declarationNameSpace)} was null.");
+            }
+
             var baseNameSpaceLength = this.baseNameSpace.Length;
 
             if (declarationNameSpace == this.baseNameSpace)

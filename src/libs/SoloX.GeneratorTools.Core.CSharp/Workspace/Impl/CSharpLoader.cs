@@ -23,24 +23,44 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public void Load(ICSharpWorkspace workspace, ICSharpProject project)
         {
+            if (project == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(project)} was null.");
+            }
+
             ((CSharpProject)project).Load(workspace);
         }
 
         /// <inheritdoc/>
         public void Load(ICSharpWorkspace workspace, ICSharpFile file)
         {
+            if (file == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(file)} was null.");
+            }
+
             ((CSharpFile)file).Load();
         }
 
         /// <inheritdoc/>
         public void Load(ICSharpWorkspace cSharpWorkspace, ICSharpAssembly assembly)
         {
+            if (assembly == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(assembly)} was null.");
+            }
+
             ((CSharpAssembly)assembly).Load();
         }
 
         /// <inheritdoc/>
         public void Load(IDeclarationResolver resolver, IDeclaration<SyntaxNode> declaration)
         {
+            if (declaration == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(declaration)} was null.");
+            }
+
             ((ADeclaration)declaration).Load(resolver);
         }
     }

@@ -69,6 +69,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <param name="workspace">The workspace within the project is loaded.</param>
         public void Load(ICSharpWorkspace workspace)
         {
+            if (workspace == null)
+            {
+                throw new ArgumentNullException($"The argument {nameof(workspace)} was null.");
+            }
+
             if (this.isLoaded)
             {
                 return;
