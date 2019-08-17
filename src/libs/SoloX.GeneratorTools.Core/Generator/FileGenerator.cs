@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.Generator
         /// Initializes a new instance of the <see cref="FileGenerator"/> class.
         /// </summary>
         /// <param name="fileSufix">The file suffix to use (like '.cs' or '.generated.cs').</param>
-        /// <param name="generateCallBack">The callback to use we generating a new file.</param>
+        /// <param name="generateCallBack">The callback to use once a new file is generated.</param>
         public FileGenerator(string fileSufix, Action<string> generateCallBack = null)
         {
             this.fileSufix = fileSufix;
