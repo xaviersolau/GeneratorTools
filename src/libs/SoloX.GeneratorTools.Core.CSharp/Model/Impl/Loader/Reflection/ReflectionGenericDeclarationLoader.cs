@@ -48,6 +48,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
         {
+            if (type.IsArray)
+            {
+                var eltType = type.GetElementType();
+                var elementDeclarationUse = GetDeclarationUseFrom(eltType, resolver);
+
+                ((IArrayDeclarationUseImpl)elementDeclarationUse).ArraySpecification = new ArraySpecification(default(SyntaxList<ArrayRankSpecifierSyntax>));
+
+                return elementDeclarationUse;
+            }
+
             if (type.Namespace == "System" && (type.IsPrimitive || type == typeof(string) || type == typeof(object)))
             {
                 return new PredefinedDeclarationUse(null, type.Name);
@@ -57,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             if (interfaceDeclaration == null)
             {
-                return new UnknownDeclarationUse(null, new UnknownDeclaration(type.Name));
+                return new UnknownDeclarationUse(null, new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
             }
 
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters;
@@ -134,14 +144,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// <param name="resolver">The resolver to resolve dependencies.</param>
         protected void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            var extendedInterfaces = declaration.GetData<Type>().GetInterfaces();
-            if (extendedInterfaces != null && extendedInterfaces.Any())
+            var declarationType = declaration.GetData<Type>();
+            var extendedInterfaces = declarationType.GetInterfaces();
+            if ((extendedInterfaces != null && extendedInterfaces.Any()) || declarationType.BaseType != null)
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
 
-                foreach (var extendedInterface in extendedInterfaces)
+                if (declarationType.BaseType != null)
                 {
-                    uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
+                    uses.Add(GetDeclarationUseFrom(declarationType.BaseType, resolver));
+                }
+
+                if (extendedInterfaces != null)
+                {
+                    foreach (var extendedInterface in extendedInterfaces)
+                    {
+                        uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
+                    }
                 }
 
                 declaration.Extends = uses;

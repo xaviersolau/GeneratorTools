@@ -50,7 +50,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             Assert.NotNull(use.Declaration);
 
             var udu = Assert.IsType<UnknownDeclarationUse>(use);
-            Assert.Equal(type.Name, udu.Declaration.Name);
+            Assert.Equal(ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name), udu.Declaration.Name);
         }
 
         [Fact]
