@@ -48,8 +48,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             {
                 Assert.NotNull(property.SyntaxNodeProvider);
                 Assert.NotNull(property.SyntaxNodeProvider.SyntaxNode);
+                Assert.Contains(property.Name, property.SyntaxNodeProvider.SyntaxNode.ToString(), StringComparison.InvariantCulture);
                 Assert.NotNull(property.PropertyType.SyntaxNodeProvider);
                 Assert.NotNull(property.PropertyType.SyntaxNodeProvider.SyntaxNode);
+                Assert.Equal(property.PropertyType.Declaration.Name, property.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString());
             }
         }
     }

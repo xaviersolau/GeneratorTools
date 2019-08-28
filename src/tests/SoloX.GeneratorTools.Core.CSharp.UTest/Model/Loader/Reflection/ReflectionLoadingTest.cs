@@ -117,7 +117,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
 
             Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
-            Assert.Equal("Int32", pInt.PropertyType.Declaration.Name);
+            Assert.Equal("int", pInt.PropertyType.Declaration.Name);
 
             if (isArray)
             {

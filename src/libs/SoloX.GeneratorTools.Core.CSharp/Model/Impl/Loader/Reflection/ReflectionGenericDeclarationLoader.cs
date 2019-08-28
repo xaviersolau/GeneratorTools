@@ -46,6 +46,53 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return name;
         }
 
+        internal static bool TryGetPredefinedDeclarationUse(Type type, out PredefinedDeclarationUse typeUse)
+        {
+            typeUse = null;
+            if (type == typeof(byte))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "byte");
+            }
+            else if (type == typeof(short))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "short");
+            }
+            else if (type == typeof(int))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "int");
+            }
+            else if (type == typeof(long))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "long");
+            }
+            else if (type == typeof(string))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "string");
+            }
+            else if (type == typeof(object))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "object");
+            }
+            else if (type == typeof(float))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "float");
+            }
+            else if (type == typeof(double))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "double");
+            }
+            else if (type == typeof(decimal))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "decimal");
+            }
+            else if (type == typeof(char))
+            {
+                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "char");
+            }
+
+            return typeUse != null;
+        }
+
         internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
         {
             if (type.IsArray)
@@ -58,9 +105,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 return elementDeclarationUse;
             }
 
-            if (type.Namespace == "System" && (type.IsPrimitive || type == typeof(string) || type == typeof(object)))
+            if (TryGetPredefinedDeclarationUse(type, out var typeUse))
             {
-                return new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), type.Name);
+                return typeUse;
             }
 
             var interfaceDeclaration = resolver.Resolve(type);
