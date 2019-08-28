@@ -60,14 +60,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             if (type.Namespace == "System" && (type.IsPrimitive || type == typeof(string) || type == typeof(object)))
             {
-                return new PredefinedDeclarationUse(null, type.Name);
+                return new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), type.Name);
             }
 
             var interfaceDeclaration = resolver.Resolve(type);
 
             if (interfaceDeclaration == null)
             {
-                return new UnknownDeclarationUse(null, new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
+                return new UnknownDeclarationUse(
+                    new ReflectionTypeUseSyntaxNodeProvider<IdentifierNameSyntax>(type),
+                    new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
             }
 
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters;
@@ -87,7 +89,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 genericParameters = Array.Empty<IDeclarationUse<SyntaxNode>>();
             }
 
-            return new GenericDeclarationUse(null, interfaceDeclaration, genericParameters);
+            return new GenericDeclarationUse(
+                new ReflectionTypeUseSyntaxNodeProvider<SimpleNameSyntax>(type),
+                interfaceDeclaration,
+                genericParameters);
         }
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
@@ -182,11 +187,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             foreach (var property in declaration.GetData<Type>().GetProperties())
             {
+                var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver);
                 memberList.Add(
                     new PropertyDeclaration(
                         property.Name,
-                        GetDeclarationUseFrom(property.PropertyType, resolver),
-                        null));
+                        propertyType,
+                        new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider)));
             }
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
