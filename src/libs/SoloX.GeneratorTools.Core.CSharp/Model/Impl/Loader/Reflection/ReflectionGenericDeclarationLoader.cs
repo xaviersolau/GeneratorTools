@@ -46,18 +46,85 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return name;
         }
 
-        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
+        internal static bool TryGetPredefinedDeclarationUse(
+            Type type,
+            out PredefinedDeclarationUse typeUse)
         {
-            if (type.Namespace == "System" && (type.IsPrimitive || type == typeof(string) || type == typeof(object)))
+            typeUse = null;
+            if (type == typeof(byte))
             {
-                return new PredefinedDeclarationUse(null, type.Name);
+                typeUse = CreatePredefinedDeclarationUse(type, "byte");
+            }
+            else if (type == typeof(short))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "short");
+            }
+            else if (type == typeof(int))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "int");
+            }
+            else if (type == typeof(long))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "long");
+            }
+            else if (type == typeof(string))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "string");
+            }
+            else if (type == typeof(object))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "object");
+            }
+            else if (type == typeof(float))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "float");
+            }
+            else if (type == typeof(double))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "double");
+            }
+            else if (type == typeof(decimal))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "decimal");
+            }
+            else if (type == typeof(char))
+            {
+                typeUse = CreatePredefinedDeclarationUse(type, "char");
+            }
+
+            return typeUse != null;
+        }
+
+        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
+            Type type,
+            IDeclarationResolver resolver,
+            int arrayCount = 0)
+        {
+            if (type.IsArray)
+            {
+                var eltType = type.GetElementType();
+                return GetDeclarationUseFrom(eltType, resolver, arrayCount + 1);
+            }
+
+            if (TryGetPredefinedDeclarationUse(type, out var typeUse))
+            {
+                typeUse.ArraySpecification = CreateArraySpecification(
+                    arrayCount,
+                    typeUse.SyntaxNodeProvider);
+                return typeUse;
             }
 
             var interfaceDeclaration = resolver.Resolve(type);
 
             if (interfaceDeclaration == null)
             {
-                return new UnknownDeclarationUse(null, new UnknownDeclaration(type.Name));
+                var unknownDeclarationUse = new UnknownDeclarationUse(
+                    new ReflectionTypeUseSyntaxNodeProvider<IdentifierNameSyntax>(type),
+                    new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
+                unknownDeclarationUse.ArraySpecification = CreateArraySpecification(
+                    arrayCount,
+                    unknownDeclarationUse.SyntaxNodeProvider);
+                return unknownDeclarationUse;
             }
 
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters;
@@ -77,7 +144,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 genericParameters = Array.Empty<IDeclarationUse<SyntaxNode>>();
             }
 
-            return new GenericDeclarationUse(null, interfaceDeclaration, genericParameters);
+            var genericDeclarationUse = new GenericDeclarationUse(
+                new ReflectionTypeUseSyntaxNodeProvider<SimpleNameSyntax>(type),
+                interfaceDeclaration,
+                genericParameters);
+            genericDeclarationUse.ArraySpecification = CreateArraySpecification(
+                arrayCount,
+                genericDeclarationUse.SyntaxNodeProvider);
+            return genericDeclarationUse;
         }
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
@@ -134,14 +208,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// <param name="resolver">The resolver to resolve dependencies.</param>
         protected void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            var extendedInterfaces = declaration.GetData<Type>().GetInterfaces();
-            if (extendedInterfaces != null && extendedInterfaces.Any())
+            var declarationType = declaration.GetData<Type>();
+            var extendedInterfaces = declarationType.GetInterfaces();
+            if ((extendedInterfaces != null && extendedInterfaces.Any()) || declarationType.BaseType != null)
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
 
-                foreach (var extendedInterface in extendedInterfaces)
+                if (declarationType.BaseType != null)
                 {
-                    uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
+                    uses.Add(GetDeclarationUseFrom(declarationType.BaseType, resolver));
+                }
+
+                if (extendedInterfaces != null)
+                {
+                    foreach (var extendedInterface in extendedInterfaces)
+                    {
+                        uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
+                    }
                 }
 
                 declaration.Extends = uses;
@@ -163,14 +246,36 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             foreach (var property in declaration.GetData<Type>().GetProperties())
             {
+                var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver);
                 memberList.Add(
                     new PropertyDeclaration(
                         property.Name,
-                        GetDeclarationUseFrom(property.PropertyType, resolver),
-                        null));
+                        propertyType,
+                        new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider)));
             }
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
+        }
+
+        private static IArraySpecification CreateArraySpecification(
+            int arrayCount,
+            ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
+        {
+            return arrayCount != 0
+                ? new ArraySpecification(
+                    arrayCount,
+                    new ReflectionArraySyntaxNodeProvider(arrayCount, syntaxNodeProvider))
+                : null;
+        }
+
+        private static PredefinedDeclarationUse CreatePredefinedDeclarationUse(
+            Type type,
+            string typeName)
+        {
+            var predefinedDeclarationUse = new PredefinedDeclarationUse(
+                new ReflectionPredefinedSyntaxNodeProvider(type),
+                typeName);
+            return predefinedDeclarationUse;
         }
     }
 }

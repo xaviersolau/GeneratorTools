@@ -21,11 +21,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
     public class TypeGenericDeclarationUseTest
     {
         [Theory]
-        [InlineData(typeof(int))]
-        [InlineData(typeof(double))]
-        [InlineData(typeof(string))]
-        [InlineData(typeof(object))]
-        public void PredefinedTypeDeclarationUseTest(Type type)
+        [InlineData(typeof(byte), "byte")]
+        [InlineData(typeof(short), "short")]
+        [InlineData(typeof(int), "int")]
+        [InlineData(typeof(long), "long")]
+        [InlineData(typeof(float), "float")]
+        [InlineData(typeof(double), "double")]
+        [InlineData(typeof(decimal), "decimal")]
+        [InlineData(typeof(string), "string")]
+        [InlineData(typeof(object), "object")]
+        [InlineData(typeof(char), "char")]
+        public void PredefinedTypeDeclarationUseTest(Type type, string typeName)
         {
             var resolverMock = new Mock<IDeclarationResolver>();
 
@@ -35,7 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             Assert.NotNull(use.Declaration);
 
             var pdu = Assert.IsType<PredefinedDeclarationUse>(use);
-            Assert.Equal(type.Name, pdu.Declaration.Name);
+            Assert.Equal(typeName, pdu.Declaration.Name);
         }
 
         [Fact]
@@ -50,7 +56,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             Assert.NotNull(use.Declaration);
 
             var udu = Assert.IsType<UnknownDeclarationUse>(use);
-            Assert.Equal(type.Name, udu.Declaration.Name);
+            Assert.Equal(ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name), udu.Declaration.Name);
         }
 
         [Fact]

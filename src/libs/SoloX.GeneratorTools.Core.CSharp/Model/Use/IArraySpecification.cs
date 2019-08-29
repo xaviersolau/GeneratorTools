@@ -20,8 +20,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
     public interface IArraySpecification
     {
         /// <summary>
-        /// Gets the declaration syntax node.
+        /// Gets the declaration syntax node provider.
         /// </summary>
-        SyntaxList<ArrayRankSpecifierSyntax> SyntaxNode { get; }
+        ISyntaxNodeProvider<ArrayTypeSyntax> SyntaxNodeProvider { get; }
+
+        /// <summary>
+        /// Gets the array count.
+        /// </summary>
+        int ArrayCount { get; }
     }
 }

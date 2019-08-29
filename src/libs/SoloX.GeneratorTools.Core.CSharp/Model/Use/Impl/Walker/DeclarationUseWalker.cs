@@ -99,7 +99,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
         {
             var elementDeclarationUse = this.Visit(node.ElementType);
 
-            ((IArrayDeclarationUseImpl)elementDeclarationUse).ArraySpecification = new ArraySpecification(node.RankSpecifiers);
+            ((IArrayDeclarationUseImpl)elementDeclarationUse).ArraySpecification = new ArraySpecification(
+                node.RankSpecifiers.Count,
+                new ParserSyntaxNodeProvider<ArrayTypeSyntax>(node));
 
             return elementDeclarationUse;
         }
