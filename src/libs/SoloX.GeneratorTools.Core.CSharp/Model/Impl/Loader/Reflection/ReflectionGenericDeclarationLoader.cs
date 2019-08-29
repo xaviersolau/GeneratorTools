@@ -46,67 +46,71 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return name;
         }
 
-        internal static bool TryGetPredefinedDeclarationUse(Type type, out PredefinedDeclarationUse typeUse)
+        internal static bool TryGetPredefinedDeclarationUse(
+            Type type,
+            out PredefinedDeclarationUse typeUse)
         {
             typeUse = null;
             if (type == typeof(byte))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "byte");
+                typeUse = CreatePredefinedDeclarationUse(type, "byte");
             }
             else if (type == typeof(short))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "short");
+                typeUse = CreatePredefinedDeclarationUse(type, "short");
             }
             else if (type == typeof(int))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "int");
+                typeUse = CreatePredefinedDeclarationUse(type, "int");
             }
             else if (type == typeof(long))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "long");
+                typeUse = CreatePredefinedDeclarationUse(type, "long");
             }
             else if (type == typeof(string))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "string");
+                typeUse = CreatePredefinedDeclarationUse(type, "string");
             }
             else if (type == typeof(object))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "object");
+                typeUse = CreatePredefinedDeclarationUse(type, "object");
             }
             else if (type == typeof(float))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "float");
+                typeUse = CreatePredefinedDeclarationUse(type, "float");
             }
             else if (type == typeof(double))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "double");
+                typeUse = CreatePredefinedDeclarationUse(type, "double");
             }
             else if (type == typeof(decimal))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "decimal");
+                typeUse = CreatePredefinedDeclarationUse(type, "decimal");
             }
             else if (type == typeof(char))
             {
-                typeUse = new PredefinedDeclarationUse(new ReflectionPredefinedSyntaxNodeProvider(type), "char");
+                typeUse = CreatePredefinedDeclarationUse(type, "char");
             }
 
             return typeUse != null;
         }
 
-        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(Type type, IDeclarationResolver resolver)
+        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
+            Type type,
+            IDeclarationResolver resolver,
+            int arrayCount = 0)
         {
             if (type.IsArray)
             {
                 var eltType = type.GetElementType();
-                var elementDeclarationUse = GetDeclarationUseFrom(eltType, resolver);
-
-                ((IArrayDeclarationUseImpl)elementDeclarationUse).ArraySpecification = new ArraySpecification(default(SyntaxList<ArrayRankSpecifierSyntax>));
-
-                return elementDeclarationUse;
+                return GetDeclarationUseFrom(eltType, resolver, arrayCount + 1);
             }
 
             if (TryGetPredefinedDeclarationUse(type, out var typeUse))
             {
+                typeUse.ArraySpecification = CreateArraySpecification(
+                    arrayCount,
+                    typeUse.SyntaxNodeProvider);
                 return typeUse;
             }
 
@@ -114,9 +118,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             if (interfaceDeclaration == null)
             {
-                return new UnknownDeclarationUse(
+                var unknownDeclarationUse = new UnknownDeclarationUse(
                     new ReflectionTypeUseSyntaxNodeProvider<IdentifierNameSyntax>(type),
                     new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
+                unknownDeclarationUse.ArraySpecification = CreateArraySpecification(
+                    arrayCount,
+                    unknownDeclarationUse.SyntaxNodeProvider);
+                return unknownDeclarationUse;
             }
 
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters;
@@ -136,10 +144,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 genericParameters = Array.Empty<IDeclarationUse<SyntaxNode>>();
             }
 
-            return new GenericDeclarationUse(
+            var genericDeclarationUse = new GenericDeclarationUse(
                 new ReflectionTypeUseSyntaxNodeProvider<SimpleNameSyntax>(type),
                 interfaceDeclaration,
                 genericParameters);
+            genericDeclarationUse.ArraySpecification = CreateArraySpecification(
+                arrayCount,
+                genericDeclarationUse.SyntaxNodeProvider);
+            return genericDeclarationUse;
         }
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
@@ -243,6 +255,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             }
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
+        }
+
+        private static IArraySpecification CreateArraySpecification(
+            int arrayCount,
+            ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
+        {
+            return arrayCount != 0
+                ? new ArraySpecification(
+                    arrayCount,
+                    new ReflectionArraySyntaxNodeProvider(arrayCount, syntaxNodeProvider))
+                : null;
+        }
+
+        private static PredefinedDeclarationUse CreatePredefinedDeclarationUse(
+            Type type,
+            string typeName)
+        {
+            var predefinedDeclarationUse = new PredefinedDeclarationUse(
+                new ReflectionPredefinedSyntaxNodeProvider(type),
+                typeName);
+            return predefinedDeclarationUse;
         }
     }
 }

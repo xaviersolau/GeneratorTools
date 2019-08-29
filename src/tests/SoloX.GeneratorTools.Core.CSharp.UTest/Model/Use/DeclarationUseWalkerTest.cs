@@ -80,7 +80,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             Assert.Same(declaration, declarationUse.Declaration);
 
             Assert.NotNull(declarationUse.ArraySpecification);
-            Assert.Equal(dimCount, declarationUse.ArraySpecification.SyntaxNode.Count);
+            Assert.NotNull(declarationUse.ArraySpecification.SyntaxNodeProvider);
+
+            Assert.Equal(dimCount, declarationUse.ArraySpecification.ArrayCount);
         }
 
         [Theory]

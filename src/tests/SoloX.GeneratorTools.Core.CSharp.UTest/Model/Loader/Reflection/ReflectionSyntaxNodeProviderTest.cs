@@ -22,27 +22,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         public void SytaxNodeProviderSimpleClassTest()
         {
             var type = typeof(SimpleClass);
+            var classDeclaration = LoadClassDeclarationFrom(type);
 
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
-
-            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
-
-            Assert.NotNull(declaration.SyntaxNodeProvider);
-            Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
+            Assert.NotNull(classDeclaration.SyntaxNodeProvider);
+            Assert.NotNull(classDeclaration.SyntaxNodeProvider.SyntaxNode);
         }
 
         [Fact]
         public void SytaxNodeProviderClassWithPropertiesTest()
         {
             var type = typeof(ClassWithProperties);
-
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
-
-            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            var classDeclaration = LoadClassDeclarationFrom(type);
 
             foreach (var property in classDeclaration.Properties)
             {
@@ -53,6 +43,41 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
                 Assert.NotNull(property.PropertyType.SyntaxNodeProvider.SyntaxNode);
                 Assert.Equal(property.PropertyType.Declaration.Name, property.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString());
             }
+        }
+
+        [Fact]
+        public void SytaxNodeProviderClassWithArrayPropertiesTest()
+        {
+            var type = typeof(ClassWithArrayProperties);
+            var classDeclaration = LoadClassDeclarationFrom(type);
+
+            foreach (var property in classDeclaration.Properties)
+            {
+                Assert.NotNull(property.PropertyType.ArraySpecification);
+                Assert.NotNull(property.PropertyType.ArraySpecification.SyntaxNodeProvider);
+
+                var code = property.PropertyType.ArraySpecification.SyntaxNodeProvider.SyntaxNode.ToString();
+
+                Assert.Contains(
+                    property.PropertyType.Declaration.Name,
+                    code,
+                    StringComparison.InvariantCulture);
+
+                Assert.Contains(
+                    "[]",
+                    code,
+                    StringComparison.InvariantCulture);
+            }
+        }
+
+        private static ClassDeclaration LoadClassDeclarationFrom(Type type)
+        {
+            var declaration = DeclarationFactory.CreateClassDeclaration(type);
+
+            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            classDeclaration.Load(declarationResolverMock.Object);
+            return classDeclaration;
         }
     }
 }

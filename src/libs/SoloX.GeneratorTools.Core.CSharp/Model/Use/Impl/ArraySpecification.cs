@@ -22,13 +22,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="ArraySpecification"/> class.
         /// </summary>
-        /// <param name="syntaxNode">Array specification syntax node.</param>
-        public ArraySpecification(SyntaxList<ArrayRankSpecifierSyntax> syntaxNode)
+        /// <param name="arrayCount">Array count.</param>
+        /// <param name="syntaxNodeProvider">Syntax node provider.</param>
+        public ArraySpecification(int arrayCount, ISyntaxNodeProvider<ArrayTypeSyntax> syntaxNodeProvider)
         {
-            this.SyntaxNode = syntaxNode;
+            this.ArrayCount = arrayCount;
+            this.SyntaxNodeProvider = syntaxNodeProvider;
         }
 
         /// <inheritdoc/>
-        public SyntaxList<ArrayRankSpecifierSyntax> SyntaxNode { get; }
+        public ISyntaxNodeProvider<ArrayTypeSyntax> SyntaxNodeProvider { get; }
+
+        /// <inheritdoc/>
+        public int ArrayCount { get; }
     }
 }
