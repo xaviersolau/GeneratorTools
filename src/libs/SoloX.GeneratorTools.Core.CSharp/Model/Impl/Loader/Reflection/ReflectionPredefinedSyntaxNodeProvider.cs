@@ -25,9 +25,45 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         protected override PredefinedTypeSyntax Generate()
         {
             string typeName;
-            if (this.predefinedType == typeof(int))
+            if (this.predefinedType == typeof(byte))
+            {
+                typeName = "byte";
+            }
+            else if (this.predefinedType == typeof(short))
+            {
+                typeName = "short";
+            }
+            else if (this.predefinedType == typeof(int))
             {
                 typeName = "int";
+            }
+            else if (this.predefinedType == typeof(long))
+            {
+                typeName = "long";
+            }
+            else if (this.predefinedType == typeof(string))
+            {
+                typeName = "string";
+            }
+            else if (this.predefinedType == typeof(object))
+            {
+                typeName = "object";
+            }
+            else if (this.predefinedType == typeof(float))
+            {
+                typeName = "float";
+            }
+            else if (this.predefinedType == typeof(double))
+            {
+                typeName = "double";
+            }
+            else if (this.predefinedType == typeof(decimal))
+            {
+                typeName = "decimal";
+            }
+            else if (this.predefinedType == typeof(char))
+            {
+                typeName = "char";
             }
             else
             {

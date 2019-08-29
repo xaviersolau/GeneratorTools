@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using Xunit;
@@ -68,6 +70,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
                     code,
                     StringComparison.InvariantCulture);
             }
+        }
+
+        [Theory]
+        [InlineData(typeof(byte), "byte")]
+        [InlineData(typeof(short), "short")]
+        [InlineData(typeof(int), "int")]
+        [InlineData(typeof(long), "long")]
+        [InlineData(typeof(string), "string")]
+        [InlineData(typeof(object), "object")]
+        [InlineData(typeof(float), "float")]
+        [InlineData(typeof(double), "double")]
+        [InlineData(typeof(decimal), "decimal")]
+        [InlineData(typeof(char), "char")]
+        public void PredefinedSyntaxNodeProviderTest(Type type, string code)
+        {
+            var provider = new ReflectionPredefinedSyntaxNodeProvider(type);
+
+            var syntaxNode = provider.SyntaxNode;
+
+            Assert.NotNull(syntaxNode);
+            Assert.IsType<PredefinedTypeSyntax>(syntaxNode);
+            Assert.Equal(code, syntaxNode.ToString());
         }
 
         private static ClassDeclaration LoadClassDeclarationFrom(Type type)
