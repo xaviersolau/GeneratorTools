@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.2" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.4" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.2.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.2.1" />
