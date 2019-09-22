@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 
@@ -23,6 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     {
         private readonly ICSharpFactory factory;
         private readonly ICSharpLoader loader;
+        private readonly ILogger<CSharpWorkspace> logger;
 
         private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
@@ -31,10 +33,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.
         /// </summary>
+        /// <param name="logger">The logger to log errors.</param>
         /// <param name="factory">The factory to create File and Project object.</param>
         /// <param name="loader">The File and Project loader.</param>
-        public CSharpWorkspace(ICSharpFactory factory, ICSharpLoader loader)
+        public CSharpWorkspace(ILogger<CSharpWorkspace> logger, ICSharpFactory factory, ICSharpLoader loader)
         {
+            this.logger = logger;
             this.factory = factory;
             this.loader = loader;
         }
@@ -85,11 +89,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (!this.assemblies.TryGetValue(assemblyFile, out var csAssembly))
             {
-                var assembly = Assembly.LoadFrom(assemblyFile);
-                csAssembly = this.factory.CreateAssembly(assembly);
-                this.assemblies.Add(assemblyFile, csAssembly);
+                try
+                {
+                    var assembly = Assembly.LoadFrom(assemblyFile);
+                    csAssembly = this.factory.CreateAssembly(assembly);
+                    this.assemblies.Add(assemblyFile, csAssembly);
 
-                this.loader.Load(this, csAssembly);
+                    this.loader.Load(this, csAssembly);
+                }
+                catch (FileLoadException e)
+                {
+                    this.logger?.LogWarning(e, $"Could not load assembly from {assemblyFile}");
+                }
             }
 
             return csAssembly;

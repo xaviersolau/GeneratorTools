@@ -10,7 +10,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Moq;
+using SoloX.CodeQuality.Test.Helpers.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
@@ -18,11 +20,19 @@ using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpWorkspaceTest
     {
+        private ITestOutputHelper testOutputHelper;
+
+        public CSharpWorkspaceTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void RegisterProjectTest()
         {
@@ -37,7 +47,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var loaderMock = new Mock<ICSharpLoader>();
 
-            var workspace = new CSharpWorkspace(factoryMock.Object, loaderMock.Object);
+            var workspace = new CSharpWorkspace(
+                new TestLogger<CSharpWorkspace>(this.testOutputHelper),
+                factoryMock.Object,
+                loaderMock.Object);
 
             var project1 = workspace.RegisterProject(projectName1);
             var project2 = workspace.RegisterProject(projectName1);
@@ -61,7 +74,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var factoryMock = new Mock<ICSharpFactory>();
             var loaderMock = new Mock<ICSharpLoader>();
 
-            var workspace = new CSharpWorkspace(factoryMock.Object, loaderMock.Object);
+            var workspace = new CSharpWorkspace(
+                new TestLogger<CSharpWorkspace>(this.testOutputHelper),
+                factoryMock.Object,
+                loaderMock.Object);
 
             var fileMock = new Mock<ICSharpFile>();
 

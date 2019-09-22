@@ -54,7 +54,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
                         case "compile":
                             return new KeysReadHandler(this.Reader, this.Serializer, this, this.targetItemAssets.AddCompile);
                         case "runtime":
-                            return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
+                            return new KeysReadHandler(this.Reader, this.Serializer, this, this.targetItemAssets.AddRuntime);
                         default:
                             return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
                     }

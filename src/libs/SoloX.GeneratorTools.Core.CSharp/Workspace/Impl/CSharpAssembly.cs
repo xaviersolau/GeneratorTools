@@ -7,9 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
@@ -19,17 +22,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// <summary>
     /// Implement ICSharpAssembly in order to load all type declarations.
     /// </summary>
+    [DebuggerDisplay("CSharpAssembly {Assembly.GetName()}")]
     public class CSharpAssembly : ICSharpAssembly
     {
+        private readonly ILogger<CSharpAssembly> logger;
         private bool isLoaded;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpAssembly"/> class.
         /// </summary>
+        /// <param name="logger">The logger to log errors.</param>
         /// <param name="assembly">The assembly to load declaration from.</param>
-        public CSharpAssembly(Assembly assembly)
+        public CSharpAssembly(ILogger<CSharpAssembly> logger, Assembly assembly)
         {
             this.Assembly = assembly;
+            this.logger = logger;
         }
 
         /// <inheritdoc/>
@@ -52,14 +59,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var declarations = new List<IDeclaration<SyntaxNode>>();
 
-            foreach (var type in this.Assembly.GetExportedTypes())
+            try
             {
-                if (type.IsInterface)
+                foreach (var type in this.Assembly.GetExportedTypes())
                 {
-                    var typeInterfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(type);
+                    if (type.IsInterface)
+                    {
+                        var typeInterfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(type);
 
-                    declarations.Add(typeInterfaceDeclaration);
+                        declarations.Add(typeInterfaceDeclaration);
+                    }
                 }
+            }
+            catch (FileNotFoundException e)
+            {
+                this.logger?.LogWarning(e, $"Could not load types from {this.Assembly.GetName()}");
             }
 
             this.Declarations = declarations;

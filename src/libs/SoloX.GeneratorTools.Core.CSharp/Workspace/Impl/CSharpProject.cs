@@ -96,11 +96,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             var projectAssets = JsonConvert.DeserializeObject<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
 
             var assemblies = new List<ICSharpAssembly>();
-            foreach (var compileItem in projectAssets.Targets.First().Value.GetAllPackageCompileItems(projectAssets))
+            foreach (var compileItem in projectAssets.Targets.First().Value.GetAllPackageRuntimeItems(projectAssets))
             {
                 var assemblyFile = GetAssemblyFile(projectAssets, compileItem);
 
-                assemblies.Add(workspace.RegisterAssembly(assemblyFile));
+                var registeredAssembly = workspace.RegisterAssembly(assemblyFile);
+                if (registeredAssembly != null)
+                {
+                    assemblies.Add(registeredAssembly);
+                }
             }
 
             this.Assemblies = assemblies;
