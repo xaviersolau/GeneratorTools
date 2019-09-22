@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Utils;
@@ -133,7 +135,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
             out IInterfaceDeclaration itfPatternDeclaration,
             out IClassDeclaration implPatternDeclaration)
         {
-            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
+            var ws = new CSharpWorkspace(
+                Mock.Of<ILogger<CSharpWorkspace>>(),
+                new CSharpFactory(Mock.Of<ILoggerFactory>()),
+                new CSharpLoader());
             itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
                 .Declarations.First() as IInterfaceDeclaration;
             itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)

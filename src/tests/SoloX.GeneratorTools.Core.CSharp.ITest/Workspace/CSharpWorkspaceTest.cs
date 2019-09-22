@@ -6,21 +6,33 @@
 // ----------------------------------------------------------------------
 
 using System;
+using Microsoft.Extensions.Logging;
+using SoloX.CodeQuality.Test.Helpers.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 {
-    public class CSharpWorkspaceTest
+    public class CSharpWorkspaceTest : IDisposable
     {
+        private ITestOutputHelper testOutputHelper;
+        private ILoggerFactory testLoggerFactory;
+
+        public CSharpWorkspaceTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+            this.testLoggerFactory = new TestLoggerFactory(this.testOutputHelper);
+        }
+
         [Fact]
         public void SimpleProjectLoadTest()
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
 
-            var resolver = LoadAndGetResolver(projectFile, 1);
+            var resolver = this.LoadAndGetResolver(projectFile, 1);
 
             var sample1Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
 
@@ -33,7 +45,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
 
-            var resolver = LoadAndGetResolver(projectFile, 1);
+            var resolver = this.LoadAndGetResolver(projectFile, 1);
 
             var jsonDecl = resolver.Find("Newtonsoft.Json.IArrayPool");
 
@@ -46,7 +58,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
 
-            var resolver = LoadAndGetResolver(projectFile, 2);
+            var resolver = this.LoadAndGetResolver(projectFile, 2);
 
             var sample2Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample2.Sample2Class1"));
             var sample1Class1Decl = Assert.Single(resolver.Find("SoloX.GeneratorTools.Core.CSharp.Sample1.Sample1Class1"));
@@ -64,9 +76,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
             Assert.Same(sample2Class1Decl, extendedBy);
         }
 
-        private static IDeclarationResolver LoadAndGetResolver(string projectFile, int expectedProjectCount)
+        public void Dispose()
         {
-            var ws = new CSharpWorkspace(new CSharpFactory(), new CSharpLoader());
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool dispose)
+        {
+            this.testLoggerFactory.Dispose();
+        }
+
+        private IDeclarationResolver LoadAndGetResolver(string projectFile, int expectedProjectCount)
+        {
+            var ws = new CSharpWorkspace(
+                new TestLogger<CSharpWorkspace>(this.testOutputHelper),
+                new CSharpFactory(this.testLoggerFactory),
+                new CSharpLoader());
             ws.RegisterProject(projectFile);
 
             Assert.Equal(expectedProjectCount, ws.Projects.Count);

@@ -28,13 +28,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace.Assets
         }
 
         [Fact]
-        public void ReadAssetsDllPathTest()
+        public void ReadAssetsCompileDllPathTest()
         {
             var assets = ReadAssets(AssetsFile);
 
             var target = Assert.Single(assets.Targets);
 
             var compileItemFile = Assert.Single(target.Value.GetAllPackageCompileItems(assets));
+
+            Assert.Equal(@"newtonsoft.json/12.0.2/lib/netstandard2.0/Newtonsoft.Json.dll", compileItemFile.Replace('\\', '/'));
+        }
+
+        [Fact]
+        public void ReadAssetsRuntimeDllPathTest()
+        {
+            var assets = ReadAssets(AssetsFile);
+
+            var target = Assert.Single(assets.Targets);
+
+            var compileItemFile = Assert.Single(target.Value.GetAllPackageRuntimeItems(assets));
 
             Assert.Equal(@"newtonsoft.json/12.0.2/lib/netstandard2.0/Newtonsoft.Json.dll", compileItemFile.Replace('\\', '/'));
         }

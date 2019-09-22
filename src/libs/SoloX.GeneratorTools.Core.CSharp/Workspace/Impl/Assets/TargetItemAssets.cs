@@ -17,6 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
     public class TargetItemAssets
     {
         private List<string> compileItems;
+        private List<string> runtimeItems;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TargetItemAssets"/> class.
@@ -26,6 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         {
             this.Name = name;
             this.compileItems = new List<string>();
+            this.runtimeItems = new List<string>();
         }
 
         /// <summary>
@@ -49,9 +51,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         public IReadOnlyDictionary<string, string> Dependencies { get; private set; }
 
         /// <summary>
-        /// Gets dependencies.
+        /// Gets compile items.
         /// </summary>
         public IReadOnlyList<string> CompileItems => this.compileItems;
+
+        /// <summary>
+        /// Gets runtime items.
+        /// </summary>
+        public IReadOnlyList<string> RuntimeItems => this.runtimeItems;
 
         internal void SetDependencies(Dictionary<string, string> dependencies)
         {
@@ -61,6 +68,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
         internal void AddCompile(string compileItem)
         {
             this.compileItems.Add(compileItem);
+        }
+
+        internal void AddRuntime(string runtimeItem)
+        {
+            this.runtimeItems.Add(runtimeItem);
         }
     }
 }
