@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\SharedProperties.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 
@@ -7,13 +9,6 @@
 
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
-    <Version>1.0.0-alpha.6</Version>
-    <Authors>Xavier Solau</Authors>
-    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/xaviersolau/GeneratorTools</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/xaviersolau/GeneratorTools.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <PackageTags>code generation, parse, netstandard, pattern</PackageTags>
     <PackageReleaseNotes>- Generate C# code from a source code pattern.</PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
