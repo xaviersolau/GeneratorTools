@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp", "src\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj", "{00C1A1CF-5231-481F-A3B9-A83A6DEF4B72}"
 EndProject
@@ -31,9 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
+		src\SharedProperties.props = src\SharedProperties.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Core", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Core\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj", "{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Core", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Core\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj", "{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
