@@ -9,10 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
+using SoloX.CodeQuality.Test.Helpers.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
 {
@@ -80,6 +85,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             itfDeclPropMock.SetupGet(d => d.PropertyType).Returns(propertyType);
 
             return itfDeclPropMock.Object;
+        }
+
+        /// <summary>
+        /// Create a Declaration factory setup with the test output logger.
+        /// </summary>
+        /// <param name="testOutputHelper">The test output helper.</param>
+        /// <returns>The created declaration factory.</returns>
+        public static IDeclarationFactory CreateDeclarationFactory(ITestOutputHelper testOutputHelper)
+        {
+            return new DeclarationFactory(
+                new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(
+                    new TestLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
+                new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(
+                    new TestLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+                new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
+                new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
+                new ParserGenericDeclarationLoader<StructDeclarationSyntax>());
         }
     }
 }

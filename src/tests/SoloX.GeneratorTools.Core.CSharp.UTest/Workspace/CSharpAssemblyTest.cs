@@ -15,6 +15,7 @@ using SoloX.CodeQuality.Test.Helpers.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 using Xunit.Abstractions;
@@ -36,6 +37,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var assembly = typeof(CSharpAssemblyTest).Assembly;
             var csAssembly = new CSharpAssembly(
                 new TestLogger<CSharpAssembly>(this.testOutputHelper),
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper),
                 assembly);
 
             csAssembly.Load();

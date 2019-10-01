@@ -9,14 +9,24 @@ using System;
 using System.IO;
 using System.Linq;
 using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpProjectTest
     {
+        private ITestOutputHelper testOutputHelper;
+
+        public CSharpProjectTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void LoadCSharpProjectTest()
         {
@@ -30,7 +40,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             workspaceMock
                 .Setup(ws => ws.RegisterFile(It.IsAny<string>()))
-                .Returns<string>(p => new CSharpFile(p));
+                .Returns<string>(p => new CSharpFile(
+                    p,
+                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
 
             var project = new CSharpProject(projectFile);
             project.Load(workspaceMock.Object);

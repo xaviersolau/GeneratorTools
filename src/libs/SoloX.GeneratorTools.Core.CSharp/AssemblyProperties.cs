@@ -8,3 +8,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly:InternalsVisibleTo("SoloX.GeneratorTools.Core.CSharp.UTest")]
+[assembly: InternalsVisibleTo("SoloX.GeneratorTools.Core.CSharp.ITest")]

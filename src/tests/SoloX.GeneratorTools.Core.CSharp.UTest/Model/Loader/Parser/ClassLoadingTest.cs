@@ -20,11 +20,19 @@ using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 {
     public class ClassLoadingTest
     {
+        private ITestOutputHelper testOutputHelper;
+
+        public ClassLoadingTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Theory]
         [InlineData(nameof(SimpleClass), null, null)]
         [InlineData(nameof(SimpleClassWithBase), null, nameof(SimpleClass))]
@@ -35,7 +43,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
         public void LoadCSharpClassTest(string className, string typeParameterName, string baseClassName)
         {
             var location = className.ToBasicPath();
-            var csFile = new CSharpFile(location);
+            var csFile = new CSharpFile(
+                location,
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
             csFile.Load();
 
             Assert.Single(csFile.Declarations);
@@ -76,12 +86,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
         [InlineData(nameof(GenericClassWithGenericBase<object>), nameof(GenericClass<object>))]
         public void LoadExtendsTest(string className, string baseClassName)
         {
-            var csFile = new CSharpFile(className.ToBasicPath());
+            var csFile = new CSharpFile(
+                className.ToBasicPath(),
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
             csFile.Load();
 
             var declaration = Assert.Single(csFile.Declarations);
 
-            var declarationResolver = SetupDeclarationResolver(
+            var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
                 baseClassName);
 
@@ -105,12 +117,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
         {
             var file = className.ToBasicPath();
 
-            var csFile = new CSharpFile(file);
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
             csFile.Load();
 
             var declaration = Assert.Single(csFile.Declarations);
 
-            var declarationResolver = SetupDeclarationResolver(
+            var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
                 nameof(SimpleClass));
 
@@ -146,12 +160,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             }
         }
 
-        private static IDeclarationResolver SetupDeclarationResolver(IDeclaration<SyntaxNode> contextDeclaration, params string[] classNames)
+        private IDeclarationResolver SetupDeclarationResolver(IDeclaration<SyntaxNode> contextDeclaration, params string[] classNames)
         {
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             foreach (var className in classNames)
             {
-                var classFile = new CSharpFile(className.ToBasicPath());
+                var classFile = new CSharpFile(
+                    className.ToBasicPath(),
+                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
                 classFile.Load();
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
                 if (classDeclarationSingle is IGenericDeclaration<SyntaxNode> genericDeclaration

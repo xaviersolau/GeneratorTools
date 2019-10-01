@@ -7,11 +7,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
@@ -21,19 +23,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
     internal class ReflectionGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
         where TNode : SyntaxNode
     {
-#pragma warning disable CA1810 // Initialize reference type static fields inline
-        static ReflectionGenericDeclarationLoader()
-#pragma warning restore CA1810 // Initialize reference type static fields inline
-        {
-            ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared
-                = new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>();
-            ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Shared
-                = new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>();
-            ReflectionGenericDeclarationLoader<StructDeclarationSyntax>.Shared
-                = new ReflectionGenericDeclarationLoader<StructDeclarationSyntax>();
-        }
+        private readonly ILogger<ReflectionGenericDeclarationLoader<TNode>> logger;
 
-        internal static ReflectionGenericDeclarationLoader<TNode> Shared { get; private set; }
+        public ReflectionGenericDeclarationLoader(ILogger<ReflectionGenericDeclarationLoader<TNode>> logger)
+        {
+            this.logger = logger;
+        }
 
         internal static string GetNameWithoutGeneric(string name)
         {
@@ -244,14 +239,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         {
             var memberList = new List<IMemberDeclaration<SyntaxNode>>();
 
-            foreach (var property in declaration.GetData<Type>().GetProperties())
+            try
             {
-                var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver);
-                memberList.Add(
-                    new PropertyDeclaration(
-                        property.Name,
-                        propertyType,
-                        new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider)));
+                foreach (var property in declaration.GetData<Type>().GetProperties())
+                {
+                    var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver);
+                    memberList.Add(
+                        new PropertyDeclaration(
+                            property.Name,
+                            propertyType,
+                            new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider)));
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                this.logger?.LogWarning($"Could not load properties from {declaration.GetData<Type>()} ({e.Message})");
             }
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();

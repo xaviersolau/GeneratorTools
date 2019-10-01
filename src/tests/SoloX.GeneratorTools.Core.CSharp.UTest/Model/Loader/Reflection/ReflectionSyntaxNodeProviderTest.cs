@@ -14,17 +14,26 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
     public class ReflectionSyntaxNodeProviderTest
     {
+        private ITestOutputHelper testOutputHelper;
+
+        public ReflectionSyntaxNodeProviderTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void SytaxNodeProviderSimpleClassTest()
         {
             var type = typeof(SimpleClass);
-            var classDeclaration = LoadClassDeclarationFrom(type);
+            var classDeclaration = this.LoadClassDeclarationFrom(type);
 
             Assert.NotNull(classDeclaration.SyntaxNodeProvider);
             Assert.NotNull(classDeclaration.SyntaxNodeProvider.SyntaxNode);
@@ -34,7 +43,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         public void SytaxNodeProviderClassWithPropertiesTest()
         {
             var type = typeof(ClassWithProperties);
-            var classDeclaration = LoadClassDeclarationFrom(type);
+            var classDeclaration = this.LoadClassDeclarationFrom(type);
 
             foreach (var property in classDeclaration.Properties)
             {
@@ -51,7 +60,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         public void SytaxNodeProviderClassWithArrayPropertiesTest()
         {
             var type = typeof(ClassWithArrayProperties);
-            var classDeclaration = LoadClassDeclarationFrom(type);
+            var classDeclaration = this.LoadClassDeclarationFrom(type);
 
             foreach (var property in classDeclaration.Properties)
             {
@@ -94,9 +103,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             Assert.Equal(code, syntaxNode.ToString());
         }
 
-        private static ClassDeclaration LoadClassDeclarationFrom(Type type)
+        private ClassDeclaration LoadClassDeclarationFrom(Type type)
         {
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
+                .CreateClassDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
             var declarationResolverMock = new Mock<IDeclarationResolver>();

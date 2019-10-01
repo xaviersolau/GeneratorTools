@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// <summary>
     /// Implements ICSharpWorkspace.
     /// </summary>
-    public class CSharpWorkspace : ICSharpWorkspace
+    public class CSharpWorkspace : ICSharpWorkspace, IDisposable
     {
         private readonly ICSharpFactory factory;
         private readonly ICSharpLoader loader;
@@ -29,6 +30,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
         private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
+
+        private readonly MetadataLoadContext metadataLoadContext;
+
+        private bool disposedValue = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.
@@ -41,6 +46,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             this.logger = logger;
             this.factory = factory;
             this.loader = loader;
+
+            var rts = GetDotnetRunTimes();
+            var paths = Directory.EnumerateFiles(rts[rts.Keys.Max()], "*.dll");
+            this.metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(paths));
         }
 
         /// <inheritdoc/>
@@ -91,7 +100,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 try
                 {
-                    var assembly = Assembly.LoadFrom(assemblyFile);
+                    var assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
                     csAssembly = this.factory.CreateAssembly(assembly);
                     this.assemblies.Add(assemblyFile, csAssembly);
 
@@ -116,6 +125,79 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             resolver.Load();
 
             return resolver;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose resources.
+        /// </summary>
+        /// <param name="disposing">Tells if this is called from Dispose.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    this.metadataLoadContext.Dispose();
+                }
+
+                this.disposedValue = true;
+            }
+        }
+
+        private static IReadOnlyDictionary<Version, string> GetDotnetRunTimes()
+        {
+            var processStartInfo = new ProcessStartInfo(CSharpProject.DotNet, $"--list-runtimes")
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            using (var process = Process.Start(processStartInfo))
+            {
+                process.WaitForExit();
+                var stdOutput = process.StandardOutput.ReadToEnd();
+                if (process.ExitCode != 0)
+                {
+                    var rawError = process.StandardError.ReadToEnd();
+                    throw new FormatException(
+                        $"Unable to get .Net Core RunTimes: dotnet exit code is {process.ExitCode}\n" +
+                        $"Standard output:\n" +
+                        $"{stdOutput})\n" +
+                        $"Standard error:\n" +
+                        $"{rawError})");
+                }
+
+                var lines = stdOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+                var pathMap = lines
+                    .Select(line => line.Split(' '))
+                    .Select(words =>
+                    {
+                        var versionString = words[1];
+                        var version = new Version(versionString);
+                        var path = string.Join(" ", words.Skip(2));
+                        path = path.Substring(1, path.Length - 2);
+
+                        // path = Path.Combine(path, versionString, "mscorlib.dll");
+                        path = Path.Combine(path, versionString);
+                        return new
+                        {
+                            Name = words.First(),
+                            Version = version,
+                            Path = path,
+                        };
+                    })
+                    .Where(sdk => sdk.Name == "Microsoft.NETCore.App")
+                    .ToDictionary(sdk => sdk.Version, sdk => sdk.Path);
+
+                return pathMap;
+            }
         }
     }
 }

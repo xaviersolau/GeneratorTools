@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.CSharp.UTest\SoloX.GeneratorTools.Core.CSharp.UTest.csproj" />
   </ItemGroup>
 
   <ItemGroup>

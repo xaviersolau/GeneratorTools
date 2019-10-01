@@ -18,17 +18,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Declaration factory.
     /// </summary>
-    internal static class DeclarationFactory
+    internal class DeclarationFactory : IDeclarationFactory
     {
-        /// <summary>
-        /// Create an interface declaration from a syntax node.
-        /// </summary>
-        /// <param name="nameSpace">The interface name space.</param>
-        /// <param name="usingDirectives">The using directives.</param>
-        /// <param name="node">The interface syntax node to load the declaration from.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns>The created interface declaration object.</returns>
-        public static IInterfaceDeclaration CreateInterfaceDeclaration(
+        private readonly ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax> reflectionLoaderInterfaceDeclarationSyntax;
+        private readonly ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax;
+        private readonly ParserGenericDeclarationLoader<InterfaceDeclarationSyntax> parserLoaderInterfaceDeclarationSyntax;
+        private readonly ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax;
+        private readonly ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax;
+
+        public DeclarationFactory(
+            ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax> reflectionLoaderInterfaceDeclarationSyntax,
+            ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax,
+            ParserGenericDeclarationLoader<InterfaceDeclarationSyntax> parserLoaderInterfaceDeclarationSyntax,
+            ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax,
+            ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax)
+        {
+            this.reflectionLoaderInterfaceDeclarationSyntax = reflectionLoaderInterfaceDeclarationSyntax;
+            this.reflectionLoaderClassDeclarationSyntax = reflectionLoaderClassDeclarationSyntax;
+
+            this.parserLoaderInterfaceDeclarationSyntax = parserLoaderInterfaceDeclarationSyntax;
+            this.parserLoaderClassDeclarationSyntax = parserLoaderClassDeclarationSyntax;
+            this.parserLoaderStructDeclarationSyntax = parserLoaderStructDeclarationSyntax;
+        }
+
+        /// <inheritdoc/>
+        public IInterfaceDeclaration CreateInterfaceDeclaration(
             string nameSpace,
             IReadOnlyList<string> usingDirectives,
             InterfaceDeclarationSyntax node,
@@ -40,15 +54,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 new ParserSyntaxNodeProvider<InterfaceDeclarationSyntax>(node),
                 usingDirectives,
                 location,
-                ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
+                this.parserLoaderInterfaceDeclarationSyntax);
         }
 
-        /// <summary>
-        /// Create an interface declaration from a syntax node.
-        /// </summary>
-        /// <param name="type">The interface type to load the declaration from.</param>
-        /// <returns>The created interface declaration object.</returns>
-        public static IInterfaceDeclaration CreateInterfaceDeclaration(Type type)
+        /// <inheritdoc/>
+        public IInterfaceDeclaration CreateInterfaceDeclaration(Type type)
         {
             var decl = new InterfaceDeclaration(
                 type.Namespace,
@@ -56,22 +66,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 new ReflectionTypeSyntaxNodeProvider<InterfaceDeclarationSyntax>(type),
                 null,
                 type.Assembly.Location,
-                ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared);
+                this.reflectionLoaderInterfaceDeclarationSyntax);
 
-            ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared.Setup(decl, type);
+            this.reflectionLoaderInterfaceDeclarationSyntax.Setup(decl, type);
 
             return decl;
         }
 
-        /// <summary>
-        /// Create a class declaration from a syntax node.
-        /// </summary>
-        /// <param name="nameSpace">The class name space.</param>
-        /// <param name="usingDirectives">The using directives.</param>
-        /// <param name="node">The class syntax node to load the declaration from.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns>The created class declaration object.</returns>
-        public static IClassDeclaration CreateClassDeclaration(
+        /// <inheritdoc/>
+        public IClassDeclaration CreateClassDeclaration(
             string nameSpace,
             IReadOnlyList<string> usingDirectives,
             ClassDeclarationSyntax node,
@@ -83,15 +86,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 new ParserSyntaxNodeProvider<ClassDeclarationSyntax>(node),
                 usingDirectives,
                 location,
-                ParserGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
+                this.parserLoaderClassDeclarationSyntax);
         }
 
-        /// <summary>
-        /// Create a class declaration from a syntax node.
-        /// </summary>
-        /// <param name="type">The class type to load the declaration from.</param>
-        /// <returns>The created class declaration object.</returns>
-        public static IClassDeclaration CreateClassDeclaration(Type type)
+        /// <inheritdoc/>
+        public IClassDeclaration CreateClassDeclaration(Type type)
         {
             var decl = new ClassDeclaration(
                 type.Namespace,
@@ -99,22 +98,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 new ReflectionTypeSyntaxNodeProvider<ClassDeclarationSyntax>(type),
                 null,
                 type.Assembly.Location,
-                ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Shared);
+                this.reflectionLoaderClassDeclarationSyntax);
 
-            ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Shared.Setup(decl, type);
+            this.reflectionLoaderClassDeclarationSyntax.Setup(decl, type);
 
             return decl;
         }
 
-        /// <summary>
-        /// Create a struct declaration from a syntax node.
-        /// </summary>
-        /// <param name="nameSpace">The struct name space.</param>
-        /// <param name="usingDirectives">The using directives.</param>
-        /// <param name="node">The struct syntax node to load the declaration from.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns>The created struct declaration object.</returns>
-        public static IStructDeclaration CreateStructDeclaration(
+        /// <inheritdoc/>
+        public IStructDeclaration CreateStructDeclaration(
             string nameSpace,
             IReadOnlyList<string> usingDirectives,
             StructDeclarationSyntax node,
@@ -126,18 +118,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 new ParserSyntaxNodeProvider<StructDeclarationSyntax>(node),
                 usingDirectives,
                 location,
-                ParserGenericDeclarationLoader<StructDeclarationSyntax>.Shared);
+                this.parserLoaderStructDeclarationSyntax);
         }
 
-        /// <summary>
-        /// Create an enum declaration from a syntax node.
-        /// </summary>
-        /// <param name="nameSpace">The enum name space.</param>
-        /// <param name="usingDirectives">The using directives.</param>
-        /// <param name="node">The enum syntax node to load the declaration from.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns>The created enum declaration object.</returns>
-        public static IEnumDeclaration CreateEnumDeclaration(
+        /// <inheritdoc/>
+        public IEnumDeclaration CreateEnumDeclaration(
             string nameSpace,
             IReadOnlyList<string> usingDirectives,
             EnumDeclarationSyntax node,
