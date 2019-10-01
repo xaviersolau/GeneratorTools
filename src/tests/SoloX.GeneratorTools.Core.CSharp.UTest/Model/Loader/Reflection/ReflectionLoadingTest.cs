@@ -17,12 +17,21 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
     public class ReflectionLoadingTest
     {
+        private ITestOutputHelper testOutputHelper;
+
+        public ReflectionLoadingTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Theory]
         [InlineData(typeof(SimpleClass))]
         [InlineData(typeof(SimpleClassWithBase))]
@@ -32,7 +41,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(GenericClassWithGenericBase<>))]
         public void BasicReflectionLoadingTest(Type type)
         {
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
+                .CreateClassDeclaration(type);
 
             Assert.NotNull(declaration);
             Assert.Equal(
@@ -75,7 +85,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(GenericClassWithGenericBase<>), nameof(GenericClass<object>))]
         public void LoadExtendsTest(Type type, string baseClassName)
         {
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
+                .CreateClassDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
@@ -95,8 +106,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(ClassWithArrayProperties), true)]
         public void LoadMemberListTest(Type type, bool isArray)
         {
-            var declaration = DeclarationFactory.CreateClassDeclaration(type);
-            var simpleClassDeclaration = DeclarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateClassDeclaration(type);
+            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 

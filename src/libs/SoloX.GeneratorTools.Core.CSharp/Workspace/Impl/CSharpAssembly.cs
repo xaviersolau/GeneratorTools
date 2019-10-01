@@ -26,6 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     public class CSharpAssembly : ICSharpAssembly
     {
         private readonly ILogger<CSharpAssembly> logger;
+        private readonly IDeclarationFactory declarationFactory;
         private bool isLoaded;
 
         /// <summary>
@@ -33,10 +34,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// </summary>
         /// <param name="logger">The logger to log errors.</param>
         /// <param name="assembly">The assembly to load declaration from.</param>
-        public CSharpAssembly(ILogger<CSharpAssembly> logger, Assembly assembly)
+        /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
+        public CSharpAssembly(ILogger<CSharpAssembly> logger, IDeclarationFactory declarationFactory, Assembly assembly)
         {
             this.Assembly = assembly;
             this.logger = logger;
+            this.declarationFactory = declarationFactory;
         }
 
         /// <inheritdoc/>
@@ -65,7 +68,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 {
                     if (type.IsInterface)
                     {
-                        var typeInterfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(type);
+                        var typeInterfaceDeclaration = this.declarationFactory.CreateInterfaceDeclaration(type);
 
                         declarations.Add(typeInterfaceDeclaration);
                     }

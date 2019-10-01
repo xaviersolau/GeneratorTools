@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
 
@@ -21,14 +22,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpFile : ICSharpFile
     {
+        private readonly IDeclarationFactory declarationFactory;
+
         private bool isLoaded;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpFile"/> class.
         /// </summary>
         /// <param name="file">The CSharp file.</param>
-        public CSharpFile(string file)
+        /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
+        public CSharpFile(string file, IDeclarationFactory declarationFactory)
         {
+            this.declarationFactory = declarationFactory;
+
             if (!File.Exists(file))
             {
                 throw new FileNotFoundException();
@@ -61,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var declarations = new List<IDeclaration<SyntaxNode>>();
             var location = Path.Combine(this.FilePath, this.FileName);
-            CSharpFileReader.Read(location, new DeclarationWalker(declarations, location));
+            CSharpFileReader.Read(location, new DeclarationWalker(this.declarationFactory, declarations, location));
 
             this.Declarations = declarations;
         }

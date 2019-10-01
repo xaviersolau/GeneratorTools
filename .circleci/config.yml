@@ -37,7 +37,7 @@ jobs:
             cd ../../..
 
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.ITest
-            dotnet test -c Release --no-build -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.ITest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
+            dotnet test -c Release --no-build -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.ITest]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
             cd ../../..
 
             mkdir coverage

@@ -28,13 +28,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         static ParserGenericDeclarationLoader()
 #pragma warning restore CA1810 // Initialize reference type static fields inline
         {
-            ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.Shared
-                = new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>();
-            ParserGenericDeclarationLoader<ClassDeclarationSyntax>.Shared
-                = new ParserGenericDeclarationLoader<ClassDeclarationSyntax>();
-            ParserGenericDeclarationLoader<StructDeclarationSyntax>.Shared
-                = new ParserGenericDeclarationLoader<StructDeclarationSyntax>();
-
             ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.BaseListGetter
                 = s => s.BaseList;
             ParserGenericDeclarationLoader<ClassDeclarationSyntax>.BaseListGetter
@@ -49,8 +42,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             ParserGenericDeclarationLoader<StructDeclarationSyntax>.TypeParameterListGetter
                 = s => s.TypeParameterList;
         }
-
-        internal static ParserGenericDeclarationLoader<TNode> Shared { get; private set; }
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {

@@ -23,12 +23,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly Stack<List<string>> usingDirectives =
             new Stack<List<string>>(new[] { new List<string>() });
 
+        private readonly IDeclarationFactory declarationFactory;
+
         private readonly IList<IDeclaration<SyntaxNode>> declarations;
 
         private readonly string location;
 
-        public DeclarationWalker(IList<IDeclaration<SyntaxNode>> declarations, string location)
+        public DeclarationWalker(IDeclarationFactory declarationFactory, IList<IDeclaration<SyntaxNode>> declarations, string location)
         {
+            this.declarationFactory = declarationFactory;
             this.declarations = declarations;
             this.location = location;
         }
@@ -62,7 +65,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var interfaceDeclaration = DeclarationFactory.CreateInterfaceDeclaration(
+            var interfaceDeclaration = this.declarationFactory.CreateInterfaceDeclaration(
                 currentNameSpace,
                 currentUsingDirectives,
                 node,
@@ -76,7 +79,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var classDeclaration = DeclarationFactory.CreateClassDeclaration(
+            var classDeclaration = this.declarationFactory.CreateClassDeclaration(
                 currentNameSpace,
                 currentUsingDirectives,
                 node,
@@ -90,7 +93,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var structDeclaration = DeclarationFactory.CreateStructDeclaration(
+            var structDeclaration = this.declarationFactory.CreateStructDeclaration(
                 currentNameSpace,
                 currentUsingDirectives,
                 node,
@@ -104,7 +107,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var currentNameSpace = this.nameSpace.Peek();
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            var enumDeclaration = DeclarationFactory.CreateEnumDeclaration(
+            var enumDeclaration = this.declarationFactory.CreateEnumDeclaration(
                 currentNameSpace,
                 currentUsingDirectives,
                 node,

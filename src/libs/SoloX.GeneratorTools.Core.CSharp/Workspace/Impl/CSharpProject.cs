@@ -24,9 +24,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpProject : ICSharpProject
     {
-        private const string ProjectData = "ProjectData";
+        internal const string DotNet = "dotnet";
 
-        private const string DotNet = "dotnet";
+        private const string ProjectData = "ProjectData";
 
         private bool isLoaded;
 
@@ -96,7 +96,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             var projectAssets = JsonConvert.DeserializeObject<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
 
             var assemblies = new List<ICSharpAssembly>();
-            foreach (var compileItem in projectAssets.Targets.First().Value.GetAllPackageRuntimeItems(projectAssets))
+            foreach (var compileItem in projectAssets.Targets.First().Value.GetAllPackageCompileItems(projectAssets))
             {
                 var assemblyFile = GetAssemblyFile(projectAssets, compileItem);
 
@@ -183,13 +183,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             using (var process = Process.Start(processStartInfo))
             {
                 process.WaitForExit();
+                var stdOutput = process.StandardOutput.ReadToEnd();
                 if (process.ExitCode != 0)
                 {
                     var rawError = process.StandardError.ReadToEnd();
-                    throw new FormatException($"Unable to load project file: dotnet exit code is {process.ExitCode} ({rawError})");
+                    throw new FormatException(
+                        $"Unable to load project file: dotnet exit code is {process.ExitCode}\n" +
+                        $"Standard output:\n" +
+                        $"{stdOutput})\n" +
+                        $"Standard error:\n" +
+                        $"{rawError})");
                 }
 
-                return process.StandardOutput.ReadToEnd();
+                return stdOutput;
             }
         }
 

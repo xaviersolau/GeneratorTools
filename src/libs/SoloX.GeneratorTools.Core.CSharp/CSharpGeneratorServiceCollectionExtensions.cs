@@ -8,7 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 
@@ -27,6 +31,25 @@ namespace SoloX.GeneratorTools.Core.CSharp
         public static IServiceCollection AddCSharpToolsGenerator(this IServiceCollection services)
         {
             return services
+                .AddSingleton<
+                    ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>,
+                    ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>()
+                .AddSingleton<
+                    ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>,
+                    ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>()
+                .AddSingleton<
+                    ReflectionGenericDeclarationLoader<StructDeclarationSyntax>,
+                    ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>()
+                .AddSingleton<
+                    ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>,
+                    ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>>()
+                .AddSingleton<
+                    ParserGenericDeclarationLoader<ClassDeclarationSyntax>,
+                    ParserGenericDeclarationLoader<ClassDeclarationSyntax>>()
+                .AddSingleton<
+                    ParserGenericDeclarationLoader<StructDeclarationSyntax>,
+                    ParserGenericDeclarationLoader<StructDeclarationSyntax>>()
+                .AddSingleton<IDeclarationFactory, DeclarationFactory>()
                 .AddSingleton<ICSharpFactory, CSharpFactory>()
                 .AddSingleton<ICSharpLoader, CSharpLoader>()
                 .AddTransient<ICSharpWorkspace, CSharpWorkspace>();
