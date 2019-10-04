@@ -47,9 +47,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             this.factory = factory;
             this.loader = loader;
 
-            var rts = GetDotnetRunTimes();
-            var paths = Directory.EnumerateFiles(rts[rts.Keys.Max()], "*.dll");
-            this.metadataLoadContext = new MetadataLoadContext(new PathAssemblyResolver(paths));
+            var runtimes = GetDotnetRunTimes();
+            var runtimePath = runtimes[runtimes.Keys.Max()];
+
+            this.metadataLoadContext = new MetadataLoadContext(new DirectoryAssemblyResolver(runtimePath));
         }
 
         /// <inheritdoc/>
@@ -96,13 +97,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public ICSharpAssembly RegisterAssembly(string assemblyFile)
         {
-            if (!this.assemblies.TryGetValue(assemblyFile, out var csAssembly))
+            if (assemblyFile == null)
             {
+                return null;
+            }
+
+            var assemblyFileName = Path.GetFileName(assemblyFile);
+
+            if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
+            {
+                var loadedAssemblies = this.metadataLoadContext.GetAssemblies()
+                    .ToDictionary(a => Path.GetFileName(a.Location));
                 try
                 {
-                    var assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
+                    if (!loadedAssemblies.TryGetValue(assemblyFileName, out var assembly))
+                    {
+                        assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
+                    }
+
                     csAssembly = this.factory.CreateAssembly(assembly);
-                    this.assemblies.Add(assemblyFile, csAssembly);
+
+                    this.assemblies.Add(assemblyFileName, csAssembly);
 
                     this.loader.Load(this, csAssembly);
                 }
