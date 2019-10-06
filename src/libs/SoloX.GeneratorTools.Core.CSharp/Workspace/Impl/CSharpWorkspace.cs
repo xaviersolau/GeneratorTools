@@ -106,24 +106,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
             {
-                var loadedAssemblies = this.metadataLoadContext.GetAssemblies()
-                    .ToDictionary(a => Path.GetFileName(a.Location));
-                try
+                if (this.TryLoadAssembly(assemblyFile, out var assembly))
                 {
-                    if (!loadedAssemblies.TryGetValue(assemblyFileName, out var assembly))
-                    {
-                        assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
-                    }
-
                     csAssembly = this.factory.CreateAssembly(assembly);
 
                     this.assemblies.Add(assemblyFileName, csAssembly);
 
                     this.loader.Load(this, csAssembly);
-                }
-                catch (FileLoadException e)
-                {
-                    this.logger?.LogWarning(e, $"Could not load assembly from {assemblyFile}");
                 }
             }
 
@@ -213,6 +202,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
                 return pathMap;
             }
+        }
+
+        private bool TryLoadAssembly(string assemblyFile, out Assembly assembly)
+        {
+            var assemblyName = Path.GetFileNameWithoutExtension(assemblyFile);
+
+            var loadedAssemblies = this.metadataLoadContext.GetAssemblies()
+                .ToDictionary(a => Path.GetFileName(a.GetName().Name));
+            try
+            {
+                if (!loadedAssemblies.TryGetValue(assemblyName, out assembly))
+                {
+                    if (assemblyFile.Contains("NuGetFallbackFolder"))
+                    {
+                        assembly = this.metadataLoadContext.LoadFromAssemblyName(assemblyName);
+                    }
+                    else
+                    {
+                        assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
+                    }
+                }
+
+                return true;
+            }
+            catch (FileLoadException e)
+            {
+                this.logger?.LogWarning(e, $"Could not load assembly from {assemblyFile}");
+            }
+
+            assembly = null;
+            return false;
         }
     }
 }
