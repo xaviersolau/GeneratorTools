@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.3.1" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.5" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.6" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
   </ItemGroup>
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.5" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.6" />
   </ItemGroup>
 
 </Project>
