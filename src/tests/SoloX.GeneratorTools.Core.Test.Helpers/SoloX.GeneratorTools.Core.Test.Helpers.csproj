@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\SharedProperties.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <PackageId>SoloX.GeneratorTools.Core.Test.Helpers</PackageId>
+
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+
+    <PackageTags>code generation, parse, netstandard, pattern, test</PackageTags>
+    <PackageReleaseNotes>- Provide generators test helpers.</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="1.0.5" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
+  </ItemGroup>
+
+</Project>

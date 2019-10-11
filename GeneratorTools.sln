@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.Examples.Core", "src\examples\SoloX.GeneratorTools.Core.CSharp.Examples.Core\SoloX.GeneratorTools.Core.CSharp.Examples.Core.csproj", "{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Core.Test.Helpers", "src\tests\SoloX.GeneratorTools.Core.Test.Helpers\SoloX.GeneratorTools.Core.Test.Helpers.csproj", "{87553C47-9859-40B7-ADD1-BCEDEF432045}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87553C47-9859-40B7-ADD1-BCEDEF432045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87553C47-9859-40B7-ADD1-BCEDEF432045}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87553C47-9859-40B7-ADD1-BCEDEF432045}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87553C47-9859-40B7-ADD1-BCEDEF432045}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{D8C335A7-9779-4F01-B481-6BFF3050179A} = {C6B09C62-ABA8-44EA-9459-2F2E67A22706}
 		{10EE3DF0-FD14-4AFB-9832-9D61F8D54861} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
 		{0F55A601-5897-4CEE-8C7E-A0CEAB5EDE4B} = {C6B09C62-ABA8-44EA-9459-2F2E67A22706}
+		{87553C47-9859-40B7-ADD1-BCEDEF432045} = {411B11DF-0D32-4F3C-AD60-7EA9D87A240D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3EEBCA9-F083-4143-96F7-99A6AB364E24}
