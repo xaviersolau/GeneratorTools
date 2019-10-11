@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
-using SoloX.GeneratorTools.Core.CSharp.ITest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -22,6 +21,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
+using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using Xunit;
 using Xunit.Abstractions;
 
