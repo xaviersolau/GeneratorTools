@@ -14,6 +14,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
 
+    <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
