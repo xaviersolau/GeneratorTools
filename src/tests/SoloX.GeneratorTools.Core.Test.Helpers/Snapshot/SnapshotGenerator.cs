@@ -26,7 +26,12 @@ namespace SoloX.GeneratorTools.Core.Test.Helpers.Snapshot
             {
                 generator(writer);
                 writer.Flush();
-                this.generated.Add(name, Encoding.ASCII.GetString(buffer.GetBuffer()));
+
+                buffer.Position = 0;
+                using (var reader = new StreamReader(buffer))
+                {
+                    this.generated.Add(name, reader.ReadToEnd());
+                }
             }
         }
 
