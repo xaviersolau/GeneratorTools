@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using SoloX.GeneratorTools.Core.Generator;
@@ -20,9 +21,7 @@ namespace SoloX.GeneratorTools.Core.Test.Helpers.Snapshot
 
         public static void AssertSnapshot(string generated, string snapshotName, string location)
         {
-            string root = GetProjectRoot();
-
-            string snapshotFolder = Path.Combine(root, location, "Snapshots");
+            string snapshotFolder = Path.Combine(location, "Snapshots");
             string snapshotFile = Path.Combine(snapshotFolder, $"{snapshotName}.snapshot");
 
             if (!Directory.Exists(snapshotFolder) && IsOverWrite)
@@ -54,11 +53,12 @@ namespace SoloX.GeneratorTools.Core.Test.Helpers.Snapshot
             }
         }
 
-        private static string GetProjectRoot()
+        public static string GetLocationFromCallingProjectRoot(string folder)
         {
-            var assemblyFolder = Path.GetDirectoryName(typeof(SnapshotHelper).Assembly.Location);
+            var callingAssembly = new StackTrace().GetFrame(1).GetMethod().DeclaringType.Assembly;
+            var assemblyFolder = Path.GetDirectoryName(callingAssembly.Location);
             var projectRoot = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(assemblyFolder)));
-            return projectRoot;
+            return folder != null ? Path.Combine(projectRoot, folder) : projectRoot;
         }
     }
 }

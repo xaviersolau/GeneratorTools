@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -134,7 +135,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 
             implGenerator.Generate(writerSelector, itfDeclaration, implName);
 
-            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, "Generator");
+            string location = SnapshotHelper.GetLocationFromCallingProjectRoot("Generator");
+
+            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
         }
 
         private IDeclarationResolver LoadWorkSpace(
