@@ -27,19 +27,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         private readonly IPropertyDeclaration itfPatternProperty;
 
         private Action<string> write;
+        private Func<string, string> typeTextExtractor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyWriter"/> class.
         /// </summary>
         /// <param name="itfPatternProperty">Interface property pattern.</param>
         /// <param name="itfDeclarationProperties">Interface declaration properties to implement.</param>
+        /// <param name="typeTextExtractor">Type text extractor used for type substitution (Properties and fields).</param>
         public PropertyWriter(
             IPropertyDeclaration itfPatternProperty,
-            IReadOnlyCollection<IPropertyDeclaration> itfDeclarationProperties)
+            IReadOnlyCollection<IPropertyDeclaration> itfDeclarationProperties,
+            Func<string, string> typeTextExtractor = null)
         {
             this.declarationProperties = itfDeclarationProperties;
-
             this.itfPatternProperty = itfPatternProperty;
+
+            this.typeTextExtractor = typeTextExtractor ?? IdentityExtract;
         }
 
         /// <inheritdoc/>
@@ -77,9 +81,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Type.ToFullString();
+
                 var itfType = this.itfPatternProperty.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
                 var declType = itemProperties.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+
+                itfType = this.typeTextExtractor(itfType);
+                declType = this.typeTextExtractor(declType);
 
                 this.write(implType.Replace(itfType, declType));
 
@@ -117,9 +125,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Declaration.Type.ToFullString();
+
                 var itfType = this.itfPatternProperty.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
                 var declType = itemProperties.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+
+                itfType = this.typeTextExtractor(itfType);
+                declType = this.typeTextExtractor(declType);
 
                 this.write(implType.Replace(itfType, declType));
 
@@ -224,6 +236,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         private static string GetFirstCharLoweredName(string name)
         {
             return $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
+        }
+
+        private static string IdentityExtract(string type)
+        {
+            return type;
         }
 
         private bool VisitStatement(SyntaxNode node)

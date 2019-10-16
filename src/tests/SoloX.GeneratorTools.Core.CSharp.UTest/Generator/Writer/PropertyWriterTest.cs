@@ -117,9 +117,52 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
             Assert.Equal(DeclFieldName2, v2.Identifier.ValueText);
         }
 
+        [Fact]
+        public void GenericTypeParameterPropertyWriterTest()
+        {
+            var itfType = "IList<IPatternType>";
+            var declType = "IList<IDeclType>";
+            var patternFieldType = "AnyImplType<IPatternType>";
+            var expectedFieldType = "AnyImplType<IDeclType>";
+
+            var pw = SetupPropertyWriter(
+                itfType,
+                PatternPropName,
+                TypeParamExtract,
+                (declType, DeclPropName1));
+
+            var implPatternFieldNode = SyntaxTreeHelper.GetFieldSyntax(patternFieldType, PatternFieldName);
+
+            var generatedFields = NodeWriterHelper.WriteAndAssertMultiMemberOfType<FieldDeclarationSyntax>(pw, implPatternFieldNode);
+
+            var field = Assert.Single(generatedFields);
+            Assert.Equal(expectedFieldType, field.Declaration.Type.ToString());
+        }
+
+        private static string TypeParamExtract(string type)
+        {
+            var start = type.IndexOf('<', StringComparison.InvariantCulture);
+            var end = type.IndexOf('>', StringComparison.InvariantCulture);
+            if (start > 0 && end > start)
+            {
+                return type.Substring(start, end - start);
+            }
+
+            return type;
+        }
+
         private static PropertyWriter SetupPropertyWriter(
             string itfPatternPropertyType,
             string itfPatternPropertyName,
+            params (string propertyType, string propertyName)[] itfDeclarations)
+        {
+            return SetupPropertyWriter(itfPatternPropertyType, itfPatternPropertyName, null, itfDeclarations);
+        }
+
+        private static PropertyWriter SetupPropertyWriter(
+            string itfPatternPropertyType,
+            string itfPatternPropertyName,
+            Func<string, string> typeTextExtractor,
             params (string propertyType, string propertyName)[] itfDeclarations)
         {
             var itfPatternProp = DeclarationHelper.SetupPropertyDeclaration(itfPatternPropertyType, itfPatternPropertyName);
@@ -130,7 +173,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
                 itfDeclProps.Add(itfDeclProp);
             }
 
-            return new PropertyWriter(itfPatternProp, itfDeclProps);
+            return new PropertyWriter(itfPatternProp, itfDeclProps, typeTextExtractor);
         }
     }
 }
