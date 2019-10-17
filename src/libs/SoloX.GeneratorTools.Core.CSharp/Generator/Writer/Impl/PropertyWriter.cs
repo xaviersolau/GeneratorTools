@@ -140,7 +140,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                     .Replace(lowPropertyName, lowItemPropertyName));
                 if (variableNode.Initializer != null)
                 {
-                    this.write(variableNode.Initializer.ToFullString());
+                    this.write(variableNode.Initializer.ToFullString().Replace(itfType, declType));
                 }
 
                 this.write(node.SemicolonToken.ToFullString());

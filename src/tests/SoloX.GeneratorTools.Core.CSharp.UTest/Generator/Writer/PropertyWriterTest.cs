@@ -118,7 +118,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         }
 
         [Fact]
-        public void GenericTypeParameterPropertyWriterTest()
+        public void GenericTypeParameterFieldPropertyWriterTest()
         {
             var itfType = "IList<IPatternType>";
             var declType = "IList<IDeclType>";
@@ -137,6 +137,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
 
             var field = Assert.Single(generatedFields);
             Assert.Equal(expectedFieldType, field.Declaration.Type.ToString());
+        }
+
+        [Fact]
+        public void GenericTypeParameterFieldWithInitPropertyWriterTest()
+        {
+            var itfType = "IList<IPatternType>";
+            var declType = "IList<IDeclType>";
+            var patternFieldType = "AnyImplType<IPatternType>";
+            var patternFieldInit = "new AnyImplType<IPatternType>()";
+            var expectedFieldType = "AnyImplType<IDeclType>";
+            var expectedFieldInit = "new AnyImplType<IDeclType>()";
+
+            var pw = SetupPropertyWriter(
+                itfType,
+                PatternPropName,
+                TypeParamExtract,
+                (declType, DeclPropName1));
+
+            var implPatternFieldNode = SyntaxTreeHelper.GetFieldSyntax(patternFieldType, PatternFieldName, patternFieldInit);
+
+            var generatedFields = NodeWriterHelper.WriteAndAssertMultiMemberOfType<FieldDeclarationSyntax>(pw, implPatternFieldNode);
+
+            var field = Assert.Single(generatedFields);
+            Assert.Equal(expectedFieldType, field.Declaration.Type.ToString());
+            Assert.Equal(expectedFieldInit, field.Declaration.Variables.First().Initializer.Value.ToString());
         }
 
         private static string TypeParamExtract(string type)
