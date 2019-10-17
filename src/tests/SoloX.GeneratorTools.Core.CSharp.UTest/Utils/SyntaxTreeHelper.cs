@@ -59,6 +59,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         }
 
         /// <summary>
+        /// Generate a property declaration syntax as if it was declared in a class implementation with
+        /// an expression body.
+        /// </summary>
+        /// <param name="type">The property type.</param>
+        /// <param name="name">The property name.</param>
+        /// <param name="expressionBody">The expression body.</param>
+        /// <returns>The PropertyDeclarationSyntax node.</returns>
+        public static SyntaxNode GetExpressionBodyPropertyImplSyntax(string type, string name, string expressionBody)
+        {
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"public {type} {name} => {expressionBody};");
+            return (PropertyDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
+        /// <summary>
         /// Generate a field declaration syntax as if it was declared in a class implementation.
         /// </summary>
         /// <param name="type">The field type.</param>

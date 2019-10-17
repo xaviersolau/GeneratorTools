@@ -47,6 +47,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
             Assert.Equal(DeclPropType1, generatedProperty.Type.ToString());
         }
 
+        [Fact]
+        public void ExpressionBodyPropertyWriterTest()
+        {
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
+
+            var implPatternPropNode = SyntaxTreeHelper.GetExpressionBodyPropertyImplSyntax(
+                PatternPropType,
+                PatternPropName,
+                $"this.{PatternFieldName}");
+
+            var generatedProperty = NodeWriterHelper
+                .WriteAndAssertSingleMemberOfType<PropertyDeclarationSyntax>(pw, implPatternPropNode);
+
+            Assert.Equal(DeclPropName1, generatedProperty.Identifier.Text);
+            Assert.Equal(DeclPropType1, generatedProperty.Type.ToString());
+            Assert.NotNull(generatedProperty.ExpressionBody);
+            Assert.Equal($"=> this.{DeclFieldName1}", generatedProperty.ExpressionBody.ToString());
+        }
+
         [Theory]
         [InlineData("propertyPattern", "propA")]
         [InlineData("myPropertyPattern", "myPropA")]

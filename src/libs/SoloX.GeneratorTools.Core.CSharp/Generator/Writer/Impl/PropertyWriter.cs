@@ -93,9 +93,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
                 this.write(node.Identifier.ToFullString()
                     .Replace(propertyName, itemPropertyName));
-                this.write(node.AccessorList.ToFullString()
-                    .Replace(propertyName, itemPropertyName)
-                    .Replace(lowPropertyName, lowItemPropertyName));
+                if (node.AccessorList != null)
+                {
+                    this.write(node.AccessorList.ToFullString()
+                        .Replace(propertyName, itemPropertyName)
+                        .Replace(lowPropertyName, lowItemPropertyName));
+                }
+
+                if (node.ExpressionBody != null)
+                {
+                    this.write(node.ExpressionBody.ToFullString()
+                        .Replace(propertyName, itemPropertyName)
+                        .Replace(lowPropertyName, lowItemPropertyName));
+                }
             }
 
             return true;
