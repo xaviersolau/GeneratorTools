@@ -71,6 +71,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
         }
 
+        /// <summary>
+        /// Generate a field declaration syntax as if it was declared in a class implementation.
+        /// </summary>
+        /// <param name="type">The field type.</param>
+        /// <param name="name">The field name.</param>
+        /// <param name="init">The field initializer.</param>
+        /// <returns>The FieldDeclarationSyntax node.</returns>
+        public static SyntaxNode GetFieldSyntax(string type, string name, string init)
+        {
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"public {type} {name} = {init};");
+            return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
         public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)
             where TNode : SyntaxNode
         {
