@@ -243,6 +243,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             return this.VisitStatement(node);
         }
 
+        /// <inheritdoc/>
+        public override bool VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+        {
+            return this.VisitStatement(node);
+        }
+
         private static string GetFirstCharLoweredName(string name)
         {
             return $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
