@@ -87,6 +87,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         }
 
         /// <summary>
+        /// Generate a variable declaration syntax as if it was declared in a method implementation.
+        /// </summary>
+        /// <param name="type">The variable type.</param>
+        /// <param name="name">The variable name.</param>
+        /// <returns>The VariableDeclarationSyntax node.</returns>
+        public static SyntaxNode GetVariableSyntax(string type, string name, string init)
+        {
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"void Method(){{{type} {name} = {init};}}");
+            return ((MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Body.Statements.First();
+        }
+
+        /// <summary>
         /// Generate a field declaration syntax as if it was declared in a class implementation.
         /// </summary>
         /// <param name="type">The field type.</param>

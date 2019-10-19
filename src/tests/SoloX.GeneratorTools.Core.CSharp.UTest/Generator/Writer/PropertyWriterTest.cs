@@ -86,6 +86,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         [InlineData("propertyPattern", "propA")]
         [InlineData("myPropertyPattern", "myPropA")]
         [InlineData("propertyPatternTest", "propATest")]
+        public void SimpleVariableStatementWriterTest(string patternVariableName, string implPropName)
+        {
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
+
+            var implPatternVariableNode = SyntaxTreeHelper.GetVariableSyntax(
+                PatternPropType, $"{patternVariableName}Version", $"this.{patternVariableName}.Version");
+
+            var variableProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(
+                pw, implPatternVariableNode);
+
+            Assert.Equal($"{implPropName}Version", variableProperty.Declaration.Variables.Single().Identifier.Text);
+            Assert.Equal($"this.{implPropName}.Version", variableProperty.Declaration.Variables.Single().Initializer.Value.ToString());
+        }
+
+        [Theory]
+        [InlineData("propertyPattern", "propA")]
+        [InlineData("myPropertyPattern", "myPropA")]
+        [InlineData("propertyPatternTest", "propATest")]
         [InlineData("this.propertyPattern", "this.propA")]
         public void PropertyWithAccessorsWriterTest(string patternFieldName, string implPropName)
         {
