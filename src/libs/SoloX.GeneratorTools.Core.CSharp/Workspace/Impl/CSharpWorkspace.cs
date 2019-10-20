@@ -31,8 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
         private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
 
-        private readonly MetadataLoadContext metadataLoadContext;
-
+        private MetadataLoadContext metadataLoadContext;
         private bool disposedValue = false;
 
         /// <summary>
@@ -46,11 +45,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             this.logger = logger;
             this.factory = factory;
             this.loader = loader;
-
-            var runtimes = GetDotnetRunTimes();
-            var runtimePath = runtimes[runtimes.Keys.Max()];
-
-            this.metadataLoadContext = new MetadataLoadContext(new DirectoryAssemblyResolver(runtimePath));
         }
 
         /// <inheritdoc/>
@@ -102,17 +96,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 return null;
             }
 
+            this.SetupAssemblyMetadataLoadContext();
+
             var assemblyFileName = Path.GetFileName(assemblyFile);
 
             if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
             {
                 if (this.TryLoadAssembly(assemblyFile, out var assembly))
                 {
-                    csAssembly = this.factory.CreateAssembly(assembly);
-
+                    csAssembly = this.CreateAndLoadAssembly(assembly);
                     this.assemblies.Add(assemblyFileName, csAssembly);
-
-                    this.loader.Load(this, csAssembly);
                 }
             }
 
@@ -148,7 +141,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 if (disposing)
                 {
-                    this.metadataLoadContext.Dispose();
+                    this.metadataLoadContext?.Dispose();
+                    this.metadataLoadContext = null;
                 }
 
                 this.disposedValue = true;
@@ -202,6 +196,35 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
                 return pathMap;
             }
+        }
+
+        private void SetupAssemblyMetadataLoadContext()
+        {
+            if (this.metadataLoadContext == null)
+            {
+                var runtimes = GetDotnetRunTimes();
+                var runtimePath = runtimes[runtimes.Keys.Max()];
+
+                this.metadataLoadContext = new MetadataLoadContext(new DirectoryAssemblyResolver(runtimePath));
+
+                var loadedAssemblies = this.metadataLoadContext.GetAssemblies();
+
+                foreach (var assembly in loadedAssemblies)
+                {
+                    var assemblyFileName = Path.GetFileName(assembly.Location);
+                    var csAssembly = this.CreateAndLoadAssembly(assembly);
+                    this.assemblies.Add(assemblyFileName, csAssembly);
+                }
+            }
+        }
+
+        private ICSharpAssembly CreateAndLoadAssembly(Assembly assembly)
+        {
+            var csAssembly = this.factory.CreateAssembly(assembly);
+
+            this.loader.Load(this, csAssembly);
+
+            return csAssembly;
         }
 
         private bool TryLoadAssembly(string assemblyFile, out Assembly assembly)

@@ -55,6 +55,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
         }
 
         [Fact]
+        public void DefaultAssemblyLoadTest()
+        {
+            var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.csproj";
+
+            var resolver = this.LoadAndGetResolver(projectFile, 1);
+
+            var collectionClass = Assert.Single(resolver.Find("System.Collections.Generic.ICollection"));
+
+            Assert.NotNull(collectionClass.Name);
+            Assert.IsType<InterfaceDeclaration>(collectionClass);
+        }
+
+        [Fact]
         public void ProjectLoadWithDependenciesTest()
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
