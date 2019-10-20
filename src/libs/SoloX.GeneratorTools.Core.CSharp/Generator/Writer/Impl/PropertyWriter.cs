@@ -86,9 +86,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
                 var declType = itemProperties.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
 
-                itfType = this.typeTextExtractor(itfType);
-                declType = this.typeTextExtractor(declType);
-
                 this.write(implType.Replace(itfType, declType));
 
                 this.write(node.Identifier.ToFullString()
@@ -105,6 +102,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                     this.write(node.ExpressionBody.ToFullString()
                         .Replace(propertyName, itemPropertyName)
                         .Replace(lowPropertyName, lowItemPropertyName));
+                    this.write(node.SemicolonToken.ToFullString());
                 }
             }
 
