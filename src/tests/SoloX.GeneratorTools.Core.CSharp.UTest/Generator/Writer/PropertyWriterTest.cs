@@ -70,7 +70,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         [InlineData("propertyPattern", "propA")]
         [InlineData("myPropertyPattern", "myPropA")]
         [InlineData("propertyPatternTest", "propATest")]
-        public void SimpleFieldWriterTest(string patternFieldName, string implPropName)
+        public void SimpleFieldWriterTest(string patternFieldName, string expectedImplPropName)
         {
             var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
 
@@ -78,8 +78,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
 
             var fieldProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(pw, implPatternPropNode);
 
-            Assert.Equal(implPropName, fieldProperty.Declaration.Variables.Single().Identifier.Text);
+            Assert.Equal(expectedImplPropName, fieldProperty.Declaration.Variables.Single().Identifier.Text);
             Assert.Equal(DeclPropType1, fieldProperty.Declaration.Type.ToString());
+        }
+
+        [Theory]
+        [InlineData("PropertyPattern", "propertyPattern", "PropA", "propA")]
+        [InlineData("MyPropertyPattern", "myPropertyPattern", "MyPropA", "myPropA")]
+        [InlineData("PropertyPatternTest", "propertyPatternTest", "PropATest", "propATest")]
+        public void SimpleMethodWriterTest(
+            string patternMethodName,
+            string patternMethodArgumentName,
+            string expectedImplMethodName,
+            string expectedArgName)
+        {
+            var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
+
+            var implPatternMethodNode = SyntaxTreeHelper.GetMethodSyntax(PatternPropType, patternMethodName, patternMethodArgumentName, ", string otherArg");
+
+            var methodProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<MethodDeclarationSyntax>(pw, implPatternMethodNode);
+
+            Assert.Equal(expectedImplMethodName, methodProperty.Identifier.Text);
+            Assert.Equal(expectedArgName, methodProperty.ParameterList.Parameters.First().Identifier.Text);
+            Assert.Equal(DeclPropType1, methodProperty.ReturnType.ToString());
         }
 
         [Theory]

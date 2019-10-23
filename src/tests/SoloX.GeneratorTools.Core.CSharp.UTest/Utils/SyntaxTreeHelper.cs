@@ -113,6 +113,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
         }
 
+        /// <summary>
+        /// Generate a method declaration syntax as if it was declared in a class implementation.
+        /// </summary>
+        /// <param name="type">The method return type.</param>
+        /// <param name="name">The method name.</param>
+        /// <param name="argument">The argument name.</param>
+        /// <returns>The MethodDeclarationSyntax node.</returns>
+        public static SyntaxNode GetMethodSyntax(string type, string name, string argument, string otherArguments)
+        {
+            if (otherArguments == null)
+            {
+                otherArguments = string.Empty;
+            }
+
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"public {type} {name}({type} {argument}{otherArguments}){{}}");
+            return (MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
         public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)
             where TNode : SyntaxNode
         {

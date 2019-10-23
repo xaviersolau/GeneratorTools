@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
     {
         public object PatternProperty { get; set; }
 
-        public static void PatternMethodForThrowStatementPattern(bool withSomeArguments)
+        public static void PatternMethodWithThrowStatement(bool withSomeArguments)
         {
             if (withSomeArguments)
             {

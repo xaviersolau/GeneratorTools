@@ -20,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
         public int Property1 { get; set; }
         public double Property2 { get; set; }
 
-        public void PatternMethodForPackedIfStatementSample(bool withSomeArguments)
+        public void PatternMethodWithPackedIfStatement(bool withSomeArguments)
         {
             if (withSomeArguments)
             {

@@ -20,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [PackStatements]
-        public void PatternMethodForPackedForEachStatementPattern(IEnumerable<object> withSomeArguments)
+        public void PatternMethodWithPackedForEachStatement(IEnumerable<object> withSomeArguments)
         {
             foreach (var arg in withSomeArguments)
             {
