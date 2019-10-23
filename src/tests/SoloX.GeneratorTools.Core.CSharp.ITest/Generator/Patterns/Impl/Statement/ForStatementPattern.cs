@@ -17,7 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
     {
         public object PatternProperty { get; set; }
 
-        public void PatternMethodForForStatementPattern(IList<object> withSomeArguments)
+        public void PatternMethodWithForStatement(IList<object> withSomeArguments)
         {
             var len = withSomeArguments.Count;
             for (var i = 0; i < len; i++)

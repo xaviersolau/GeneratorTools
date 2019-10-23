@@ -18,7 +18,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
         public object PatternProperty { get; set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PatternMethodForForEachStatementPattern(IEnumerable<object> withSomeArguments)
+        public void PatternMethodWithForEachStatement(IEnumerable<object> withSomeArguments)
         {
             foreach (var arg in withSomeArguments)
             {

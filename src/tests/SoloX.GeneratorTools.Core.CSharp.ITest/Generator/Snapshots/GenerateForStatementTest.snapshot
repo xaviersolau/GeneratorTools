@@ -21,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
         public int Property1 { get; set; }
         public double Property2 { get; set; }
 
-        public void PatternMethodForForStatementSample(IList<object> withSomeArguments)
+        public void PatternMethodWithForStatement(IList<object> withSomeArguments)
         {
             var len = withSomeArguments.Count;
             for (var i = 0; i < len; i++)

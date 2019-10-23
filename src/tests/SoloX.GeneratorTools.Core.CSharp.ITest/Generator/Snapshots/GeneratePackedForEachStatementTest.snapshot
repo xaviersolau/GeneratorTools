@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
         public double Property2 { get; set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PatternMethodForPackedForEachStatementSample(IEnumerable<object> withSomeArguments)
+        public void PatternMethodWithPackedForEachStatement(IEnumerable<object> withSomeArguments)
         {
             foreach (var arg in withSomeArguments)
             {

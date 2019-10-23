@@ -18,7 +18,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
         public object PatternProperty { get; set; }
 
         [PackStatements]
-        public void PatternMethodForPackedIfStatementPattern(bool withSomeArguments)
+        public void PatternMethodWithPackedIfStatement(bool withSomeArguments)
         {
             if (withSomeArguments)
             {

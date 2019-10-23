@@ -154,32 +154,35 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            var previousIsPackStatement = this.isPackStatements;
-            try
+            if (!this.writerSelector.SelectAndProcessWriter(node, this.Write))
             {
-                this.WriteAttributeLists(node.AttributeLists, out this.isPackStatements);
-
-                this.Write(node.Modifiers.ToFullString());
-                this.WriteNode(node.ReturnType);
-
-                this.WriteNode(node.ExplicitInterfaceSpecifier);
-
-                this.WriteToken(node.Identifier);
-
-                this.WriteNode(node.TypeParameterList);
-                this.WriteNode(node.ParameterList);
-                foreach (var constraintClauses in node.ConstraintClauses)
+                var previousIsPackStatement = this.isPackStatements;
+                try
                 {
-                    this.WriteNode(constraintClauses);
-                }
+                    this.WriteAttributeLists(node.AttributeLists, out this.isPackStatements);
 
-                this.Visit(node.Body);
-                this.Visit(node.ExpressionBody);
-                this.Write(node.SemicolonToken.ToFullString());
-            }
-            finally
-            {
-                this.isPackStatements = previousIsPackStatement;
+                    this.Write(node.Modifiers.ToFullString());
+                    this.WriteNode(node.ReturnType);
+
+                    this.WriteNode(node.ExplicitInterfaceSpecifier);
+
+                    this.WriteToken(node.Identifier);
+
+                    this.WriteNode(node.TypeParameterList);
+                    this.WriteNode(node.ParameterList);
+                    foreach (var constraintClauses in node.ConstraintClauses)
+                    {
+                        this.WriteNode(constraintClauses);
+                    }
+
+                    this.Visit(node.Body);
+                    this.Visit(node.ExpressionBody);
+                    this.Write(node.SemicolonToken.ToFullString());
+                }
+                finally
+                {
+                    this.isPackStatements = previousIsPackStatement;
+                }
             }
         }
 
