@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
@@ -18,6 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
     /// </summary>
     public class StringReplaceWriter : INodeWriter
     {
+        private readonly Func<SyntaxNode, bool> nodeFilter;
         private string oldString;
         private IReadOnlyList<string> newStringList;
 
@@ -26,10 +28,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         /// </summary>
         /// <param name="oldString">The string to be replaced.</param>
         /// <param name="newString">The string to use instead.</param>
-        public StringReplaceWriter(string oldString, string newString)
+        /// <param name="nodeFilter">The node filter to use to prevent direct substitution.</param>
+        public StringReplaceWriter(string oldString, string newString, Func<SyntaxNode, bool> nodeFilter = null)
         {
             this.oldString = oldString;
             this.newStringList = new[] { newString };
+            this.nodeFilter = nodeFilter ?? DefaultNodeFilter;
         }
 
         /// <summary>
@@ -38,10 +42,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         /// <remarks>The pattern string substitution will be repeated for every new string in the newStringList.</remarks>
         /// <param name="oldString">The string to be replaced.</param>
         /// <param name="newStringList">The string list to use instead.</param>
-        public StringReplaceWriter(string oldString, IReadOnlyList<string> newStringList)
+        /// <param name="nodeFilter">The node filter to use to prevent direct substitution (return true to prevent substitution).</param>
+        public StringReplaceWriter(string oldString, IReadOnlyList<string> newStringList, Func<SyntaxNode, bool> nodeFilter = null)
         {
             this.oldString = oldString;
             this.newStringList = newStringList;
+            this.nodeFilter = nodeFilter ?? DefaultNodeFilter;
         }
 
         /// <inheritdoc/>
@@ -50,6 +56,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             if (node == null)
             {
                 throw new ArgumentNullException($"The argument {nameof(node)} was null.");
+            }
+
+            if (this.nodeFilter(node))
+            {
+                return false;
             }
 
             var txt = node.ToFullString();
@@ -83,6 +94,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             }
 
             return false;
+        }
+
+        private static bool DefaultNodeFilter(SyntaxNode node)
+        {
+            return node is MethodDeclarationSyntax
+                || node is ClassDeclarationSyntax
+                || node is InterfaceDeclarationSyntax
+                || node is StructDeclarationSyntax
+                || node is EnumDeclarationSyntax;
         }
     }
 }
