@@ -63,6 +63,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
         }
 
         [Theory]
+        [InlineData("Simple")]
+        public void GenerateMethodTest(string method)
+        {
+            this.GenerateSimpleSample(method, "Method");
+        }
+
+        [Theory]
         [InlineData("If")]
         [InlineData("PackedIf")]
         [InlineData("ForEach")]
