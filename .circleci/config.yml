@@ -53,13 +53,16 @@ jobs:
             dotnet pack -c Release --no-build
             cd ../../..
             mv src/libs/SoloX.GeneratorTools.Core/bin/Release/*.nupkg packages/
+            mv src/libs/SoloX.GeneratorTools.Core/bin/Release/*.snupkg packages/
             cd src/libs/SoloX.GeneratorTools.Core.CSharp
             dotnet pack -c Release --no-build
             cd ../../..
             mv src/libs/SoloX.GeneratorTools.Core.CSharp/bin/Release/*.nupkg packages/
+            mv src/libs/SoloX.GeneratorTools.Core.CSharp/bin/Release/*.snupkg packages/
             cd src/tests/SoloX.GeneratorTools.Core.Test.Helpers
             dotnet pack -c Release --no-build
             cd ../../..
             mv src/tests/SoloX.GeneratorTools.Core.Test.Helpers/bin/Release/*.nupkg packages/
+            mv src/tests/SoloX.GeneratorTools.Core.Test.Helpers/bin/Release/*.snupkg packages/
       - store_artifacts:
           path: packages

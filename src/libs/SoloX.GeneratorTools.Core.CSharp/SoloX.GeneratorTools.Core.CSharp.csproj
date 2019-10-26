@@ -15,6 +15,10 @@
     <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
   </PropertyGroup>
 
   <ItemGroup>
