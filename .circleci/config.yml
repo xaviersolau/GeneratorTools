@@ -2,31 +2,58 @@ version: 2
 jobs:
   build:
     docker:
-      - image: microsoft/dotnet:sdk
+      - image: mcr.microsoft.com/dotnet/core/sdk:3.1
     steps:
       - checkout
+      - run:
+          name: Install coveralls
+          command: |
+            apt-get update
+            apt-get install unzip
+            
+            curl -o dotnet-install.sh https://dotnetwebsite.azurewebsites.net/download/dotnet-core/scripts/v1/dotnet-install.sh
+            chmod +x dotnet-install.sh
+            export TERM=linux
+            ./dotnet-install.sh --runtime dotnet --channel 2.1 --version latest --install-dir /usr/share/dotnet
+            
+            dotnet tool install coveralls.net --version 1.0.0 --tool-path coveralls
+
       - run:
           name: Build the projects
           command: |
             dotnet build -c Release
+
       - run:
           name: Run Unit Tests
           command: |
             cd src/tests/SoloX.GeneratorTools.Core.UTest
-            dotnet test -c Release --no-build
+            dotnet test -c Release --no-build --logger trx --results-directory ../../../TestResults
             cd ../../..
 
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.UTest
-            dotnet test -c Release --no-build
+            dotnet test -c Release --no-build --logger trx --results-directory ../../../TestResults
             cd ../../..
 
             cd src/tests/SoloX.GeneratorTools.Core.CSharp.ITest
-            dotnet test -c Release --no-build
+            dotnet test -c Release --no-build --logger trx --results-directory ../../../TestResults
             cd ../../..
+
+      - run:
+          name: Publish test results
+          when: always
+          command: |
+            dotnet tool install trx2junit --tool-path trx2junit
+            trx2junit/trx2junit TestResults/*.trx
+
+      - store_test_results:
+          path: TestResults
+      - store_artifacts:
+          path: TestResults
+          destination: TestResults
+
       - run:
           name: Run Code coverage
           command: |
-            dotnet tool install coveralls.net --version 1.0.0 --tool-path coveralls
 
             cd src/tests/SoloX.GeneratorTools.Core.UTest
             dotnet test -c Release --no-build -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample*]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
@@ -45,6 +72,7 @@ jobs:
             coveralls/csmacnz.Coveralls --opencover -i coverage/result.opencover.xml --repoToken $COVERALLS_REPO_TOKEN --useRelativePaths --commitId $CIRCLE_SHA1 --commitBranch $CIRCLE_BRANCH --commitAuthor $CIRCLE_USERNAME --jobId $CIRCLE_BUILD_NUM --serviceName circleci
       - store_artifacts:
           path: coverage
+
       - run:
           name: Generate packages
           command: |
