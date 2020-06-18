@@ -13,7 +13,9 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
@@ -100,6 +102,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         /// <inheritdoc/>
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
+        {
+            this.Write(node.AttributeLists.ToFullString());
+            this.Write(node.Modifiers.ToFullString());
+            this.Write(node.Keyword.ToFullString());
+            this.Write(node.Identifier.ToFullString()
+                .Replace(this.implPattern.Name, this.implName));
+
+            if (node.TypeParameterList != null)
+            {
+                this.Write(node.TypeParameterList.ToFullString());
+            }
+
+            if (node.BaseList != null)
+            {
+                this.Write(node.BaseList.ToFullString()
+                    .Replace(this.itfPattern.Name, this.declaration.Name));
+            }
+
+            this.Write(node.ConstraintClauses.ToFullString());
+
+            this.Write(node.OpenBraceToken.ToFullString());
+
+            foreach (var member in node.Members)
+            {
+                this.Visit(member);
+            }
+
+            this.Write(node.CloseBraceToken.ToFullString());
+        }
+
+        public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
             this.Write(node.AttributeLists.ToFullString());
             this.Write(node.Modifiers.ToFullString());
@@ -320,7 +353,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.writer.Write(this.textSubstitutionHandler(text));
         }
 
-        private void WriteAttributeLists(SyntaxList<AttributeListSyntax> attributeLists, out bool isPackStatements)
+        private void WriteAttributeLists(
+            SyntaxList<AttributeListSyntax> attributeLists,
+            out bool isPackStatements)
         {
             isPackStatements = false;
 
@@ -331,8 +366,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     bool found = false;
                     foreach (var attr in attrList.Attributes)
                     {
-                        var attrName = attr.Name.ToString();
-                        if (attrName == "PackStatements" || attrName == "PackStatementsAttribute")
+                        if (attr.IsAttributeName<PackStatementsAttribute>())
                         {
                             isPackStatements = true;
                         }

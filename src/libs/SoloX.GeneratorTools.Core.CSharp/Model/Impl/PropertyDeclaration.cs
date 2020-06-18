@@ -26,16 +26,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="name">The member name.</param>
         /// <param name="propertyType">The property type use.</param>
         /// <param name="syntaxNodeProvider">The property syntax provider.</param>
+        /// <param name="hasGetter">Tells if the property has a getter.</param>
+        /// <param name="hasSetter">Tells if the property has a setter.</param>
         public PropertyDeclaration(
             string name,
             IDeclarationUse<SyntaxNode> propertyType,
-            ISyntaxNodeProvider<PropertyDeclarationSyntax> syntaxNodeProvider)
+            ISyntaxNodeProvider<PropertyDeclarationSyntax> syntaxNodeProvider,
+            bool hasGetter,
+            bool hasSetter)
             : base(name, syntaxNodeProvider)
         {
             this.PropertyType = propertyType;
+            this.HasGetter = hasGetter;
+            this.HasSetter = hasSetter;
         }
 
         /// <inheritdoc/>
         public IDeclarationUse<SyntaxNode> PropertyType { get; }
+
+        /// <inheritdoc/>
+        public bool HasGetter { get; }
+
+        /// <inheritdoc/>
+        public bool HasSetter { get; }
     }
 }

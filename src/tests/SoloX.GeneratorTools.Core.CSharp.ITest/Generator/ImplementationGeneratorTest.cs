@@ -81,7 +81,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
             this.GenerateSimpleSample(statement, "Statement");
         }
 
-        private static IWriterSelector SetupWriterSolector(
+        private static IWriterSelector SetupWriterSelector(
             IInterfaceDeclaration itfPatternDeclaration,
             IClassDeclaration implPatternDeclaration,
             IInterfaceDeclaration itfDeclaration,
@@ -138,7 +138,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
             var implGenerator = new ImplementationGenerator(
                 snapshotGenerator, locator, itfPatternDeclaration, implPatternDeclaration);
 
-            var writerSelector = SetupWriterSolector(itfPatternDeclaration, implPatternDeclaration, itfDeclaration, implName);
+            var writerSelector = SetupWriterSelector(itfPatternDeclaration, implPatternDeclaration, itfDeclaration, implName);
 
             implGenerator.Generate(writerSelector, itfDeclaration, implName);
 

@@ -111,7 +111,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         {
             var pw = SetupPropertyWriter(PatternPropType, PatternPropName, (DeclPropType1, DeclPropName1));
 
-            var implPatternVariableNode = SyntaxTreeHelper.GetVariableSyntax(
+            var implPatternVariableNode = SyntaxTreeHelper.GetLocalDeclarationStatementSyntax(
                 PatternPropType, $"{patternVariableName}Version", $"this.{patternVariableName}.Version");
 
             var variableProperty = NodeWriterHelper.WriteAndAssertSingleMemberOfType<FieldDeclarationSyntax>(

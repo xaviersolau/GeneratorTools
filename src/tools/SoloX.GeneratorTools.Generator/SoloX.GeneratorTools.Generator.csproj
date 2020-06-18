@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\SharedProperties.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Attributes\SoloX.GeneratorTools.Attributes.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Patterns\Impl\ObjectPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Itf\IFactoryPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Impl\FactoryPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Itf\IObjectPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+</Project>

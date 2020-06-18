@@ -77,7 +77,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             {
                 var itemPropertyName = itemProperties.Name;
                 var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
-                this.write(node.AttributeLists.ToFullString());
+                this.WriteAttributeLists(node.AttributeLists);
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Type.ToFullString();
@@ -129,7 +129,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 var itemPropertyName = itemProperties.Name;
                 var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
 
-                this.write(node.AttributeLists.ToFullString());
+                this.WriteAttributeLists(node.AttributeLists);
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.Declaration.Type.ToFullString();
@@ -175,7 +175,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 var itemPropertyName = itemProperties.Name;
                 var lowItemPropertyName = GetFirstCharLoweredName(itemPropertyName);
 
-                this.write(node.AttributeLists.ToFullString());
+                this.WriteAttributeLists(node.AttributeLists);
                 this.write(node.Modifiers.ToFullString());
 
                 var implType = node.ReturnType.ToFullString();
@@ -211,7 +211,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                     {
                         var parameter = (ParameterSyntax)parameterItem.AsNode();
 
-                        this.write(parameter.AttributeLists.ToFullString());
+                        this.WriteAttributeLists(parameter.AttributeLists);
                         this.write(parameter.Modifiers.ToFullString());
                         this.write(parameter.Type.ToFullString().Replace(itfType, declType));
                         this.write(parameter.Identifier.ToFullString().Replace(itfType, declType)
@@ -349,6 +349,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
             return this.VisitStatement(node);
         }
 
+#pragma warning restore CA1062 // Valider les arguments de méthodes publiques
+
         private static string GetFirstCharLoweredName(string name)
         {
             return $"{char.ToLowerInvariant(name[0])}{name.Substring(1)}";
@@ -383,6 +385,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
 
             return true;
         }
+
+        private void WriteAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            if (attributeLists != null)
+            {
+                this.write(attributeLists.ToFullString());
+            }
+        }
     }
-#pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 }

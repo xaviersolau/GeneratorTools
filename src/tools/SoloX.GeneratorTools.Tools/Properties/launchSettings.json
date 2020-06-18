@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SoloX.GeneratorTools.Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "--project SoloX.GeneratorTools.Generator.Sample.csproj",
+      "workingDirectory": "C:\\Work\\Net\\GeneratorTools\\src\\tools\\SoloX.GeneratorTools.Generator.Sample"
+    }
+  }
+}

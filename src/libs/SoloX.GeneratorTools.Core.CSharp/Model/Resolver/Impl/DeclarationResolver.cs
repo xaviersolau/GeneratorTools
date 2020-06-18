@@ -14,6 +14,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using SoloX.GeneratorTools.Core.CSharp.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
 {
@@ -154,17 +155,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
         }
 
-        private static IEnumerable<string> GetParentNameSpaces(string declarationNameSpace)
-        {
-            var nameSpace = declarationNameSpace;
-            while (!string.IsNullOrEmpty(nameSpace))
-            {
-                yield return nameSpace;
-                var index = nameSpace.LastIndexOf('.');
-                nameSpace = index >= 0 ? nameSpace.Substring(0, index) : null;
-            }
-        }
-
         private IEnumerable<IDeclaration<SyntaxNode>> FindDeclarations(
             string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
@@ -181,7 +171,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                     }
                 }
 
-                foreach (var nameSpace in GetParentNameSpaces(declarationContext.DeclarationNameSpace))
+                foreach (var nameSpace in NameSpaceHelper.GetParentNameSpaces(declarationContext.DeclarationNameSpace))
                 {
                     if (this.declarationMap.TryGetValue(
                         ADeclaration<SyntaxNode>.GetFullName(nameSpace, identifier),

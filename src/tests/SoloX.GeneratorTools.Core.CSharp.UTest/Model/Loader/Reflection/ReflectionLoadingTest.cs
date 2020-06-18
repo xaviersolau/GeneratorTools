@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -141,6 +142,66 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
                 Assert.Null(pClass.PropertyType.ArraySpecification);
                 Assert.Null(pInt.PropertyType.ArraySpecification);
             }
+        }
+
+        [Fact]
+        public void LoadGetterSetterPropertyTest()
+        {
+            var type = typeof(ClassWithGetterSetterProperties);
+
+            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateClassDeclaration(type);
+
+            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            classDeclaration.Load(declarationResolverMock.Object);
+
+            Assert.NotEmpty(classDeclaration.Properties);
+            Assert.Equal(3, classDeclaration.Properties.Count);
+
+            var rwp = Assert.Single(classDeclaration.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.ReadWriteProperty)));
+            Assert.True(rwp.HasGetter);
+            Assert.True(rwp.HasSetter);
+
+            var rop = Assert.Single(classDeclaration.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.ReadOnlyProperty)));
+            Assert.True(rop.HasGetter);
+            Assert.False(rop.HasSetter);
+
+            var wop = Assert.Single(classDeclaration.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.WriteOnlyProperty)));
+            Assert.False(wop.HasGetter);
+            Assert.True(wop.HasSetter);
+        }
+
+        [Fact]
+        public void LoadClassAttributes()
+        {
+            var type = typeof(AttributedClass);
+            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
+                .CreateClassDeclaration(type);
+
+            Assert.NotNull(declaration);
+            Assert.Equal(
+                ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name),
+                declaration.Name);
+
+            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            classDeclaration.Load(declarationResolverMock.Object);
+
+            Assert.NotNull(declaration.Attributes);
+            var attribute = Assert.Single(declaration.Attributes);
+
+            Assert.Equal(nameof(PatternAttribute), attribute.Name);
+
+            Assert.NotNull(attribute.SyntaxNodeProvider);
+
+            var node = attribute.SyntaxNodeProvider.SyntaxNode;
+            Assert.NotNull(node);
+
+            var attrText = node.ToString();
+            Assert.Contains(nameof(PatternAttribute), attrText, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

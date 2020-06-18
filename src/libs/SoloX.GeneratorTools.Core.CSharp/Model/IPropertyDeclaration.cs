@@ -23,5 +23,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the property type.
         /// </summary>
         IDeclarationUse<SyntaxNode> PropertyType { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether tells if the property has a getter.
+        /// </summary>
+        bool HasGetter { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether tells if the property has a setter.
+        /// </summary>
+        bool HasSetter { get; }
     }
 }

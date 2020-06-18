@@ -52,6 +52,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         public IReadOnlyList<string> UsingDirectives => Array.Empty<string>();
 
         /// <inheritdoc/>
+        public IReadOnlyList<IAttributeUse> Attributes => Array.Empty<IAttributeUse>();
+
+        /// <inheritdoc/>
         public string Location { get; }
 
         /// <inheritdoc/>

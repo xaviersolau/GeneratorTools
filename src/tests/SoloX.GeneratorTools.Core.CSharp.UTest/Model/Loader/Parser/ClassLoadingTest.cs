@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -110,6 +111,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             Assert.Equal(baseClassName, genDeclUse.Declaration.Name);
         }
 
+        [Fact]
+        public void LoadClassAttributes()
+        {
+            var className = nameof(AttributedClass);
+            var file = className.ToBasicPath();
+
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+            csFile.Load();
+
+            var declaration = Assert.Single(csFile.Declarations);
+
+            var declarationResolver = this.SetupDeclarationResolver(declaration);
+
+            var decl = Assert.IsType<ClassDeclaration>(declaration);
+
+            decl.Load(declarationResolver);
+
+            Assert.NotEmpty(decl.Attributes);
+            var attribute = Assert.Single(decl.Attributes);
+
+            Assert.Equal(nameof(PatternAttribute), attribute.Name);
+
+            Assert.NotNull(attribute.SyntaxNodeProvider);
+        }
+
         [Theory]
         [InlineData(nameof(ClassWithProperties), false)]
         [InlineData(nameof(ClassWithArrayProperties), true)]
@@ -158,6 +186,42 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
                 Assert.Null(pClass.PropertyType.ArraySpecification);
                 Assert.Null(pInt.PropertyType.ArraySpecification);
             }
+        }
+
+        [Fact]
+        public void LoadGetterSetterPropertyTest()
+        {
+            var className = nameof(ClassWithGetterSetterProperties);
+
+            var file = className.ToBasicPath();
+
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+            csFile.Load();
+
+            var declaration = Assert.Single(csFile.Declarations);
+
+            var declarationResolver = this.SetupDeclarationResolver(declaration);
+
+            var decl = Assert.IsType<ClassDeclaration>(declaration);
+
+            decl.Load(declarationResolver);
+
+            Assert.NotEmpty(decl.Properties);
+            Assert.Equal(3, decl.Properties.Count);
+
+            var rwp = Assert.Single(decl.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.ReadWriteProperty)));
+            Assert.True(rwp.HasGetter);
+            Assert.True(rwp.HasSetter);
+
+            var rop = Assert.Single(decl.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.ReadOnlyProperty)));
+            Assert.True(rop.HasGetter);
+            Assert.False(rop.HasSetter);
+
+            var wop = Assert.Single(decl.Properties.Where(p => p.Name == nameof(ClassWithGetterSetterProperties.WriteOnlyProperty)));
+            Assert.False(wop.HasGetter);
+            Assert.True(wop.HasSetter);
         }
 
         private IDeclarationResolver SetupDeclarationResolver(IDeclaration<SyntaxNode> contextDeclaration, params string[] classNames)

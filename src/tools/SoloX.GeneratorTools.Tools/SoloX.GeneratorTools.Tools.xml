@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SoloX.GeneratorTools.Tools</name>
+    </assembly>
+    <members>
+        <member name="T:SoloX.GeneratorTools.Tools.Program">
+            <summary>
+            Program entry point class.
+            </summary>
+        </member>
+        <member name="M:SoloX.GeneratorTools.Tools.Program.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SoloX.GeneratorTools.Tools.Program"/> class.
+            </summary>
+            <param name="configuration">The configuration that contains all arguments.</param>
+        </member>
+        <member name="M:SoloX.GeneratorTools.Tools.Program.Main(System.String[])">
+            <summary>
+            Main program entry point.
+            </summary>
+            <param name="args">Tools arguments.</param>
+            <returns>Error code.</returns>
+        </member>
+        <member name="M:SoloX.GeneratorTools.Tools.Program.Run">
+            <summary>
+            Run the tools command.
+            </summary>
+            <returns>Error code.</returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\SharedProperties.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  
+    <PackageId>SoloX.GeneratorTools.Attributes</PackageId>
+
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+
+    <PackageTags>code generation, parse, netstandard, pattern</PackageTags>
+    <PackageReleaseNotes>- Add Attributes used by the Generator tools.</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.6" />
+  </ItemGroup>
+
+</Project>

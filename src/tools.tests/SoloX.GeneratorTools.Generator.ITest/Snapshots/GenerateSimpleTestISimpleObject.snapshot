@@ -1,0 +1,91 @@
+---------------------
+IFactory
+---------------------
+using SoloX.GeneratorTools.Generator.ITest.Resources.Data;
+
+namespace target.name.space
+{
+    /// <summary>
+    /// factory interface to use as pattern.
+    /// </summary>
+    public interface IFactory
+    {
+        /// <summary>
+        /// Create a ISimpleObject instance.
+        /// </summary>
+        /// <param name="someReadOnlyValue">Some optional parameter.</param>
+        /// <param name="someValue">Some mandatory parameter.</param>
+        /// <returns>The created ISimpleObject instance.</returns>
+        ISimpleObject CreateSimpleObject(
+            int property1,
+            string property2,
+            int property3 = default,
+            string property4 = default);
+    }
+}
+
+---------------------
+Factory
+---------------------
+using SoloX.GeneratorTools.Generator.ITest.Resources.Data;
+
+namespace target.name.space
+{
+    /// <summary>
+    /// Implemented factory to use as pattern.
+    /// </summary>
+    public class Factory : IFactory
+    {
+        /// <inheritdoc/>
+        public ISimpleObject CreateSimpleObject(
+            int property1,
+            string property2,
+            int property3 = default,
+            string property4 = default)
+        {
+            return new SimpleObject()
+            {
+                Property1 = property1,
+                Property2 = property2,
+                Property3 = property3,
+                Property4 = property4,
+            };
+        }
+    }
+}
+
+---------------------
+SimpleObject
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleObject.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using SoloX.GeneratorTools.Generator.ITest.Resources.Data;
+
+namespace SoloX.GeneratorTools.Generator.ITest.Resources.Data
+{
+    /// <summary>
+    /// Implementation of Object pattern interface.
+    /// </summary>
+    public class SimpleObject : ISimpleObject
+    {
+        /// <inheritdoc/>
+        public int Property1 { get; set; }
+        /// <inheritdoc/>
+        public string Property2 { get; set; }
+
+        /// <inheritdoc/>
+        public int Property3 { get; set; }
+
+        /// <inheritdoc/>
+        public string Property4 { get; set; }
+    }
+}
+
