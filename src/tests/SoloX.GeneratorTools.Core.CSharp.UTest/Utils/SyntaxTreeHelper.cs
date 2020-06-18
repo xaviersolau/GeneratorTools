@@ -42,7 +42,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="name">The property name.</param>
         /// <param name="field">The field to get or set.</param>
         /// <returns>The PropertyDeclarationSyntax node.</returns>
-        public static SyntaxNode GetPropertyImplSyntax(string type, string name, string field = null)
+        public static PropertyDeclarationSyntax GetPropertyImplSyntax(string type, string name, string field = null)
         {
             var getImpl = "get;";
             var setImpl = "set;";
@@ -66,7 +66,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="name">The property name.</param>
         /// <param name="expressionBody">The expression body.</param>
         /// <returns>The PropertyDeclarationSyntax node.</returns>
-        public static SyntaxNode GetExpressionBodyPropertyImplSyntax(string type, string name, string expressionBody)
+        public static PropertyDeclarationSyntax GetExpressionBodyPropertyImplSyntax(string type, string name, string expressionBody)
         {
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
                 .GetSyntaxNode($"public {type} {name} => {expressionBody};");
@@ -79,24 +79,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="type">The field type.</param>
         /// <param name="name">The field name.</param>
         /// <returns>The FieldDeclarationSyntax node.</returns>
-        public static SyntaxNode GetFieldSyntax(string type, string name)
+        public static FieldDeclarationSyntax GetFieldSyntax(string type, string name)
         {
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
                 .GetSyntaxNode($"public {type} {name};");
             return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
-        }
-
-        /// <summary>
-        /// Generate a variable declaration syntax as if it was declared in a method implementation.
-        /// </summary>
-        /// <param name="type">The variable type.</param>
-        /// <param name="name">The variable name.</param>
-        /// <returns>The VariableDeclarationSyntax node.</returns>
-        public static SyntaxNode GetVariableSyntax(string type, string name, string init)
-        {
-            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
-                .GetSyntaxNode($"void Method(){{{type} {name} = {init};}}");
-            return ((MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Body.Statements.First();
         }
 
         /// <summary>
@@ -106,11 +93,38 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="name">The field name.</param>
         /// <param name="init">The field initializer.</param>
         /// <returns>The FieldDeclarationSyntax node.</returns>
-        public static SyntaxNode GetFieldSyntax(string type, string name, string init)
+        public static FieldDeclarationSyntax GetFieldSyntax(string type, string name, string init)
         {
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
                 .GetSyntaxNode($"public {type} {name} = {init};");
             return (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+        }
+
+        /// <summary>
+        /// Generate a local declaration syntax as if it was declared in a method implementation
+        /// (for a variable declaration by instance).
+        /// </summary>
+        /// <param name="type">The variable type.</param>
+        /// <param name="name">The variable name.</param>
+        /// <returns>The VariableDeclarationSyntax node.</returns>
+        public static LocalDeclarationStatementSyntax GetLocalDeclarationStatementSyntax(string type, string name, string init)
+        {
+            var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
+                .GetSyntaxNode($"void Method(){{{type} {name} = {init};}}");
+            var statementSyntax = ((MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Body.Statements.First();
+            return (LocalDeclarationStatementSyntax)statementSyntax;
+        }
+
+        /// <summary>
+        /// Generate a expression syntax.
+        /// </summary>
+        /// <param name="expressionBody">The expression body.</param>
+        /// <returns>The ExpressionSyntax node.</returns>
+        public static ExpressionSyntax GetExpressionSyntax(string expressionBody)
+        {
+            var syntaxNode = GetLocalDeclarationStatementSyntax("var", "name", expressionBody);
+
+            return syntaxNode.Declaration.Variables.First().Initializer.Value;
         }
 
         /// <summary>
@@ -120,7 +134,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="name">The method name.</param>
         /// <param name="argument">The argument name.</param>
         /// <returns>The MethodDeclarationSyntax node.</returns>
-        public static SyntaxNode GetMethodSyntax(string type, string name, string argument, string otherArguments)
+        public static MethodDeclarationSyntax GetMethodSyntax(string type, string name, string argument, string otherArguments)
         {
             if (otherArguments == null)
             {

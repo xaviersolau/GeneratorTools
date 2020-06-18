@@ -6,14 +6,22 @@ obj
 *.generated.cs
 
 
-src/libs/SoloX.GeneratorTools.Core.CSharp/SoloX.GeneratorTools.Core.CSharp.xml
+src/libs/SoloX.GeneratorTools.Attributes/SoloX.GeneratorTools.Attributes.xml
 src/libs/SoloX.GeneratorTools.Core/SoloX.GeneratorTools.Core.xml
+src/libs/SoloX.GeneratorTools.Core.CSharp/SoloX.GeneratorTools.Core.CSharp.xml
+
 src/tests/SoloX.GeneratorTools.Core.UTest/SoloX.GeneratorTools.Core.UTest.xml
 src/tests/SoloX.GeneratorTools.Core.Test.Helpers/SoloX.GeneratorTools.Core.Test.Helpers.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.Sample1/SoloX.GeneratorTools.Core.CSharp.Sample1.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.UTest/SoloX.GeneratorTools.Core.CSharp.UTest.xml
 src/tests/SoloX.GeneratorTools.Core.CSharp.ITest/SoloX.GeneratorTools.Core.CSharp.ITest.xml
+
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples/SoloX.GeneratorTools.Core.CSharp.Examples.xml
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples.Sample/SoloX.GeneratorTools.Core.CSharp.Examples.Sample.xml
 src/examples/SoloX.GeneratorTools.Core.CSharp.Examples.Core/SoloX.GeneratorTools.Core.CSharp.Examples.Core.xml
+
+src/tools/SoloX.GeneratorTools.Generator/SoloX.GeneratorTools.Generator.xml
+src/tools/SoloX.GeneratorTools.Generator.Sample/SoloX.GeneratorTools.Generator.Sample.xml
+
+src/tools.tests/SoloX.GeneratorTools.Generator.ITest/SoloX.GeneratorTools.Generator.ITest.xml

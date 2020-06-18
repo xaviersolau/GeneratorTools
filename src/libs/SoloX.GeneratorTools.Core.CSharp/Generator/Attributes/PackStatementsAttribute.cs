@@ -12,8 +12,8 @@ using System.Text;
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
 {
     /// <summary>
-    /// Attribute used to tell that a pattern must be packed.
-    /// For example a if statement must be take as a unit of code and must not be considered in detail.
+    /// Attribute used to tell that the pattern method statements must be packed.
+    /// For example use it if all method statements must be taken as a unit of code and must not be considered in detail.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class PackStatementsAttribute : Attribute

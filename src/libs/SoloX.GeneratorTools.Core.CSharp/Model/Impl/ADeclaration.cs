@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
@@ -111,6 +112,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public IReadOnlyList<string> UsingDirectives { get; }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<IAttributeUse> Attributes { get; internal set; }
 
         /// <inheritdoc/>
         public string Location { get; }

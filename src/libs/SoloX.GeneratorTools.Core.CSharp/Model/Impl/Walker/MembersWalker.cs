@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -23,7 +24,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly List<IMemberDeclaration<SyntaxNode>> memberList;
         private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
-        public MembersWalker(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration, List<IMemberDeclaration<SyntaxNode>> memberList)
+        public MembersWalker(
+            IDeclarationResolver resolver,
+            IGenericDeclaration<SyntaxNode> genericDeclaration,
+            List<IMemberDeclaration<SyntaxNode>> memberList)
         {
             this.resolver = resolver;
             this.memberList = memberList;
@@ -37,10 +41,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
 
+            var canRead = node.AccessorList.Accessors.FirstOrDefault(a => a.Kind() == SyntaxKind.GetAccessorDeclaration) != null;
+            var canWrite = node.AccessorList.Accessors.LastOrDefault(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) != null;
+
             this.memberList.Add(new PropertyDeclaration(
                 identifier,
                 use,
-                new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(node)));
+                new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(node),
+                canRead,
+                canWrite));
         }
     }
 }

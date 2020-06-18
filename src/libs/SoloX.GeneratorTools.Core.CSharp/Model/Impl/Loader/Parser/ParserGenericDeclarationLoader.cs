@@ -48,6 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             this.LoadGenericParameters(declaration);
             this.LoadExtends(declaration, resolver);
             this.LoadMembers(declaration, resolver);
+            this.LoadAttributes(declaration, resolver);
         }
 
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(
@@ -130,6 +131,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             membersWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
+        }
+
+        private void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        {
+            var attributeList = new List<IAttributeUse>();
+            var attributesWalker = new AttributesWalker(resolver, declaration, attributeList);
+
+            attributesWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
+
+            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
     }
 }

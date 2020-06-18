@@ -154,6 +154,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             this.LoadGenericParameters(declaration);
             this.LoadExtends(declaration, resolver);
             this.LoadMembers(declaration, resolver);
+            this.LoadAttributes(declaration, resolver);
         }
 
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(
@@ -172,10 +173,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             decl.SetData(type);
         }
 
+        private static IArraySpecification CreateArraySpecification(
+            int arrayCount,
+            ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
+        {
+            return arrayCount != 0
+                ? new ArraySpecification(
+                    arrayCount,
+                    new ReflectionArraySyntaxNodeProvider(arrayCount, syntaxNodeProvider))
+                : null;
+        }
+
+        private static PredefinedDeclarationUse CreatePredefinedDeclarationUse(
+            Type type,
+            string typeName)
+        {
+            var predefinedDeclarationUse = new PredefinedDeclarationUse(
+                new ReflectionPredefinedSyntaxNodeProvider(type),
+                typeName);
+            return predefinedDeclarationUse;
+        }
+
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
-        protected void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
+        private void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
             var declarationType = declaration.GetData<Type>();
 
@@ -201,7 +223,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// </summary>
         /// <param name="declaration">The declaration to load.</param>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        protected void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var declarationType = declaration.GetData<Type>();
             var extendedInterfaces = declarationType.GetInterfaces();
@@ -235,7 +257,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// </summary>
         /// <param name="declaration">The declaration to load.</param>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        protected void LoadMembers(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private void LoadMembers(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var memberList = new List<IMemberDeclaration<SyntaxNode>>();
 
@@ -248,7 +270,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                         new PropertyDeclaration(
                             property.Name,
                             propertyType,
-                            new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider)));
+                            new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
+                            property.CanRead,
+                            property.CanWrite));
                 }
             }
             catch (FileNotFoundException e)
@@ -259,25 +283,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }
 
-        private static IArraySpecification CreateArraySpecification(
-            int arrayCount,
-            ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
+        private void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            return arrayCount != 0
-                ? new ArraySpecification(
-                    arrayCount,
-                    new ReflectionArraySyntaxNodeProvider(arrayCount, syntaxNodeProvider))
-                : null;
-        }
+            var attributeList = new List<IAttributeUse>();
 
-        private static PredefinedDeclarationUse CreatePredefinedDeclarationUse(
-            Type type,
-            string typeName)
-        {
-            var predefinedDeclarationUse = new PredefinedDeclarationUse(
-                new ReflectionPredefinedSyntaxNodeProvider(type),
-                typeName);
-            return predefinedDeclarationUse;
+            var declType = declaration.GetData<Type>();
+
+            foreach (var customAttribute in declType.CustomAttributes)
+            {
+                attributeList.Add(
+                    new AttributeUse(
+                        GetDeclarationUseFrom(customAttribute.AttributeType, resolver).Declaration,
+                        new ReflectionAttributeSyntaxNodeProvider(customAttribute)));
+            }
+
+            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
     }
 }
