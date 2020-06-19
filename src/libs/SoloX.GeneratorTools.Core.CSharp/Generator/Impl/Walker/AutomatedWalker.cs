@@ -452,9 +452,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     var line = attrList.OpenBracketToken.ToFullString().Replace("[", string.Empty)
                         + attrList.CloseBracketToken.ToFullString().Replace("]", string.Empty);
 
-                    var idx = line.LastIndexOf("\r\n", StringComparison.InvariantCulture);
+                    var idx = line.LastIndexOf(Environment.NewLine, StringComparison.InvariantCulture);
                     this.Write(line.Substring(0, idx).TrimEnd(' ', '\t'));
-                    this.Write(line.Substring(idx + 2));
+                    this.Write(line.Substring(idx + Environment.NewLine.Length));
                 }
             }
         }
