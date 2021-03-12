@@ -47,10 +47,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <inheritdoc/>
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
         {
-            var txt = node.ToFullString();
+            var nameTxt = node.Name.ToString();
 
-            if (txt.Contains(GeneratorAttributesNameSpace))
+            if (GeneratorAttributesNameSpace.Equals(nameTxt, StringComparison.Ordinal))
             {
+                var txt = node.ToFullString();
+
                 this.strategy.RepeatNameSpace(
                     ns =>
                     {
@@ -59,11 +61,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
             else
             {
-                if (!txt.Contains("SoloX.GeneratorTools.Core.CSharp.Generator") &&
-                    !txt.Contains("SoloX.GeneratorTools.Attributes") &&
-                    !txt.Contains("SoloX.GeneratorTools.Generator.Patterns"))
+                if (!nameTxt.StartsWith("SoloX.GeneratorTools.Core.CSharp.Generator", StringComparison.Ordinal) &&
+                    !nameTxt.StartsWith("SoloX.GeneratorTools.Attributes", StringComparison.Ordinal) &&
+                    !nameTxt.StartsWith("SoloX.GeneratorTools.Generator.Patterns", StringComparison.Ordinal) &&
+                    !this.strategy.IgnoreUsingDirective(nameTxt))
                 {
-                    this.Write(txt);
+                    this.Write(node.ToFullString());
                 }
             }
         }
@@ -159,7 +162,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 }
                 else
                 {
-                    if (!firstParameter)
+                    if (firstParameter)
+                    {
+                        firstParameter = false;
+                    }
+                    else
                     {
                         this.Write(tkns);
                     }
@@ -186,6 +193,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             else
             {
                 this.WritePropertyDeclaration(node);
+            }
+        }
+
+        public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            if (node.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax))
+            {
+                this.strategy.RepeatDeclaration(
+                    attributeSyntax,
+                    itemStrategy =>
+                    {
+                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                            .WriteFieldDeclaration(node);
+                    });
+            }
+            else
+            {
+                this.WriteFieldDeclaration(node);
             }
         }
 
@@ -292,6 +317,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
                 this.WriteToken(node.Initializer.CloseBraceToken);
             }
+        }
+
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitBinaryExpression(BinaryExpressionSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitExpressionStatement(ExpressionStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
+        {
+            this.WriteToken(node.Identifier);
+            this.Visit(node.Initializer);
+        }
+
+        public override void VisitEqualsValueClause(EqualsValueClauseSyntax node)
+        {
+            this.WriteToken(node.EqualsToken);
+            this.WriteNode(node.Value);
         }
 
         private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
@@ -406,6 +458,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             this.Visit(node.AccessorList);
             this.Visit(node.ExpressionBody);
+            this.Write(node.SemicolonToken.ToFullString());
+        }
+
+        private void WriteFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            this.WriteAttributeLists(node.AttributeLists);
+            this.Write(node.Modifiers.ToFullString());
+
+            this.WriteNode(node.Declaration.Type);
+
+            foreach (var child in node.Declaration.ChildNodesAndTokens())
+            {
+                if (child.IsNode)
+                {
+                    if (!object.ReferenceEquals(node.Declaration.Type, child))
+                    {
+                        this.Visit(child.AsNode());
+                    }
+                }
+                else
+                {
+                    this.WriteToken(child.AsToken());
+                }
+            }
+
             this.Write(node.SemicolonToken.ToFullString());
         }
 

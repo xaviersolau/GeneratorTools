@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
     /// Attribute used to tell that the pattern element must be repeated.
     /// For example use it if you want to repeat a piece of code.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Parameter)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
     public sealed class RepeatAttribute : Attribute
     {
         /// <summary>

@@ -119,6 +119,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             nsCallback(this.declaration.DeclarationNameSpace);
         }
 
+        public bool IgnoreUsingDirective(string ns)
+        {
+            return this.pattern.DeclarationNameSpace.Equals(ns, StringComparison.Ordinal);
+        }
+
         public string ComputeTargetName()
         {
             return this.targetDeclarationName;

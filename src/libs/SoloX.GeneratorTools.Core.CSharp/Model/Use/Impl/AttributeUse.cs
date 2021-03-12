@@ -27,7 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         {
             if (declaration == null)
             {
-                throw new ArgumentNullException($"{nameof(declaration)} must not be null.");
+                throw new ArgumentNullException(nameof(declaration), $"{nameof(declaration)} must not be null.");
             }
 
             this.Name = declaration.Name;

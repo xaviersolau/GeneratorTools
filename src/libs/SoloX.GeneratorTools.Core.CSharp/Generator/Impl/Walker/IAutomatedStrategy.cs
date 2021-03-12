@@ -38,6 +38,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         void RepeatNameSpace(Action<string> nsCallback);
 
         /// <summary>
+        /// Tells if a name space must be ignored.
+        /// </summary>
+        /// <param name="ns">The name space to test.</param>
+        /// <returns>True if the name space must be ignored.</returns>
+        bool IgnoreUsingDirective(string ns);
+
+        /// <summary>
         /// Try to match if the repeat declaration can apply on the given text expression.
         /// </summary>
         /// <param name="repeatAttributeSyntax">The repeat attribute syntax.</param>

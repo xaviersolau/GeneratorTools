@@ -55,7 +55,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         {
             if (node == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(node)} was null.");
+                throw new ArgumentNullException(nameof(node), $"The argument {nameof(node)} was null.");
             }
 
             if (this.nodeFilter(node))

@@ -38,7 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         {
             if (declarations == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(declarations)} was null.");
+                throw new ArgumentNullException(nameof(declarations), $"The argument {nameof(declarations)} was null.");
             }
 
             this.loader = loader;
@@ -75,7 +75,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         {
             if (type == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(type)} was null.");
+                throw new ArgumentNullException(nameof(type), $"The argument {nameof(type)} was null.");
             }
 
             var fullName = type.FullName;

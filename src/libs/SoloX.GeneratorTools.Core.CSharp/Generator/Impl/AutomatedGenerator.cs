@@ -80,6 +80,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         public IEnumerable<IGeneratedItem> Generate(IEnumerable<ICSharpFile> files)
         {
             var generatedItems = new List<IGeneratedItem>();
+
             var selector = this.patternAttribute.Selector;
 
             var declarations = selector.GetDeclarations(files);

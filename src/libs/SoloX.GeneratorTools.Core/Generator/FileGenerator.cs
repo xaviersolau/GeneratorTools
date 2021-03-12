@@ -37,7 +37,7 @@ namespace SoloX.GeneratorTools.Core.Generator
         {
             if (generator == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(generator)} was null.");
+                throw new ArgumentNullException(nameof(generator), $"The argument {nameof(generator)} was null.");
             }
 
             var file = $"{name}{this.fileSufix}";

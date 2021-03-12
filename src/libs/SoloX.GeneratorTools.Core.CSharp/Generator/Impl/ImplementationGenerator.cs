@@ -52,7 +52,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         {
             if (itfDeclaration == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(itfDeclaration)} was null.");
+                throw new ArgumentNullException(nameof(itfDeclaration), $"The argument {nameof(itfDeclaration)} was null.");
             }
 
             var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);

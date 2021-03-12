@@ -29,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.Utils
         {
             if (interfaceName == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(interfaceName)} was null.");
+                throw new ArgumentNullException(nameof(interfaceName), $"The argument {nameof(interfaceName)} was null.");
             }
 
             var len = interfaceName.Length;
