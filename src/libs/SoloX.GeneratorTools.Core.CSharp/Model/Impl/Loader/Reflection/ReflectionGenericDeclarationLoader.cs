@@ -274,6 +274,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                             property.CanRead,
                             property.CanWrite));
                 }
+
+                foreach (var method in declaration.GetData<Type>().GetMethods())
+                {
+                    if (!method.IsPrivate)
+                    {
+                        var returnType = GetDeclarationUseFrom(method.ReturnType, resolver);
+                        memberList.Add(
+                            new MethodDeclaration(
+                                method.Name,
+                                returnType,
+                                new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider)));
+                    }
+                }
+            }
+            catch (TypeLoadException e)
+            {
+                this.logger?.LogWarning($"Could not load properties from {declaration.GetData<Type>()} ({e.Message})");
             }
             catch (FileNotFoundException e)
             {

@@ -175,10 +175,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
                 var pathMap = lines
                     .Select(line => line.Split(' '))
+                    .Where(words =>
+                    {
+                        var versionString = words[1];
+                        return Version.TryParse(versionString, out _);
+                    })
                     .Select(words =>
                     {
                         var versionString = words[1];
                         var version = new Version(versionString);
+
                         var path = string.Join(" ", words.Skip(2));
                         path = path.Substring(1, path.Length - 2);
 
@@ -202,8 +208,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (this.metadataLoadContext == null)
             {
+                var currentVersion = Environment.Version;
+
                 var runtimes = GetDotnetRunTimes();
-                var runtimePath = runtimes[runtimes.Keys.Max()];
+                var runtimePath = runtimes[runtimes.Keys.Where(v => v <= currentVersion).Max()];
 
                 this.metadataLoadContext = new MetadataLoadContext(new DirectoryAssemblyResolver(runtimePath));
 
@@ -251,7 +259,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
             catch (FileLoadException e)
             {
-                this.logger?.LogWarning(e, $"Could not load assembly from {assemblyFile}");
+                this.logger?.LogWarning($"Could not load assembly from {assemblyFile}");
+                this.logger?.LogDebug(e, e.Message);
             }
 
             assembly = null;

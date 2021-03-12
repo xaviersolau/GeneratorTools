@@ -51,5 +51,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                 canRead,
                 canWrite));
         }
+
+        public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            var identifier = node.Identifier.ToString();
+
+            if (node.Modifiers.All(m => m.Kind() != SyntaxKind.PrivateKeyword))
+            {
+                var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+                var use = useWalker.Visit(node.ReturnType);
+
+                this.memberList.Add(new MethodDeclaration(
+                    identifier,
+                    use,
+                    new ParserSyntaxNodeProvider<MethodDeclarationSyntax>(node)));
+            }
+        }
     }
 }
