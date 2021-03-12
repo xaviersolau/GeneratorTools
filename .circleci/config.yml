@@ -16,7 +16,7 @@ jobs:
             export TERM=linux
             ./dotnet-install.sh --runtime dotnet --channel 2.1 --version latest --install-dir /usr/share/dotnet
             
-            dotnet tool install coveralls.net --version 1.0.0 --tool-path coveralls
+            dotnet tool install coveralls.net --version 2.0.0 --tool-path coveralls
 
       - run:
           name: Build the projects

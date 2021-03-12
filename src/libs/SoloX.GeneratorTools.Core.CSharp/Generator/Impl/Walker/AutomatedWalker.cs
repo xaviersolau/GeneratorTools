@@ -529,9 +529,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     var line = attrList.OpenBracketToken.ToFullString().Replace("[", string.Empty)
                         + attrList.CloseBracketToken.ToFullString().Replace("]", string.Empty);
 
-                    var idx = line.LastIndexOf(Environment.NewLine, StringComparison.InvariantCulture);
+                    var newLine = "\r\n";
+                    var idx = line.LastIndexOf(newLine, StringComparison.InvariantCulture);
+                    if (idx < 0)
+                    {
+                        newLine = "\n";
+                        idx = line.LastIndexOf(newLine, StringComparison.InvariantCulture);
+                    }
+
                     this.Write(line.Substring(0, idx).TrimEnd(' ', '\t'));
-                    this.Write(line.Substring(idx + Environment.NewLine.Length));
+                    this.Write(line.Substring(idx + newLine.Length));
                 }
             }
         }
