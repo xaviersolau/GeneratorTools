@@ -29,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         {
             if (walker == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(walker)} was null.");
+                throw new ArgumentNullException(nameof(walker), $"The argument {nameof(walker)} was null.");
             }
 
             walker.Visit(Parse(file).GetRoot());

@@ -71,7 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (workspace == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(workspace)} was null.");
+                throw new ArgumentNullException(nameof(workspace), $"The argument {nameof(workspace)} was null.");
             }
 
             if (this.isLoaded)

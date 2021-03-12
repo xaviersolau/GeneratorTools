@@ -59,6 +59,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             throw new NotImplementedException();
         }
 
+        public bool IgnoreUsingDirective(string ns)
+        {
+            throw new NotImplementedException();
+        }
+
         public string ComputeTargetName()
         {
             return this.declaration.Name;

@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (project == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(project)} was null.");
+                throw new ArgumentNullException(nameof(project), $"The argument {nameof(project)} was null.");
             }
 
             ((CSharpProject)project).Load(workspace);
@@ -36,7 +36,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (file == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(file)} was null.");
+                throw new ArgumentNullException(nameof(file), $"The argument {nameof(file)} was null.");
             }
 
             ((CSharpFile)file).Load();
@@ -47,7 +47,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (assembly == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(assembly)} was null.");
+                throw new ArgumentNullException(nameof(assembly), $"The argument {nameof(assembly)} was null.");
             }
 
             ((CSharpAssembly)assembly).Load();
@@ -58,7 +58,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (declaration == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(declaration)} was null.");
+                throw new ArgumentNullException(nameof(declaration), $"The argument {nameof(declaration)} was null.");
             }
 
             ((ADeclaration)declaration).Load(resolver);

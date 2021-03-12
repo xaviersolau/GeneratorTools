@@ -11,21 +11,28 @@ SimpleSample
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Samples
 {
+    [Pattern(typeof(SampleSelector))]
+    [Repeat(RepeatPattern = nameof(ISimplePattern), RepeatPatternPrefix = "I")]
     public class SimpleSample : ISimpleSample
     {
+        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
         private int property1;
+        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
         private double property2;
 
+        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
         public int Property1
         {
             get { return this.property1; }
             set { this.property1 = value; }
         }
 
+        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
         public double Property2
         {
             get { return this.property2; }

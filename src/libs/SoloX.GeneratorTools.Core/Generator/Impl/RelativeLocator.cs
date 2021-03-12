@@ -44,7 +44,7 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
         {
             if (declarationNameSpace == null)
             {
-                throw new ArgumentNullException($"The argument {nameof(declarationNameSpace)} was null.");
+                throw new ArgumentNullException(nameof(declarationNameSpace), $"The argument {nameof(declarationNameSpace)} was null.");
             }
 
             var baseNameSpaceLength = this.baseNameSpace.Length;
