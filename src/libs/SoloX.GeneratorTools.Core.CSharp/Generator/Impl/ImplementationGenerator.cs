@@ -24,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
     /// </summary>
     public class ImplementationGenerator : IImplementationGenerator
     {
-        private readonly IGenerator generator;
+        private readonly IWriter writer;
         private readonly IInterfaceDeclaration itfPattern;
         private readonly IGenericDeclaration<SyntaxNode> implPattern;
         private readonly ILocator locator;
@@ -32,13 +32,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGenerator"/> class.
         /// </summary>
-        /// <param name="generator">The generator to use to generate the output.</param>
+        /// <param name="writer">The writer to use to generate the output.</param>
         /// <param name="locator">Code generation locator.</param>
         /// <param name="itfPattern">The interface pattern to use for the generator.</param>
         /// <param name="implPattern">The implementation pattern to use for the generator.</param>
-        public ImplementationGenerator(IGenerator generator, ILocator locator, IInterfaceDeclaration itfPattern, IGenericDeclaration<SyntaxNode> implPattern)
+        public ImplementationGenerator(IWriter writer, ILocator locator, IInterfaceDeclaration itfPattern, IGenericDeclaration<SyntaxNode> implPattern)
         {
-            this.generator = generator;
+            this.writer = writer;
             this.itfPattern = itfPattern;
             this.implPattern = implPattern;
             this.locator = locator;
@@ -57,10 +57,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 
             var (location, nameSpace) = this.locator.ComputeTargetLocation(itfDeclaration.DeclarationNameSpace);
 
-            this.generator.Generate(location, implName, writer =>
+            this.writer.Generate(location, implName, textWriter =>
             {
                 var generatorWalker = new ImplementationGeneratorWalker(
-                    writer,
+                    textWriter,
                     this.itfPattern,
                     this.implPattern,
                     itfDeclaration,

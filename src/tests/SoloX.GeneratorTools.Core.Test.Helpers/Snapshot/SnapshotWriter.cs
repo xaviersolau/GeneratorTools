@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="SnapshotGenerator.cs" company="SoloX Software">
+// <copyright file="SnapshotWriter.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -13,7 +13,7 @@ using SoloX.GeneratorTools.Core.Generator;
 
 namespace SoloX.GeneratorTools.Core.Test.Helpers.Snapshot
 {
-    public class SnapshotGenerator : IGenerator
+    public class SnapshotWriter : IWriter
     {
         private Dictionary<string, string> generated = new Dictionary<string, string>();
 

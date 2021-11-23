@@ -60,12 +60,67 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             {
                 var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
                 var use = useWalker.Visit(node.ReturnType);
+                var genericParameters = LoadGenericParameters(node);
+                var parameters = LoadParameters(node, useWalker);
 
                 this.memberList.Add(new MethodDeclaration(
                     identifier,
                     use,
-                    new ParserSyntaxNodeProvider<MethodDeclarationSyntax>(node)));
+                    new ParserSyntaxNodeProvider<MethodDeclarationSyntax>(node),
+                    genericParameters,
+                    parameters));
             }
+        }
+
+        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
+        {
+            IReadOnlyCollection<IParameterDeclaration> parameters;
+            var parameterList = node.ParameterList?.Parameters;
+            if (parameterList != null && parameterList.Value.Any())
+            {
+                var parameterSet = new List<IParameterDeclaration>();
+                foreach (var parameter in parameterList.Value)
+                {
+                    var use = useWalker.Visit(parameter.Type);
+
+                    parameterSet.Add(new ParameterDeclaration(
+                        parameter.Identifier.Text,
+                        use,
+                        new ParserSyntaxNodeProvider<ParameterSyntax>(parameter)));
+                }
+
+                parameters = parameterSet;
+            }
+            else
+            {
+                parameters = Array.Empty<IParameterDeclaration>();
+            }
+
+            return parameters;
+        }
+
+        private static IReadOnlyCollection<IGenericParameterDeclaration> LoadGenericParameters(MethodDeclarationSyntax node)
+        {
+            IReadOnlyCollection<IGenericParameterDeclaration> genericParameters;
+            var parameterList = node.TypeParameterList;
+            if (parameterList != null)
+            {
+                var parameterSet = new List<IGenericParameterDeclaration>();
+                foreach (var parameter in parameterList.Parameters)
+                {
+                    parameterSet.Add(new GenericParameterDeclaration(
+                        parameter.Identifier.Text,
+                        new ParserSyntaxNodeProvider<TypeParameterSyntax>(parameter)));
+                }
+
+                genericParameters = parameterSet;
+            }
+            else
+            {
+                genericParameters = Array.Empty<IGenericParameterDeclaration>();
+            }
+
+            return genericParameters;
         }
     }
 }

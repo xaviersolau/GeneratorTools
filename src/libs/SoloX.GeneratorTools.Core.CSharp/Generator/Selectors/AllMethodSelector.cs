@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ReadOnlyPropertySelector.cs" company="SoloX Software">
+// <copyright file="AllMethodSelector.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,9 +16,9 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
 {
     /// <summary>
-    /// Read only property selector.
+    /// All method selector.
     /// </summary>
-    public class ReadOnlyPropertySelector : ISelector
+    public class AllMethodSelector : ISelector
     {
         /// <inheritdoc/>
         public IEnumerable<IDeclaration<SyntaxNode>> GetDeclarations(IEnumerable<ICSharpFile> files)
@@ -29,13 +29,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <inheritdoc/>
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
-            return declaration?.Properties.Where(p => p.HasGetter && !p.HasSetter);
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
         public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
         {
-            throw new NotImplementedException();
+            return declaration?.Methods;
         }
     }
 }

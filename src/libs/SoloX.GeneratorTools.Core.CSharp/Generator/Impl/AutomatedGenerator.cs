@@ -25,25 +25,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
     /// </summary>
     public class AutomatedGenerator : IAutomatedGenerator
     {
-        private readonly IGenerator generator;
+        private readonly IWriter writer;
         private readonly ILocator locator;
         private readonly IDeclarationResolver resolver;
         private readonly Type patternType;
         private readonly PatternAttribute patternAttribute;
         private readonly IDeclaration<SyntaxNode> pattern;
+        private readonly List<string> ignoreUsingList = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutomatedGenerator"/> class.
         /// </summary>
-        /// <param name="generator">The generator to use to generate the output.</param>
+        /// <param name="writer">The writer to use to generate the output.</param>
         /// <param name="locator">Code generation locator.</param>
         /// <param name="resolver">The resolver to resolve workspace symbols.</param>
         /// <param name="patternType">The pattern type to use.</param>
-        public AutomatedGenerator(IGenerator generator, ILocator locator, IDeclarationResolver resolver, Type patternType)
+        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType)
         {
-            if (generator == null)
+            if (writer == null)
             {
-                throw new ArgumentNullException(nameof(generator));
+                throw new ArgumentNullException(nameof(writer));
             }
 
             if (locator == null)
@@ -61,7 +62,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                 throw new ArgumentNullException(nameof(patternType));
             }
 
-            this.generator = generator;
+            this.writer = writer;
             this.resolver = resolver;
             this.locator = locator;
             this.patternType = patternType;
@@ -85,6 +86,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 
             var declarations = selector.GetDeclarations(files);
 
+            var replacePatternHandlerAttributes = FindAttributes<ReplacePatternAttribute>(this.patternType);
+            var replacePatternHandlerFactories = replacePatternHandlerAttributes.Select(a => a.ReplacePatternHandlerFactory);
+
             var repeatAttribute = FindAttribute<RepeatAttribute>(this.patternType);
             if (repeatAttribute != null)
             {
@@ -97,11 +101,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     var strategy = new AutomatedGenericStrategy(
                         (IGenericDeclaration<SyntaxNode>)patternPattern,
                         (IGenericDeclaration<SyntaxNode>)declaration,
-                        this.resolver);
+                        this.resolver,
+                        replacePatternHandlerFactories,
+                        this.ignoreUsingList);
 
-                    var implName = strategy.ComputeTargetName();
+                    var implName = strategy.ApplyPatternReplace(this.pattern.Name);
 
-                    this.generator.Generate(location, implName, writer =>
+                    this.writer.Generate(location, implName, writer =>
                     {
                         var generatorWalker = new AutomatedWalker(
                             writer,
@@ -121,9 +127,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     nameSpace,
                     this.pattern.Name.Replace("Pattern", string.Empty),
                     declarations,
-                    this.resolver);
+                    this.resolver,
+                    replacePatternHandlerFactories,
+                    this.ignoreUsingList);
 
-                this.generator.Generate(location, strategy.ComputeTargetName(), writer =>
+                this.writer.Generate(location, strategy.ComputeTargetName(), writer =>
                 {
                     var generatorWalker = new AutomatedWalker(
                         writer,
@@ -137,11 +145,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             return generatedItems;
         }
 
+        /// <inheritdoc/>
+        public void AddIgnoreUsing(params string[] usingToIgnore)
+        {
+            this.ignoreUsingList.AddRange(usingToIgnore);
+        }
+
         private static TAttribute FindAttribute<TAttribute>(Type type)
             where TAttribute : Attribute
         {
             var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
             return (TAttribute)attributes.FirstOrDefault();
+        }
+
+        private static IEnumerable<TAttribute> FindAttributes<TAttribute>(Type type)
+            where TAttribute : Attribute
+        {
+            var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
+            return attributes.Cast<TAttribute>();
         }
     }
 }

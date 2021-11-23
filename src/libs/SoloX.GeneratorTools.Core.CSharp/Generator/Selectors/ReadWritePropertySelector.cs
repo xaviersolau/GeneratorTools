@@ -31,5 +31,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         {
             return declaration?.Properties.Where(p => p.HasGetter && p.HasSetter);
         }
+
+        /// <inheritdoc/>
+        public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

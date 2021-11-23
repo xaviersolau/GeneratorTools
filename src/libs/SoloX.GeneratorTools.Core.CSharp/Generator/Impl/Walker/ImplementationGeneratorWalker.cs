@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
     /// </summary>
     internal class ImplementationGeneratorWalker : CSharpSyntaxWalker
     {
-        private readonly TextWriter writer;
+        private readonly TextWriter textWriter;
         private readonly Func<string, string> textSubstitutionHandler;
         private readonly IInterfaceDeclaration itfPattern;
         private readonly IGenericDeclaration<SyntaxNode> implPattern;
@@ -39,7 +39,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
         /// </summary>
-        /// <param name="writer">The writer where to write generated code.</param>
+        /// <param name="textWriter">The textWriter where to write generated code.</param>
         /// <param name="itfPattern">Interface pattern.</param>
         /// <param name="implPattern">Implementation pattern.</param>
         /// <param name="itfDeclaration">Interface declaration to implement.</param>
@@ -48,7 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <param name="writerSelector">Writer selector.</param>
         /// <param name="textSubstitutionHandler">Optional text substitution handler.</param>
         public ImplementationGeneratorWalker(
-            TextWriter writer,
+            TextWriter textWriter,
             IInterfaceDeclaration itfPattern,
             IGenericDeclaration<SyntaxNode> implPattern,
             IInterfaceDeclaration itfDeclaration,
@@ -57,7 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IWriterSelector writerSelector,
             Func<string, string> textSubstitutionHandler = null)
         {
-            this.writer = writer;
+            this.textWriter = textWriter;
             this.itfPattern = itfPattern;
             this.implPattern = implPattern;
             this.declaration = itfDeclaration;
@@ -350,7 +350,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private void Write(string text)
         {
-            this.writer.Write(this.textSubstitutionHandler(text));
+            this.textWriter.Write(this.textSubstitutionHandler(text));
         }
 
         private void WriteAttributeLists(

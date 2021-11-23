@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
     {
         private const string GeneratorAttributesNameSpace = "SoloX.GeneratorTools.Core.CSharp.Generator.Attributes";
 
-        private readonly TextWriter writer;
+        private readonly TextWriter textWriter;
         private readonly IDeclaration<SyntaxNode> pattern;
         private readonly IAutomatedStrategy strategy;
 
@@ -31,15 +31,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <summary>
         /// Initializes a new instance of the <see cref="AutomatedWalker"/> class.
         /// </summary>
-        /// <param name="writer">The writer where to write generated code.</param>
+        /// <param name="textWriter">The writer where to write generated code.</param>
         /// <param name="pattern">The pattern reference.</param>
         /// <param name="strategy">Automated strategy that manage repeat feature.</param>
         public AutomatedWalker(
-            TextWriter writer,
+            TextWriter textWriter,
             IDeclaration<SyntaxNode> pattern,
             IAutomatedStrategy strategy)
         {
-            this.writer = writer;
+            this.textWriter = textWriter;
             this.pattern = pattern;
             this.strategy = strategy;
         }
@@ -101,7 +101,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                             .WriteClassDeclaration(node);
                     });
             }
@@ -119,7 +119,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                             .WriteInterfaceDeclaration(node);
                     });
             }
@@ -135,7 +135,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             var firstParameter = true;
 
-            var tkns = node.ChildTokens().First().ToFullString().Replace("(", ",");
+            var tkns = node.ChildTokens().First().ToFullString().Replace("(", ", ");
 
             foreach (var parameter in node.Parameters)
             {
@@ -156,7 +156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                                 this.Write(tkns);
                             }
 
-                            new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                                 .WriteParameter(parameter);
                         });
                 }
@@ -178,6 +178,55 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteToken(node.CloseParenToken);
         }
 
+        public override void VisitBracketedParameterList(BracketedParameterListSyntax node)
+        {
+            this.WriteToken(node.OpenBracketToken);
+
+            var firstParameter = true;
+
+            var tkns = node.ChildTokens().First().ToFullString().Replace("[", ", ");
+
+            foreach (var parameter in node.Parameters)
+            {
+                if (parameter.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax))
+                {
+                    this.subRepeatAttributes.Add(attributeSyntax);
+
+                    this.strategy.RepeatDeclaration(
+                        attributeSyntax,
+                        itemStrategy =>
+                        {
+                            if (firstParameter)
+                            {
+                                firstParameter = false;
+                            }
+                            else
+                            {
+                                this.Write(tkns);
+                            }
+
+                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                                .WriteParameter(parameter);
+                        });
+                }
+                else
+                {
+                    if (firstParameter)
+                    {
+                        firstParameter = false;
+                    }
+                    else
+                    {
+                        this.Write(tkns);
+                    }
+
+                    this.WriteParameter(parameter);
+                }
+            }
+
+            this.WriteToken(node.CloseBracketToken);
+        }
+
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             if (node.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax))
@@ -186,7 +235,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                             .WritePropertyDeclaration(node);
                     });
             }
@@ -204,7 +253,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                             .WriteFieldDeclaration(node);
                     });
             }
@@ -235,6 +284,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteToken(node.SemicolonToken);
         }
 
+        public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+        {
+            this.WriteAttributeLists(node.AttributeLists);
+            this.Write(node.Modifiers.ToFullString());
+            this.WriteToken(node.Identifier);
+            this.WriteNode(node.ParameterList);
+            this.Visit(node.Body);
+        }
+
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             if (node.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax))
@@ -243,13 +301,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.writer, this.pattern, itemStrategy)
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
                             .WriteMethodDeclaration(node);
                     });
             }
             else
             {
                 this.WriteMethodDeclaration(node);
+            }
+        }
+
+        public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
+        {
+            if (node.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax))
+            {
+                this.strategy.RepeatDeclaration(
+                    attributeSyntax,
+                    itemStrategy =>
+                    {
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                            .WriteIndexerDeclaration(node);
+                    });
+            }
+            else
+            {
+                this.WriteIndexerDeclaration(node);
             }
         }
 
@@ -262,6 +338,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
 
             this.Write(node.CloseBraceToken.ToFullString());
+        }
+
+        public override void VisitArrowExpressionClause(ArrowExpressionClauseSyntax node)
+        {
+            this.WriteToken(node.ArrowToken);
+
+            this.Visit(node.Expression);
         }
 
         public override void VisitReturnStatement(ReturnStatementSyntax node)
@@ -302,7 +385,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                             attributeSyntax,
                             itemStrategy =>
                             {
-                                this.writer.Write(itemStrategy.ApplyPatternReplace(textExpression));
+                                this.textWriter.Write(itemStrategy.ApplyPatternReplace(textExpression));
 
                                 this.Write(tkns);
                             });
@@ -344,6 +427,101 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             this.WriteToken(node.EqualsToken);
             this.WriteNode(node.Value);
+        }
+
+        public override void VisitArgumentList(ArgumentListSyntax node)
+        {
+            this.WriteToken(node.OpenParenToken);
+
+            bool isFirst = true;
+
+            foreach (var argument in node.Arguments)
+            {
+                var textExpression = argument.ToFullString();
+                if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                {
+                    this.strategy.RepeatDeclaration(
+                        attributeSyntax,
+                        itemStrategy =>
+                        {
+                            if (isFirst)
+                            {
+                                isFirst = false;
+                            }
+                            else
+                            {
+                                this.Write(", ");
+                            }
+
+                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
+                        });
+                }
+                else
+                {
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        this.Write(", ");
+                    }
+
+                    this.Visit(argument);
+                }
+            }
+
+            this.WriteToken(node.CloseParenToken);
+        }
+
+        public override void VisitBracketedArgumentList(BracketedArgumentListSyntax node)
+        {
+            this.WriteToken(node.OpenBracketToken);
+
+            bool isFirst = true;
+
+            foreach (var argument in node.Arguments)
+            {
+                var textExpression = argument.ToFullString();
+                if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                {
+                    this.strategy.RepeatDeclaration(
+                        attributeSyntax,
+                        itemStrategy =>
+                        {
+                            if (isFirst)
+                            {
+                                isFirst = false;
+                            }
+                            else
+                            {
+                                this.Write(", ");
+                            }
+
+                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
+                        });
+                }
+                else
+                {
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        this.Write(", ");
+                    }
+
+                    this.Visit(argument);
+                }
+            }
+
+            this.WriteToken(node.CloseBracketToken);
+        }
+
+        public override void VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            this.WriteToken(node.Identifier);
         }
 
         private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
@@ -446,6 +624,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.Write(node.SemicolonToken.ToFullString());
         }
 
+        private void WriteIndexerDeclaration(IndexerDeclarationSyntax node)
+        {
+            this.WriteAttributeLists(node.AttributeLists);
+
+            this.Write(node.Modifiers.ToFullString());
+            this.WriteNode(node.Type);
+
+            this.WriteNode(node.ExplicitInterfaceSpecifier);
+
+            this.WriteToken(node.ThisKeyword);
+
+            this.Visit(node.ParameterList);
+
+            this.Visit(node.AccessorList);
+            this.Visit(node.ExpressionBody);
+            this.Write(node.SemicolonToken.ToFullString());
+        }
+
         private void WritePropertyDeclaration(PropertyDeclarationSyntax node)
         {
             this.WriteAttributeLists(node.AttributeLists);
@@ -472,9 +668,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 if (child.IsNode)
                 {
-                    if (!object.ReferenceEquals(node.Declaration.Type, child))
+                    var childNode = child.AsNode();
+
+                    if (!object.ReferenceEquals(node.Declaration.Type, childNode))
                     {
-                        this.Visit(child.AsNode());
+                        this.Visit(childNode);
                     }
                 }
                 else
@@ -508,7 +706,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 foreach (var attr in attrList.Attributes)
                 {
                     if (!attr.IsAttributeName<PatternAttribute>() &&
-                        !attr.IsAttributeName<RepeatAttribute>())
+                        !attr.IsAttributeName<RepeatAttribute>() &&
+                        !attr.IsAttributeName<ReplacePatternAttribute>())
                     {
                         if (!found)
                         {
@@ -537,8 +736,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                         idx = line.LastIndexOf(newLine, StringComparison.InvariantCulture);
                     }
 
-                    this.Write(line.Substring(0, idx).TrimEnd(' ', '\t'));
-                    this.Write(line.Substring(idx + newLine.Length));
+                    if (idx >= 0)
+                    {
+                        this.Write(line.Substring(0, idx).TrimEnd(' ', '\t'));
+                        this.Write(line.Substring(idx + newLine.Length));
+                    }
+                    else
+                    {
+                        this.Write(line);
+                    }
                 }
             }
         }
@@ -558,7 +764,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private void Write(string text)
         {
-            this.writer.Write(this.strategy.ApplyPatternReplace(text));
+            this.textWriter.Write(this.strategy.ApplyPatternReplace(text));
         }
     }
 }

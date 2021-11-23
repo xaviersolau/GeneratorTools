@@ -26,6 +26,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns
                 .Where(d => d.Name == nameof(ISimpleSample));
         }
 
+        public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
             throw new NotImplementedException();

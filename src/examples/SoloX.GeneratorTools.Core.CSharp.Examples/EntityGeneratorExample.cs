@@ -75,7 +75,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
             var generator = new ImplementationGenerator(
-                new FileGenerator(".generated.cs"),
+                new FileWriter(".generated.cs"),
                 locator,
                 patternInterfaceDeclaration,
                 patternImplementationDeclaration);

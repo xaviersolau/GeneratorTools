@@ -48,11 +48,60 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         {
             return ConvertToT(node.Token.Value);
         }
+
+        /// <inheritdoc/>
+        public override T VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        {
+            return LoadFromArrayInitializerExpression(node.Initializer);
+        }
+
+        /// <inheritdoc/>
+        public override T VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
+        {
+            return LoadFromArrayInitializerExpression(node.Initializer);
+        }
 #pragma warning restore CA1062 // Valider les arguments de méthodes publiques
+
+        private static T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer)
+        {
+            if (IsTArrayOfType<string>())
+            {
+                return LoadArray<string>(initializer);
+            }
+            else if (IsTArrayOfType<int>())
+            {
+                return LoadArray<int>(initializer);
+            }
+            else if (IsTArrayOfType<double>())
+            {
+                return LoadArray<double>(initializer);
+            }
+
+            return default;
+        }
+
+        private static T LoadArray<TItem>(InitializerExpressionSyntax initializer)
+        {
+            var size = initializer.Expressions.Count;
+            var values = new TItem[size];
+
+            var evaluator = new ConstantExpressionSyntaxEvaluator<TItem>();
+            var idx = 0;
+            foreach (var expression in initializer.Expressions)
+            {
+                var value = evaluator.Visit(expression);
+                values[idx++] = value;
+            }
+
+            return ConvertToT(values);
+        }
 
         private static T ConvertToT(object value)
         {
             return (value is T t) ? t : default;
         }
+
+        private static bool IsTArrayOfType<TItem>()
+            => typeof(T) == typeof(TItem[]) || typeof(T) == typeof(IEnumerable<TItem>);
     }
 }

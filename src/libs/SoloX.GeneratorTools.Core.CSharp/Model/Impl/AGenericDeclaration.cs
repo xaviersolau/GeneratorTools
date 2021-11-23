@@ -73,6 +73,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             => this.Members.OfType<IPropertyDeclaration>().ToArray();
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<IMethodDeclaration> Methods
+            => this.Members.OfType<IMethodDeclaration>().ToArray();
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             if (this.Extends?.Any() ?? false)
