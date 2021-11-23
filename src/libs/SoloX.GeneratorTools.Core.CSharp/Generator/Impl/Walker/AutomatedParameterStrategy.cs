@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AutomatedPropertyStrategy.cs" company="SoloX Software">
+// <copyright file="AutomatedParameterStrategy.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,15 +14,15 @@ using SoloX.GeneratorTools.Core.CSharp.Model;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
-    internal class AutomatedPropertyStrategy : IAutomatedStrategy
+    internal class AutomatedParameterStrategy : IAutomatedStrategy
     {
-        private readonly IPropertyDeclaration pattern;
-        private readonly IPropertyDeclaration declaration;
+        private readonly IParameterDeclaration pattern;
+        private readonly IParameterDeclaration declaration;
         private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
 
-        public AutomatedPropertyStrategy(
-            IPropertyDeclaration pattern,
-            IPropertyDeclaration declaration,
+        public AutomatedParameterStrategy(
+            IParameterDeclaration pattern,
+            IParameterDeclaration declaration,
             IEnumerable<IReplacePatternHandler> replacePatternHandlers)
         {
             this.pattern = pattern;
@@ -35,9 +35,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var firstLowerPatternName = char.ToLowerInvariant(this.pattern.Name[0]) + this.pattern.Name.Substring(1);
             var firstLowerDeclarationName = char.ToLowerInvariant(this.declaration.Name[0]) + this.declaration.Name.Substring(1);
 
-            var patternType = this.pattern.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+            var patternType = this.pattern.ParameterType.SyntaxNodeProvider.SyntaxNode.ToString();
 
-            var declarationType = this.declaration.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+            var declarationType = this.declaration.ParameterType.SyntaxNodeProvider.SyntaxNode.ToString();
 
             var result = text
                 .Replace(patternType, declarationType)
@@ -82,10 +82,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.declaration.Name;
         }
 
-        internal static bool Match(IPropertyDeclaration repeatProperty, string expression)
+        internal static bool Match(IParameterDeclaration repeatParameter, string expression)
         {
-            var firstLowerPatternName = char.ToLowerInvariant(repeatProperty.Name[0]) + repeatProperty.Name.Substring(1);
-            return expression.Contains(repeatProperty.Name) || expression.Contains(firstLowerPatternName);
+            var firstUpperPatternName = char.ToUpperInvariant(repeatParameter.Name[0]) + repeatParameter.Name.Substring(1);
+            return expression.Contains(repeatParameter.Name) || expression.Contains(firstUpperPatternName);
         }
     }
 }

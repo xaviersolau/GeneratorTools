@@ -141,7 +141,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
         [Theory]
         [InlineData(nameof(ClassWithProperties), false)]
         [InlineData(nameof(ClassWithArrayProperties), true)]
-        public void LoadMemberListTest(string className, bool isArray)
+        public void LoadPropertyListTest(string className, bool isArray)
         {
             var file = className.ToBasicPath();
 
@@ -185,6 +185,66 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             {
                 Assert.Null(pClass.PropertyType.ArraySpecification);
                 Assert.Null(pInt.PropertyType.ArraySpecification);
+            }
+        }
+
+        [Theory]
+        [InlineData(nameof(ClassWithMethods), false)]
+        [InlineData(nameof(ClassWithGenericMethods), true)]
+        public void LoadMethodListTest(string className, bool isGeneric)
+        {
+            var file = className.ToBasicPath();
+
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+            csFile.Load();
+
+            var declaration = Assert.Single(csFile.Declarations);
+
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration,
+                nameof(SimpleClass));
+
+            var decl = Assert.IsType<ClassDeclaration>(declaration);
+
+            decl.Load(declarationResolver);
+
+            Assert.Empty(decl.GenericParameters);
+            Assert.Empty(decl.Extends);
+
+            Assert.NotEmpty(decl.Members);
+            Assert.Equal(2, decl.Members.Count);
+
+            var mClass = Assert.Single(decl.Members.Where(m => m.Name == nameof(ClassWithMethods.ThisIsABasicMethod)));
+            var methodClass = Assert.IsType<MethodDeclaration>(mClass);
+            Assert.IsType<GenericDeclarationUse>(methodClass.ReturnType);
+            Assert.Equal(nameof(SimpleClass), methodClass.ReturnType.Declaration.Name);
+
+            Assert.Empty(methodClass.Parameters);
+
+            var mInt = Assert.Single(decl.Members.Where(m => m.Name == nameof(ClassWithMethods.ThisIsAMethodWithParameters)));
+            var methodInt = Assert.IsType<MethodDeclaration>(mInt);
+            Assert.IsType<PredefinedDeclarationUse>(methodInt.ReturnType);
+            Assert.Equal("int", methodInt.ReturnType.Declaration.Name);
+
+            Assert.NotEmpty(methodInt.Parameters);
+            Assert.Equal(3, methodInt.Parameters.Count);
+
+            if (isGeneric)
+            {
+                Assert.NotNull(methodClass.GenericParameters);
+                Assert.NotNull(methodInt.GenericParameters);
+
+                Assert.NotEmpty(methodClass.GenericParameters);
+                Assert.NotEmpty(methodInt.GenericParameters);
+            }
+            else
+            {
+                Assert.NotNull(methodClass.GenericParameters);
+                Assert.NotNull(methodInt.GenericParameters);
+                Assert.Empty(methodClass.GenericParameters);
+                Assert.Empty(methodInt.GenericParameters);
             }
         }
 

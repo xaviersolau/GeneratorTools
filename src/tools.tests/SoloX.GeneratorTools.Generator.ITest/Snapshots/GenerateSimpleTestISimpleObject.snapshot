@@ -17,9 +17,9 @@ namespace target.name.space
         /// <param name="someValue">Some mandatory parameter.</param>
         /// <returns>The created ISimpleObject instance.</returns>
         ISimpleObject CreateSimpleObject(
-            int property1,
-            string property2,
-            int property3 = default,
+            int property1, 
+            string property2, 
+            int property3 = default, 
             string property4 = default);
     }
 }
@@ -38,9 +38,9 @@ namespace target.name.space
     {
         /// <inheritdoc/>
         public ISimpleObject CreateSimpleObject(
-            int property1,
-            string property2,
-            int property3 = default,
+            int property1, 
+            string property2, 
+            int property3 = default, 
             string property4 = default)
         {
             return new SimpleObject()

@@ -32,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
         /// <param name="fallBackSubNameSpace">The fall back name space.</param>
         public RelativeLocator(string baseFolder, string baseNameSpace, string suffix = null, string fallBackSubNameSpace = null)
         {
-            this.baseFolder = baseFolder;
+            this.baseFolder = string.IsNullOrEmpty(baseFolder) ? "." : baseFolder;
             this.baseNameSpace = baseNameSpace;
             this.suffix = suffix;
             this.suffixPath = this.suffix?.Replace('.', Path.DirectorySeparatorChar);

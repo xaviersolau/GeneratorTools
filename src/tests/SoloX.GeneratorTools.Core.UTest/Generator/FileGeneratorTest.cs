@@ -23,7 +23,7 @@ namespace SoloX.GeneratorTools.Core.UTest.Generator
 
             var location = Path.GetTempPath();
 
-            var generator = new FileGenerator(".txt");
+            var generator = new FileWriter(".txt");
 
             generator.Generate(location, "testfile", (w) => w.Write(txt));
 

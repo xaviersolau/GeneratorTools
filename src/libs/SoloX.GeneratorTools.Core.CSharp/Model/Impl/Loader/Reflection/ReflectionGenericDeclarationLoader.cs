@@ -194,6 +194,53 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return predefinedDeclarationUse;
         }
 
+        private static IReadOnlyCollection<IGenericParameterDeclaration> LoadGenericParameters(MethodInfo methodInfo)
+        {
+            IReadOnlyCollection<IGenericParameterDeclaration> genericParameters;
+            if (methodInfo.IsGenericMethod)
+            {
+                var parameterSet = new List<IGenericParameterDeclaration>();
+                foreach (var parameter in methodInfo.GetGenericArguments())
+                {
+                    parameterSet.Add(new GenericParameterDeclaration(
+                        parameter.Name,
+                        null));
+                }
+
+                genericParameters = parameterSet;
+            }
+            else
+            {
+                genericParameters = Array.Empty<IGenericParameterDeclaration>();
+            }
+
+            return genericParameters;
+        }
+
+        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodInfo method, IDeclarationResolver resolver)
+        {
+            IReadOnlyCollection<IParameterDeclaration> parameters;
+
+            var paramInfos = method.GetParameters();
+
+            if (paramInfos != null && paramInfos.Any())
+            {
+                var parameterSet = new List<IParameterDeclaration>();
+                foreach (var pi in paramInfos)
+                {
+                    parameterSet.Add(new ParameterDeclaration(pi.Name, GetDeclarationUseFrom(pi.ParameterType, resolver), null));
+                }
+
+                parameters = parameterSet;
+            }
+            else
+            {
+                parameters = Array.Empty<IParameterDeclaration>();
+            }
+
+            return parameters;
+        }
+
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
@@ -275,17 +322,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                             property.CanWrite));
                 }
 
-                foreach (var method in declaration.GetData<Type>().GetMethods())
+                foreach (var method in declaration.GetData<Type>().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
                 {
-                    if (!method.IsPrivate)
-                    {
-                        var returnType = GetDeclarationUseFrom(method.ReturnType, resolver);
-                        memberList.Add(
-                            new MethodDeclaration(
-                                method.Name,
-                                returnType,
-                                new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider)));
-                    }
+                    var returnType = GetDeclarationUseFrom(method.ReturnType, resolver);
+
+                    var genericParameters = LoadGenericParameters(method);
+
+                    var parameters = LoadParameters(method, resolver);
+
+                    memberList.Add(
+                        new MethodDeclaration(
+                            method.Name,
+                            returnType,
+                            new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider),
+                            genericParameters,
+                            parameters));
                 }
             }
             catch (TypeLoadException e)

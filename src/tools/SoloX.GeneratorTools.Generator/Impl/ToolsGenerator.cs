@@ -54,7 +54,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
             var project = this.workspace.RegisterProject(projectFile);
 
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
-            var fileGenerator = new FileGenerator(".generated.cs");
+            var fileGenerator = new FileWriter(".generated.cs");
 
             // Generate with a filter on current project interface declarations.
             this.Generate(
@@ -63,7 +63,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 project.Files);
         }
 
-        internal void Generate(RelativeLocator locator, IGenerator fileGenerator, IEnumerable<ICSharpFile> files)
+        internal void Generate(RelativeLocator locator, IWriter fileGenerator, IEnumerable<ICSharpFile> files)
         {
             this.workspace.RegisterFile(GetContentFile("./Patterns/Itf/IObjectPattern.cs"));
             this.workspace.RegisterFile(GetContentFile("./Patterns/Itf/IFactoryPattern.cs"));

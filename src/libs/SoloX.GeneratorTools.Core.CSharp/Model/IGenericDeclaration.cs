@@ -51,5 +51,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the property list.
         /// </summary>
         IReadOnlyCollection<IPropertyDeclaration> Properties { get; }
+
+        /// <summary>
+        /// Gets the method list.
+        /// </summary>
+        IReadOnlyCollection<IMethodDeclaration> Methods { get; }
     }
 }

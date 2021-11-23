@@ -30,6 +30,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
         }
 
         [Theory]
+        [InlineData("new string[]")]
+        [InlineData("new []")]
+        public void StringArrayConstEvaluatorTest(string arrayDecl)
+        {
+            var textValue1 = "textValue1";
+            var textValue2 = "textValue2";
+            var textExp = $@"{arrayDecl} {{ ""{textValue1}"", ""{textValue2}"" }}";
+
+            var walker = new ConstantExpressionSyntaxEvaluator<string[]>();
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExp);
+
+            var array = walker.Visit(exp);
+
+            Assert.NotNull(array);
+
+            Assert.Equal(2, array.Length);
+            Assert.Equal(textValue1, array[0]);
+            Assert.Equal(textValue2, array[1]);
+        }
+
+        [Theory]
         [InlineData("MyValue", "MyValue")]
         [InlineData("SomeClass.MyValue", "MyValue")]
         public void NameOfConstEvaluatorTest(string textExpression, string expectedValue)

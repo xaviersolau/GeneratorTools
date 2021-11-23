@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
+using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -24,19 +25,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IDeclarationResolver resolver;
         private readonly string targetName;
         private readonly string currentNameSpace;
+        private readonly IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories;
+        private readonly IEnumerable<string> ignoreUsingList;
 
         public AutomatedDeclarationsStrategy(
             IDeclaration<SyntaxNode> pattern,
             string nameSpace,
             string name,
             IEnumerable<IDeclaration<SyntaxNode>> declarations,
-            IDeclarationResolver resolver)
+            IDeclarationResolver resolver,
+            IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
+            IEnumerable<string> ignoreUsingList)
         {
             this.targetName = name;
             this.currentNameSpace = nameSpace;
             this.declarations = declarations;
             this.pattern = pattern;
             this.resolver = resolver;
+            this.replacePatternHandlerFactories = replacePatternHandlerFactories;
+            this.ignoreUsingList = ignoreUsingList;
         }
 
         public string ApplyPatternReplace(string text)
@@ -69,7 +76,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     new AutomatedGenericStrategy(
                         (IGenericDeclaration<SyntaxNode>)repeatPattern,
                         (IGenericDeclaration<SyntaxNode>)declaration,
-                        this.resolver));
+                        this.resolver,
+                        this.replacePatternHandlerFactories,
+                        this.ignoreUsingList));
             }
         }
 
@@ -85,7 +94,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public bool IgnoreUsingDirective(string ns)
         {
-            throw new NotImplementedException();
+            return this.ignoreUsingList.Contains(ns);
         }
 
         public string ComputeTargetName()

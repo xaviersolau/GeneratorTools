@@ -133,7 +133,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 
             var locator = new RelativeLocator(string.Empty, targetNameSpace);
 
-            var snapshotGenerator = new SnapshotGenerator();
+            var snapshotGenerator = new SnapshotWriter();
 
             var implGenerator = new ImplementationGenerator(
                 snapshotGenerator, locator, itfPatternDeclaration, implPatternDeclaration);

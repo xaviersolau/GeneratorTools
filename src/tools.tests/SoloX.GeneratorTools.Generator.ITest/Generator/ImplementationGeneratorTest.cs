@@ -63,7 +63,7 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
                 var inputs = new HashSet<string>();
                 var locator = new RelativeLocator(string.Empty, "target.name.space");
 
-                var snapshotGenerator = new SnapshotGenerator();
+                var snapshotGenerator = new SnapshotWriter();
 
                 generator.Generate(locator, snapshotGenerator, workspace.Files);
 

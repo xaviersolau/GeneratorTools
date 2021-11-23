@@ -16,6 +16,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
     public interface IAutomatedGenerator
     {
         /// <summary>
+        /// Add name-spaces to the using ignore list.
+        /// </summary>
+        /// <param name="usingToIgnore">The name-spaces to add to the using ignore list.</param>
+        void AddIgnoreUsing(params string[] usingToIgnore);
+
+        /// <summary>
         /// Generate the implementation of the given interface declaration.
         /// </summary>
         /// <param name="files">The files where to apply the generator.</param>

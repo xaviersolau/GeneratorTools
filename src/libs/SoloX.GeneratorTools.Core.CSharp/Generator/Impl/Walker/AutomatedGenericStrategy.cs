@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
+using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -26,36 +27,50 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IGenericDeclaration<SyntaxNode> declaration;
         private readonly IGenericDeclaration<SyntaxNode> pattern;
         private readonly IDeclarationResolver resolver;
-
+        private readonly IEnumerable<string> ignoreUsingList;
         private readonly string targetDeclarationName;
         private readonly string targetPatternName;
+        private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
 
         public AutomatedGenericStrategy(
             IGenericDeclaration<SyntaxNode> pattern,
             IGenericDeclaration<SyntaxNode> declaration,
-            IDeclarationResolver resolver)
+            IDeclarationResolver resolver,
+            IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
+            IEnumerable<string> ignoreUsingList)
         {
             this.declaration = declaration;
             this.pattern = pattern;
             this.resolver = resolver;
+            this.ignoreUsingList = ignoreUsingList;
             this.targetDeclarationName = GeneratorHelper.ComputeClassName(declaration.Name);
             this.targetPatternName = GeneratorHelper.ComputeClassName(pattern.Name);
+
+            this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
 
         public string ApplyPatternReplace(string text)
         {
+            string result;
             if (this.targetPatternName.Length < this.pattern.Name.Length)
             {
-                return text
+                result = text
                     .Replace(this.pattern.Name, this.declaration.Name)
                     .Replace(this.targetPatternName, this.targetDeclarationName);
             }
             else
             {
-                return text
+                result = text
                     .Replace(this.targetPatternName, this.targetDeclarationName)
                     .Replace(this.pattern.Name, this.declaration.Name);
             }
+
+            foreach (var replacePatternHandler in this.replacePatternHandlers)
+            {
+                result = replacePatternHandler.ApplyOn(result);
+            }
+
+            return result;
         }
 
         public string GetCurrentNameSpace()
@@ -90,27 +105,56 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 return;
             }
 
-            // get the property from the current pattern generic definition.
-            var repeatProperty = this.pattern.Properties.First(p => p.Name == patternName);
+            // get the member from the current pattern generic definition.
+            var repeatMember = this.pattern.Members.First(p => p.Name == patternName);
 
-            ISelector selector;
-
-            // Get the selector if any from the matching property.
-            if (repeatProperty.SyntaxNodeProvider.SyntaxNode.AttributeLists
-                .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
+            if (repeatMember is IPropertyDeclaration repeatProperty)
             {
-                selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
+                ISelector selector;
+
+                // Get the selector if any from the matching property.
+                if (repeatProperty.SyntaxNodeProvider.SyntaxNode.AttributeLists
+                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
+                {
+                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
+                }
+                else
+                {
+                    selector = new AllPropertySelector();
+                }
+
+                foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
+                {
+                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, this.replacePatternHandlers);
+
+                    callback(strategy);
+                }
+            }
+            else if (repeatMember is IMethodDeclaration repeatMethod)
+            {
+                ISelector selector;
+
+                // Get the selector if any from the matching property.
+                if (repeatMethod.SyntaxNodeProvider.SyntaxNode.AttributeLists
+                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
+                {
+                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
+                }
+                else
+                {
+                    selector = new AllMethodSelector();
+                }
+
+                foreach (var methodDeclaration in selector.GetMethods(this.declaration))
+                {
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers);
+
+                    callback(strategy);
+                }
             }
             else
             {
-                selector = new AllPropertySelector();
-            }
-
-            foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
-            {
-                var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration);
-
-                callback(strategy);
+                throw new NotSupportedException();
             }
         }
 
@@ -121,7 +165,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public bool IgnoreUsingDirective(string ns)
         {
-            return this.pattern.DeclarationNameSpace.Equals(ns, StringComparison.Ordinal);
+            return this.pattern.DeclarationNameSpace.Equals(ns, StringComparison.Ordinal) || this.ignoreUsingList.Contains(ns);
         }
 
         public string ComputeTargetName()

@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IMethodDeclaration.cs" company="SoloX Software">
+// <copyright file="IParameterDeclaration.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,23 +15,13 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
     /// <summary>
-    /// Method declaration interface.
+    /// Parameter declaration.
     /// </summary>
-    public interface IMethodDeclaration : IMemberDeclaration<MethodDeclarationSyntax>
+    public interface IParameterDeclaration : IDeclaration<ParameterSyntax>
     {
         /// <summary>
-        /// Gets the method return type.
+        /// Gets the parameter type.
         /// </summary>
-        IDeclarationUse<SyntaxNode> ReturnType { get; }
-
-        /// <summary>
-        /// Gets the generic method parameters.
-        /// </summary>
-        IReadOnlyCollection<IGenericParameterDeclaration> GenericParameters { get; }
-
-        /// <summary>
-        /// Gets the method parameters.
-        /// </summary>
-        IReadOnlyCollection<IParameterDeclaration> Parameters { get; }
+        IDeclarationUse<SyntaxNode> ParameterType { get; }
     }
 }
