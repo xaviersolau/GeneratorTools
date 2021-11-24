@@ -37,7 +37,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var type = this.typeSyntaxNodeProvider.SyntaxNode.ToString();
 
             var node = GetSyntaxNode($"{type}{array} x;");
-            return (ArrayTypeSyntax)((FieldDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single()).Declaration.Type;
+            var statement = (LocalDeclarationStatementSyntax)(((GlobalStatementSyntax)((CompilationUnitSyntax)node).Members.Single()).Statement);
+            return (ArrayTypeSyntax)statement.Declaration.Type;
         }
     }
 }

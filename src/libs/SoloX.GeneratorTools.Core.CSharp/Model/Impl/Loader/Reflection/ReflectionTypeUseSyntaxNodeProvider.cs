@@ -25,7 +25,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         protected override TNode Generate()
         {
             var node = GetSyntaxNode($"{this.typeUsed.Name} x;");
-            return (TNode)((FieldDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single()).Declaration.Type;
+            var statement = (LocalDeclarationStatementSyntax)(((GlobalStatementSyntax)((CompilationUnitSyntax)node).Members.Single()).Statement);
+            return (TNode)statement.Declaration.Type;
         }
     }
 }

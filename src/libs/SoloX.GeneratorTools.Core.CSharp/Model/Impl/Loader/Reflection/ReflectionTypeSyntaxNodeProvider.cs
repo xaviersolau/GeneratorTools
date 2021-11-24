@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
@@ -38,8 +39,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 type = "struct";
             }
 
-            var node = GetSyntaxNode($"public {type} {this.declarationType.Name} {{}}");
-            return (TNode)((CompilationUnitSyntax)node).Members.Single();
+            if (this.declarationType.IsGenericType)
+            {
+                var name = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(this.declarationType.Name);
+
+                var node = GetSyntaxNode($"public {type} {name} {{}}");
+                return (TNode)((CompilationUnitSyntax)node).Members.Single();
+            }
+            else
+            {
+                var node = GetSyntaxNode($"public {type} {this.declarationType.Name} {{}}");
+                return (TNode)((CompilationUnitSyntax)node).Members.Single();
+            }
         }
     }
 }
