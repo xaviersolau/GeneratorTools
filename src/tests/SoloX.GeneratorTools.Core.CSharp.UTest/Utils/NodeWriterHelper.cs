@@ -55,11 +55,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         private static T AssertSingleMemberOfType<T>(StringBuilder output)
             where T : SyntaxNode
         {
+            var code = $"public class x {{ {output} }}";
             var resultingNode = AReflectionSyntaxNodeProvider<SyntaxNode>
-                .GetSyntaxNode(output.ToString());
+                .GetSyntaxNode(code);
+
             var cun = Assert.IsType<CompilationUnitSyntax>(resultingNode);
             var member = Assert.Single(cun.Members);
-            return Assert.IsType<T>(member);
+
+            var classDeclaration = Assert.IsType<ClassDeclarationSyntax>(member);
+
+            var classMember = Assert.Single(classDeclaration.Members);
+
+            return Assert.IsType<T>(classMember);
         }
 
         private static IReadOnlyList<T> AssertMultiMemberOfType<T>(StringBuilder output)

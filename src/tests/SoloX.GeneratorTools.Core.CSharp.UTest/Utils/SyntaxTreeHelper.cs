@@ -27,7 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
                 .GetSyntaxNode($"{typeStatement} a;");
 
-            var field = (FieldDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+            var field = (LocalDeclarationStatementSyntax)((GlobalStatementSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Statement;
             return field.Declaration.Type;
         }
 
@@ -107,7 +107,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         {
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
                 .GetSyntaxNode($"void Method(){{{type} {name} = {init};}}");
-            var statementSyntax = ((MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Body.Statements.First();
+
+            var localFunctionStatementSyntax = (LocalFunctionStatementSyntax)((GlobalStatementSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single()).Statement;
+
+            var statementSyntax = localFunctionStatementSyntax.Body.Statements.First();
             return (LocalDeclarationStatementSyntax)statementSyntax;
         }
 
@@ -138,8 +141,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             }
 
             var syntaxNode = AReflectionSyntaxNodeProvider<SyntaxNode>
-                .GetSyntaxNode($"public {type} {name}({type} {argument}{otherArguments}){{}}");
-            return (MethodDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.Single();
+                .GetSyntaxNode($"public class X {{ public {type} {name}({type} {argument}{otherArguments}){{}}}}");
+
+            return (MethodDeclarationSyntax)((ClassDeclarationSyntax)((CompilationUnitSyntax)syntaxNode).Members.First()).Members.Single();
         }
 
         public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)

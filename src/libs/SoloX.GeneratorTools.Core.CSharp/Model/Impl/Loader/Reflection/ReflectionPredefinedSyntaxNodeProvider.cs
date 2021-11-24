@@ -70,7 +70,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             }
 
             var node = GetSyntaxNode($"{typeName} x;");
-            return (PredefinedTypeSyntax)((FieldDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single()).Declaration.Type;
+
+            var statement = (LocalDeclarationStatementSyntax)(((GlobalStatementSyntax)((CompilationUnitSyntax)node).Members.Single()).Statement);
+            return (PredefinedTypeSyntax)statement.Declaration.Type;
         }
     }
 }
