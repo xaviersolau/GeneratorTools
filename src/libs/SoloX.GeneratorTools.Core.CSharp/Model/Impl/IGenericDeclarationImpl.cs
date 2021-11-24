@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IGenericDeclarationImpl.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="IGenericDeclarationImpl.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -13,7 +14,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// Generic declaration implementation interface.
     /// The purpose is to give access to the AddExtendedBy method.
     /// </summary>
+#pragma warning disable CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
     public interface IGenericDeclarationImpl
+#pragma warning restore CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
     {
         /// <summary>
         /// Add ExtendedBy declaration.

@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="KeysReadHandler.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="KeysReadHandler.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
@@ -15,7 +14,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
     internal class KeysReadHandler : AConverterReadHandler
     {
         private int nestedLevel;
-        private Action<string> addKey;
+        private readonly Action<string> addKey;
 
         public KeysReadHandler(JsonReader reader, JsonSerializer serializer, AConverterReadHandler parent, Action<string> addKey)
             : base(reader, serializer, parent)
@@ -25,6 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 
         protected override AConverterReadHandler Handle(JsonToken tknType)
         {
+#pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
                 case JsonToken.StartObject:
@@ -38,11 +38,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
                     {
                         this.addKey((string)this.Reader.Value);
                     }
-
                     break;
                 default:
                     break;
             }
+#pragma warning restore IDE0010 // Ajouter les instructions case manquantes
 
             if (this.nestedLevel == 0)
             {

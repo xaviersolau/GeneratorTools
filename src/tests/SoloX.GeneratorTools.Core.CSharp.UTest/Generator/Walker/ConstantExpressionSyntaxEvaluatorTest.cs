@@ -1,15 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ConstantExpressionSyntaxEvaluatorTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ConstantExpressionSyntaxEvaluatorTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
 

@@ -1,15 +1,13 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="FileWriter.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="FileWriter.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Threading;
 
 namespace SoloX.GeneratorTools.Core.Generator
 {
@@ -18,8 +16,8 @@ namespace SoloX.GeneratorTools.Core.Generator
     /// </summary>
     public class FileWriter : IWriter
     {
-        private string fileSufix;
-        private Action<string> generateCallBack;
+        private readonly string fileSufix;
+        private readonly Action<string> generateCallBack;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileWriter"/> class.

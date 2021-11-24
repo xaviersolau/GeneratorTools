@@ -1,21 +1,18 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ImplementationGeneratorTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ImplementationGeneratorTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -30,7 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 {
     public class ImplementationGeneratorTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public ImplementationGeneratorTest(ITestOutputHelper testOutputHelper)
         {
@@ -142,7 +139,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 
             implGenerator.Generate(writerSelector, itfDeclaration, implName);
 
-            string location = SnapshotHelper.GetLocationFromCallingProjectRoot("Generator");
+            var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot("Generator");
 
             SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
         }

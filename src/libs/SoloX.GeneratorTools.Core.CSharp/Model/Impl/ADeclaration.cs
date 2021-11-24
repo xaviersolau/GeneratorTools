@@ -1,15 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ADeclaration.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ADeclaration.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
@@ -20,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// </summary>
     public abstract class ADeclaration
     {
-        private bool isLoaded = false;
+        private bool isLoaded;
         private Dictionary<Type, object> data;
 
         /// <summary>
@@ -56,14 +55,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 return (T)value;
             }
 
-            return default(T);
+            return default;
         }
 
         /// <summary>
         /// Implementation of the declaration loading.
         /// </summary>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
+#pragma warning disable CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
         protected abstract void LoadImpl(IDeclarationResolver resolver);
+#pragma warning restore CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
     }
 
     /// <summary>

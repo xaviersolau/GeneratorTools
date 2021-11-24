@@ -1,20 +1,19 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="TargetItemReadHandler.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="TargetItemReadHandler.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
     internal class TargetItemReadHandler : AConverterReadHandler
     {
-        private TargetItemAssets targetItemAssets;
+        private readonly TargetItemAssets targetItemAssets;
 
         public TargetItemReadHandler(
             JsonReader reader,
@@ -28,6 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 
         protected override AConverterReadHandler Handle(JsonToken tknType)
         {
+#pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
                 case JsonToken.StartObject:
@@ -58,11 +58,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
                         default:
                             return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
                     }
-
                     break;
                 default:
                     break;
             }
+#pragma warning restore IDE0010 // Ajouter les instructions case manquantes
 
             return this;
         }

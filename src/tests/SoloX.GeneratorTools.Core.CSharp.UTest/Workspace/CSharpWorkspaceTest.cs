@@ -1,21 +1,18 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="CSharpWorkspaceTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="CSharpWorkspaceTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using Moq;
-using SoloX.CodeQuality.Test.Helpers.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -26,7 +23,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpWorkspaceTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public CSharpWorkspaceTest(ITestOutputHelper testOutputHelper)
         {

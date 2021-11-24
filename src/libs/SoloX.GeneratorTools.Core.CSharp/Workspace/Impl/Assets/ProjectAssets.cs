@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ProjectAssets.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ProjectAssets.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
@@ -18,9 +17,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
     [JsonConverter(typeof(JsonProjectAssetsConverter))]
     public class ProjectAssets
     {
-        private Dictionary<string, TargetAssets> targets = new Dictionary<string, TargetAssets>();
-        private Dictionary<string, LibraryAssets> libraries = new Dictionary<string, LibraryAssets>();
-        private List<string> packageFolder = new List<string>();
+        private readonly Dictionary<string, TargetAssets> targets = new Dictionary<string, TargetAssets>();
+        private readonly Dictionary<string, LibraryAssets> libraries = new Dictionary<string, LibraryAssets>();
+        private readonly List<string> packageFolder = new List<string>();
 
         /// <summary>
         /// Gets or sets version.

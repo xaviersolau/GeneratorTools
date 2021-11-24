@@ -1,13 +1,13 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="StringReplaceWriter.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="StringReplaceWriter.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.Generator.Writer;
@@ -20,8 +20,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
     public class StringReplaceWriter : INodeWriter
     {
         private readonly Func<SyntaxNode, bool> nodeFilter;
-        private string oldString;
-        private IReadOnlyList<string> newStringList;
+        private readonly string oldString;
+        private readonly IReadOnlyList<string> newStringList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StringReplaceWriter"/> class.
@@ -58,6 +58,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
                 throw new ArgumentNullException(nameof(node), $"The argument {nameof(node)} was null.");
             }
 
+            if (write == null)
+            {
+                throw new ArgumentNullException(nameof(write), $"The argument {nameof(write)} was null.");
+            }
+
             if (this.nodeFilter(node))
             {
                 return false;
@@ -81,6 +86,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         /// <inheritdoc/>
         public bool Write(SyntaxToken token, Action<string> write)
         {
+            if (write == null)
+            {
+                throw new ArgumentNullException(nameof(write), $"The argument {nameof(write)} was null.");
+            }
+
             var txt = token.ToFullString();
 
             if (txt.Contains(this.oldString))

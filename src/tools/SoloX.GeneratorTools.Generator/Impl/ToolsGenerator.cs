@@ -1,25 +1,18 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ToolsGenerator.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ToolsGenerator.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using SoloX.GeneratorTools.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Generator.Impl;
-using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Generator.Patterns.Impl;
 using SoloX.GeneratorTools.Generator.Patterns.Itf;
 
@@ -95,14 +88,6 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 typeof(ObjectPattern));
 
             var generatedItems3 = generator3.Generate(files);
-        }
-
-        private static bool IsDeclarationInProject(IInterfaceDeclaration itfDeclaration, ICSharpProject project)
-        {
-            var filePath = itfDeclaration.Location;
-            var projectPath = project.ProjectPath;
-
-            return filePath.StartsWith(projectPath, StringComparison.InvariantCulture);
         }
 
         private static string GetContentFile(string contentFile)

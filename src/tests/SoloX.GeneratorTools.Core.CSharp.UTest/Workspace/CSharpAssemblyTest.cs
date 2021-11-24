@@ -1,18 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="CSharpAssemblyTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="CSharpAssemblyTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SoloX.CodeQuality.Test.Helpers.Logger;
-using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -24,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpAssemblyTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public CSharpAssemblyTest(ITestOutputHelper testOutputHelper)
         {
@@ -43,11 +39,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             csAssembly.Load();
 
             Assert.Same(assembly, csAssembly.Assembly);
-            var decl = Assert.Single(csAssembly.Declarations.Where(d => d.Name == nameof(BasicInterface)));
+            var decl = Assert.Single(csAssembly.Declarations.Where(d => d.Name == nameof(IBasicInterface)));
 
             var typeItfDecl = Assert.IsType<InterfaceDeclaration>(decl);
 
-            Assert.Same(typeof(BasicInterface), typeItfDecl.GetData<Type>());
+            Assert.Same(typeof(IBasicInterface), typeItfDecl.GetData<Type>());
         }
     }
 }

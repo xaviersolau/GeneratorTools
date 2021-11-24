@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="PatternAttribute.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="PatternAttribute.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -31,5 +32,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// Gets the selector.
         /// </summary>
         public ISelector Selector { get; }
+
+        /// <summary>
+        /// Gets the selector type.
+        /// </summary>
+        public Type SelectorType { get; }
     }
 }

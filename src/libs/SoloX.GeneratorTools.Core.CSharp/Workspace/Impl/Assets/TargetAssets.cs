@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="TargetAssets.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="TargetAssets.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -9,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
 {
@@ -18,7 +18,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
     /// </summary>
     public class TargetAssets
     {
-        private Dictionary<string, TargetItemAssets> targetItems;
+        private readonly Dictionary<string, TargetItemAssets> targetItems;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TargetAssets"/> class.

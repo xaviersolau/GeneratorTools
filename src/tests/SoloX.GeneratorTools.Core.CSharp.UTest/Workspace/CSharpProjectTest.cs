@@ -1,15 +1,13 @@
 // ----------------------------------------------------------------------
-// <copyright file="CSharpProjectTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="CSharpProjectTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
-using System.IO;
 using System.Linq;
 using Moq;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -20,7 +18,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpProjectTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public CSharpProjectTest(ITestOutputHelper testOutputHelper)
         {

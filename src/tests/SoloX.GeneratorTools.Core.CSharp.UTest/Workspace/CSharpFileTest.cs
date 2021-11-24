@@ -1,15 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="CSharpFileTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="CSharpFileTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -21,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 {
     public class CSharpFileTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public CSharpFileTest(ITestOutputHelper testOutputHelper)
         {
@@ -42,7 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         [Theory]
         [InlineData("./Resources/Workspace/BasicClass.cs", nameof(BasicClass), typeof(ClassDeclaration))]
         [InlineData("./Resources/Workspace/BasicEnum.cs", nameof(BasicEnum), typeof(EnumDeclaration))]
-        [InlineData("./Resources/Workspace/BasicInterface.cs", nameof(BasicInterface), typeof(InterfaceDeclaration))]
+        [InlineData("./Resources/Workspace/IBasicInterface.cs", nameof(IBasicInterface), typeof(InterfaceDeclaration))]
         [InlineData("./Resources/Workspace/BasicStruct.cs", nameof(BasicStruct), typeof(StructDeclaration))]
         public void LoadCSharpFileTest(string declarationFile, string name, Type expectedDeclarationType)
         {
