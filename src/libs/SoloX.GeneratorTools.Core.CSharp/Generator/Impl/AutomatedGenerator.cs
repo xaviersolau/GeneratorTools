@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AutomatedGenerator.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="AutomatedGenerator.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -11,12 +12,10 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
-using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 {

@@ -1,14 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ParserGenericDeclarationLoader.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ParserGenericDeclarationLoader.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
@@ -45,10 +45,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            this.LoadGenericParameters(declaration);
-            this.LoadExtends(declaration, resolver);
-            this.LoadMembers(declaration, resolver);
-            this.LoadAttributes(declaration, resolver);
+            LoadGenericParameters(declaration);
+            LoadExtends(declaration, resolver);
+            LoadMembers(declaration, resolver);
+            LoadAttributes(declaration, resolver);
         }
 
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(
@@ -61,7 +61,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
-        private void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
+        private static void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
             var parameterList = TypeParameterListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
             if (parameterList != null)
@@ -87,11 +87,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// </summary>
         /// <param name="declaration">The declaration to load.</param>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        private void LoadExtends(
+        private static void LoadExtends(
             AGenericDeclaration<TNode> declaration,
             IDeclarationResolver resolver)
         {
-            BaseListSyntax baseListSyntax = BaseListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
+            var baseListSyntax = BaseListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
 
             if (baseListSyntax != null)
             {
@@ -123,7 +123,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// </summary>
         /// <param name="declaration">The declaration to load.</param>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        private void LoadMembers(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private static void LoadMembers(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var memberList = new List<IMemberDeclaration<SyntaxNode>>();
             var membersWalker = new MembersWalker(resolver, declaration, memberList);
@@ -133,7 +133,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }
 
-        private void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private static void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var attributeList = new List<IAttributeUse>();
             var attributesWalker = new AttributesWalker(resolver, declaration, attributeList);

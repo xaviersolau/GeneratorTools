@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ReflectionGenericDeclarationLoader.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ReflectionGenericDeclarationLoader.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
@@ -151,10 +151,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            this.LoadGenericParameters(declaration);
-            this.LoadExtends(declaration, resolver);
-            this.LoadMembers(declaration, resolver);
-            this.LoadAttributes(declaration, resolver);
+            LoadGenericParameters(declaration);
+            LoadExtends(declaration, resolver);
+            LoadMembers(declaration, resolver);
+            LoadAttributes(declaration, resolver);
         }
 
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(
@@ -168,7 +168,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// </summary>
         /// <param name="decl">The declaration that will be loaded.</param>
         /// <param name="type">The type to load the declaration from.</param>
-        internal void Setup(AGenericDeclaration<TNode> decl, Type type)
+        internal static void Setup(AGenericDeclaration<TNode> decl, Type type)
         {
             decl.SetData(type);
         }
@@ -244,7 +244,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// <summary>
         /// Load the generic parameters from the type parameter list node.
         /// </summary>
-        private void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
+        private static void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
             var declarationType = declaration.GetData<Type>();
 
@@ -270,7 +270,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         /// </summary>
         /// <param name="declaration">The declaration to load.</param>
         /// <param name="resolver">The resolver to resolve dependencies.</param>
-        private void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private static void LoadExtends(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var declarationType = declaration.GetData<Type>();
             var extendedInterfaces = declarationType.GetInterfaces();
@@ -351,7 +351,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }
 
-        private void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
+        private static void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var attributeList = new List<IAttributeUse>();
 

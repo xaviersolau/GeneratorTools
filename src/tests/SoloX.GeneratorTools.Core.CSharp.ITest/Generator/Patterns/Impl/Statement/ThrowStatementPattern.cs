@@ -1,17 +1,17 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ThrowStatementPattern.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ThrowStatementPattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Itf;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
 {
+#pragma warning disable CA2201 // Ne pas lever de types d'exception réservés
     public class ThrowStatementPattern : ISimplePattern
     {
         public object PatternProperty { get; set; }
@@ -24,4 +24,5 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
             }
         }
     }
+#pragma warning restore CA2201 // Ne pas lever de types d'exception réservés
 }

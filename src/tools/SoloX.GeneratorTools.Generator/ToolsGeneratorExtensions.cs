@@ -1,13 +1,11 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ToolsGeneratorExtensions.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ToolsGeneratorExtensions.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using SoloX.GeneratorTools.Core.CSharp;
 using SoloX.GeneratorTools.Generator.Impl;

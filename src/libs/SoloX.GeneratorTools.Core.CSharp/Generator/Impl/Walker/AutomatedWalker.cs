@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AutomatedWalker.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="AutomatedWalker.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -433,7 +434,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             this.WriteToken(node.OpenParenToken);
 
-            bool isFirst = true;
+            var isFirst = true;
 
             foreach (var argument in node.Arguments)
             {
@@ -478,7 +479,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             this.WriteToken(node.OpenBracketToken);
 
-            bool isFirst = true;
+            var isFirst = true;
 
             foreach (var argument in node.Arguments)
             {
@@ -702,7 +703,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             foreach (var attrList in attributeLists)
             {
-                bool found = false;
+                var found = false;
                 foreach (var attr in attrList.Attributes)
                 {
                     if (!attr.IsAttributeName<PatternAttribute>() &&

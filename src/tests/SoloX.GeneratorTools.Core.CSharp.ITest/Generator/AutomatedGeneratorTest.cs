@@ -1,16 +1,17 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AutomatedGeneratorTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="AutomatedGeneratorTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -27,7 +28,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 {
     public class AutomatedGeneratorTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public AutomatedGeneratorTest(ITestOutputHelper testOutputHelper)
         {
@@ -77,7 +78,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
 
             implGenerator.Generate(files);
 
-            string location = SnapshotHelper.GetLocationFromCallingProjectRoot("Generator");
+            var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot("Generator");
 
             SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
         }

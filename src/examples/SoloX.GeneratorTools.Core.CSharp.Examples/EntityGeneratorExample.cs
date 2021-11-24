@@ -1,15 +1,13 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="EntityGeneratorExample.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="EntityGeneratorExample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
@@ -28,8 +26,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     /// </summary>
     public class EntityGeneratorExample
     {
-        private ILogger<EntityGeneratorExample> logger;
-        private ICSharpWorkspace workspace;
+        private readonly ILogger<EntityGeneratorExample> logger;
+        private readonly ICSharpWorkspace workspace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityGeneratorExample"/> class.

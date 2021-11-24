@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="CSharpWorkspace.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="CSharpWorkspace.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -11,7 +12,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
@@ -32,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
 
         private MetadataLoadContext metadataLoadContext;
-        private bool disposedValue = false;
+        private bool disposedValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.

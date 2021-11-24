@@ -3,11 +3,18 @@
   <PropertyGroup>
     <Version>1.0.0-alpha.19</Version>
     <Authors>Xavier Solau</Authors>
-    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
+    <Copyright>Copyright © 2021 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/GeneratorTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/GeneratorTools.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+
+    <CodeQualityHeaderCompanyName>$(Authors)</CodeQualityHeaderCompanyName>
+    <CodeQualityHeaderCopyright>$(Copyright)</CodeQualityHeaderCopyright>
+    <CodeQualityHeaderLicense>$(PackageLicenseExpression)</CodeQualityHeaderLicense>
+    <CodeQualityHeaderLicenseFile>LICENSE</CodeQualityHeaderLicenseFile>
+
+    <CodeQualityUpdateGitIgnore>true</CodeQualityUpdateGitIgnore>
   </PropertyGroup>
 
 </Project>

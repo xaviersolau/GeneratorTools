@@ -1,15 +1,13 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ImplementationGeneratorWalker.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ImplementationGeneratorWalker.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -34,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly string implNameSpace;
         private readonly IWriterSelector writerSelector;
 
-        private bool isPackStatements = false;
+        private bool isPackStatements;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImplementationGeneratorWalker"/> class.
@@ -363,7 +361,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var attrList in attributeLists)
                 {
-                    bool found = false;
+                    var found = false;
                     foreach (var attr in attrList.Attributes)
                     {
                         if (attr.IsAttributeName<PackStatementsAttribute>())

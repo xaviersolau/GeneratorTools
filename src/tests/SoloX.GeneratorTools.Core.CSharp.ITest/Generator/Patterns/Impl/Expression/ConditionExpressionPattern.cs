@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ConditionExpressionPattern.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ConditionExpressionPattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Itf;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
@@ -16,6 +15,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
     {
         public object PatternProperty { get; set; }
 
+#pragma warning disable CA1508 // Éviter le code conditionnel mort
+#pragma warning disable CA2201 // Ne pas lever de types d'exception réservés
         public void PatternMethodForConditionStatementPattern(bool withSomeArguments)
         {
             if (withSomeArguments || this.PatternProperty == default)
@@ -28,5 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl
                 throw new Exception();
             }
         }
+#pragma warning restore CA2201 // Ne pas lever de types d'exception réservés
+#pragma warning restore CA1508 // Éviter le code conditionnel mort
     }
 }

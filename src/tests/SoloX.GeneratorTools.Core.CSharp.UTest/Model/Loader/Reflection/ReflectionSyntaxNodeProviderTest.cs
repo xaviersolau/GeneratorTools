@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ReflectionSyntaxNodeProviderTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ReflectionSyntaxNodeProviderTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
@@ -22,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
     public class ReflectionSyntaxNodeProviderTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public ReflectionSyntaxNodeProviderTest(ITestOutputHelper testOutputHelper)
         {

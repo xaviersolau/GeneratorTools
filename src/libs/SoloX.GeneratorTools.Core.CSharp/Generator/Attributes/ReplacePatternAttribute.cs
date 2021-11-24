@@ -1,13 +1,12 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ReplacePatternAttribute.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ReplacePatternAttribute.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
@@ -31,5 +30,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// Gets the selector.
         /// </summary>
         public IReplacePatternHandlerFactory ReplacePatternHandlerFactory { get; }
+
+        /// <summary>
+        /// Gets the selector type.
+        /// </summary>
+        public Type ReplacePatternHandlerType { get; }
     }
 }

@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\SharedProperties.props" />
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
@@ -24,9 +26,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Moq" Version="4.13.0" />
-    <PackageReference Include="SoloX.CodeQuality.Test" Version="1.0.6" />
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
-    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="1.0.6" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.0.8" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.0.8" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -81,7 +87,7 @@
     <Compile Update="Resources\Workspace\BasicEnum.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Workspace\BasicInterface.cs">
+    <Compile Update="Resources\Workspace\IBasicInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Workspace\MultiNameSapces.cs">

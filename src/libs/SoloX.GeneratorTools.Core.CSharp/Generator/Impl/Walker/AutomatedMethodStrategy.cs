@@ -1,14 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="AutomatedMethodStrategy.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="AutomatedMethodStrategy.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;

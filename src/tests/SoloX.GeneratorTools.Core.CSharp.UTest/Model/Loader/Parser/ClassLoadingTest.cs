@@ -1,14 +1,13 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ClassLoadingTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ClassLoadingTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
@@ -27,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 {
     public class ClassLoadingTest
     {
-        private ITestOutputHelper testOutputHelper;
+        private readonly ITestOutputHelper testOutputHelper;
 
         public ClassLoadingTest(ITestOutputHelper testOutputHelper)
         {
