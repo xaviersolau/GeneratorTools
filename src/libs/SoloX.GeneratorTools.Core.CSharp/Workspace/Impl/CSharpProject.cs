@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets;
 
@@ -85,13 +85,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             var projectDataStr = this.DeployAndRunTarget(ProjectData);
             projectDataStr = projectDataStr.Replace(@"\", @"/");
 
-            var projectData = JsonConvert.DeserializeObject<CSharpProjectData>(projectDataStr);
+            var projectData = JsonSerializer.Deserialize<CSharpProjectData>(projectDataStr);
 
             this.RootNameSpace = projectData.RootNamespace;
 
             var projectAssetsFilePath = projectData.ProjectAssetsFile;
 
-            var projectAssets = JsonConvert.DeserializeObject<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
+            var projectAssets = JsonSerializer.Deserialize<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
 
             var assemblies = new List<ICSharpAssembly>();
             var compileItems = projectAssets.Targets.First().Value.GetAllPackageCompileItems(projectAssets);

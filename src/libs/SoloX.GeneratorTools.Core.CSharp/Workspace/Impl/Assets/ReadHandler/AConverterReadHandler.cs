@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -15,30 +15,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
     /// </summary>
     internal abstract class AConverterReadHandler
     {
-        internal AConverterReadHandler(JsonReader reader, JsonSerializer serializer, AConverterReadHandler parent)
+        internal AConverterReadHandler(JsonSerializerOptions options, AConverterReadHandler parent)
         {
-            this.Reader = reader;
-            this.Serializer = serializer;
+            this.Options = options;
             this.Parent = parent;
         }
 
-        protected JsonReader Reader { get; }
-
-        protected JsonSerializer Serializer { get; }
-
         protected AConverterReadHandler Parent { get; }
+
+        protected JsonSerializerOptions Options { get; }
 
         /// <summary>
         /// Handle Converter Read operation.
         /// </summary>
         /// <returns>The next Converter Read Handler.</returns>
-        internal AConverterReadHandler Handle()
+        internal AConverterReadHandler Handle(ref Utf8JsonReader reader)
         {
-            var tknType = this.Reader.TokenType;
-            var res = this.Handle(tknType);
-            return this.Reader.Read() ? res : null;
+            var tknType = reader.TokenType;
+            var res = this.Handle(ref reader, tknType);
+            return reader.Read() ? res : null;
         }
 
-        protected abstract AConverterReadHandler Handle(JsonToken tknType);
+        protected abstract AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType);
     }
 }
