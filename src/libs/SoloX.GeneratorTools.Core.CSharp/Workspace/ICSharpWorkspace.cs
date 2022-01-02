@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -30,6 +31,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Gets the workspace SCharp assembly dependencies.
         /// </summary>
         IReadOnlyCollection<ICSharpAssembly> Assemblies { get; }
+
+        /// <summary>
+        /// Gets the workspace CSharp syntax trees.
+        /// </summary>
+        IReadOnlyCollection<ICSharpSyntaxTree> SyntaxTrees { get; }
 
         /// <summary>
         /// Register the project associated to the given project file.
@@ -57,5 +63,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// </summary>
         /// <returns>The resulting declaration resolver.</returns>
         IDeclarationResolver DeepLoad();
+
+        /// <summary>
+        /// Register compilation.
+        /// </summary>
+        /// <param name="compilation">Compilation to register.</param>
+        void RegisterCompilation(Compilation compilation);
     }
 }

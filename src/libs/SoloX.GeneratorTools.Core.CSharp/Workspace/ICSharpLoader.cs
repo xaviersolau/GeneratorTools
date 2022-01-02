@@ -32,6 +32,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         void Load(ICSharpWorkspace workspace, ICSharpFile file);
 
         /// <summary>
+        /// Load a given syntaxTree.
+        /// </summary>
+        /// <param name="workspace">The context workspace.</param>
+        /// <param name="syntaxTree">The syntaxTree to load.</param>
+        void Load(ICSharpWorkspace workspace, ICSharpSyntaxTree syntaxTree);
+
+        /// <summary>
         /// Load the given assembly.
         /// </summary>
         /// <param name="workspace">The context workspace.</param>

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 
@@ -50,6 +51,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public ICSharpProject CreateProject(string file)
         {
             return new CSharpProject(file);
+        }
+
+        /// <inheritdoc/>
+        public ICSharpSyntaxTree CreateSyntaxTree(SyntaxTree syntaxTree)
+        {
+            return new CSharpSyntaxTree(syntaxTree, this.declarationFactory);
         }
     }
 }
