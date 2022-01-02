@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
@@ -30,6 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
         private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
+        private readonly Dictionary<string, ICSharpSyntaxTree> syntaxTrees = new Dictionary<string, ICSharpSyntaxTree>();
 
         private MetadataLoadContext metadataLoadContext;
         private bool disposedValue;
@@ -55,6 +57,61 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
         /// <inheritdoc/>
         public IReadOnlyCollection<ICSharpAssembly> Assemblies => this.assemblies.Values;
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<ICSharpSyntaxTree> SyntaxTrees => this.syntaxTrees.Values;
+
+        /// <inheritdoc/>
+        public void RegisterCompilation(Compilation compilation)
+        {
+            if (compilation == null)
+            {
+                throw new ArgumentNullException(nameof(compilation));
+            }
+
+            if (this.metadataLoadContext == null)
+            {
+                this.metadataLoadContext = new MetadataLoadContext(new CompilationAssemblyResolver(compilation));
+
+                foreach (var externalReference in compilation.GetUsedAssemblyReferences())
+                {
+                    if (externalReference.Properties.Kind == MetadataImageKind.Assembly)
+                    {
+                        this.metadataLoadContext.LoadFromAssemblyPath(externalReference.Display);
+                    }
+                }
+
+                var loadedAssemblies = this.metadataLoadContext.GetAssemblies();
+
+                foreach (var assembly in loadedAssemblies)
+                {
+                    var assemblyFileName = Path.GetFileName(assembly.Location);
+
+                    if (!this.assemblies.ContainsKey(assemblyFileName))
+                    {
+                        var csAssembly = this.CreateAndLoadAssembly(assembly);
+                        this.assemblies.Add(assemblyFileName, csAssembly);
+                    }
+                }
+
+                foreach (var syntaxTree in compilation.SyntaxTrees)
+                {
+                    var syntaxTreeName = syntaxTree.FilePath;
+
+                    if (!this.syntaxTrees.ContainsKey(syntaxTreeName))
+                    {
+                        var csSyntaxTree = this.factory.CreateSyntaxTree(syntaxTree);
+                        this.syntaxTrees.Add(syntaxTreeName, csSyntaxTree);
+
+                        this.loader.Load(this, csSyntaxTree);
+                    }
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"{nameof(this.metadataLoadContext)} is already set. Use of RegisterCompilation is exclusive.");
+            }
+        }
 
         /// <inheritdoc/>
         public ICSharpFile RegisterFile(string file)
@@ -116,7 +173,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public IDeclarationResolver DeepLoad()
         {
             var declarations = this.Assemblies.SelectMany(a => a.Declarations)
-                .Concat(this.Files.SelectMany(f => f.Declarations));
+                .Concat(this.Files.SelectMany(f => f.Declarations))
+                .Concat(this.SyntaxTrees.SelectMany(s => s.Declarations));
             var resolver = new DeclarationResolver(declarations, this.loader.Load);
 
             resolver.Load();

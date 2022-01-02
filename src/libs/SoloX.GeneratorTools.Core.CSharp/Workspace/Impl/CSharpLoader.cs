@@ -42,6 +42,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
+        public void Load(ICSharpWorkspace workspace, ICSharpSyntaxTree syntaxTree)
+        {
+            if (syntaxTree == null)
+            {
+                throw new ArgumentNullException(nameof(syntaxTree), $"The argument {nameof(syntaxTree)} was null.");
+            }
+
+            ((CSharpSyntaxTree)syntaxTree).Load();
+        }
+
+        /// <inheritdoc/>
         public void Load(ICSharpWorkspace workspace, ICSharpAssembly assembly)
         {
             if (assembly == null)

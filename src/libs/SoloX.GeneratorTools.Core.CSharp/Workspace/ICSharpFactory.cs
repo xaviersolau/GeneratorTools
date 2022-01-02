@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.CodeAnalysis;
 using System.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -35,5 +36,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="assembly">The CSharp assembly.</param>
         /// <returns>The created assembly object.</returns>
         ICSharpAssembly CreateAssembly(Assembly assembly);
+
+        /// <summary>
+        /// Create a ICSharpSyntaxTree.
+        /// </summary>
+        /// <param name="syntaxTree">The CSharp syntax tree.</param>
+        /// <returns>The created syntax tree object.</returns>
+        ICSharpSyntaxTree CreateSyntaxTree(SyntaxTree syntaxTree);
     }
 }
