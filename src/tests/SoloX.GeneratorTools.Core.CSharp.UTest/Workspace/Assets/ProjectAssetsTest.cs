@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets;
 using Xunit;
 
@@ -53,7 +53,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace.Assets
         {
             var assetsJson = File.ReadAllText(file);
 
-            var projectAssets = JsonConvert.DeserializeObject<ProjectAssets>(assetsJson);
+            var projectAssets = JsonSerializer.Deserialize<ProjectAssets>(assetsJson);
 
             Assert.NotNull(projectAssets);
 

@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -16,29 +16,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
         private readonly Action<LibraryAssets> addLibrary;
 
         public LibrariesReadHandler(
-            JsonReader reader,
-            JsonSerializer serializer,
+            JsonSerializerOptions options,
             AConverterReadHandler parent,
             Action<LibraryAssets> addLibrary)
-            : base(reader, serializer, parent)
+            : base(options, parent)
         {
             this.addLibrary = addLibrary;
         }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     return this.Parent;
-                case JsonToken.PropertyName:
-                    var libraryName = (string)this.Reader.Value;
+                case JsonTokenType.PropertyName:
+                    var libraryName = reader.GetString();
                     var library = new LibraryAssets(libraryName);
                     this.addLibrary(library);
-                    return new LibraryReadHandler(this.Reader, this.Serializer, this, library);
+                    return new LibraryReadHandler(this.Options, this, library);
                 default:
                     break;
             }

@@ -6,44 +6,45 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
     internal class ProjectAssetsReadHandler : AConverterReadHandler
     {
-        public ProjectAssetsReadHandler(JsonReader reader, JsonSerializer serializer)
-            : base(reader, serializer, null)
+        public ProjectAssetsReadHandler(JsonSerializerOptions options)
+            : base(options, null)
         {
             this.ProjectAssets = new ProjectAssets();
         }
 
         internal ProjectAssets ProjectAssets { get; }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     break;
-                case JsonToken.PropertyName:
-                    var propertyName = (string)this.Reader.Value;
+                case JsonTokenType.PropertyName:
+                    var propertyName = reader.GetString();
                     switch (propertyName)
                     {
                         case "version":
-                            this.ProjectAssets.Version = this.Reader.ReadAsInt32().Value;
+                            reader.Read();
+                            this.ProjectAssets.Version = reader.GetInt32();
                             break;
                         case "targets":
-                            return new TargetsReadHandler(this.Reader, this.Serializer, this, this.ProjectAssets.AddTarget);
+                            return new TargetsReadHandler(this.Options, this, this.ProjectAssets.AddTarget);
                         case "libraries":
-                            return new LibrariesReadHandler(this.Reader, this.Serializer, this, this.ProjectAssets.AddLibrary);
+                            return new LibrariesReadHandler(this.Options, this, this.ProjectAssets.AddLibrary);
                         case "packageFolders":
-                            return new KeysReadHandler(this.Reader, this.Serializer, this, this.ProjectAssets.AddPackageFolder);
+                            return new KeysReadHandler(this.Options, this, this.ProjectAssets.AddPackageFolder);
                         default:
-                            return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
+                            return new ObjectIgnoreReadHandler(this.Options, this);
                     }
 
                     break;

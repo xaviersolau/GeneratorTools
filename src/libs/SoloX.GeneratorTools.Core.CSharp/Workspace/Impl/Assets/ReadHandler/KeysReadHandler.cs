@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -16,27 +16,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
         private int nestedLevel;
         private readonly Action<string> addKey;
 
-        public KeysReadHandler(JsonReader reader, JsonSerializer serializer, AConverterReadHandler parent, Action<string> addKey)
-            : base(reader, serializer, parent)
+        public KeysReadHandler(JsonSerializerOptions options, AConverterReadHandler parent, Action<string> addKey)
+            : base(options, parent)
         {
             this.addKey = addKey;
         }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     this.nestedLevel++;
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     this.nestedLevel--;
                     break;
-                case JsonToken.PropertyName:
+                case JsonTokenType.PropertyName:
                     if (this.nestedLevel == 1)
                     {
-                        this.addKey((string)this.Reader.Value);
+                        this.addKey(reader.GetString());
                     }
                     break;
                 default:

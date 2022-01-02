@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -16,47 +16,48 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
         private readonly TargetItemAssets targetItemAssets;
 
         public TargetItemReadHandler(
-            JsonReader reader,
-            JsonSerializer serializer,
+            JsonSerializerOptions options,
             AConverterReadHandler parent,
             TargetItemAssets targetItemAssets)
-            : base(reader, serializer, parent)
+            : base(options, parent)
         {
             this.targetItemAssets = targetItemAssets;
         }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     return this.Parent;
-                case JsonToken.PropertyName:
-                    var propertyName = (string)this.Reader.Value;
+                case JsonTokenType.PropertyName:
+                    var propertyName = reader.GetString();
                     switch (propertyName)
                     {
                         case "type":
-                            this.targetItemAssets.ItemType = this.Reader.ReadAsString();
+                            reader.Read();
+                            this.targetItemAssets.ItemType = reader.GetString();
                             break;
                         case "framework":
-                            this.targetItemAssets.Framework = this.Reader.ReadAsString();
+                            reader.Read();
+                            this.targetItemAssets.Framework = reader.GetString();
                             break;
                         case "dependencies":
-                            this.Reader.Read();
-                            var dependencies = this.Serializer.Deserialize<Dictionary<string, string>>(this.Reader);
+                            reader.Read();
+                            var dependencies = JsonSerializer.Deserialize<Dictionary<string, string>>(ref reader, this.Options);
                             this.targetItemAssets.SetDependencies(dependencies);
                             break;
                         case "build":
-                            return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
+                            return new ObjectIgnoreReadHandler(this.Options, this);
                         case "compile":
-                            return new KeysReadHandler(this.Reader, this.Serializer, this, this.targetItemAssets.AddCompile);
+                            return new KeysReadHandler(this.Options, this, this.targetItemAssets.AddCompile);
                         case "runtime":
-                            return new KeysReadHandler(this.Reader, this.Serializer, this, this.targetItemAssets.AddRuntime);
+                            return new KeysReadHandler(this.Options, this, this.targetItemAssets.AddRuntime);
                         default:
-                            return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
+                            return new ObjectIgnoreReadHandler(this.Options, this);
                     }
                     break;
                 default:

@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -15,33 +15,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
         private readonly LibraryAssets library;
 
         public LibraryReadHandler(
-            JsonReader reader,
-            JsonSerializer serializer,
+            JsonSerializerOptions options,
             AConverterReadHandler parent,
             LibraryAssets library)
-            : base(reader, serializer, parent)
+            : base(options, parent)
         {
             this.library = library;
         }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     return this.Parent;
-                case JsonToken.PropertyName:
-                    var propertyName = (string)this.Reader.Value;
+                case JsonTokenType.PropertyName:
+                    var propertyName = reader.GetString();
                     switch (propertyName)
                     {
                         case "path":
-                            this.library.Path = this.Reader.ReadAsString();
+                            reader.Read();
+                            this.library.Path = reader.GetString();
                             break;
                         default:
-                            return new ObjectIgnoreReadHandler(this.Reader, this.Serializer, this);
+                            return new ObjectIgnoreReadHandler(this.Options, this);
                     }
                     break;
                 default:

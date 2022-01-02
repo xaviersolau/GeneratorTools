@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
 {
@@ -14,20 +14,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
     {
         private int nestedLevel;
 
-        public ObjectIgnoreReadHandler(JsonReader reader, JsonSerializer serializer, AConverterReadHandler parent)
-            : base(reader, serializer, parent)
+        public ObjectIgnoreReadHandler(JsonSerializerOptions options, AConverterReadHandler parent)
+            : base(options, parent)
         {
         }
 
-        protected override AConverterReadHandler Handle(JsonToken tknType)
+        protected override AConverterReadHandler Handle(ref Utf8JsonReader reader, JsonTokenType tknType)
         {
 #pragma warning disable IDE0010 // Ajouter les instructions case manquantes
             switch (tknType)
             {
-                case JsonToken.StartObject:
+                case JsonTokenType.StartObject:
                     this.nestedLevel++;
                     break;
-                case JsonToken.EndObject:
+                case JsonTokenType.EndObject:
                     this.nestedLevel--;
                     break;
                 default:

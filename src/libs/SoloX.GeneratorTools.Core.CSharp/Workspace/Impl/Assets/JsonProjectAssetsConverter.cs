@@ -7,7 +7,8 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
@@ -15,30 +16,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
     /// <summary>
     /// Json ProjectAssets Converter.
     /// </summary>
-    public class JsonProjectAssetsConverter : JsonConverter
+    public class JsonProjectAssetsConverter : JsonConverter<ProjectAssets>
     {
         /// <inheritdoc/>
-        public override bool CanConvert(Type objectType)
+        public override ProjectAssets Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var root = new ProjectAssetsReadHandler(reader, serializer);
+            var root = new ProjectAssetsReadHandler(options);
 
             AConverterReadHandler handler = root;
             while (handler != null)
             {
-                handler = handler.Handle();
+                handler = handler.Handle(ref reader);
             }
 
             return root.ProjectAssets;
         }
 
         /// <inheritdoc/>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, ProjectAssets value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
