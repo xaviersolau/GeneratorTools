@@ -19,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// <summary>
     /// Implements ICSharpSyntaxTree.
     /// </summary>
-    public class CSharpSyntaxTree : ICSharpSyntaxTree
+    public class CSharpSyntaxTree : ICSharpSyntaxTree, ICSharpWorkspaceItemLoader<ICSharpSyntaxTree>
     {
         private readonly IDeclarationFactory declarationFactory;
 
@@ -59,10 +59,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public string FilePath { get; }
 
-        /// <summary>
-        /// Load the CSharp file.
-        /// </summary>
-        public void Load()
+        /// <inheritdoc/>
+        public ICSharpSyntaxTree WorkspaceItem => this;
+
+        /// <inheritdoc/>
+        public void Load(ICSharpWorkspace workspace)
         {
             if (this.isLoaded)
             {

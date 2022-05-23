@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 {
@@ -55,6 +56,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 
         /// <inheritdoc/>
         public string Location { get; }
+
+        /// <inheritdoc/>
+        public void DeepLoad(IDeclarationResolver resolver)
+        {
+            // Nothing to load.
+        }
 
         /// <inheritdoc/>
         public override string ToString()

@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
@@ -53,5 +54,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the location on the file system.
         /// </summary>
         string Location { get; }
+
+        /// <summary>
+        /// DeepLoad the current declaration (if not already loaded).
+        /// </summary>
+        /// <param name="resolver">Resolver to solve all dependencies.</param>
+        void DeepLoad(IDeclarationResolver resolver);
     }
 }

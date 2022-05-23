@@ -13,7 +13,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
     /// <summary>
     /// Basic declaration use interface.
     /// </summary>
-    public interface IBasicDeclarationUse : IDeclarationUse<IdentifierNameSyntax>
+    public interface IBasicDeclarationUse : IDeclarationUse<NameSyntax>
     {
     }
 }

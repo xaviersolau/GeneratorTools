@@ -11,9 +11,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 {
@@ -21,9 +21,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// Implement ICSharpAssembly in order to load all type declarations.
     /// </summary>
     [DebuggerDisplay("CSharpAssembly {Assembly.GetName()}")]
-    public class CSharpAssembly : ICSharpAssembly
+    public class CSharpAssembly : ICSharpAssembly, ICSharpWorkspaceItemLoader<ICSharpAssembly>
     {
-        private readonly ILogger<CSharpAssembly> logger;
+        private readonly IGeneratorLogger<CSharpAssembly> logger;
         private readonly IDeclarationFactory declarationFactory;
         private bool isLoaded;
 
@@ -31,9 +31,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// Initializes a new instance of the <see cref="CSharpAssembly"/> class.
         /// </summary>
         /// <param name="logger">The logger to log errors.</param>
-        /// <param name="assembly">The assembly to load declaration from.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpAssembly(ILogger<CSharpAssembly> logger, IDeclarationFactory declarationFactory, Assembly assembly)
+        /// <param name="assembly">The assembly to load declaration from.</param>
+        public CSharpAssembly(IGeneratorLogger<CSharpAssembly> logger, IDeclarationFactory declarationFactory, Assembly assembly)
         {
             this.Assembly = assembly;
             this.logger = logger;
@@ -46,10 +46,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; private set; }
 
-        /// <summary>
-        /// Load assembly declarations.
-        /// </summary>
-        public void Load()
+        /// <inheritdoc/>
+        public ICSharpAssembly WorkspaceItem => this;
+
+        /// <inheritdoc/>
+        public void Load(ICSharpWorkspace workspace)
         {
             if (this.isLoaded)
             {

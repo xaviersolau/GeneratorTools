@@ -14,7 +14,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
     /// <summary>
     /// Unknown declaration use implementation.
     /// </summary>
-    public class UnknownDeclarationUse : ADeclarationUse<IdentifierNameSyntax>, IUnknownDeclarationUse
+    public class UnknownDeclarationUse : ADeclarationUse<NameSyntax>, IUnknownDeclarationUse
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnknownDeclarationUse"/> class.
@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <param name="syntaxNodeProvider">The declaration use syntax node provider.</param>
         /// <param name="declaration">The declaration in use.</param>
         public UnknownDeclarationUse(
-            ISyntaxNodeProvider<IdentifierNameSyntax> syntaxNodeProvider,
+            ISyntaxNodeProvider<NameSyntax> syntaxNodeProvider,
             IDeclaration<SyntaxNode> declaration)
             : base(syntaxNodeProvider, declaration)
         {

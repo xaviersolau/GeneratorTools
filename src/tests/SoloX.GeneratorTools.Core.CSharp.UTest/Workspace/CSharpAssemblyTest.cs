@@ -8,11 +8,13 @@
 
 using System;
 using System.Linq;
-using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
+using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.Test.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,11 +34,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var assembly = typeof(CSharpAssemblyTest).Assembly;
             var csAssembly = new CSharpAssembly(
-                new TestLogger<CSharpAssembly>(this.testOutputHelper),
+                LoggerHelper.CreateGeneratorLogger<CSharpAssembly>(this.testOutputHelper),
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper),
                 assembly);
 
-            csAssembly.Load();
+            csAssembly.Load(Mock.Of<ICSharpWorkspace>());
 
             Assert.Same(assembly, csAssembly.Assembly);
             var decl = Assert.Single(csAssembly.Declarations.Where(d => d.Name == nameof(IBasicInterface)));

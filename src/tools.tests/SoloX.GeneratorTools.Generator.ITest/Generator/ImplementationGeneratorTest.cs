@@ -11,7 +11,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
-using SoloX.GeneratorTools.Core.CSharp;
+using SoloX.GeneratorTools.Core.CSharp.Extentions;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
@@ -48,7 +48,9 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
 
             using (var sp = sc.BuildServiceProvider())
             {
-                var workspace = sp.GetService<ICSharpWorkspace>();
+                var workspaceFactory = sp.GetService<ICSharpWorkspaceFactory>();
+
+                var workspace = workspaceFactory.CreateWorkspace();
 
                 foreach (var file in files)
                 {

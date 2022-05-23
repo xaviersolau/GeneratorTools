@@ -13,40 +13,41 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 {
     /// <summary>
     /// Implements ICSharpWorkspace.
     /// </summary>
-    public class CSharpWorkspace : ICSharpWorkspace, IDisposable
+    public class CSharpWorkspace : ICSharpWorkspace
     {
-        private readonly ICSharpFactory factory;
-        private readonly ICSharpLoader loader;
-        private readonly ILogger<CSharpWorkspace> logger;
+        private readonly ICSharpWorkspaceItemFactory factory;
+        private readonly IGeneratorLogger<CSharpWorkspace> logger;
 
         private readonly Dictionary<string, ICSharpProject> projects = new Dictionary<string, ICSharpProject>();
         private readonly Dictionary<string, ICSharpFile> files = new Dictionary<string, ICSharpFile>();
         private readonly Dictionary<string, ICSharpAssembly> assemblies = new Dictionary<string, ICSharpAssembly>();
+        private readonly Dictionary<string, ICSharpMetadataAssembly> metadataAssemblies = new Dictionary<string, ICSharpMetadataAssembly>();
         private readonly Dictionary<string, ICSharpSyntaxTree> syntaxTrees = new Dictionary<string, ICSharpSyntaxTree>();
+        private readonly bool disableRuntimeProb;
 
-        private MetadataLoadContext metadataLoadContext;
-        private bool disposedValue;
+        private string runTimePath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspace"/> class.
         /// </summary>
         /// <param name="logger">The logger to log errors.</param>
         /// <param name="factory">The factory to create File and Project object.</param>
-        /// <param name="loader">The File and Project loader.</param>
-        public CSharpWorkspace(ILogger<CSharpWorkspace> logger, ICSharpFactory factory, ICSharpLoader loader)
+        /// <param name="disableRuntimeProb">Disable installed runtime assembly prob.</param>
+        public CSharpWorkspace(IGeneratorLogger<CSharpWorkspace> logger, ICSharpWorkspaceItemFactory factory, bool disableRuntimeProb = false)
         {
             this.logger = logger;
             this.factory = factory;
-            this.loader = loader;
+
+            this.disableRuntimeProb = disableRuntimeProb;
         }
 
         /// <inheritdoc/>
@@ -59,6 +60,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public IReadOnlyCollection<ICSharpAssembly> Assemblies => this.assemblies.Values;
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<ICSharpMetadataAssembly> MetadataAssemblies => this.metadataAssemblies.Values;
+
+        /// <inheritdoc/>
         public IReadOnlyCollection<ICSharpSyntaxTree> SyntaxTrees => this.syntaxTrees.Values;
 
         /// <inheritdoc/>
@@ -69,47 +73,39 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 throw new ArgumentNullException(nameof(compilation));
             }
 
-            if (this.metadataLoadContext == null)
+            foreach (var externalReference in compilation.References)
             {
-                this.metadataLoadContext = new MetadataLoadContext(new CompilationAssemblyResolver(compilation));
-
-                foreach (var externalReference in compilation.GetUsedAssemblyReferences())
+                if (externalReference.Properties.Kind == MetadataImageKind.Assembly)
                 {
-                    if (externalReference.Properties.Kind == MetadataImageKind.Assembly)
+                    var assemblyFile = externalReference.Display;
+
+                    var assemblyFileName = Path.GetFileName(assemblyFile);
+
+                    if (!this.metadataAssemblies.TryGetValue(assemblyFileName, out var csMetadataAssembly))
                     {
-                        this.metadataLoadContext.LoadFromAssemblyPath(externalReference.Display);
-                    }
-                }
+                        var csMetadataAssemblyLoader = this.CreateMetadataAssembly(assemblyFile);
 
-                var loadedAssemblies = this.metadataLoadContext.GetAssemblies();
-
-                foreach (var assembly in loadedAssemblies)
-                {
-                    var assemblyFileName = Path.GetFileName(assembly.Location);
-
-                    if (!this.assemblies.ContainsKey(assemblyFileName))
-                    {
-                        var csAssembly = this.CreateAndLoadAssembly(assembly);
-                        this.assemblies.Add(assemblyFileName, csAssembly);
-                    }
-                }
-
-                foreach (var syntaxTree in compilation.SyntaxTrees)
-                {
-                    var syntaxTreeName = syntaxTree.FilePath;
-
-                    if (!this.syntaxTrees.ContainsKey(syntaxTreeName))
-                    {
-                        var csSyntaxTree = this.factory.CreateSyntaxTree(syntaxTree);
-                        this.syntaxTrees.Add(syntaxTreeName, csSyntaxTree);
-
-                        this.loader.Load(this, csSyntaxTree);
+                        this.metadataAssemblies.Add(assemblyFileName, csMetadataAssemblyLoader.WorkspaceItem);
                     }
                 }
             }
-            else
+
+            foreach (var csMetadataAssembly in this.metadataAssemblies.Values)
             {
-                throw new InvalidOperationException($"{nameof(this.metadataLoadContext)} is already set. Use of RegisterCompilation is exclusive.");
+                this.LoadMetadataAssembly(csMetadataAssembly);
+            }
+
+            foreach (var syntaxTree in compilation.SyntaxTrees)
+            {
+                var syntaxTreeName = syntaxTree.FilePath;
+
+                if (!this.syntaxTrees.ContainsKey(syntaxTreeName))
+                {
+                    var csSyntaxTree = this.factory.CreateSyntaxTree(syntaxTree);
+                    this.syntaxTrees.Add(syntaxTreeName, csSyntaxTree.WorkspaceItem);
+
+                    csSyntaxTree.Load(this);
+                }
             }
         }
 
@@ -120,10 +116,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             file = Path.GetFullPath(file);
             if (!this.files.TryGetValue(file, out var csFile))
             {
-                csFile = this.factory.CreateFile(file);
+                var csFileLoader = this.factory.CreateFile(file);
+                csFile = csFileLoader.WorkspaceItem;
+
                 this.files.Add(file, csFile);
 
-                this.loader.Load(this, csFile);
+                csFileLoader.Load(this);
             }
 
             return csFile;
@@ -136,75 +134,79 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             projectFile = Path.GetFullPath(projectFile);
             if (!this.projects.TryGetValue(projectFile, out var csProject))
             {
-                csProject = this.factory.CreateProject(projectFile);
+                var csProjectLoader = this.factory.CreateProject(projectFile);
+                csProject = csProjectLoader.WorkspaceItem;
+
                 this.projects.Add(projectFile, csProject);
 
-                this.loader.Load(this, csProject);
+                csProjectLoader.Load(this);
             }
 
             return csProject;
         }
 
         /// <inheritdoc/>
-        public ICSharpAssembly RegisterAssembly(string assemblyFile)
+        public ICSharpAssembly RegisterAssembly(Assembly assembly)
         {
-            if (assemblyFile == null)
+            if (assembly == null)
             {
                 return null;
             }
 
-            this.SetupAssemblyMetadataLoadContext();
-
-            var assemblyFileName = Path.GetFileName(assemblyFile);
+            var assemblyFileName = Path.GetFileName(assembly.FullName);
 
             if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
             {
-                if (this.TryLoadAssembly(assemblyFile, out var assembly))
-                {
-                    csAssembly = this.CreateAndLoadAssembly(assembly);
-                    this.assemblies.Add(assemblyFileName, csAssembly);
-                }
+                var csAssemblyLoader = this.factory.CreateAssembly(assembly);
+                csAssembly = csAssemblyLoader.WorkspaceItem;
+
+                this.assemblies.Add(assemblyFileName, csAssembly);
+
+                csAssemblyLoader.Load(this);
             }
 
             return csAssembly;
         }
 
         /// <inheritdoc/>
+        public ICSharpMetadataAssembly RegisterMetadataAssembly(string assemblyFile)
+        {
+            if (assemblyFile == null)
+            {
+                return null;
+            }
+
+            var assemblyFileName = Path.GetFileName(assemblyFile);
+
+            if (!this.metadataAssemblies.TryGetValue(assemblyFileName, out var csMetadataAssembly))
+            {
+                var csMetadataAssemblyLoader = this.CreateMetadataAssembly(assemblyFile);
+
+                if (csMetadataAssemblyLoader != null)
+                {
+                    csMetadataAssembly = csMetadataAssemblyLoader.WorkspaceItem;
+
+                    this.metadataAssemblies.Add(assemblyFileName, csMetadataAssembly);
+
+                    this.LoadMetadataAssembly(csMetadataAssembly);
+                }
+            }
+
+            return csMetadataAssembly;
+        }
+
+        /// <inheritdoc/>
         public IDeclarationResolver DeepLoad()
         {
             var declarations = this.Assemblies.SelectMany(a => a.Declarations)
+                .Concat(this.MetadataAssemblies.SelectMany(f => f.Declarations))
                 .Concat(this.Files.SelectMany(f => f.Declarations))
                 .Concat(this.SyntaxTrees.SelectMany(s => s.Declarations));
-            var resolver = new DeclarationResolver(declarations, this.loader.Load);
+            var resolver = new DeclarationResolver(declarations);
 
             resolver.Load();
 
             return resolver;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Dispose resources.
-        /// </summary>
-        /// <param name="disposing">Tells if this is called from Dispose.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposedValue)
-            {
-                if (disposing)
-                {
-                    this.metadataLoadContext?.Dispose();
-                    this.metadataLoadContext = null;
-                }
-
-                this.disposedValue = true;
-            }
         }
 
         private static IReadOnlyDictionary<Version, string> GetDotnetRunTimes()
@@ -262,67 +264,45 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
         }
 
-        private void SetupAssemblyMetadataLoadContext()
+        private string LoadRunTimeAssembly()
         {
-            if (this.metadataLoadContext == null)
+            if (this.runTimePath == null)
             {
                 var currentVersion = Environment.Version;
 
                 var runtimes = GetDotnetRunTimes();
-                var runtimePath = runtimes[runtimes.Keys.Where(v => v <= currentVersion).Max()];
-
-                this.metadataLoadContext = new MetadataLoadContext(new DirectoryAssemblyResolver(runtimePath));
-
-                var loadedAssemblies = this.metadataLoadContext.GetAssemblies();
-
-                foreach (var assembly in loadedAssemblies)
-                {
-                    var assemblyFileName = Path.GetFileName(assembly.Location);
-                    var csAssembly = this.CreateAndLoadAssembly(assembly);
-                    this.assemblies.Add(assemblyFileName, csAssembly);
-                }
+                this.runTimePath = runtimes[runtimes.Keys.Where(v => v <= currentVersion).Max()];
             }
+            return this.runTimePath;
         }
 
-        private ICSharpAssembly CreateAndLoadAssembly(Assembly assembly)
+        private ICSharpWorkspaceItemLoader<ICSharpMetadataAssembly> CreateMetadataAssembly(string assemblyFile)
         {
-            var csAssembly = this.factory.CreateAssembly(assembly);
-
-            this.loader.Load(this, csAssembly);
-
-            return csAssembly;
-        }
-
-        private bool TryLoadAssembly(string assemblyFile, out Assembly assembly)
-        {
-            var assemblyName = Path.GetFileNameWithoutExtension(assemblyFile);
-
-            var loadedAssemblies = this.metadataLoadContext.GetAssemblies()
-                .ToDictionary(a => Path.GetFileName(a.GetName().Name));
-            try
+            if (!File.Exists(assemblyFile))
             {
-                if (!loadedAssemblies.TryGetValue(assemblyName, out assembly))
+                if (this.disableRuntimeProb)
                 {
-                    if (assemblyFile.Contains("NuGetFallbackFolder"))
-                    {
-                        assembly = this.metadataLoadContext.LoadFromAssemblyName(assemblyName);
-                    }
-                    else
-                    {
-                        assembly = this.metadataLoadContext.LoadFromAssemblyPath(assemblyFile);
-                    }
+                    return null;
                 }
 
-                return true;
-            }
-            catch (FileLoadException e)
-            {
-                this.logger?.LogWarning($"Could not load assembly from {assemblyFile}");
-                this.logger?.LogDebug(e, e.Message);
+                var runtimePath = LoadRunTimeAssembly();
+
+                assemblyFile = Path.Combine(runtimePath, assemblyFile);
+
+                if (!File.Exists(assemblyFile))
+                {
+                    throw new FileNotFoundException(assemblyFile);
+                }
             }
 
-            assembly = null;
-            return false;
+            var csMetadataAssembly = this.factory.CreateMetadataAssembly(assemblyFile);
+
+            return csMetadataAssembly;
+        }
+
+        private void LoadMetadataAssembly(ICSharpMetadataAssembly csMetadataAssembly)
+        {
+            ((ICSharpWorkspaceItemLoader<ICSharpMetadataAssembly>)csMetadataAssembly).Load(this);
         }
     }
 }

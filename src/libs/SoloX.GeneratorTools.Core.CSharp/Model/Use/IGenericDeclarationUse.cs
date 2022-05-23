@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
     /// <summary>
     /// Generic declaration  use interface.
     /// </summary>
-    public interface IGenericDeclarationUse : IDeclarationUse<SimpleNameSyntax>
+    public interface IGenericDeclarationUse : IDeclarationUse<NameSyntax>
     {
         /// <summary>
         /// Gets the generic parameters used on the generic declaration.

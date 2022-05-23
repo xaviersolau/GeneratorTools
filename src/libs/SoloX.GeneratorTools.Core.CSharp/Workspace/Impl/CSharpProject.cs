@@ -12,6 +12,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets;
 
@@ -20,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// <summary>
     /// CSharpProject implementation.
     /// </summary>
-    public class CSharpProject : ICSharpProject
+    public class CSharpProject : ICSharpProject, ICSharpWorkspaceItemLoader<ICSharpProject>
     {
         internal const string DotNet = "dotnet";
 
@@ -59,12 +61,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public IReadOnlyCollection<ICSharpFile> Files { get; private set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<ICSharpAssembly> Assemblies { get; private set; }
+        public IReadOnlyCollection<ICSharpMetadataAssembly> Assemblies { get; private set; }
 
-        /// <summary>
-        /// Load the project.
-        /// </summary>
-        /// <param name="workspace">The workspace within the project is loaded.</param>
+        /// <inheritdoc/>
+        public IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations => this.Files.SelectMany(f => f.Declarations).ToArray();
+
+        /// <inheritdoc/>
+        public ICSharpProject WorkspaceItem => this;
+
+        /// <inheritdoc/>
         public void Load(ICSharpWorkspace workspace)
         {
             if (workspace == null)
@@ -93,13 +98,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var projectAssets = JsonSerializer.Deserialize<ProjectAssets>(File.ReadAllText(projectAssetsFilePath));
 
-            var assemblies = new List<ICSharpAssembly>();
+            var assemblies = new List<ICSharpMetadataAssembly>();
             var compileItems = projectAssets.Targets.First().Value.GetAllPackageCompileItems(projectAssets);
             foreach (var compileItem in compileItems)
             {
                 var assemblyFile = GetAssemblyFile(projectAssets, compileItem);
 
-                var registeredAssembly = workspace.RegisterAssembly(assemblyFile);
+                var registeredAssembly = workspace.RegisterMetadataAssembly(assemblyFile);
                 if (registeredAssembly != null)
                 {
                     assemblies.Add(registeredAssembly);

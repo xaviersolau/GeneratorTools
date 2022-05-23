@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 {
     internal class ReflectionTypeUseSyntaxNodeProvider<TNode> : AReflectionSyntaxNodeProvider<TNode>
-        where TNode : SimpleNameSyntax
+        where TNode : NameSyntax
     {
         private readonly Type typeUsed;
 
@@ -24,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         protected override TNode Generate()
         {
-            var node = GetSyntaxNode($"{this.typeUsed.Name} x;");
+            var node = GetSyntaxNode($"{this.typeUsed.FullName} x;");
             var statement = (LocalDeclarationStatementSyntax)(((GlobalStatementSyntax)((CompilationUnitSyntax)node).Members.Single()).Statement);
             return (TNode)statement.Declaration.Type;
         }

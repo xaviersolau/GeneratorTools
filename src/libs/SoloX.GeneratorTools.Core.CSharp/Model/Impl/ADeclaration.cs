@@ -19,24 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// </summary>
     public abstract class ADeclaration
     {
-        private bool isLoaded;
         private Dictionary<Type, object> data;
-
-        /// <summary>
-        /// Load the declaration.
-        /// </summary>
-        /// <param name="resolver">The resolver to resolve dependencies.</param>
-        public void Load(IDeclarationResolver resolver)
-        {
-            if (this.isLoaded)
-            {
-                return;
-            }
-
-            this.isLoaded = true;
-
-            this.LoadImpl(resolver);
-        }
 
         internal void SetData<T>(T data)
         {
@@ -57,14 +40,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
             return default;
         }
-
-        /// <summary>
-        /// Implementation of the declaration loading.
-        /// </summary>
-        /// <param name="resolver">The resolver to resolve dependencies.</param>
-#pragma warning disable CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
-        protected abstract void LoadImpl(IDeclarationResolver resolver);
-#pragma warning restore CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
     }
 
     /// <summary>
@@ -76,6 +51,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 #pragma warning restore SA1402 // File may only contain a single type
         where TNode : SyntaxNode
     {
+        private bool isLoaded;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ADeclaration{TNode}"/> class.
         /// </summary>
@@ -134,5 +111,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The declaration full name.</returns>
         internal static string GetFullName(string nameSpace, string name)
             => string.IsNullOrEmpty(nameSpace) ? name : $"{nameSpace}.{name}";
+
+        /// <summary>
+        /// Load the declaration.
+        /// </summary>
+        /// <param name="resolver">The resolver to resolve dependencies.</param>
+        public void DeepLoad(IDeclarationResolver resolver)
+        {
+            if (this.isLoaded)
+            {
+                return;
+            }
+
+            this.isLoaded = true;
+
+            this.LoadImpl(resolver);
+        }
+
+        /// <summary>
+        /// Implementation of the declaration loading.
+        /// </summary>
+        /// <param name="resolver">The resolver to resolve dependencies.</param>
+#pragma warning disable CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
+        protected abstract void LoadImpl(IDeclarationResolver resolver);
+#pragma warning restore CA1711 // Les identificateurs ne doivent pas avoir un suffixe incorrect
     }
 }

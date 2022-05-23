@@ -10,12 +10,13 @@ using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
-using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using SoloX.GeneratorTools.Core.Test.Helpers;
 using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
@@ -95,9 +96,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         {
             return new DeclarationFactory(
                 new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(
-                    new TestLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
                 new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(
-                    new TestLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+                new MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
+                new MetadataGenericDeclarationLoader<ClassDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
                 new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
                 new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
                 new ParserGenericDeclarationLoader<StructDeclarationSyntax>());

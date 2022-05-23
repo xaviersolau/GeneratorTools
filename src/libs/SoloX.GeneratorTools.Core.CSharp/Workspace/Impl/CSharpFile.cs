@@ -19,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// <summary>
     /// Implements ICSharpFile.
     /// </summary>
-    public class CSharpFile : ICSharpFile
+    public class CSharpFile : ICSharpFile, ICSharpWorkspaceItemLoader<ICSharpFile>
     {
         private readonly IDeclarationFactory declarationFactory;
 
@@ -52,10 +52,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; private set; }
 
-        /// <summary>
-        /// Load the CSharp file.
-        /// </summary>
-        public void Load()
+        /// <inheritdoc/>
+        public ICSharpFile WorkspaceItem => this;
+
+        /// <inheritdoc/>
+        public void Load(ICSharpWorkspace workspace)
         {
             if (this.isLoaded)
             {

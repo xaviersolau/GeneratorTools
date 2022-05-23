@@ -13,7 +13,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
     /// <summary>
     /// Interface describing a CSharp project.
     /// </summary>
-    public interface ICSharpProject
+    public interface ICSharpProject : ICSharpWorkspaceItem
     {
         /// <summary>
         /// Gets the project file.
@@ -43,6 +43,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <summary>
         /// Gets the project SCharp assembly dependencies.
         /// </summary>
-        IReadOnlyCollection<ICSharpAssembly> Assemblies { get; }
+        IReadOnlyCollection<ICSharpMetadataAssembly> Assemblies { get; }
     }
 }

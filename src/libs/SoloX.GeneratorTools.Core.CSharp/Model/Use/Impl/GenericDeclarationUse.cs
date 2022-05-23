@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
     /// <summary>
     /// Generic declaration use implementation.
     /// </summary>
-    public class GenericDeclarationUse : ADeclarationUse<SimpleNameSyntax>, IGenericDeclarationUse
+    public class GenericDeclarationUse : ADeclarationUse<NameSyntax>, IGenericDeclarationUse
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericDeclarationUse"/> class.
@@ -24,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <param name="declaration">The declaration in use.</param>
         /// <param name="genericParameters">The generic parameters.</param>
         public GenericDeclarationUse(
-            ISyntaxNodeProvider<SimpleNameSyntax> syntaxNodeProvider,
+            ISyntaxNodeProvider<NameSyntax> syntaxNodeProvider,
             IDeclaration<SyntaxNode> declaration,
             IReadOnlyCollection<IDeclarationUse<SyntaxNode>> genericParameters)
             : base(syntaxNodeProvider, declaration)

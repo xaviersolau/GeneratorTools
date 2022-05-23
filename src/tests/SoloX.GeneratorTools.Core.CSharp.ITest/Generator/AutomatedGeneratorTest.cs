@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
@@ -17,6 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Patterns.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator.Impl;
@@ -92,24 +92,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator
             out IClassDeclaration implPatternDeclaration,
             out IEnumerable<ICSharpFile> files)
         {
-            using (var ws = new CSharpWorkspace(
-                Mock.Of<ILogger<CSharpWorkspace>>(),
-                new CSharpFactory(
-                    Mock.Of<ILoggerFactory>(),
-                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)),
-                new CSharpLoader()))
-            {
-                itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
-                    .Declarations.First() as IInterfaceDeclaration;
-                itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)
-                    .Declarations.First() as IInterfaceDeclaration;
-                implPatternDeclaration = ws.RegisterFile(patternImplementationFile)
-                    .Declarations.First() as IClassDeclaration;
+            var ws = new CSharpWorkspace(
+                Mock.Of<IGeneratorLogger<CSharpWorkspace>>(),
+                new CSharpWorkspaceItemFactory(
+                    Mock.Of<IGeneratorLoggerFactory>(),
+                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
 
-                files = ws.Files;
+            itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
+                .Declarations.First() as IInterfaceDeclaration;
+            itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)
+                .Declarations.First() as IInterfaceDeclaration;
+            implPatternDeclaration = ws.RegisterFile(patternImplementationFile)
+                .Declarations.First() as IClassDeclaration;
 
-                return ws.DeepLoad();
-            }
+            files = ws.Files;
+
+            return ws.DeepLoad();
         }
     }
 }

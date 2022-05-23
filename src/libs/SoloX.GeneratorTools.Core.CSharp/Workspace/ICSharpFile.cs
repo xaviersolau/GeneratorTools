@@ -6,16 +6,12 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using SoloX.GeneratorTools.Core.CSharp.Model;
-
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
 {
     /// <summary>
     /// Interface describing a CSharp file.
     /// </summary>
-    public interface ICSharpFile
+    public interface ICSharpFile : ICSharpWorkspaceItem
     {
         /// <summary>
         /// Gets the CSharp file name.
@@ -26,10 +22,5 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Gets the CSharp file path.
         /// </summary>
         string FilePath { get; }
-
-        /// <summary>
-        /// Gets the file declarations.
-        /// </summary>
-        IReadOnlyCollection<IDeclaration<SyntaxNode>> Declarations { get; }
     }
 }

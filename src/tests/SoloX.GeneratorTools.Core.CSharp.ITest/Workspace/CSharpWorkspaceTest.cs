@@ -9,6 +9,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
+using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -104,21 +105,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 
         private IDeclarationResolver LoadAndGetResolver(string projectFile, int expectedProjectCount)
         {
-            using (var ws = new CSharpWorkspace(
-                new TestLogger<CSharpWorkspace>(this.testOutputHelper),
-                new CSharpFactory(
-                    this.testLoggerFactory,
-                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)),
-                new CSharpLoader()))
-            {
-                ws.RegisterProject(projectFile);
+            var ws = new CSharpWorkspace(
+                new GeneratorLogger<CSharpWorkspace>(new TestLogger<CSharpWorkspace>(this.testOutputHelper)),
+                new CSharpWorkspaceItemFactory(
+                    new GeneratorLoggerFactory(this.testLoggerFactory),
+                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
 
-                Assert.Equal(expectedProjectCount, ws.Projects.Count);
+            ws.RegisterProject(projectFile);
 
-                Assert.NotEmpty(ws.Files);
+            Assert.Equal(expectedProjectCount, ws.Projects.Count);
 
-                return ws.DeepLoad();
-            }
+            Assert.NotEmpty(ws.Files);
+
+            return ws.DeepLoad();
         }
     }
 }

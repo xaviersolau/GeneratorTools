@@ -8,8 +8,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 
@@ -22,6 +24,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     {
         private readonly ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax> reflectionLoaderInterfaceDeclarationSyntax;
         private readonly ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax;
+        private readonly MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax> metadataLoaderInterfaceDeclarationSyntax;
+        private readonly MetadataGenericDeclarationLoader<ClassDeclarationSyntax> metadataLoaderClassDeclarationSyntax;
         private readonly ParserGenericDeclarationLoader<InterfaceDeclarationSyntax> parserLoaderInterfaceDeclarationSyntax;
         private readonly ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax;
         private readonly ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax;
@@ -29,13 +33,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public DeclarationFactory(
             ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax> reflectionLoaderInterfaceDeclarationSyntax,
             ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax,
+            MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax> metadataLoaderInterfaceDeclarationSyntax,
+            MetadataGenericDeclarationLoader<ClassDeclarationSyntax> metadataLoaderClassDeclarationSyntax,
             ParserGenericDeclarationLoader<InterfaceDeclarationSyntax> parserLoaderInterfaceDeclarationSyntax,
             ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax,
             ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax)
         {
             this.reflectionLoaderInterfaceDeclarationSyntax = reflectionLoaderInterfaceDeclarationSyntax;
             this.reflectionLoaderClassDeclarationSyntax = reflectionLoaderClassDeclarationSyntax;
-
+            this.metadataLoaderInterfaceDeclarationSyntax = metadataLoaderInterfaceDeclarationSyntax;
+            this.metadataLoaderClassDeclarationSyntax = metadataLoaderClassDeclarationSyntax;
             this.parserLoaderInterfaceDeclarationSyntax = parserLoaderInterfaceDeclarationSyntax;
             this.parserLoaderClassDeclarationSyntax = parserLoaderClassDeclarationSyntax;
             this.parserLoaderStructDeclarationSyntax = parserLoaderStructDeclarationSyntax;
@@ -73,6 +80,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             return decl;
         }
 
+        public IInterfaceDeclaration CreateInterfaceDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        {
+            var decl = new InterfaceDeclaration(
+                MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
+                MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(metadataReader, typeDefinitionHandle),
+                new MetadataTypeSyntaxNodeProvider<InterfaceDeclarationSyntax>(metadataReader, typeDefinitionHandle),
+                null,
+                location,
+                this.metadataLoaderInterfaceDeclarationSyntax);
+
+            if (decl.Name.StartsWith("<", StringComparison.Ordinal))
+            {
+
+            }
+
+            MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>.Setup(decl, typeDefinitionHandle);
+
+            return decl;
+        }
+
         /// <inheritdoc/>
         public IClassDeclaration CreateClassDeclaration(
             string nameSpace,
@@ -101,6 +128,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                 this.reflectionLoaderClassDeclarationSyntax);
 
             ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>.Setup(decl, type);
+
+            return decl;
+        }
+
+        public IClassDeclaration CreateClassDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        {
+            var decl = new ClassDeclaration(
+                MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
+                MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(metadataReader, typeDefinitionHandle),
+                new MetadataTypeSyntaxNodeProvider<ClassDeclarationSyntax>(metadataReader, typeDefinitionHandle),
+                null,
+                location,
+                this.metadataLoaderClassDeclarationSyntax);
+
+            MetadataGenericDeclarationLoader<ClassDeclarationSyntax>.Setup(decl, typeDefinitionHandle);
+
+            if (decl.Name.StartsWith("<", StringComparison.Ordinal))
+            {
+
+            }
 
             return decl;
         }
