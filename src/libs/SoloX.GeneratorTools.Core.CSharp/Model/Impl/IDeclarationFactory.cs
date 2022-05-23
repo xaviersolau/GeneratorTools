@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
@@ -39,6 +40,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         IInterfaceDeclaration CreateInterfaceDeclaration(Type type);
 
         /// <summary>
+        /// Create a interface declaration from a metadata type definition.
+        /// </summary>
+        /// <param name="metadataReader">Metadata reader.</param>
+        /// <param name="typeDefinitionHandle">Type definition.</param>
+        /// <param name="location">Location of the declaration.</param>
+        /// <returns></returns>
+        IInterfaceDeclaration CreateInterfaceDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
+
+        /// <summary>
         /// Create a class declaration from a syntax node.
         /// </summary>
         /// <param name="nameSpaceDecl">The class name space.</param>
@@ -58,6 +68,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="type">The class type to load the declaration from.</param>
         /// <returns>The created class declaration object.</returns>
         IClassDeclaration CreateClassDeclaration(Type type);
+
+        /// <summary>
+        /// Create a class declaration from a metadata type definition.
+        /// </summary>
+        /// <param name="metadataReader">Metadata reader.</param>
+        /// <param name="typeDefinitionHandle">Type definition.</param>
+        /// <param name="location">Location of the declaration.</param>
+        /// <returns></returns>
+        IClassDeclaration CreateClassDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
 
         /// <summary>
         /// Create a struct declaration from a syntax node.

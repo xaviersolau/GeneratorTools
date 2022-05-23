@@ -13,7 +13,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
     /// <summary>
     /// Unknown declaration use.
     /// </summary>
-    public interface IUnknownDeclarationUse : IDeclarationUse<IdentifierNameSyntax>
+    public interface IUnknownDeclarationUse : IDeclarationUse<NameSyntax>
     {
     }
 }

@@ -13,19 +13,19 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 {
     internal class ReflectionGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
         where TNode : SyntaxNode
     {
-        private readonly ILogger<ReflectionGenericDeclarationLoader<TNode>> logger;
+        private readonly IGeneratorLogger<ReflectionGenericDeclarationLoader<TNode>> logger;
 
-        public ReflectionGenericDeclarationLoader(ILogger<ReflectionGenericDeclarationLoader<TNode>> logger)
+        public ReflectionGenericDeclarationLoader(IGeneratorLogger<ReflectionGenericDeclarationLoader<TNode>> logger)
         {
             this.logger = logger;
         }
@@ -114,8 +114,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             if (interfaceDeclaration == null)
             {
                 var unknownDeclarationUse = new UnknownDeclarationUse(
-                    new ReflectionTypeUseSyntaxNodeProvider<IdentifierNameSyntax>(type),
-                    new UnknownDeclaration(GetNameWithoutGeneric(type.Name)));
+                    new ReflectionTypeUseSyntaxNodeProvider<NameSyntax>(type),
+                    new UnknownDeclaration(type.Namespace, GetNameWithoutGeneric(type.Name)));
                 unknownDeclarationUse.ArraySpecification = CreateArraySpecification(
                     arrayCount,
                     unknownDeclarationUse.SyntaxNodeProvider);
@@ -140,7 +140,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             }
 
             var genericDeclarationUse = new GenericDeclarationUse(
-                new ReflectionTypeUseSyntaxNodeProvider<SimpleNameSyntax>(type),
+                new ReflectionTypeUseSyntaxNodeProvider<NameSyntax>(type),
                 interfaceDeclaration,
                 genericParameters);
             genericDeclarationUse.ArraySpecification = CreateArraySpecification(

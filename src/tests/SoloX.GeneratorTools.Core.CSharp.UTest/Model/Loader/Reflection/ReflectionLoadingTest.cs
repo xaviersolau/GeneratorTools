@@ -59,7 +59,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotNull(declaration.GenericParameters);
             Assert.NotNull(declaration.Extends);
@@ -91,7 +91,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotEmpty(classDeclaration.Extends);
 
@@ -114,7 +114,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotEmpty(classDeclaration.Properties);
             Assert.Equal(2, classDeclaration.Properties.Count);
@@ -156,7 +156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
-            decl.Load(declarationResolverMock.Object);
+            decl.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotEmpty(decl.Methods);
             Assert.Equal(2, decl.Methods.Count);
@@ -204,7 +204,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotEmpty(classDeclaration.Properties);
             Assert.Equal(3, classDeclaration.Properties.Count);
@@ -222,10 +222,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             Assert.True(wop.HasSetter);
         }
 
-        [Fact]
-        public void LoadClassAttributes()
+        [Theory]
+        [InlineData(typeof(PatternAttributedClass), nameof(PatternAttribute))]
+        [InlineData(typeof(RepeatAttributedClass), nameof(RepeatAttribute))]
+        public void LoadClassAttributes(Type type, string attributeName)
         {
-            var type = typeof(AttributedClass);
             var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
                 .CreateClassDeclaration(type);
 
@@ -237,12 +238,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotNull(declaration.Attributes);
             var attribute = Assert.Single(declaration.Attributes);
 
-            Assert.Equal(nameof(PatternAttribute), attribute.Name);
+            Assert.Equal(attributeName, attribute.Name);
 
             Assert.NotNull(attribute.SyntaxNodeProvider);
 
@@ -250,7 +251,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             Assert.NotNull(node);
 
             var attrText = node.ToString();
-            Assert.Contains(nameof(PatternAttribute), attrText, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains(attributeName, attrText, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

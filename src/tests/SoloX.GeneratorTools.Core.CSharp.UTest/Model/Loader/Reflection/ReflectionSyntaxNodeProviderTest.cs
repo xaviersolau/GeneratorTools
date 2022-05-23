@@ -51,7 +51,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
                 Assert.Contains(property.Name, property.SyntaxNodeProvider.SyntaxNode.ToString(), StringComparison.InvariantCulture);
                 Assert.NotNull(property.PropertyType.SyntaxNodeProvider);
                 Assert.NotNull(property.PropertyType.SyntaxNodeProvider.SyntaxNode);
-                Assert.Equal(property.PropertyType.Declaration.Name, property.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString());
+                Assert.Equal(property.PropertyType.Declaration.FullName, property.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString());
             }
         }
 
@@ -109,7 +109,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
             var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.Load(declarationResolverMock.Object);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
             return classDeclaration;
         }
     }

@@ -22,25 +22,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
     /// </summary>
     public class DeclarationResolver : IDeclarationResolver
     {
-        private readonly Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader;
-
         private readonly Dictionary<string, List<IDeclaration<SyntaxNode>>> declarationMap = new Dictionary<string, List<IDeclaration<SyntaxNode>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeclarationResolver"/> class.
         /// </summary>
         /// <param name="declarations">The declaration list the resolver is based on.</param>
-        /// <param name="loader">The loader delegate to load a declaration is needed.</param>
-        public DeclarationResolver(
-            IEnumerable<IDeclaration<SyntaxNode>> declarations,
-            Action<IDeclarationResolver, IDeclaration<SyntaxNode>> loader)
+        public DeclarationResolver(IEnumerable<IDeclaration<SyntaxNode>> declarations)
         {
             if (declarations == null)
             {
                 throw new ArgumentNullException(nameof(declarations), $"The argument {nameof(declarations)} was null.");
             }
-
-            this.loader = loader;
 
             this.Setup(declarations);
         }
@@ -56,7 +49,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 foreach (var declarationItem in declarations)
                 {
                     // Make sure the declaration is loaded
-                    this.loader(this, declarationItem);
+                    declarationItem.DeepLoad(this);
 
                     if (declarationItem is IGenericDeclaration<SyntaxNode> gd && tParamCount == gd.GenericParameters.Count)
                     {
@@ -92,7 +85,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 foreach (var declarationItem in declarations)
                 {
                     // Make sure the declaration is loaded
-                    this.loader(this, declarationItem);
+                    declarationItem.DeepLoad(this);
 
                     if (declarationItem is IGenericDeclaration<SyntaxNode> gd && tParamCount == gd.GenericParameters.Count)
                     {
@@ -114,7 +107,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 foreach (var declarationItem in declarations)
                 {
                     // Make sure the declaration is loaded
-                    this.loader(this, declarationItem);
+                    declarationItem.DeepLoad(this);
 
                     if (declarationItem is IGenericDeclaration<SyntaxNode> gd)
                     {
@@ -149,7 +142,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
                 var declarationList = declarationItem.Value;
                 foreach (var declaration in declarationList)
                 {
-                    this.loader(this, declaration);
+                    declaration.DeepLoad(this);
                 }
             }
         }

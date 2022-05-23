@@ -9,9 +9,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 using Xunit.Abstractions;
@@ -49,7 +51,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
                 declarationFile,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
 
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             Assert.Single(csFile.Declarations);
             var decl = csFile.Declarations.Single();
@@ -65,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var csFile = new CSharpFile(file, DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
 
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             Assert.Equal(3, csFile.Declarations.Count);
 

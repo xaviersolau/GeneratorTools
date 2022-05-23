@@ -24,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         {
             var declaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>("ns", "name");
 
-            var declResolver = new DeclarationResolver(new[] { declaration }, null);
+            var declResolver = new DeclarationResolver(new[] { declaration });
 
             var fundDecl = Assert.Single(declResolver.Find(declaration.FullName));
             Assert.Same(declaration, fundDecl);
@@ -52,7 +52,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
                 m.SetupGet(d => d.UsingDirectives).Returns(usingDirectives);
             });
 
-            var declResolver = new DeclarationResolver(new[] { declaration }, (r, d) => { });
+            var declResolver = new DeclarationResolver(new[] { declaration });
 
             var resolvedDecl = declResolver.Resolve(nameToResolve, contextDeclaration);
 
@@ -95,7 +95,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
             var declarationParamUse1 = DeclarationHelper.SetupDeclarationUse<IDeclarationUse<SyntaxNode>>(declarationParam);
             var declarationParamUse2 = DeclarationHelper.SetupDeclarationUse<IDeclarationUse<SyntaxNode>>(declarationParam);
 
-            var declResolver = new DeclarationResolver(new[] { genericDeclaration }, (r, d) => { });
+            var declResolver = new DeclarationResolver(new[] { genericDeclaration });
 
             var resolvedGenericDecl1 = declResolver.Resolve(
                 nameToResolve,

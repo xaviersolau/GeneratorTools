@@ -18,6 +18,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
 using Xunit.Abstractions;
@@ -46,7 +47,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             Assert.Single(csFile.Declarations);
             var declaration = csFile.Declarations.Single();
@@ -55,7 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var classDecl = Assert.IsType<ClassDeclaration>(declaration);
 
-            classDecl.Load(Mock.Of<IDeclarationResolver>());
+            classDecl.DeepLoad(Mock.Of<IDeclarationResolver>());
 
             Assert.NotNull(classDecl.GenericParameters);
             Assert.NotNull(classDecl.Extends);
@@ -89,7 +91,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             var csFile = new CSharpFile(
                 className.ToBasicPath(),
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
@@ -99,7 +101,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var classDecl = Assert.IsType<ClassDeclaration>(declaration);
 
-            classDecl.Load(declarationResolver);
+            classDecl.DeepLoad(declarationResolver);
 
             Assert.NotNull(classDecl.GenericParameters);
             Assert.NotNull(classDecl.Extends);
@@ -110,16 +112,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             Assert.Equal(baseClassName, genDeclUse.Declaration.Name);
         }
 
-        [Fact]
-        public void LoadClassAttributes()
+        [Theory]
+        [InlineData(nameof(PatternAttributedClass), nameof(PatternAttribute))]
+        [InlineData(nameof(RepeatAttributedClass), nameof(RepeatAttribute))]
+        public void LoadClassAttributes(string className, string attributeName)
         {
-            var className = nameof(AttributedClass);
             var file = className.ToBasicPath();
 
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
@@ -127,12 +130,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
 
-            decl.Load(declarationResolver);
+            decl.DeepLoad(declarationResolver);
 
             Assert.NotEmpty(decl.Attributes);
             var attribute = Assert.Single(decl.Attributes);
 
-            Assert.Equal(nameof(PatternAttribute), attribute.Name);
+            Assert.Equal(attributeName, attribute.Name);
 
             Assert.NotNull(attribute.SyntaxNodeProvider);
         }
@@ -147,7 +150,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
@@ -157,7 +160,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
 
-            decl.Load(declarationResolver);
+            decl.DeepLoad(declarationResolver);
 
             Assert.Empty(decl.GenericParameters);
             Assert.Empty(decl.Extends);
@@ -197,7 +200,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
@@ -207,7 +210,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
 
-            decl.Load(declarationResolver);
+            decl.DeepLoad(declarationResolver);
 
             Assert.Empty(decl.GenericParameters);
             Assert.Empty(decl.Extends);
@@ -257,7 +260,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-            csFile.Load();
+            csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
@@ -265,7 +268,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
 
-            decl.Load(declarationResolver);
+            decl.DeepLoad(declarationResolver);
 
             Assert.NotEmpty(decl.Properties);
             Assert.Equal(3, decl.Properties.Count);
@@ -291,7 +294,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Loader
                 var classFile = new CSharpFile(
                     className.ToBasicPath(),
                     DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
-                classFile.Load();
+                classFile.Load(Mock.Of<ICSharpWorkspace>());
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
                 if (classDeclarationSingle is IGenericDeclaration<SyntaxNode> genericDeclaration
                     && genericDeclaration.TypeParameterListSyntaxProvider.SyntaxNode != null)

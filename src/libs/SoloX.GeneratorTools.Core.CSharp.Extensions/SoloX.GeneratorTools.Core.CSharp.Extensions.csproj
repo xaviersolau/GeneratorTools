@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\SharedProperties.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+	  <PackageId>SoloX.GeneratorTools.Core.CSharp.Extensions</PackageId>
+
+	  <NoPackageAnalysis>true</NoPackageAnalysis>
+
+	  <PackageTags>code generation, parse, netstandard, pattern</PackageTags>
+	  <PackageReleaseNotes>- Generate C# code from a source code pattern.</PackageReleaseNotes>
+	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
+	  <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
+
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+	  <IncludeSymbols>true</IncludeSymbols>
+	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SoloX.CodeQuality.Prod" Version="2.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+	</ItemGroup>
+
+</Project>

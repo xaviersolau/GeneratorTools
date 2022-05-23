@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp", "src\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj", "{00C1A1CF-5231-481F-A3B9-A83A6DEF4B72}"
 EndProject
@@ -51,6 +51,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Tools", "src\tools\SoloX.GeneratorTools.Tools\SoloX.GeneratorTools.Tools.csproj", "{BA3558A9-7427-4E80-94FB-A69AD9C47704}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Generator.Sample", "src\tools\SoloX.GeneratorTools.Generator.Sample\SoloX.GeneratorTools.Generator.Sample.csproj", "{B56055EA-6D81-4DAB-9995-7748EB11EF23}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.CSharp.Extensions", "src\libs\SoloX.GeneratorTools.Core.CSharp.Extensions\SoloX.GeneratorTools.Core.CSharp.Extensions.csproj", "{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,6 +124,10 @@ Global
 		{B56055EA-6D81-4DAB-9995-7748EB11EF23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B56055EA-6D81-4DAB-9995-7748EB11EF23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B56055EA-6D81-4DAB-9995-7748EB11EF23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +149,7 @@ Global
 		{3133D9A4-6D68-4C78-9741-30AF4C1BB670} = {79744D96-CD07-4319-89CE-32347E6C1482}
 		{BA3558A9-7427-4E80-94FB-A69AD9C47704} = {38384ACA-C2CB-47CC-BAA8-76EAC066CBDA}
 		{B56055EA-6D81-4DAB-9995-7748EB11EF23} = {38384ACA-C2CB-47CC-BAA8-76EAC066CBDA}
+		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB} = {79744D96-CD07-4319-89CE-32347E6C1482}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3EEBCA9-F083-4143-96F7-99A6AB364E24}

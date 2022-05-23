@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+using System.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -33,6 +33,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         IReadOnlyCollection<ICSharpAssembly> Assemblies { get; }
 
         /// <summary>
+        /// Gets the workspace SCharp metadata assembly dependencies.
+        /// </summary>
+        IReadOnlyCollection<ICSharpMetadataAssembly> MetadataAssemblies { get; }
+
+        /// <summary>
         /// Gets the workspace CSharp syntax trees.
         /// </summary>
         IReadOnlyCollection<ICSharpSyntaxTree> SyntaxTrees { get; }
@@ -54,20 +59,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <summary>
         /// Register the ICSharpAssembly associated to the given assembly.
         /// </summary>
-        /// <param name="assemblyFile">The CSharp assembly file.</param>
+        /// <param name="assembly">The CSharp assembly.</param>
         /// <returns>The matching or created ICSharpAssembly.</returns>
-        ICSharpAssembly RegisterAssembly(string assemblyFile);
+        ICSharpAssembly RegisterAssembly(Assembly assembly);
+
+        /// <summary>
+        /// Register the ICSharpMetadataAssembly associated to the given assembly file.
+        /// </summary>
+        /// <param name="assemblyFile"></param>
+        /// <returns></returns>
+        ICSharpMetadataAssembly RegisterMetadataAssembly(string assemblyFile);
 
         /// <summary>
         /// Deep load the workspace.
         /// </summary>
         /// <returns>The resulting declaration resolver.</returns>
         IDeclarationResolver DeepLoad();
-
-        /// <summary>
-        /// Register compilation.
-        /// </summary>
-        /// <param name="compilation">Compilation to register.</param>
-        void RegisterCompilation(Compilation compilation);
     }
 }

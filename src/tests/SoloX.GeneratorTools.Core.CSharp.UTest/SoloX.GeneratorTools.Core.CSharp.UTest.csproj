@@ -41,7 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp.Extensions\SoloX.GeneratorTools.Core.CSharp.Extensions.csproj" />
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.Test.Helpers\SoloX.GeneratorTools.Core.Test.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,7 +71,10 @@
     <Compile Update="Resources\Model\Basic\GenericClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\AttributedClass.cs">
+    <Compile Update="Resources\Model\Basic\PatternAttributedClass.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\RepeatAttributedClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Model\Basic\SimpleClassWithGenericBase.cs">

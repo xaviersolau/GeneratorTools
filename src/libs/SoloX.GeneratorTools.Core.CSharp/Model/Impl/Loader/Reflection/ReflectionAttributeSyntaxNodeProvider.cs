@@ -30,6 +30,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 ctorArgs = $"({string.Join(",", this.customAttribute.ConstructorArguments.Select(arg => arg.ToString()))})";
             }
 
+            if (this.customAttribute.NamedArguments.Any())
+            {
+                ctorArgs = $"({string.Join(",", this.customAttribute.NamedArguments.Select(arg => arg.MemberName + "=" + arg.TypedValue.ToString()))})";
+            }
+
             var node = GetSyntaxNode($"[{this.customAttribute.AttributeType.FullName}{ctorArgs}] public int Property {{ get; set; }}");
             return ((PropertyDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single())
                 .AttributeLists.Single().Attributes.Single();

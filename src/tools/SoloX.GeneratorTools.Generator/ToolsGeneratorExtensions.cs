@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using SoloX.GeneratorTools.Core.CSharp;
+using SoloX.GeneratorTools.Core.CSharp.Extentions;
 using SoloX.GeneratorTools.Generator.Impl;
 
 namespace SoloX.GeneratorTools.Generator
