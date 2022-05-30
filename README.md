@@ -1,8 +1,4 @@
 # GeneratorTools
-[![CircleCI](https://circleci.com/gh/xaviersolau/GeneratorTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/GeneratorTools)
-[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.GeneratorTools.Core.CSharp.svg)](https://www.nuget.org/packages/SoloX.GeneratorTools.Core.CSharp)
 
 GeneratorTools is a project that helps you to automate C# code generation.
 It is written in C# and thanks to .Net Standard, it is cross platform.
@@ -10,6 +6,13 @@ It is written in C# and thanks to .Net Standard, it is cross platform.
 It also provides you with an API to parse your existing C# sources (based on Roslyn).
 
 Don't hesitate to post issue, pull request on the project or to fork and improve the project.
+
+## Project dashboard
+
+[![CircleCI](https://circleci.com/gh/xaviersolau/GeneratorTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/GeneratorTools)
+[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.GeneratorTools.Core.CSharp.svg)](https://www.nuget.org/packages/SoloX.GeneratorTools.Core.CSharp)
 
 ## License and credits
 
