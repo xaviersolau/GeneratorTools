@@ -156,7 +156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 var attributes = methodDefinition.Attributes;
 
                 var methodName = LoadString(metadataReader, methodDefinition.Name);
-                if ((attributes & MethodAttributes.Public) != 0 && (attributes & MethodAttributes.SpecialName) == 0)
+                if (((attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) && (attributes & MethodAttributes.SpecialName) == 0)
                 {
                     var genericParameters = LoadGenericParameters(metadataReader, methodDefinition);
 
