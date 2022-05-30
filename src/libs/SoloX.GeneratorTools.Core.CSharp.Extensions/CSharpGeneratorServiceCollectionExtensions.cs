@@ -18,7 +18,7 @@ using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using System;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
 
-namespace SoloX.GeneratorTools.Core.CSharp.Extentions
+namespace SoloX.GeneratorTools.Core.CSharp.Extensions
 {
     /// <summary>
     /// CSharp Tools Generator ServiceCollection extensions.

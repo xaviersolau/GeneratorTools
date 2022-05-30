@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Attributes\SoloX.GeneratorTools.Attributes.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp.Extensions\SoloX.GeneratorTools.Core.CSharp.Extensions.csproj" />
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
     <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
   </ItemGroup>

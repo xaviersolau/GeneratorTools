@@ -11,7 +11,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
-using SoloX.GeneratorTools.Core.CSharp.Extentions;
+using SoloX.GeneratorTools.Core.CSharp.Extensions;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
