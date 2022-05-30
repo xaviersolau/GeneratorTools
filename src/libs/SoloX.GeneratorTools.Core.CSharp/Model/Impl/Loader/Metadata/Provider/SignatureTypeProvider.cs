@@ -40,7 +40,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
 
         public IDeclarationUse<SyntaxNode> GetFunctionPointerType(MethodSignature<IDeclarationUse<SyntaxNode>> signature)
         {
-            throw new NotImplementedException();
+            // TODO
+            return null;
+            //throw new NotImplementedException();
         }
 
         public IDeclarationUse<SyntaxNode> GetGenericInstantiation(IDeclarationUse<SyntaxNode> genericType, ImmutableArray<IDeclarationUse<SyntaxNode>> typeArguments)

@@ -34,13 +34,24 @@ jobs:
           - src/tools.tests/SoloX.GeneratorTools.Generator.ITest
 
     steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.100
+    - name: Install dependencies ${{ matrix.test_path }}
+      run: dotnet restore ${{ matrix.test_path }}
+    - name: Build ${{ matrix.test_path }}
+      run: dotnet build ${{ matrix.test_path }} --configuration Release --no-restore
     - name: Test Coverage ${{ matrix.test_path }}
       run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+    - name: Moving test results
+      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.info ${{ matrix.test_path }}/TestResults/coverage.info
     - name: Send to coverals
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ matrix.test_path }}/TestResults/**/coverage.info
+        path-to-lcov: ${{ matrix.test_path }}/TestResults/coverage.info
         flag-name: test-${{ matrix.test_path }}
         parallel: true
 
