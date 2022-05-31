@@ -34,6 +34,11 @@ jobs:
           - src/tools.tests/SoloX.GeneratorTools.Generator.ITest
 
     steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.100
     - name: Install dependencies ${{ matrix.test_path }}
       run: dotnet restore ${{ matrix.test_path }}
     - name: Build ${{ matrix.test_path }}
@@ -66,6 +71,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.100
     - name: Install dependencies
       run: dotnet restore
     - name: Build
