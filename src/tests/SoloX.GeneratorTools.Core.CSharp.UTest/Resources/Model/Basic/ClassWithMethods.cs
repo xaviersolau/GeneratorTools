@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic
         }
 
         /// <summary>
-        /// A generic method with parameters.
+        /// A basic method with parameters.
         /// </summary>
         public int ThisIsAMethodWithParameters(int a, string b, object c)
         {
