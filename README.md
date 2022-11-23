@@ -218,7 +218,7 @@ Let's define a `ModelGenerator` with a `ICSharpWorkspace` constructor argument:
         /// Initializes a new instance of the <see cref="ModelGenerator"/> class.
         /// </summary>
         /// <param name="workspace">The workspace to use to load the project data.</param>
-        public ModelGeneratorExample(ICSharpWorkspace workspace)
+        public ModelGenerator(ICSharpWorkspace workspace)
         {
             this.workspace = workspace;
         }
