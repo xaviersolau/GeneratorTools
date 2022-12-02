@@ -28,7 +28,36 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
 
         public IDeclarationUse<SyntaxNode> GetArrayType(IDeclarationUse<SyntaxNode> elementType, ArrayShape shape)
         {
-            throw new NotImplementedException();
+            if (elementType is IGenericDeclarationUse genericDeclarationUse)
+            {
+                return new GenericDeclarationUse(
+                    new MetadataTypeUseSyntaxNodeProvider<NameSyntax>(elementType.Declaration.FullName, genericDeclarationUse.GenericParameters),
+                    elementType.Declaration,
+                    genericDeclarationUse.GenericParameters)
+                {
+                    ArraySpecification = new ArraySpecification(shape.Rank, null),
+                };
+            }
+            else if (elementType is IPredefinedDeclarationUse predefinedDeclarationUse)
+            {
+                return new PredefinedDeclarationUse(
+                    predefinedDeclarationUse.SyntaxNodeProvider,
+                    predefinedDeclarationUse.Declaration.Name)
+                {
+                    ArraySpecification = new ArraySpecification(shape.Rank, null),
+                };
+            }
+            else if (elementType is IGenericParameterDeclarationUse genericParameterDeclarationUse)
+            {
+                return new GenericParameterDeclarationUse(
+                    genericParameterDeclarationUse.SyntaxNodeProvider,
+                    genericParameterDeclarationUse.Declaration)
+                {
+                    ArraySpecification = new ArraySpecification(shape.Rank, null),
+                };
+            }
+
+            throw new NotSupportedException();
         }
 
         public IDeclarationUse<SyntaxNode> GetByReferenceType(IDeclarationUse<SyntaxNode> elementType)
@@ -41,8 +70,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
         public IDeclarationUse<SyntaxNode> GetFunctionPointerType(MethodSignature<IDeclarationUse<SyntaxNode>> signature)
         {
             // TODO
-            return null;
             //throw new NotImplementedException();
+            return null;
         }
 
         public IDeclarationUse<SyntaxNode> GetGenericInstantiation(IDeclarationUse<SyntaxNode> genericType, ImmutableArray<IDeclarationUse<SyntaxNode>> typeArguments)
