@@ -375,11 +375,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 this.WriteToken(node.Initializer.OpenBraceToken);
 
                 var tknList = node.Initializer.ChildTokens();
+#pragma warning disable CA1851 // Possible multiple enumerations of 'IEnumerable' collection
                 var tkns = tknList.Count() > 2 ? tknList.ElementAt(1).ToFullString() : ", ";
+#pragma warning restore CA1851 // Possible multiple enumerations of 'IEnumerable' collection
 
                 foreach (var expression in node.Initializer.Expressions)
                 {
                     var textExpression = expression.ToFullString();
+
                     if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
                     {
                         this.strategy.RepeatDeclaration(

@@ -168,6 +168,48 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         }
 
         [Theory]
+        [InlineData(typeof(GenericClassWithProperties<>), false)]
+        [InlineData(typeof(GenericClassWithArrayProperties<>), true)]
+        [InlineData(typeof(GenericClassWithArrayProperties2<>), true)]
+        public void LoadGenericPropertyListTest(Type type, bool isArray)
+        {
+            var assemblyPath = type.Assembly.Location;
+
+            using var portableExecutableReader = new PEReader(File.OpenRead(assemblyPath));
+
+            var metadataReader = portableExecutableReader.GetMetadataReader();
+            var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
+
+            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+
+            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+
+            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
+            classDeclaration.DeepLoad(declarationResolverMock.Object);
+
+            Assert.NotEmpty(classDeclaration.Properties);
+            Assert.Equal(1, classDeclaration.Properties.Count);
+
+            var m = Assert.Single(declaration.Members.Where(m => m.Name == nameof(GenericClassWithProperties<object>.Property)));
+            var p = Assert.IsType<PropertyDeclaration>(m);
+
+            Assert.IsType<GenericParameterDeclarationUse>(p.PropertyType);
+            Assert.Equal("T", p.PropertyType.Declaration.Name);
+
+            if (isArray)
+            {
+                Assert.NotNull(p.PropertyType.ArraySpecification);
+            }
+            else
+            {
+                Assert.Null(p.PropertyType.ArraySpecification);
+            }
+        }
+
+        [Theory]
         [InlineData(typeof(ClassWithMethods), false)]
         [InlineData(typeof(ClassWithGenericMethods), true)]
         public void LoadMethodListTest(Type type, bool isGeneric)
