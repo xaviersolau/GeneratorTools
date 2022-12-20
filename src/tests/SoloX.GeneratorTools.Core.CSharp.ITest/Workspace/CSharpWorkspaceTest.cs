@@ -50,7 +50,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 
             var resolver = this.LoadAndGetResolver(projectFile, 1);
 
-            var jsonDecl = resolver.Find("Newtonsoft.Json.IArrayPool");
+            var jsonDecl = resolver.Find("Microsoft.Extensions.Logging.ILogger");
 
             Assert.NotNull(jsonDecl);
             Assert.NotEmpty(jsonDecl);

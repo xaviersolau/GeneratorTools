@@ -14,7 +14,14 @@ namespace SoloX.GeneratorTools.Core.Utils
     /// Logger interface to provide an abstraction to be able to remove all assembly dependencies.
     /// </summary>
     /// <typeparam name="TType">Logger type.</typeparam>
-    public interface IGeneratorLogger<TType>
+    public interface IGeneratorLogger<TType> : IGeneratorLogger
+    {
+    }
+
+    /// <summary>
+    /// Logger interface.
+    /// </summary>
+    public interface IGeneratorLogger
     {
         /// <summary>
         /// Log debug.

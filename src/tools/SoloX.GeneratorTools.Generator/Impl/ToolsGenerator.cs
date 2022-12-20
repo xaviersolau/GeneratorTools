@@ -8,11 +8,11 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Generator.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Generator.Patterns.Impl;
 using SoloX.GeneratorTools.Generator.Patterns.Itf;
 
@@ -23,7 +23,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
     /// </summary>
     public class ToolsGenerator : IToolsGenerator
     {
-        private readonly ILogger<ToolsGenerator> logger;
+        private readonly IGeneratorLogger<ToolsGenerator> logger;
         private readonly ICSharpWorkspace workspace;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
         /// </summary>
         /// <param name="logger">Logger that will be used for logs.</param>
         /// <param name="workspace">The workspace to use.</param>
-        public ToolsGenerator(ILogger<ToolsGenerator> logger, ICSharpWorkspace workspace)
+        public ToolsGenerator(IGeneratorLogger<ToolsGenerator> logger, ICSharpWorkspace workspace)
         {
             this.logger = logger;
             this.workspace = workspace;
@@ -69,7 +69,8 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 fileGenerator,
                 locator,
                 resolver,
-                typeof(IFactoryPattern));
+                typeof(IFactoryPattern),
+                this.logger);
 
             var generatedItems1 = generator1.Generate(files);
 
@@ -77,7 +78,8 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 fileGenerator,
                 locator,
                 resolver,
-                typeof(FactoryPattern));
+                typeof(FactoryPattern),
+                this.logger);
 
             var generatedItems2 = generator2.Generate(files);
 
@@ -85,7 +87,8 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 fileGenerator,
                 locator,
                 resolver,
-                typeof(ObjectPattern));
+                typeof(ObjectPattern),
+                this.logger);
 
             var generatedItems3 = generator3.Generate(files);
         }

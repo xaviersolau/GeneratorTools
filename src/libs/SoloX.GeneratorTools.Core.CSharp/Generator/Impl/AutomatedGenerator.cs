@@ -16,6 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 {
@@ -28,6 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         private readonly ILocator locator;
         private readonly IDeclarationResolver resolver;
         private readonly Type patternType;
+        private readonly IGeneratorLogger logger;
         private readonly PatternAttribute patternAttribute;
         private readonly IDeclaration<SyntaxNode> pattern;
         private readonly List<string> ignoreUsingList = new List<string>();
@@ -39,7 +41,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <param name="locator">Code generation locator.</param>
         /// <param name="resolver">The resolver to resolve workspace symbols.</param>
         /// <param name="patternType">The pattern type to use.</param>
-        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType)
+        /// <param name="logger">Logger instance.</param>
+        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, IGeneratorLogger logger)
         {
             if (writer == null)
             {
@@ -65,7 +68,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             this.resolver = resolver;
             this.locator = locator;
             this.patternType = patternType;
-
+            this.logger = logger;
             this.patternAttribute = FindAttribute<PatternAttribute>(this.patternType);
 
             // Get the pattern as source declaration from the given resolver.
@@ -85,16 +88,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 
             var declarations = selector.GetDeclarations(files);
 
+            this.logger.LogDebug($"Selected declarations: {string.Join(", ", declarations.Select(d => d.Name))}");
+
             var replacePatternHandlerAttributes = FindAttributes<ReplacePatternAttribute>(this.patternType);
             var replacePatternHandlerFactories = replacePatternHandlerAttributes.Select(a => a.ReplacePatternHandlerFactory);
 
             var repeatAttribute = FindAttribute<RepeatAttribute>(this.patternType);
             if (repeatAttribute != null)
             {
+                this.logger.LogDebug($"Repeat attribute detected: {repeatAttribute.RepeatPattern}");
+
                 var patternPattern = this.resolver.Resolve(repeatAttribute.RepeatPattern, this.pattern);
 
                 foreach (var declaration in declarations)
                 {
+                    this.logger.LogDebug($"Repeat item: {declaration.Name}");
+
                     var (location, nameSpace) = this.locator.ComputeTargetLocation(declaration.DeclarationNameSpace);
 
                     var strategy = new AutomatedGenericStrategy(
@@ -119,6 +128,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             }
             else
             {
+                this.logger.LogDebug($"No Repeat attribute detected");
+
                 var (location, nameSpace) = this.locator.ComputeTargetLocation(string.Empty);
 
                 var strategy = new AutomatedDeclarationsStrategy(
