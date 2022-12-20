@@ -6,8 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
-
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic
 {
     public class GenericClassWithArrayProperties<T>

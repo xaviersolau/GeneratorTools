@@ -13,7 +13,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 7.0.100
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -38,7 +38,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 7.0.100
     - name: Install dependencies ${{ matrix.test_path }}
       run: dotnet restore ${{ matrix.test_path }}
     - name: Build ${{ matrix.test_path }}
@@ -75,7 +75,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 7.0.100
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -83,7 +83,9 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release --no-restore --no-build
     - name: Upload Packages
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: 'NugetPackages'
-        path: 'src/**/*.nupkg'
+        path: |
+          'src/**/*.nupkg'
+          'src/**/*.snupkg'

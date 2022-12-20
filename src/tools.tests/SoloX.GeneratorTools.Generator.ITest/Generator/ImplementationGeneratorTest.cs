@@ -9,12 +9,12 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
+using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Generator.Impl;
 using Xunit;
 using Xunit.Abstractions;
@@ -58,7 +58,7 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
                 }
 
                 var generator = new ToolsGenerator(
-                    sp.GetService<ILogger<ToolsGenerator>>(),
+                    sp.GetService<IGeneratorLogger<ToolsGenerator>>(),
                     workspace);
 
                 var inputs = new HashSet<string>();
