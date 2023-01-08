@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -29,6 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         private readonly ILocator locator;
         private readonly IDeclarationResolver resolver;
         private readonly Type patternType;
+        private readonly ISelectorResolver selectorResolver;
         private readonly IGeneratorLogger logger;
         private readonly PatternAttribute patternAttribute;
         private readonly IDeclaration<SyntaxNode> pattern;
@@ -41,8 +43,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <param name="locator">Code generation locator.</param>
         /// <param name="resolver">The resolver to resolve workspace symbols.</param>
         /// <param name="patternType">The pattern type to use.</param>
+        /// <param name="selectorResolver">Selector resolver or null to use the default one.</param>
         /// <param name="logger">Logger instance.</param>
-        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, IGeneratorLogger logger)
+        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, ISelectorResolver selectorResolver, IGeneratorLogger logger)
         {
             if (writer == null)
             {
@@ -68,6 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             this.resolver = resolver;
             this.locator = locator;
             this.patternType = patternType;
+            this.selectorResolver = selectorResolver;
             this.logger = logger;
             this.patternAttribute = FindAttribute<PatternAttribute>(this.patternType);
 
@@ -111,7 +115,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                         (IGenericDeclaration<SyntaxNode>)declaration,
                         this.resolver,
                         replacePatternHandlerFactories,
-                        this.ignoreUsingList);
+                        this.ignoreUsingList,
+                        this.selectorResolver);
 
                     var implName = strategy.ApplyPatternReplace(this.pattern.Name);
 
@@ -139,7 +144,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     declarations,
                     this.resolver,
                     replacePatternHandlerFactories,
-                    this.ignoreUsingList);
+                    this.ignoreUsingList,
+                    this.selectorResolver);
 
                 this.writer.Generate(location, strategy.ComputeTargetName(), writer =>
                 {
