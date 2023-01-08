@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -27,6 +28,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly string currentNameSpace;
         private readonly IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories;
         private readonly IEnumerable<string> ignoreUsingList;
+        private readonly ISelectorResolver selectorResolver;
 
         public AutomatedDeclarationsStrategy(
             IDeclaration<SyntaxNode> pattern,
@@ -35,7 +37,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IEnumerable<IDeclaration<SyntaxNode>> declarations,
             IDeclarationResolver resolver,
             IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
-            IEnumerable<string> ignoreUsingList)
+            IEnumerable<string> ignoreUsingList,
+            ISelectorResolver selectorResolver)
         {
             this.targetName = name;
             this.currentNameSpace = nameSpace;
@@ -44,6 +47,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.resolver = resolver;
             this.replacePatternHandlerFactories = replacePatternHandlerFactories;
             this.ignoreUsingList = ignoreUsingList;
+            this.selectorResolver = selectorResolver;
         }
 
         public string ApplyPatternReplace(string text)
@@ -78,7 +82,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                         (IGenericDeclaration<SyntaxNode>)declaration,
                         this.resolver,
                         this.replacePatternHandlerFactories,
-                        this.ignoreUsingList));
+                        this.ignoreUsingList,
+                        this.selectorResolver));
             }
         }
 

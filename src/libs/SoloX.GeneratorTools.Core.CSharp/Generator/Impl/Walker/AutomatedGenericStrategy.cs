@@ -24,10 +24,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
     internal class AutomatedGenericStrategy : IAutomatedStrategy
     {
+        private class DefaultSelectorResolver : ISelectorResolver
+        {
+            public ISelector GetSelector(string selectorName)
+            {
+                var selectorType = Type.GetType(selectorName);
+                if (selectorType != null)
+                {
+                    return (ISelector)Activator.CreateInstance(selectorType);
+                }
+
+                return null;
+            }
+        }
+
         private readonly IGenericDeclaration<SyntaxNode> declaration;
         private readonly IGenericDeclaration<SyntaxNode> pattern;
         private readonly IDeclarationResolver resolver;
         private readonly IEnumerable<string> ignoreUsingList;
+        private readonly ISelectorResolver selectorResolver;
         private readonly string targetDeclarationName;
         private readonly string targetPatternName;
         private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
@@ -37,7 +52,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IGenericDeclaration<SyntaxNode> declaration,
             IDeclarationResolver resolver,
             IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
-            IEnumerable<string> ignoreUsingList)
+            IEnumerable<string> ignoreUsingList,
+            ISelectorResolver selectorResolver)
         {
             this.declaration = declaration;
             this.pattern = pattern;
@@ -45,6 +61,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.ignoreUsingList = ignoreUsingList;
             this.targetDeclarationName = GeneratorHelper.ComputeClassName(declaration.Name);
             this.targetPatternName = GeneratorHelper.ComputeClassName(pattern.Name);
+
+            this.selectorResolver = selectorResolver ?? new DefaultSelectorResolver();
 
             this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
@@ -185,10 +203,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             foreach (var usingDirective in nsBase)
             {
-                var selectorType = Type.GetType($"{usingDirective}.{selectorTypeName}");
-                if (selectorType != null)
+                var selectorName = $"{usingDirective}.{selectorTypeName}";
+
+                var selector = this.selectorResolver.GetSelector(selectorName);
+                if (selector != null)
                 {
-                    return (ISelector)Activator.CreateInstance(selectorType);
+                    return selector;
                 }
             }
 
