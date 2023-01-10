@@ -388,7 +388,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     {
                         var line = attrList.OpenBracketToken.ToFullString().Replace("[", string.Empty)
                             + attrList.CloseBracketToken.ToFullString().Replace("]", string.Empty);
-                        this.Write(line.Replace("        \r\n", string.Empty));
+                        this.Write(line.Replace($"        {Environment.NewLine}", string.Empty));
                     }
                 }
             }
