@@ -1,0 +1,33 @@
+---------------------
+ForStatementSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="ForStatementSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System.Collections.Generic;
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Implementation.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Implementation.Samples
+{
+    public class ForStatementSample : ISimpleSample
+    {
+        public int Property1 { get; set; }
+        public double Property2 { get; set; }
+
+        public void PatternMethodWithForStatement(IList<object> withSomeArguments)
+        {
+            var len = withSomeArguments.Count;
+            for (var i = 0; i < len; i++)
+            {
+                withSomeArguments[i] = Property1;
+                withSomeArguments[i] = Property2;
+            }
+        }
+    }
+}
+
