@@ -23,6 +23,7 @@ using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using Xunit;
 using Xunit.Abstractions;
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 {
@@ -47,9 +48,30 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                 typeof(SimplePattern),
                 patternInterfaceFile,
                 patternImplementationFile,
-                declarationInterfaceFile,
                 targetNameSpace,
-                nameof(this.AutomatedSimpleTest));
+                nameof(this.AutomatedSimpleTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedIMethodPatternTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+
+            var patternImplementationFile = @"Generator/Automated/Patterns/Itf/IMethodPattern.cs";
+
+            var declarationInterfaceFile1 = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var declarationInterfaceFile2 = @"Generator/Automated/Samples/IOtherSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(IMethodPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedIMethodPatternTest),
+                declarationInterfaceFile1,
+                declarationInterfaceFile2);
         }
 
         [Theory]
@@ -86,29 +108,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                 patternImplementationType,
                 patternInterfaceFile,
                 patternImplementationFile,
-                declarationInterfaceFile,
                 targetNameSpace,
-                $"Automated{code}Test");
+                $"Automated{code}Test",
+                declarationInterfaceFile);
         }
 
         private void GenerateAndAssertSnapshot(
             Type patternType,
             string patternInterfaceFile,
             string patternImplementationFile,
-            string declarationInterfaceFile,
             string targetNameSpace,
-            string snapshotName)
+            string snapshotName,
+            params string[] declarationInterfaceFiles)
         {
             SnapshotHelper.IsOverwriteEnable = true;
 
             var resolver = LoadWorkSpace(
                 patternInterfaceFile,
                 patternImplementationFile,
-                declarationInterfaceFile,
-                out var itfDeclaration,
                 out var itfPatternDeclaration,
                 out var implPatternDeclaration,
-                out var files);
+                out var itfDeclarations,
+                out var files,
+                declarationInterfaceFiles);
 
             var locator = new RelativeLocator(string.Empty, targetNameSpace);
 
@@ -127,11 +149,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         private IDeclarationResolver LoadWorkSpace(
             string patternInterfaceFile,
             string patternImplementationFile,
-            string declarationInterfaceFile,
-            out IInterfaceDeclaration itfDeclaration,
             out IInterfaceDeclaration itfPatternDeclaration,
             out IClassDeclaration implPatternDeclaration,
-            out IEnumerable<ICSharpFile> files)
+            out IEnumerable<IInterfaceDeclaration> itfDeclarations,
+            out IEnumerable<ICSharpFile> files,
+            params string[] declarationInterfaceFiles)
         {
             var ws = new CSharpWorkspace(
                 Mock.Of<IGeneratorLogger<CSharpWorkspace>>(),
@@ -139,8 +161,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                     Mock.Of<IGeneratorLoggerFactory>(),
                     DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
 
-            itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
-                .Declarations.First() as IInterfaceDeclaration;
+            var itfDeclarationsList = new List<IInterfaceDeclaration>();
+            itfDeclarations = itfDeclarationsList;
+
+            foreach (var declarationInterfaceFile in declarationInterfaceFiles)
+            {
+                var itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
+                    .Declarations.First() as IInterfaceDeclaration;
+
+                itfDeclarationsList.Add(itfDeclaration);
+            }
+
             itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)
                 .Declarations.First() as IInterfaceDeclaration;
             implPatternDeclaration = ws.RegisterFile(patternImplementationFile)
