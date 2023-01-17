@@ -1,0 +1,26 @@
+---------------------
+IMethod
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="IMethod.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest
+{
+
+    public interface IMethod
+    {
+        ISimpleSample CreateSimpleSample(
+            int property1, 
+            double property2);
+        IOtherSample CreateOtherSample(
+            string prop);
+    }
+}
+
