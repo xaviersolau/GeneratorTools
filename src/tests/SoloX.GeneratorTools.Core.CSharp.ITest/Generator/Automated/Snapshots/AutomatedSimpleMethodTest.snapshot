@@ -1,8 +1,8 @@
 ---------------------
-SimpleMethodPattern
+SimpleMethodSimpleSample
 ---------------------
 // ----------------------------------------------------------------------
-// <copyright file="SimpleMethodPattern.cs" company="Xavier Solau">
+// <copyright file="SimpleMethodSimpleSample.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -13,7 +13,7 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 {
-    public class SimpleMethodPattern : ISimpleSample
+    public class SimpleMethodSimpleSample : ISimpleSample
     {
         private int property1;
         private double property2;

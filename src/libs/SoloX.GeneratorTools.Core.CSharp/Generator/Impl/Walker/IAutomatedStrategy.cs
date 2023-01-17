@@ -59,6 +59,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             Action<IAutomatedStrategy> callback);
 
         /// <summary>
+        /// Process repeat statements handling.
+        /// </summary>
+        /// <param name="repeatStatementsAttributeSyntax">The repeat statements attribute syntax.</param>
+        /// <param name="callback">Declaration callback.</param>
+        void RepeatStatements(
+            AttributeSyntax repeatStatementsAttributeSyntax,
+            Action<IAutomatedStrategy> callback);
+
+        /// <summary>
+        /// Tells is PackStatement is enabled.
+        /// </summary>
+        bool IsPackStatementEnabled { get; }
+
+        /// <summary>
         /// Apply the pattern substitution on the given text.
         /// </summary>
         /// <param name="text">Source text to match the pattern from.</param>

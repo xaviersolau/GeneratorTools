@@ -306,6 +306,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                             .WriteMethodDeclaration(node);
                     });
             }
+            else if (node.AttributeLists.TryMatchAttributeName<RepeatStatementsAttribute>(out attributeSyntax))
+            {
+                this.strategy.RepeatStatements(
+                    attributeSyntax,
+                    itemStrategy =>
+                    {
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                            .WriteMethodDeclaration(node);
+                    });
+            }
             else
             {
                 this.WriteMethodDeclaration(node);
@@ -528,6 +538,80 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteToken(node.Identifier);
         }
 
+        public override void VisitIfStatement(IfStatementSyntax node)
+        {
+            if (this.strategy.IsPackStatementEnabled)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.WriteToken(node.IfKeyword);
+                this.WriteToken(node.OpenParenToken);
+                this.WriteNode(node.Condition);
+                this.WriteToken(node.CloseParenToken);
+                this.Visit(node.Statement);
+                if (node.Else != null)
+                {
+                    this.Visit(node.Else);
+                }
+            }
+        }
+
+        public override void VisitElseClause(ElseClauseSyntax node)
+        {
+            this.WriteToken(node.ElseKeyword);
+            this.Visit(node.Statement);
+        }
+
+        public override void VisitForEachStatement(ForEachStatementSyntax node)
+        {
+            if (this.strategy.IsPackStatementEnabled)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.Write(node.ForEachKeyword.ToFullString());
+                this.Write(node.OpenParenToken.ToFullString());
+                this.WriteNode(node.Type);
+                this.Write(node.Identifier.ToFullString());
+                this.Write(node.InKeyword.ToFullString());
+                this.WriteNode(node.Expression);
+                this.Write(node.CloseParenToken.ToFullString());
+                this.Visit(node.Statement);
+            }
+        }
+
+        public override void VisitForStatement(ForStatementSyntax node)
+        {
+            if (this.strategy.IsPackStatementEnabled)
+            {
+                this.WriteNode(node);
+            }
+            else
+            {
+                this.Write(node.ForKeyword.ToFullString());
+                this.Write(node.OpenParenToken.ToFullString());
+                this.WriteNode(node.Declaration);
+                this.Write(node.FirstSemicolonToken.ToFullString());
+                this.WriteNode(node.Condition);
+                this.Write(node.SecondSemicolonToken.ToFullString());
+                foreach (var incrementor in node.Incrementors)
+                {
+                    this.WriteNode(incrementor);
+                }
+
+                this.Write(node.CloseParenToken.ToFullString());
+                this.Visit(node.Statement);
+            }
+        }
+
+        public override void VisitThrowStatement(ThrowStatementSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
         private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
         {
             attributeSyntax = null;
@@ -711,6 +795,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 {
                     if (!attr.IsAttributeName<PatternAttribute>() &&
                         !attr.IsAttributeName<RepeatAttribute>() &&
+                        !attr.IsAttributeName<RepeatStatementsAttribute>() &&
                         !attr.IsAttributeName<ReplacePatternAttribute>())
                     {
                         if (!found)

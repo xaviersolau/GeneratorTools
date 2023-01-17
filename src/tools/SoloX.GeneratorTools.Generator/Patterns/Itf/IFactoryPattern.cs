@@ -24,11 +24,11 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Itf
         /// <param name="someReadOnlyValue">Some optional parameter.</param>
         /// <param name="someValue">Some mandatory parameter.</param>
         /// <returns>The created IObjectPattern instance.</returns>
-        [Repeat(RepeatPattern = nameof(IObjectPattern), RepeatPatternPrefix = "I")]
+        [Repeat(Pattern = nameof(IObjectPattern), Prefix = "I")]
         IObjectPattern CreateObjectPattern(
-            [Repeat(RepeatPattern = nameof(IObjectPattern.SomeReadOnlyValue))]
+            [Repeat(Pattern = nameof(IObjectPattern.SomeReadOnlyValue))]
             object someReadOnlyValue,
-            [Repeat(RepeatPattern = nameof(IObjectPattern.SomeValue))]
+            [Repeat(Pattern = nameof(IObjectPattern.SomeValue))]
             object someValue = default);
     }
 }

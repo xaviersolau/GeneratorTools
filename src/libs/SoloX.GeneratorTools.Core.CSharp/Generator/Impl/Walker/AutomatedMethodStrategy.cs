@@ -32,6 +32,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.replacePatternHandlers = replacePatternHandlers;
         }
 
+        public bool IsPackStatementEnabled => false;
+
         public string ApplyPatternReplace(string text)
         {
             var result = text
@@ -88,6 +90,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var repeatParameter = this.pattern.Parameters.First(p => p.Name == patternName);
 
             return AutomatedParameterStrategy.Match(repeatParameter, expression);
+        }
+
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }
