@@ -20,11 +20,11 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Impl
     public class FactoryPattern : IFactoryPattern
     {
         /// <inheritdoc/>
-        [Repeat(RepeatPattern = nameof(IObjectPattern), RepeatPatternPrefix = "I")]
+        [Repeat(Pattern = nameof(IObjectPattern), Prefix = "I")]
         public IObjectPattern CreateObjectPattern(
-            [Repeat(RepeatPattern = nameof(IObjectPattern.SomeReadOnlyValue))]
+            [Repeat(Pattern = nameof(IObjectPattern.SomeReadOnlyValue))]
             object someReadOnlyValue,
-            [Repeat(RepeatPattern = nameof(IObjectPattern.SomeValue))]
+            [Repeat(Pattern = nameof(IObjectPattern.SomeValue))]
             object someValue = default)
         {
             return new ObjectPattern()

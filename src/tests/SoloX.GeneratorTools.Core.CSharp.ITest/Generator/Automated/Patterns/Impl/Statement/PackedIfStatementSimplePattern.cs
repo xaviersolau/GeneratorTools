@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="PackedIfStatementPattern.cs" company="Xavier Solau">
+// <copyright file="PackedIfStatementSimplePattern.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -9,13 +9,16 @@
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
-namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.Statement
 {
-    public class PackedIfStatementPattern : ISimplePattern
+    [Pattern(typeof(SampleSelector))]
+    [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
+    public class PackedIfStatementSimplePattern : ISimplePattern
     {
+        [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
         public object PatternProperty { get; set; }
 
-        [PackStatements]
+        [RepeatStatements(Pattern = nameof(ISimplePattern.PatternProperty), PackStatement = true)]
         public void PatternMethodWithPackedIfStatement(bool withSomeArguments)
         {
             if (withSomeArguments)

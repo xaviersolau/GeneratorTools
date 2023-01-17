@@ -17,6 +17,9 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns
 {
+    /// <summary>
+    /// Selector that always return the ISimpleSample descriptor. (For test purpose.)
+    /// </summary>
     public class SampleSelector : ISelector
     {
         public IEnumerable<IDeclaration<SyntaxNode>> GetDeclarations(IEnumerable<ICSharpFile> files)

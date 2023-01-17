@@ -30,6 +30,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.replacePatternHandlers = replacePatternHandlers;
         }
 
+        public bool IsPackStatementEnabled => false;
+
         public string ApplyPatternReplace(string text)
         {
             var firstLowerPatternName = char.ToLowerInvariant(this.pattern.Name[0]) + this.pattern.Name.Substring(1);
@@ -86,6 +88,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             var firstLowerPatternName = char.ToLowerInvariant(repeatProperty.Name[0]) + repeatProperty.Name.Substring(1);
             return expression.Contains(repeatProperty.Name) || expression.Contains(firstLowerPatternName);
+        }
+
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }

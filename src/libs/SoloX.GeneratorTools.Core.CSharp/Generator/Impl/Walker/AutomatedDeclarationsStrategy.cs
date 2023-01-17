@@ -50,6 +50,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.selectorResolver = selectorResolver;
         }
 
+        public bool IsPackStatementEnabled => false;
+
         public string ApplyPatternReplace(string text)
         {
             return text.Replace(this.pattern.Name, this.targetName);
@@ -105,6 +107,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public string ComputeTargetName()
         {
             return this.targetName;
+        }
+
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }

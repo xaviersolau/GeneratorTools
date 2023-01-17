@@ -59,15 +59,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             GenerateSimpleSample(method, "Method");
         }
 
+        [Theory]
+        [InlineData("If")]
+        [InlineData("PackedIf")]
+        [InlineData("ForEach")]
+        [InlineData("For")]
+        [InlineData("PackedForEach")]
+        [InlineData("Throw")]
+        public void GenerateStatementTest(string statement)
+        {
+            GenerateSimpleSample(statement, "Statement");
+        }
+
         private void GenerateSimpleSample(string name, string group)
         {
             var code = $"{name}{group}";
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
-            var patternImplementationFile = $@"Generator/Automated/Patterns/Impl/{group}/{code}Pattern.cs";
+            var patternImplementationFile = $@"Generator/Automated/Patterns/Impl/{group}/{code}SimplePattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            var patternImplementationTypeName = $"SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.{group}.{code}Pattern";
+            var patternImplementationTypeName = $"SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.{group}.{code}SimplePattern";
             var patternImplementationType = Type.GetType(patternImplementationTypeName);
 
             GenerateAndAssertSnapshot(
@@ -87,7 +99,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             string targetNameSpace,
             string snapshotName)
         {
-            //SnapshotHelper.IsOverwriteEnable = true;
+            SnapshotHelper.IsOverwriteEnable = true;
 
             var resolver = LoadWorkSpace(
                 patternInterfaceFile,

@@ -67,6 +67,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
 
+        public bool IsPackStatementEnabled => false;
+
         public string ApplyPatternReplace(string text)
         {
             string result;
@@ -213,6 +215,43 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
 
             throw new ArgumentException($"Unknown selector {selectorTypeName}");
+        }
+
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        {
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var patternName = constEvaluator.Visit(repeatStatementsAttributeSyntax.ArgumentList.Arguments.First().Expression);
+
+            var constBoolEvaluator = new ConstantExpressionSyntaxEvaluator<bool>();
+            var packArgument = repeatStatementsAttributeSyntax.ArgumentList.Arguments.Skip(1).FirstOrDefault();
+            var pack = packArgument != null ? constBoolEvaluator.Visit(packArgument.Expression) : false;
+
+            // get the member from the current pattern generic definition.
+            var repeatMember = this.pattern.Members.First(p => p.Name == patternName);
+
+            if (repeatMember is IPropertyDeclaration repeatProperty)
+            {
+                ISelector selector;
+
+                // Get the selector if any from the matching property.
+                if (repeatProperty.SyntaxNodeProvider.SyntaxNode.AttributeLists
+                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
+                {
+                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
+                }
+                else
+                {
+                    selector = new AllPropertySelector();
+                }
+
+                var methodStatementsStrategy = new AutomatedMethodStatementsStrategy(selector.GetProperties(this.declaration), repeatProperty, this, pack);
+
+                callback(methodStatementsStrategy);
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 }

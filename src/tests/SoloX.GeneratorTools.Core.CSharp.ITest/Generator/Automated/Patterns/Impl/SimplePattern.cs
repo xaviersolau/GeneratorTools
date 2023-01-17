@@ -12,13 +12,13 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl
 {
     [Pattern(typeof(SampleSelector))]
-    [Repeat(RepeatPattern = nameof(ISimplePattern), RepeatPatternPrefix = "I")]
+    [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
     public class SimplePattern : ISimplePattern
     {
-        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
+        [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
         private object patternProperty;
 
-        [Repeat(RepeatPattern = nameof(ISimplePattern.PatternProperty))]
+        [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
         public object PatternProperty
         {
             get { return this.patternProperty; }

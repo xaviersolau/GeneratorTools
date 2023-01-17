@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ConditionExpressionPattern.cs" company="Xavier Solau">
+// <copyright file="ConditionExpressionSimplePattern.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -9,9 +9,9 @@
 using System;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
-namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.Expression
 {
-    public class ConditionExpressionPattern : ISimplePattern
+    public class ConditionExpressionSimplePattern : ISimplePattern
     {
         public object PatternProperty { get; set; }
 

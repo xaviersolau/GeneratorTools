@@ -100,9 +100,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             var repeatAttribute = FindAttribute<RepeatAttribute>(this.patternType);
             if (repeatAttribute != null)
             {
-                this.logger.LogDebug($"Repeat attribute detected: {repeatAttribute.RepeatPattern}");
+                this.logger.LogDebug($"Repeat attribute detected: {repeatAttribute.Pattern}");
 
-                var patternPattern = this.resolver.Resolve(repeatAttribute.RepeatPattern, this.pattern);
+                var patternPattern = this.resolver.Resolve(repeatAttribute.Pattern, this.pattern);
 
                 foreach (var declaration in declarations)
                 {

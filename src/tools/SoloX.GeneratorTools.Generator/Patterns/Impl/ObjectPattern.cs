@@ -17,15 +17,15 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Impl
     /// Implementation of Object pattern interface.
     /// </summary>
     [Pattern(typeof(AttributeSelector<FactoryAttribute>))]
-    [Repeat(RepeatPattern = nameof(IObjectPattern), RepeatPatternPrefix = "I")]
+    [Repeat(Pattern = nameof(IObjectPattern), Prefix = "I")]
     public class ObjectPattern : IObjectPattern
     {
         /// <inheritdoc/>
-        [Repeat(RepeatPattern = nameof(IObjectPattern.SomeReadOnlyValue))]
+        [Repeat(Pattern = nameof(IObjectPattern.SomeReadOnlyValue))]
         public object SomeReadOnlyValue { get; set; }
 
         /// <inheritdoc/>
-        [Repeat(RepeatPattern = nameof(IObjectPattern.SomeValue))]
+        [Repeat(Pattern = nameof(IObjectPattern.SomeValue))]
         public object SomeValue { get; set; }
     }
 }
