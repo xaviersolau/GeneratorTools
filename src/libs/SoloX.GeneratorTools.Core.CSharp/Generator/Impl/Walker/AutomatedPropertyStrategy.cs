@@ -19,32 +19,35 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IPropertyDeclaration pattern;
         private readonly IPropertyDeclaration declaration;
         private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
+        private readonly TextPatternHelper textReplaceHelper;
+        private readonly TextPatternHelper typeReplaceHelper;
 
         public AutomatedPropertyStrategy(
             IPropertyDeclaration pattern,
             IPropertyDeclaration declaration,
-            IEnumerable<IReplacePatternHandler> replacePatternHandlers)
+            IEnumerable<IReplacePatternHandler> replacePatternHandlers,
+            string patternPrefix, string patternSuffix)
         {
             this.pattern = pattern;
             this.declaration = declaration;
             this.replacePatternHandlers = replacePatternHandlers;
+
+            var patternName = this.pattern.Name;
+            var declarationName = this.declaration.Name;
+
+            var patternTypeName = this.pattern.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+            var declarationTypeName = this.declaration.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
+
+            this.textReplaceHelper = new TextPatternHelper(patternName, declarationName, patternPrefix, patternSuffix);
+            this.typeReplaceHelper = new TextPatternHelper(patternTypeName, declarationTypeName, patternPrefix, patternSuffix);
         }
 
         public bool IsPackStatementEnabled => false;
 
         public string ApplyPatternReplace(string text)
         {
-            var firstLowerPatternName = char.ToLowerInvariant(this.pattern.Name[0]) + this.pattern.Name.Substring(1);
-            var firstLowerDeclarationName = char.ToLowerInvariant(this.declaration.Name[0]) + this.declaration.Name.Substring(1);
-
-            var patternType = this.pattern.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
-
-            var declarationType = this.declaration.PropertyType.SyntaxNodeProvider.SyntaxNode.ToString();
-
-            var result = text
-                .Replace(patternType, declarationType)
-                .Replace(firstLowerPatternName, firstLowerDeclarationName)
-                .Replace(this.pattern.Name, this.declaration.Name);
+            var result = this.textReplaceHelper.ReplacePattern(text);
+            result = this.typeReplaceHelper.ReplacePattern(result);
 
             foreach (var replacePatternHandler in this.replacePatternHandlers)
             {

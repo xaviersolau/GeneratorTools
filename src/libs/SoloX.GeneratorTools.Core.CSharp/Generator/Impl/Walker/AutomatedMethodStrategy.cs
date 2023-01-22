@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -69,9 +70,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             var patternParameter = this.pattern.Parameters.Single(x => x.Name == patternName);
 
+            var patternPrefixExp = repeatAttributeSyntax.ArgumentList
+                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Prefix))?.Expression;
+            var patternSuffixExp = repeatAttributeSyntax.ArgumentList
+                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Suffix))?.Expression;
+
+            var patternPrefix = patternPrefixExp != null ? constEvaluator.Visit(patternPrefixExp) : null;
+            var patternSuffix = patternSuffixExp != null ? constEvaluator.Visit(patternSuffixExp) : null;
+
+
             foreach (var parameter in this.declaration.Parameters)
             {
-                var strategy = new AutomatedParameterStrategy(patternParameter, parameter, this.replacePatternHandlers);
+                var strategy = new AutomatedParameterStrategy(patternParameter, parameter, this.replacePatternHandlers, patternPrefix, patternSuffix);
                 callback(strategy);
             }
         }

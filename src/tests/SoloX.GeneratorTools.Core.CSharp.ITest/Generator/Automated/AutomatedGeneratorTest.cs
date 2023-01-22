@@ -76,6 +76,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 
         [Theory]
         [InlineData("Simple")]
+        [InlineData("TypeNameReplace")]
         public void GenerateMethodTest(string method)
         {
             GenerateSimpleSample(method, "Method");
