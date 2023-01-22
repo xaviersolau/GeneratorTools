@@ -114,21 +114,30 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             Action<IAutomatedStrategy> callback)
         {
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
-            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
+            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList
+                .Arguments.First(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Pattern)).Expression);
 
-            var resolved = this.resolver.Resolve(patternName, this.pattern);
+            var patternPrefixExp = repeatAttributeSyntax.ArgumentList
+                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Prefix))?.Expression;
+            var patternSuffixExp = repeatAttributeSyntax.ArgumentList
+                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Suffix))?.Expression;
+
+            var patternPrefix = patternPrefixExp != null ? constEvaluator.Visit(patternPrefixExp) : null;
+            var patternSuffix = patternSuffixExp != null ? constEvaluator.Visit(patternSuffixExp) : null;
+
+            var resolvedPattern = this.resolver.Resolve(patternName, this.pattern);
 
             // Check if this is self repeat pattern reference.
-            if (object.ReferenceEquals(this.pattern, resolved))
+            if (object.ReferenceEquals(this.pattern, resolvedPattern))
             {
                 callback(this);
                 return;
             }
 
             // get the member from the current pattern generic definition.
-            var repeatMember = this.pattern.Members.First(p => p.Name == patternName);
+            var repeatPatternMember = this.pattern.Members.First(p => p.Name == patternName);
 
-            if (repeatMember is IPropertyDeclaration repeatProperty)
+            if (repeatPatternMember is IPropertyDeclaration repeatProperty)
             {
                 ISelector selector;
 
@@ -145,12 +154,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
                 foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
                 {
-                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, this.replacePatternHandlers);
+                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, this.replacePatternHandlers, patternPrefix, patternSuffix);
 
                     callback(strategy);
                 }
             }
-            else if (repeatMember is IMethodDeclaration repeatMethod)
+            else if (repeatPatternMember is IMethodDeclaration repeatMethod)
             {
                 ISelector selector;
 

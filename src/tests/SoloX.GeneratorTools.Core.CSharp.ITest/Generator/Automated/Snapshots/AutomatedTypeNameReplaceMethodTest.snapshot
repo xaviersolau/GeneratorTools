@@ -1,0 +1,40 @@
+---------------------
+TypeNameReplaceMethodSimpleSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="TypeNameReplaceMethodSimpleSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class TypeNameReplaceMethodSimpleSample : ISimpleSample
+    {
+        public int Property1 => null;
+        public double Property2 => null;
+
+        public int ProcessProperty1(int withSomeProperty1Argument)
+        {
+            return this.Property1.ToInt();
+        }
+
+        public double ProcessProperty2(double withSomeProperty2Argument)
+        {
+            return this.Property2.ToDouble();
+        }
+    }
+
+    public static class Ext
+    {
+        public static object ToObject(this object data)
+        {
+            return null;
+        }
+    }
+}
+

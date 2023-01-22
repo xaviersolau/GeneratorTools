@@ -25,6 +25,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// <summary>
         /// Gets or sets the repeat pattern prefix.
         /// </summary>
-        public string Prefix { get; set; }
+        public string? Prefix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the repeat pattern suffix.
+        /// </summary>
+        public string? Suffix { get; set; }
     }
 }

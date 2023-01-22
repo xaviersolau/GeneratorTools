@@ -41,8 +41,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
 
-            var canRead = node.AccessorList.Accessors.FirstOrDefault(a => a.Kind() == SyntaxKind.GetAccessorDeclaration) != null;
-            var canWrite = node.AccessorList.Accessors.LastOrDefault(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) != null;
+            var canRead = false;
+            var canWrite = false;
+
+            if (node.AccessorList != null)
+            {
+                canRead = node.AccessorList.Accessors.FirstOrDefault(a => a.Kind() == SyntaxKind.GetAccessorDeclaration) != null;
+                canWrite = node.AccessorList.Accessors.LastOrDefault(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) != null;
+            }
+            else if (node.ExpressionBody != null)
+            {
+                canRead = true;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
 
             this.memberList.Add(new PropertyDeclaration(
                 identifier,

@@ -612,6 +612,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node);
         }
 
+        public override void VisitLiteralExpression(LiteralExpressionSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
         private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
         {
             attributeSyntax = null;
