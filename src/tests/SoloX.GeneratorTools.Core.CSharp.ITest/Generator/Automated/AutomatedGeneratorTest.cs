@@ -138,7 +138,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             var snapshotGenerator = new SnapshotWriter();
 
             var implGenerator = new AutomatedGenerator(
-                snapshotGenerator, locator, resolver, patternType, null, Mock.Of<IGeneratorLogger>());
+                snapshotGenerator, locator, resolver, patternType, Mock.Of<IGeneratorLogger>());
 
             implGenerator.Generate(files);
 

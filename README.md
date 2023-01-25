@@ -5,7 +5,7 @@ It is written in C# and thanks to .Net Standard, it is cross platform.
 
 It also provides you with an API to parse your existing C# sources (based on Roslyn).
 
-Don't hesitate to post issue, pull request on the project or to fork and improve the project.
+Don't hesitate to post issue, pull request on the project or to fork and improve the source code.
 
 ## Project dashboard
 
@@ -39,11 +39,9 @@ dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.24
 <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.24" />
 ```
 
-## How to use it
+## The use case
 
-Note that you can find code examples in this repository in this location: `src/examples`.
-
-### The use case
+> Note that you can find code examples in this repository in this location: [`src/examples`](src/examples).
 
 How many time are you writing a source code that is matching a single pattern?
 A code that doesn't bring a lot of value but a code that you need to write and to maintain?
@@ -67,7 +65,8 @@ The interfaces are all based on a `IModelBase` interface defined as follow.
     }
 ```
 
-The model base interface defines a `IsDirty` property that is going to be `true` once a model implementation property is set.
+The `IModelBase` interface defines a `IsDirty` property that is going to be `true` once a model implementation
+property is set.
 
 All you need to do in order to define a model is to write your model interface: `IMyModel` with the properties you want:
 
@@ -91,10 +90,13 @@ All you need to do in order to define a model is to write your model interface: 
     }
 ```
 
-The GeneratorTools project provides you the tools to help you to generate the model implementation based on
+The GeneratorTools project provides you the tools to help you to generate the implementation for a given interface based on
 a pattern you can define in C# :
 
-* The Pattern model interface
+* The Pattern interface
+
+Basically, this is the simplest example of the interface you want the user to write. Here we have only one
+property defined in the interface.
 
 ```csharp
     /// <summary>
@@ -109,21 +111,32 @@ a pattern you can define in C# :
     }
 ```
 
-* The Pattern model implementation
+* The Pattern implementation
+
+The pattern implementation is the code you want the tool to generate for the pattern interface.
+So in our example it will define a field and a property that is updating the IsDirty flag when
+it is modified.
 
 ```csharp
     /// <summary>
-    /// Model pattern implementation.
+    /// Model pattern implementation that should be generated for the previous pattern model interface.
     /// </summary>
     public class ModelPattern : IModelPattern
     {
-        private object propertyPattern;
-
-        /// <inheritdoc/>
+        /// <summary>
+        /// The IsDirty implementation.
+        /// </summary>
         public bool IsDirty
         { get; private set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// The field used be the property implementation.
+        /// </summary>
+        private object propertyPattern;
+
+        /// <summary>
+        /// The actual property implementation that is updating IsDirty on set.
+        /// </summary>
         public object PropertyPattern
         {
             get
@@ -140,22 +153,85 @@ a pattern you can define in C# :
     }
 ```
 
-The result of the generated implementation for `IMyModel` is going to be like this:
+We expected the tool to generate implementations for all interfaces based on IModelBase. It will generate the field and
+the property code replacing the pattern name with the real name of the property. And the generator is going to repeat
+this code generation for every property defined in the interface.
+
+In order to inform the generator tool if a code must be repeated or not, we have to add some attributes in
+the implementation pattern.
+
+Let's get back to our pattern implementation example with the attributes added:
 
 ```csharp
     /// <summary>
-    /// Model pattern implementation.
+    /// Here we need two attributes:
+    /// * The Pattern attribute tells the generator how it can find the interfaces from witch it must generate the
+    ///  implementation based on the implementation pattern.
+    ///  Here we use typeof(InterfaceBasedOnSelector<IModelBase>) to tell the generator to generate code for all
+    ///  interfaces extending the IModelBase interface.
+    ///  
+    /// * The Repeat attribute means that the generator must repeat the pattern model implementation on each
+    ///  interfaces targeted by the Pattern attribute.
+    ///  The Pattern argument given in the Repeat attribute allows the generator to make the link with the interface
+    ///  pattern model.
+    ///  The argument Prefix given in the Repeat attribute allows the generator to make text replacement from the
+    ///  pattern model implementation to the generated code. Here it will replace all IModelPattern text by the real
+    ///  name of the targeted interface.
+    ///  
     /// </summary>
-    public class MyModel : IMyModel
+    [Pattern(typeof(InterfaceBasedOnSelector<IModelBase>))]
+    [Repeat(Pattern = nameof(IModelPattern), Prefix = "I")]
+    public class ModelPattern : IModelPattern
     {
-        private string myFirstProperty;
-        private double mySecondProperty;
-
-        /// <inheritdoc/>
+        /// <summary>
+        /// We don't need any attribute since we just want the generator to copy the IsDirty property.
+        /// </summary>
         public bool IsDirty
         { get; private set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Here we need the Repeat attribute to tell the generator that we want to repeat the field for each
+        /// Property defined in the targeted interface. The Property are selected matching the one in the pattern
+        /// model interface (In this case PropertyPattern in IModelPattern).
+        /// </summary>
+        [Repeat(Pattern = nameof(IModelPattern.PropertyPattern))]
+        private object propertyPattern;
+
+        /// <summary>
+        /// Here again we need the Repeat attribute to tell the generator that we want to repeat the Property for each
+        /// Property defined in the targeted interface.
+        /// </summary>
+        [Repeat(Pattern = nameof(IModelPattern.PropertyPattern))]
+        public object PropertyPattern
+        {
+            get
+            {
+                return this.propertyPattern;
+            }
+
+            set
+            {
+                this.propertyPattern = null;
+                this.IsDirty = true;
+            }
+        }
+    }
+```
+
+So the result of the generated implementation for `IMyModel` is going to be like this:
+
+```csharp
+    /// <summary>
+    /// Model implementation.
+    /// </summary>
+    public class MyModel : IMyModel
+    {
+        public bool IsDirty
+        { get; private set; }
+
+        private string myFirstProperty;
+        private double mySecondProperty;
+
         public string MyFirstProperty
         {
             get
@@ -170,7 +246,6 @@ The result of the generated implementation for `IMyModel` is going to be like th
             }
         }
 
-        /// <inheritdoc/>
         public double MySecondProperty
         {
             get
@@ -187,6 +262,8 @@ The result of the generated implementation for `IMyModel` is going to be like th
     }
 ```
 
+## How to use it
+
 ### Dependency injection
 
 First if you are using dependency injection, you need to use the method extension to register the services:
@@ -202,9 +279,10 @@ void Setup(IServiceCollection serviceCollection)
 
 ### Parse your existing C# projects and source files
 
-In order to load and parse a C# project you need to use a `SoloX.GeneratorTools.Core.CSharp.Workspace.ICSharpWorkspace`.
+In order to load and parse a C# project you need to use a `SoloX.GeneratorTools.Core.CSharp.Workspace.ICSharpWorkspace`
+created from the factory `SoloX.GeneratorTools.Core.CSharp.Workspace.ICSharpWorkspaceFactory`.
 
-Let's define a `ModelGenerator` with a `ICSharpWorkspace` constructor argument:
+Let's define a `ModelGenerator` with a `ICSharpWorkspaceFactory` constructor argument:
 
 ```csharp
     /// <summary>
@@ -212,24 +290,27 @@ Let's define a `ModelGenerator` with a `ICSharpWorkspace` constructor argument:
     /// </summary>
     public class ModelGenerator
     {
-        private ICSharpWorkspace workspace;
+        private ICSharpWorkspaceFactory workspaceFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelGenerator"/> class.
         /// </summary>
-        /// <param name="workspace">The workspace to use to load the project data.</param>
-        public ModelGenerator(ICSharpWorkspace workspace)
+        /// <param name="workspaceFactory">The workspace to use to load the project data.</param>
+        public ModelGenerator(ICSharpWorkspaceFactory workspaceFactory)
         {
-            this.workspace = workspace;
+            this.workspaceFactory = workspaceFactory;
         }
     }
 ```
 
-Now we can use the `workspace` to register a project with the pattern we need and we can load the sources.
+Now we can create and use the `workspace` to register a project with the pattern we need and we can load the sources.
 
 ```csharp
+    // Create a Workspace
+    var workspace = this.workspaceFactory.CreateWorkspace();
+
     // First we need to register the project.
-    this.workspace.RegisterProject(projectFile);
+    workspace.RegisterProject(projectFile);
 
     // Register the pattern interface.
     var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IModelPattern.cs")
@@ -237,64 +318,38 @@ Now we can use the `workspace` to register a project with the pattern we need an
 
     // Register the pattern implementation.
     var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/ModelPattern.cs")
-        .Declarations.Single() as IGenericDeclaration;
+        .Declarations.Single() as IGenericDeclaration<SyntaxNode>;
 
-    // Load the project and its project dependencies. (Note that for now we only load the sources.
-    // The binary assembly dependencies are not taken into account)
+    // Load the project and its project dependencies. (Note that we load the sources and the binary assembly
+    // dependencies. Both are taken into account)
     var resolver = this.workspace.DeepLoad();
 ```
 
-Once all is loaded we can get the `IModelBase` descriptor and get all interfaces extending it:
+### Generate your class implementation from a given project files and the pattern
+
+The GeneratorTools project provides a `AutomatedGenerator` that can generate all class implementations from
+the pattern and the project files:
 
 ```csharp
-    // Get the base interface in order to find all extended interfaces that need to be implemented.
-    var modelBaseInterface = resolver.Find("IModelBase").Single() as IGenericDeclaration;
-
-    var allModelInterfaces = modelBaseInterface.ExtendedBy;
-```
-
-### Generate your class implementation from a given interface and the pattern
-
-The GeneratorTools project provides a `ImplementationGenerator` that can generate a class implementation from
-the pattern and the model interface:
-
-```csharp
-    // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
-    var generator = new ImplementationGenerator(
+    // Create the `AutomatedGenerator` with a file generator, the locator and the pattern interface/class.
+    var generator = new AutomatedGenerator(
         // Tells that we want to write the implementation in a file.
         new FileGenerator(".generated.cs"),
         // Tells that we want the implementation class to be located at the same location than its model interface.
         new RelativeLocator(projectFolder, projectNameSpace),
-        // The pattern interface we loaded previously.
-        patternInterfaceDeclaration,
-        // The pattern implementation we loaded previously.
-        patternImplementationDeclaration);
+        // The target project type resolver. (previously created)
+        resolver,
+        // The pattern type.
+        typeof(ModelPattern),
+        // A Logger forwarding logs to the given `ILogger`.
+        new GeneratorLogger<ModelGeneratorExample>(this.logger));
 ```
 
-With this created instance we can call the `Generate` method with the model interface we want to implement and the name of the implementation class.
-It also requires a `WriterSelector` initialized with a `INodeWriter` collection:
+With this created generator instance we can call the `Generate` method with the set of files where to apply the
+pattern selector to get all interfaces to generate.
 
 ```csharp
-    // Loop on all interface extending the base model interface.
-    foreach (var modelInterface in allModelInterfaces)
-    {
-        var implName = GeneratorHelper.ComputeClassName(modelInterface.Name);
-
-        // Create the property writer what will use all properties from the model interface to generate
-        // and write the corresponding code depending on the given pattern property.
-        var propertyWriter = new PropertyWriter(
-            patternInterfaceDeclaration.Properties.Single(),
-            modelInterface.Properties);
-
-        // Setup some basic text replacement writer.
-        var itfNameWriter = new StringReplaceWriter(patternInterfaceDeclaration.Name, modelInterface.Name);
-        var implNameWriter = new StringReplaceWriter(patternImplementationDeclaration.Name, implName);
-
-        // Create the writer selector.
-        var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
-
-        // And generate the class implementation.
-        generator.Generate(writerSelector, (IInterfaceDeclaration)modelInterface, implName);
-    }
+    // Generate the implementations from the given files.
+    generator.Generate(project.Files);
 ```
 

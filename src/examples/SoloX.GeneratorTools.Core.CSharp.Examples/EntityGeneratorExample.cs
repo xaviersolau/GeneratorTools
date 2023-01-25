@@ -10,14 +10,13 @@ using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
+using SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Generator.Impl;
-using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
-using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples
 {
@@ -27,17 +26,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     public class EntityGeneratorExample
     {
         private readonly ILogger<EntityGeneratorExample> logger;
-        private readonly ICSharpWorkspace workspace;
+        private readonly ICSharpWorkspaceFactory workspaceFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityGeneratorExample"/> class.
         /// </summary>
         /// <param name="logger">The logger to log the output messages.</param>
-        /// <param name="workspace">The workspace to use to load the project data.</param>
-        public EntityGeneratorExample(ILogger<EntityGeneratorExample> logger, ICSharpWorkspace workspace)
+        /// <param name="workspaceFactory">The factory to use to create a workspace to load the project data.</param>
+        public EntityGeneratorExample(ILogger<EntityGeneratorExample> logger, ICSharpWorkspaceFactory workspaceFactory)
         {
             this.logger = logger;
-            this.workspace = workspace;
+            this.workspaceFactory = workspaceFactory;
         }
 
         /// <summary>
@@ -50,57 +49,32 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
 
             var projectFolder = Path.GetDirectoryName(projectFile);
 
+            // Create a Workspace
+            var workspace = this.workspaceFactory.CreateWorkspace();
+
             // First we need to register the project.
-            var project = this.workspace.RegisterProject(projectFile);
+            var project = workspace.RegisterProject(projectFile);
 
             // Register the pattern interface.
-            var patternInterfaceDeclaration = this.workspace.RegisterFile("./Patterns/Itf/IEntityPattern.cs")
+            var patternInterfaceDeclaration = workspace.RegisterFile("./Patterns/Itf/IEntityPattern.cs")
                 .Declarations.Single() as IInterfaceDeclaration;
 
             // Register the pattern implementation.
-            var patternImplementationDeclaration = this.workspace.RegisterFile("./Patterns/Impl/EntityPattern.cs")
+            var patternImplementationDeclaration = workspace.RegisterFile("./Patterns/Impl/EntityPattern.cs")
                 .Declarations.Single() as IGenericDeclaration<SyntaxNode>;
 
             // Load the project and its project dependencies. (Note that for now we only load the sources.
             // The binary assembly dependencies are not taken into account)
-            var resolver = this.workspace.DeepLoad();
-
-            // Get the base interface in order to find all extended interfaces that need to be implemented.
-            var entityBaseInterface = resolver.Find("SoloX.GeneratorTools.Core.CSharp.Examples.Core.IEntityBase").Single() as IGenericDeclaration<SyntaxNode>;
+            var resolver = workspace.DeepLoad();
 
             // Setup a locator that will tell the location where the generated classes must be written.
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
 
-            // Create the Implementation Generator with a file generator, the locator and the pattern interface/class.
-            var generator = new ImplementationGenerator(
-                new FileWriter(".generated.cs"),
-                locator,
-                patternInterfaceDeclaration,
-                patternImplementationDeclaration);
+            // Create the automated generator.
+            var generator = new AutomatedGenerator(new FileWriter(".generated.cs"), locator, resolver, typeof(EntityPattern), new GeneratorLogger<EntityGeneratorExample>(this.logger));
 
-            // Loop on all interface extending the base interface.
-            foreach (var extendedByItem in entityBaseInterface.ExtendedBy.Where(d => d != patternInterfaceDeclaration))
-            {
-                this.logger.LogInformation(extendedByItem.FullName);
-
-                var implName = GeneratorHelper.ComputeClassName(extendedByItem.Name);
-
-                // Create the property writer what will extract all properties from the interface to generate and write
-                // the corresponding code depending on the given patterns.
-                var propertyWriter = new PropertyWriter(
-                    patternInterfaceDeclaration.Properties.Single(),
-                    extendedByItem.Properties);
-
-                // Setup some basic text replacement writer.
-                var itfNameWriter = new StringReplaceWriter(patternInterfaceDeclaration.Name, extendedByItem.Name);
-                var implNameWriter = new StringReplaceWriter(patternImplementationDeclaration.Name, implName);
-
-                // Create the writer selector.
-                var writerSelector = new WriterSelector(propertyWriter, itfNameWriter, implNameWriter);
-
-                // And generate the class implementation.
-                generator.Generate(writerSelector, (IInterfaceDeclaration)extendedByItem, implName);
-            }
+            // Generate the files.
+            generator.Generate(project.Files);
         }
     }
 }

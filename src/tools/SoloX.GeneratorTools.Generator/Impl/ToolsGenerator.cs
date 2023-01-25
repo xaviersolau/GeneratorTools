@@ -70,7 +70,6 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 resolver,
                 typeof(IFactoryPattern),
-                null,
                 this.logger);
 
             var generatedItems1 = generator1.Generate(files);
@@ -80,7 +79,6 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 resolver,
                 typeof(FactoryPattern),
-                null,
                 this.logger);
 
             var generatedItems2 = generator2.Generate(files);
@@ -90,7 +88,6 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 resolver,
                 typeof(ObjectPattern),
-                null,
                 this.logger);
 
             var generatedItems3 = generator3.Generate(files);

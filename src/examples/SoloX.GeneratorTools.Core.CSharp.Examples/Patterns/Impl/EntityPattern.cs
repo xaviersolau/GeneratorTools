@@ -8,7 +8,10 @@
 
 using System;
 using System.CodeDom.Compiler;
+using SoloX.GeneratorTools.Core.CSharp.Examples.Core;
 using SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
 {
@@ -16,10 +19,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
     /// Entity implementation pattern used in the generator.
     /// </summary>
     [GeneratedCode("TOOL", "VERSION")]
+    [Pattern(typeof(InterfaceBasedOnSelector<IEntityBase>))]
+    [Repeat(Pattern = nameof(IEntityPattern), Prefix = "I")]
     public partial class EntityPattern : IEntityPattern
     {
-
         /// <inheritdoc/>
+        [Repeat(Pattern = nameof(IEntityPattern.PropertyPattern))]
         public object PropertyPattern
         { get; set; }
 
