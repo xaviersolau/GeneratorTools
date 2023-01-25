@@ -43,9 +43,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <param name="locator">Code generation locator.</param>
         /// <param name="resolver">The resolver to resolve workspace symbols.</param>
         /// <param name="patternType">The pattern type to use.</param>
-        /// <param name="selectorResolver">Selector resolver or null to use the default one.</param>
         /// <param name="logger">Logger instance.</param>
-        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, ISelectorResolver selectorResolver, IGeneratorLogger logger)
+        /// <param name="selectorResolver">Selector resolver or null to use the default one.</param>
+        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, IGeneratorLogger logger, ISelectorResolver selectorResolver = null)
         {
             if (writer == null)
             {

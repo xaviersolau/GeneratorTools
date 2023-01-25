@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entity\Impl\" />
     <Folder Include="Model\Impl\" />
   </ItemGroup>
 
