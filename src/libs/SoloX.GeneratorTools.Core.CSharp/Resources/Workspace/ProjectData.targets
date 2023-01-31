@@ -2,12 +2,18 @@
 
   <Target Name="ProjectData">
     <Message Importance="high" Text="{" />
+    <Message Importance="high" Text="&quot;TargetFramework&quot; : &quot;$(TargetFramework)&quot;," />
+    <Message Importance="high" Text="&quot;TargetFrameworks&quot; : &quot;$(TargetFrameworks)&quot;," />
     <Message Importance="high" Text="&quot;RootNamespace&quot; : &quot;$(RootNamespace)&quot;," />
     <Message Importance="high" Text="&quot;ProjectAssetsFile&quot; : &quot;$(ProjectAssetsFile)&quot;," />
     <Message Condition="'@(ProjectReference)' != ''"
              Importance="high" Text="&quot;ProjectReferences&quot; : [ &quot;@(ProjectReference, '&quot;, &quot;')&quot; ]," />
+    <Message Condition="'@(ProjectReference)' == ''"
+             Importance="high" Text="&quot;ProjectReferences&quot; : [ ]," />
     <Message Condition="'@(Compile)' != ''"
              Importance="high" Text="&quot;CompileList&quot; : [ &quot;@(Compile, '&quot;, &quot;')&quot; ]" />
+    <Message Condition="'@(Compile)' == ''"
+             Importance="high" Text="&quot;CompileList&quot; : [ ]" />
     <Message Importance="high" Text="}" />
   </Target>
 

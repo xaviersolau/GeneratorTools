@@ -19,21 +19,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpProjectData"/> class.
         /// </summary>
+        /// <param name="targetFramework">The TargetFramework property.</param>
+        /// <param name="targetFrameworks">The TargetFrameworks property.</param>
         /// <param name="rootNamespace">The project root name space.</param>
         /// <param name="projectAssetsFile">The project assets file path.</param>
         /// <param name="projectReferences">The project references.</param>
         /// <param name="compileList">The compile list.</param>
         public CSharpProjectData(
+            string targetFramework,
+            string targetFrameworks,
             string rootNamespace,
             string projectAssetsFile,
             IReadOnlyCollection<string> projectReferences,
             IReadOnlyCollection<string> compileList)
         {
+            this.TargetFramework = targetFramework;
+            this.TargetFrameworks = targetFrameworks;
             this.RootNamespace = rootNamespace;
             this.ProjectAssetsFile = projectAssetsFile;
             this.ProjectReferences = projectReferences ?? Array.Empty<string>();
             this.CompileList = compileList ?? Array.Empty<string>();
         }
+
+        /// <summary>
+        /// Gets the TargetFramework property
+        /// </summary>
+        public string TargetFramework { get; private set; }
+
+        /// <summary>
+        /// Gets the TargetFrameworks property
+        /// </summary>
+        public string TargetFrameworks { get; private set; }
 
         /// <summary>
         /// Gets root name space.

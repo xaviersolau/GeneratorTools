@@ -24,17 +24,17 @@ namespace SoloX.GeneratorTools.Generator.Impl
     public class ToolsGenerator : IToolsGenerator
     {
         private readonly IGeneratorLogger<ToolsGenerator> logger;
-        private readonly ICSharpWorkspace workspace;
+        private readonly ICSharpWorkspaceFactory workspaceFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolsGenerator"/> class.
         /// </summary>
         /// <param name="logger">Logger that will be used for logs.</param>
-        /// <param name="workspace">The workspace to use.</param>
-        public ToolsGenerator(IGeneratorLogger<ToolsGenerator> logger, ICSharpWorkspace workspace)
+        /// <param name="workspaceFactory">The workspace to use.</param>
+        public ToolsGenerator(IGeneratorLogger<ToolsGenerator> logger, ICSharpWorkspaceFactory workspaceFactory)
         {
             this.logger = logger;
-            this.workspace = workspace;
+            this.workspaceFactory = workspaceFactory;
         }
 
         /// <inheritdoc/>
@@ -44,26 +44,29 @@ namespace SoloX.GeneratorTools.Generator.Impl
 
             this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
 
-            var project = this.workspace.RegisterProject(projectFile);
+            var workspace = this.workspaceFactory.CreateWorkspace();
+
+            var project = workspace.RegisterProject(projectFile);
 
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
             var fileGenerator = new FileWriter(".generated.cs");
 
             // Generate with a filter on current project interface declarations.
             this.Generate(
+                workspace,
                 locator,
                 fileGenerator,
                 project.Files);
         }
 
-        internal void Generate(RelativeLocator locator, IWriter fileGenerator, IEnumerable<ICSharpFile> files)
+        internal void Generate(ICSharpWorkspace workspace, RelativeLocator locator, IWriter fileGenerator, IEnumerable<ICSharpFile> files)
         {
-            this.workspace.RegisterFile(GetContentFile("./Patterns/Itf/IObjectPattern.cs"));
-            this.workspace.RegisterFile(GetContentFile("./Patterns/Itf/IFactoryPattern.cs"));
-            this.workspace.RegisterFile(GetContentFile("./Patterns/Impl/FactoryPattern.cs"));
-            this.workspace.RegisterFile(GetContentFile("./Patterns/Impl/ObjectPattern.cs"));
+            workspace.RegisterFile(GetContentFile("./Patterns/Itf/IObjectPattern.cs"));
+            workspace.RegisterFile(GetContentFile("./Patterns/Itf/IFactoryPattern.cs"));
+            workspace.RegisterFile(GetContentFile("./Patterns/Impl/FactoryPattern.cs"));
+            workspace.RegisterFile(GetContentFile("./Patterns/Impl/ObjectPattern.cs"));
 
-            var resolver = this.workspace.DeepLoad();
+            var resolver = workspace.DeepLoad();
 
             var generator1 = new AutomatedGenerator(
                 fileGenerator,
