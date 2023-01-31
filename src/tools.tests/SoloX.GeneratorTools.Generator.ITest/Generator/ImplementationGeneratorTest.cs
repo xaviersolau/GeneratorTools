@@ -59,14 +59,14 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
 
                 var generator = new ToolsGenerator(
                     sp.GetService<IGeneratorLogger<ToolsGenerator>>(),
-                    workspace);
+                    workspaceFactory);
 
                 var inputs = new HashSet<string>();
                 var locator = new RelativeLocator(string.Empty, "target.name.space");
 
                 var snapshotGenerator = new SnapshotWriter();
 
-                generator.Generate(locator, snapshotGenerator, workspace.Files);
+                generator.Generate(workspace, locator, snapshotGenerator, workspace.Files);
 
                 var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
                 SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);

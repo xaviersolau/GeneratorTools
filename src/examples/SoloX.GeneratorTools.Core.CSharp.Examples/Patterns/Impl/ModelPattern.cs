@@ -20,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
     [Repeat(Pattern = nameof(IModelPattern), Prefix = "I")]
     public class ModelPattern : IModelPattern
     {
-        [Repeat(Pattern = nameof(IModelPattern.PropertyPattern))]
+        [Repeat]
         private object propertyPattern;
 
         /// <inheritdoc/>
@@ -28,7 +28,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
         { get; private set; }
 
         /// <inheritdoc/>
-        [Repeat(Pattern = nameof(IModelPattern.PropertyPattern))]
+        [Repeat]
         public object PropertyPattern
         {
             get

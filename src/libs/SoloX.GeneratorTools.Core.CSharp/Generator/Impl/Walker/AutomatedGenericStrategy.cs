@@ -113,29 +113,40 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             AttributeSyntax repeatAttributeSyntax,
             Action<IAutomatedStrategy> callback)
         {
+            var patternArgumentExp = repeatAttributeSyntax.ArgumentList?.Arguments
+                .FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Pattern))?.Expression;
+            var patternPrefixExp = repeatAttributeSyntax.ArgumentList?.Arguments
+                .FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Prefix))?.Expression;
+            var patternSuffixExp = repeatAttributeSyntax.ArgumentList?.Arguments
+                .FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Suffix))?.Expression;
+
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
-            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList
-                .Arguments.First(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Pattern)).Expression);
 
-            var patternPrefixExp = repeatAttributeSyntax.ArgumentList
-                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Prefix))?.Expression;
-            var patternSuffixExp = repeatAttributeSyntax.ArgumentList
-                .Arguments.FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Suffix))?.Expression;
-
+            var patternName = patternArgumentExp != null ? constEvaluator.Visit(patternArgumentExp) : null;
             var patternPrefix = patternPrefixExp != null ? constEvaluator.Visit(patternPrefixExp) : null;
             var patternSuffix = patternSuffixExp != null ? constEvaluator.Visit(patternSuffixExp) : null;
 
-            var resolvedPattern = this.resolver.Resolve(patternName, this.pattern);
-
-            // Check if this is self repeat pattern reference.
-            if (object.ReferenceEquals(this.pattern, resolvedPattern))
+            if (!string.IsNullOrEmpty(patternName))
             {
-                callback(this);
-                return;
+                var resolvedPattern = this.resolver.Resolve(patternName, this.pattern);
+
+                // Check if this is self repeat pattern reference.
+                if (object.ReferenceEquals(this.pattern, resolvedPattern))
+                {
+                    callback(this);
+                    return;
+                }
+            }
+
+            if (this.pattern.Members.Count != 1 && string.IsNullOrEmpty(patternName))
+            {
+                throw new InvalidOperationException($"The Repeat pattern name must be specified since several members are defined in {this.pattern.Name}");
             }
 
             // get the member from the current pattern generic definition.
-            var repeatPatternMember = this.pattern.Members.First(p => p.Name == patternName);
+            var repeatPatternMember = string.IsNullOrEmpty(patternName)
+                ? this.pattern.Members.Single()
+                : this.pattern.Members.First(p => p.Name == patternName);
 
             if (repeatPatternMember is IPropertyDeclaration repeatProperty)
             {

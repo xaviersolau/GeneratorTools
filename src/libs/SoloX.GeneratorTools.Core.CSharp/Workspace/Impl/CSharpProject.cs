@@ -87,10 +87,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             this.DotNetRestore();
 
             // Get the project data.
-            var projectDataStr = this.DeployAndRunTarget(ProjectData);
+            var projectDataStr = this.DeployAndRunTarget(ProjectData, null);
             projectDataStr = projectDataStr.Replace(@"\", @"/");
 
             var projectData = JsonSerializer.Deserialize<CSharpProjectData>(projectDataStr);
+
+            if (string.IsNullOrEmpty(projectData.TargetFramework) && !string.IsNullOrEmpty(projectData.TargetFrameworks))
+            {
+                projectDataStr = this.DeployAndRunTarget(ProjectData, new Dictionary<string, string>()
+                {
+                    ["TargetFramework"] = projectData.TargetFrameworks.Split(';').First(),
+                });
+
+                projectDataStr = projectDataStr.Replace(@"\", @"/");
+
+                projectData = JsonSerializer.Deserialize<CSharpProjectData>(projectDataStr);
+            }
 
             this.RootNameSpace = projectData.RootNamespace;
 
@@ -148,13 +160,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 assemblyFile);
         }
 
-        private string DeployAndRunTarget(string target)
+        private string DeployAndRunTarget(string target, Dictionary<string, string> properties)
         {
             // Generate and inject the target.
             this.DeployTarget(target);
 
             // Not we can call the target and get the output. (dotnet msbuild -t:target -nologo)
-            return this.RunTarget(target);
+            return this.RunTarget(target, properties);
         }
 
         private void DotNetRestore()
@@ -176,9 +188,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             }
         }
 
-        private string RunTarget(string target)
+        private string RunTarget(string target, Dictionary<string, string> properties)
         {
-            var processStartInfo = new ProcessStartInfo(DotNet, $"msbuild -t:{target} -nologo")
+            var propertiesArgs = string.Empty;
+
+            if (properties != null && properties.Any())
+            {
+                foreach (var property in properties)
+                {
+                    propertiesArgs += $" -p:{property.Key}={property.Value}";
+                }
+            }
+
+            var processStartInfo = new ProcessStartInfo(DotNet, $"msbuild -t:{target} {propertiesArgs} -nologo")
             {
                 WorkingDirectory = this.ProjectPath,
                 RedirectStandardOutput = true,
@@ -217,7 +239,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 Directory.CreateDirectory(outputFolder);
             }
 
-            if (!File.Exists(outputFileName))
+            var copy = true;
+            if (File.Exists(outputFileName))
+            {
+                // check if modified.
+                using (var targetFile = currentAssembly.GetManifestResourceStream(resName))
+                using (var targetReader = new StreamReader(targetFile))
+                using (var outputFile = File.OpenRead(outputFileName))
+                using (var outputReader = new StreamReader(outputFile))
+                {
+                    var targetTxt = targetReader.ReadToEnd();
+                    var outputTxt = outputReader.ReadToEnd();
+                    copy = targetTxt != outputTxt;
+                }
+            }
+
+            if (copy)
             {
                 using (var targetFile = currentAssembly.GetManifestResourceStream(resName))
                 using (var outputFile = System.IO.File.OpenWrite(outputFileName))

@@ -20,7 +20,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// <summary>
         /// Gets or sets the repeat pattern.
         /// </summary>
-        public string Pattern { get; set; }
+        public string? Pattern { get; set; }
 
         /// <summary>
         /// Gets or sets the repeat pattern prefix.
