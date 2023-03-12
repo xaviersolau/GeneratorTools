@@ -19,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Runtime.CompilerServices;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {
@@ -239,14 +240,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
             if (!typeDefinition.BaseType.IsNil)
             {
-                uses.Add(GetDeclarationUseFrom(metadataReader, typeDefinition.BaseType, resolver, declaration));
+                var baseTypeDeclarationUse = GetDeclarationUseFrom(metadataReader, typeDefinition.BaseType, resolver, declaration);
+
+                if (baseTypeDeclarationUse != null && baseTypeDeclarationUse.Declaration.FullName != typeof(object).FullName)
+                {
+                    uses.Add(baseTypeDeclarationUse);
+                }
             }
 
             foreach (var interfaceImplementation in typeDefinition.GetInterfaceImplementations())
             {
                 if (!interfaceImplementation.IsNil)
                 {
-                    uses.Add(GetDeclarationUseFrom(metadataReader, interfaceImplementation, resolver, declaration));
+                    var interfaceDeclarationUse = GetDeclarationUseFrom(metadataReader, interfaceImplementation, resolver, declaration);
+
+                    if (interfaceDeclarationUse != null)
+                    {
+                        uses.Add(interfaceDeclarationUse);
+                    }
                 }
             }
 
@@ -298,12 +309,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                     return LoadDeclarationUseFromTypeReference(metadataReader, (TypeReferenceHandle)typeHandle, resolver);
                 case HandleKind.TypeSpecification:
                     return LoadDeclarationUseFromTypeSpecification(metadataReader, (TypeSpecificationHandle)typeHandle, resolver, declarationContext);
+                case HandleKind.InterfaceImplementation:
+                    return LoadDeclarationUseFromInterfaceImplementation(metadataReader, (InterfaceImplementationHandle)typeHandle, resolver, declarationContext);
                 default:
                     break;
             }
 #pragma warning restore IDE0010 // Add missing cases
 
             return null;
+        }
+
+        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromInterfaceImplementation(
+            MetadataReader metadataReader,
+            InterfaceImplementationHandle interfaceImplementationHandle,
+            IDeclarationResolver resolver,
+            IGenericDeclaration<TNode> declarationContext)
+        {
+            var interfaceImplementation = metadataReader.GetInterfaceImplementation(interfaceImplementationHandle);
+
+            var interfaceHandle = interfaceImplementation.Interface;
+
+            var declarationUse = GetDeclarationUseFrom(metadataReader, interfaceHandle, resolver, declarationContext);
+
+            return declarationUse;
         }
 
         private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromTypeSpecification(
@@ -402,7 +430,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return name;
         }
 
-        private static string LoadString(MetadataReader metadataReader, StringHandle stringHandle)
+        internal static string LoadString(MetadataReader metadataReader, StringHandle stringHandle)
         {
             return stringHandle.IsNil ? null : metadataReader.GetString(stringHandle);
         }
@@ -414,6 +442,126 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 return name;
             }
             return $"{ns}.{name}";
+        }
+
+        internal static bool ProbeValueType(MetadataReader metadataReader, TypeDefinition typeDefinition)
+        {
+            var baseTypeHandle = typeDefinition.BaseType;
+
+            var attributes = typeDefinition.Attributes;
+
+            var classSemantics = attributes & TypeAttributes.ClassSemanticsMask;
+
+            var layout = attributes & TypeAttributes.LayoutMask;
+
+            var sealedAttr = attributes & TypeAttributes.Sealed;
+
+            if (!baseTypeHandle.IsNil && baseTypeHandle.Kind == HandleKind.TypeReference
+                && classSemantics == TypeAttributes.Class && layout == TypeAttributes.SequentialLayout && sealedAttr == TypeAttributes.Sealed)
+            {
+                var typeRef = metadataReader.GetTypeReference((TypeReferenceHandle)baseTypeHandle);
+
+                var name = LoadString(metadataReader, typeRef.Name);
+                var ns = LoadString(metadataReader, typeRef.Namespace);
+
+                return typeof(ValueType).FullName == $"{ns}.{name}";
+            }
+
+            return false;
+        }
+
+        internal static bool ProbeEnumType(MetadataReader metadataReader, TypeDefinition typeDefinition)
+        {
+            var baseTypeHandle = typeDefinition.BaseType;
+
+            var attributes = typeDefinition.Attributes;
+
+            var classSemantics = attributes & TypeAttributes.ClassSemanticsMask;
+
+            var layout = attributes & TypeAttributes.LayoutMask;
+
+            var sealedAttr = attributes & TypeAttributes.Sealed;
+
+            if (!baseTypeHandle.IsNil && baseTypeHandle.Kind == HandleKind.TypeReference
+                && classSemantics == TypeAttributes.Class && layout == TypeAttributes.AutoLayout && sealedAttr == TypeAttributes.Sealed)
+            {
+                var typeRef = metadataReader.GetTypeReference((TypeReferenceHandle)baseTypeHandle);
+
+                var name = LoadString(metadataReader, typeRef.Name);
+                var ns = LoadString(metadataReader, typeRef.Namespace);
+
+                return typeof(Enum).FullName == $"{ns}.{name}";
+            }
+
+            return false;
+        }
+
+        internal static bool ProbeRecordStructType(MetadataReader metadataReader, TypeDefinition typeDefinition)
+        {
+            // Probe record struct type looking for "PrintMembers" method
+            foreach (var methodHandle in typeDefinition.GetMethods())
+            {
+                var methodDefinition = metadataReader.GetMethodDefinition(methodHandle);
+
+                var methodName = LoadString(metadataReader, methodDefinition.Name);
+
+                if ("PrintMembers".Equals(methodName, StringComparison.Ordinal))
+                {
+                    return HasCustomAttribute<CompilerGeneratedAttribute>(metadataReader, methodDefinition.GetCustomAttributes());
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool ProbeRecordType(MetadataReader metadataReader, TypeDefinition typeDefinition)
+        {
+            // Probe record type looking for the "<Clone>$" method.
+            foreach (var methodHandle in typeDefinition.GetMethods())
+            {
+                var methodDefinition = metadataReader.GetMethodDefinition(methodHandle);
+
+                var methodName = LoadString(metadataReader, methodDefinition.Name);
+
+                if ("<Clone>$".Equals(methodName, StringComparison.Ordinal))
+                {
+                    return HasCustomAttribute<CompilerGeneratedAttribute>(metadataReader, methodDefinition.GetCustomAttributes());
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasCustomAttribute<TAttribute>(MetadataReader metadataReader, CustomAttributeHandleCollection attributeHandles)
+        {
+            foreach (var attributeHandle in attributeHandles)
+            {
+                var attribute = metadataReader.GetCustomAttribute(attributeHandle);
+
+                if (attribute.Constructor.Kind == HandleKind.MemberReference)
+                {
+                    var memberReferenceHandler = (MemberReferenceHandle)attribute.Constructor;
+                    var memberReference = metadataReader.GetMemberReference(memberReferenceHandler);
+
+                    var typeHandle = memberReference.Parent;
+                    if (typeHandle.Kind == HandleKind.TypeReference)
+                    {
+                        var typeReferenceHandle = (TypeReferenceHandle)typeHandle;
+                        var typeReference = metadataReader.GetTypeReference(typeReferenceHandle);
+
+                        var ns = LoadString(metadataReader, typeReference.Namespace);
+                        var name = LoadString(metadataReader, typeReference.Name);
+                        var fullName = GetFullName(ns, name);
+
+                        if (typeof(TAttribute).FullName.Equals(fullName, StringComparison.Ordinal))
+                        {
+                            // Got it!
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }

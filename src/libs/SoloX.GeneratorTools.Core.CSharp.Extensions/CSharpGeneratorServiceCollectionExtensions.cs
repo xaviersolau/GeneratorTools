@@ -49,6 +49,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
                 .AddSingleton<
                     ReflectionGenericDeclarationLoader<StructDeclarationSyntax>,
                     ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>()
+                .AddSingleton<IReflectionDeclarationFactory, ReflectionDeclarationFactory>()
                 .AddSingleton<
                     MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>,
                     MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>()
@@ -58,6 +59,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
                 .AddSingleton<
                     MetadataGenericDeclarationLoader<StructDeclarationSyntax>,
                     MetadataGenericDeclarationLoader<StructDeclarationSyntax>>()
+                .AddSingleton<IMetadataDeclarationFactory, MetadataDeclarationFactory>()
                 .AddSingleton<
                     ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>,
                     ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>>()
@@ -67,7 +69,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
                 .AddSingleton<
                     ParserGenericDeclarationLoader<StructDeclarationSyntax>,
                     ParserGenericDeclarationLoader<StructDeclarationSyntax>>()
-                .AddSingleton<IDeclarationFactory, DeclarationFactory>()
+                .AddSingleton<IParserDeclarationFactory, ParserDeclarationFactory>()
                 .AddSingleton<ICSharpWorkspaceItemFactory, CSharpWorkspaceItemFactory>()
                 .AddTransient<ICSharpWorkspaceFactory, CSharpWorkspaceFactory>()
                 .AddTransient<IGeneratorLoggerFactory, GeneratorLoggerFactory>();

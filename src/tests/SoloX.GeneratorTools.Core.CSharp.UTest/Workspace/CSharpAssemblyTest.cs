@@ -35,7 +35,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var assembly = typeof(CSharpAssemblyTest).Assembly;
             var csAssembly = new CSharpAssembly(
                 LoggerHelper.CreateGeneratorLogger<CSharpAssembly>(this.testOutputHelper),
-                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper),
+                DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
                 assembly);
 
             csAssembly.Load(Mock.Of<ICSharpWorkspace>());

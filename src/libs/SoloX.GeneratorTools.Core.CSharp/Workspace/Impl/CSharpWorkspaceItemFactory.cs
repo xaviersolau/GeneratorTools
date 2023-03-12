@@ -19,17 +19,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     public class CSharpWorkspaceItemFactory : ICSharpWorkspaceItemFactory
     {
         private readonly IGeneratorLoggerFactory loggerFactory;
-        private readonly IDeclarationFactory declarationFactory;
+        private readonly IParserDeclarationFactory parserDeclarationFactory;
+        private readonly IReflectionDeclarationFactory reflectionDeclarationFactory;
+        private readonly IMetadataDeclarationFactory metadataDeclarationFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpWorkspaceItemFactory"/> class.
         /// </summary>
         /// <param name="loggerFactory">The logger provider.</param>
-        /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpWorkspaceItemFactory(IGeneratorLoggerFactory loggerFactory, IDeclarationFactory declarationFactory)
+        /// <param name="parserDeclarationFactory">The declaration factory to use to create declaration instances.</param>
+        public CSharpWorkspaceItemFactory(IGeneratorLoggerFactory loggerFactory,
+            IParserDeclarationFactory parserDeclarationFactory,
+            IReflectionDeclarationFactory reflectionDeclarationFactory,
+            IMetadataDeclarationFactory metadataDeclarationFactory)
         {
             this.loggerFactory = loggerFactory;
-            this.declarationFactory = declarationFactory;
+            this.parserDeclarationFactory = parserDeclarationFactory;
+            this.reflectionDeclarationFactory = reflectionDeclarationFactory;
+            this.metadataDeclarationFactory = metadataDeclarationFactory;
         }
 
         /// <inheritdoc/>
@@ -37,14 +44,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             return new CSharpAssembly(
                 this.loggerFactory.CreateLogger<CSharpAssembly>(),
-                this.declarationFactory,
+                this.reflectionDeclarationFactory,
                 assembly);
         }
 
         /// <inheritdoc/>
         public ICSharpWorkspaceItemLoader<ICSharpFile> CreateFile(string file)
         {
-            return new CSharpFile(file, this.declarationFactory);
+            return new CSharpFile(file, this.parserDeclarationFactory);
         }
 
         /// <inheritdoc/>
@@ -52,7 +59,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             return new CSharpMetadataAssembly(
                 this.loggerFactory.CreateLogger<CSharpMetadataAssembly>(),
-                this.declarationFactory,
+                this.metadataDeclarationFactory,
                 assemblyFile);
         }
 
@@ -65,7 +72,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public ICSharpWorkspaceItemLoader<ICSharpSyntaxTree> CreateSyntaxTree(SyntaxTree syntaxTree)
         {
-            return new CSharpSyntaxTree(syntaxTree, this.declarationFactory);
+            return new CSharpSyntaxTree(syntaxTree, this.parserDeclarationFactory);
         }
     }
 }

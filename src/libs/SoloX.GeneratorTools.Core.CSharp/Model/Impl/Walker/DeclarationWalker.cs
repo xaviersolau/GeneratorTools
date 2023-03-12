@@ -21,13 +21,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly Stack<List<string>> usingDirectives =
             new Stack<List<string>>(new[] { new List<string>() });
 
-        private readonly IDeclarationFactory declarationFactory;
+        private readonly IParserDeclarationFactory declarationFactory;
 
         private readonly IList<IDeclaration<SyntaxNode>> declarations;
 
         private readonly string location;
 
-        public DeclarationWalker(IDeclarationFactory declarationFactory, IList<IDeclaration<SyntaxNode>> declarations, string location)
+        public DeclarationWalker(IParserDeclarationFactory declarationFactory, IList<IDeclaration<SyntaxNode>> declarations, string location)
         {
             this.declarationFactory = declarationFactory;
             this.declarations = declarations;
@@ -112,6 +112,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                 this.location);
 
             this.declarations.Add(enumDeclaration);
+        }
+
+        public override void VisitRecordDeclaration(RecordDeclarationSyntax node)
+        {
+            var currentNameSpace = this.nameSpace.Peek();
+            var currentUsingDirectives = this.usingDirectives.Peek();
+
+            IDeclaration<SyntaxNode> recordDeclaration = node.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword)
+                ? this.declarationFactory.CreateRecordStructDeclaration(
+                    currentNameSpace,
+                    currentUsingDirectives,
+                    node,
+                    this.location)
+                : this.declarationFactory.CreateRecordDeclaration(
+                    currentNameSpace,
+                    currentUsingDirectives,
+                    node,
+                    this.location);
+
+            this.declarations.Add(recordDeclaration);
         }
     }
 }

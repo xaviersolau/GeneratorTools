@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -274,7 +275,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         {
             var declarationType = declaration.GetData<Type>();
             var extendedInterfaces = declarationType.GetInterfaces();
-            if ((extendedInterfaces != null && extendedInterfaces.Any()) || declarationType.BaseType != null)
+            if ((extendedInterfaces != null && extendedInterfaces.Any())
+                || (declarationType.BaseType != null && declarationType.BaseType != typeof(object)))
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
 
@@ -366,6 +368,38 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             }
 
             declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+        }
+
+        internal static bool ProbeRecordStructType(Type type)
+        {
+            var printMethod = type.GetMethod("PrintMembers", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (printMethod != null && type.IsValueType)
+            {
+                var compilerGeneratedAttribute = printMethod.GetCustomAttribute<CompilerGeneratedAttribute>();
+                if (compilerGeneratedAttribute != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal static bool ProbeRecordType(Type type)
+        {
+            var cloneMethod = type.GetMethod("<Clone>$");
+
+            if (cloneMethod != null)
+            {
+                var compilerGeneratedAttribute = cloneMethod.GetCustomAttribute<CompilerGeneratedAttribute>();
+                if (compilerGeneratedAttribute != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
