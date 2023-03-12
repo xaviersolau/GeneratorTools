@@ -92,20 +92,49 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// </summary>
         /// <param name="testOutputHelper">The test output helper.</param>
         /// <returns>The created declaration factory.</returns>
-        public static IDeclarationFactory CreateDeclarationFactory(ITestOutputHelper testOutputHelper)
+        public static IParserDeclarationFactory CreateParserDeclarationFactory(ITestOutputHelper testOutputHelper)
         {
-            return new DeclarationFactory(
-                new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(
-                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
-                new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(
-                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+            return new ParserDeclarationFactory(
+                new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
+                new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
+                new ParserGenericDeclarationLoader<StructDeclarationSyntax>(),
+                new ParserGenericDeclarationLoader<RecordDeclarationSyntax>());
+        }
+
+        /// <summary>
+        /// Create a Declaration factory setup with the test output logger.
+        /// </summary>
+        /// <param name="testOutputHelper">The test output helper.</param>
+        /// <returns>The created declaration factory.</returns>
+        public static IMetadataDeclarationFactory CreateMetadataDeclarationFactory(ITestOutputHelper testOutputHelper)
+        {
+            return new MetadataDeclarationFactory(
                 new MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>(
                     LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
                 new MetadataGenericDeclarationLoader<ClassDeclarationSyntax>(
                     LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
-                new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
-                new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
-                new ParserGenericDeclarationLoader<StructDeclarationSyntax>());
+                new MetadataGenericDeclarationLoader<StructDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
+                new MetadataGenericDeclarationLoader<RecordDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
+        }
+
+        /// <summary>
+        /// Create a Declaration factory setup with the test output logger.
+        /// </summary>
+        /// <param name="testOutputHelper">The test output helper.</param>
+        /// <returns>The created declaration factory.</returns>
+        public static IReflectionDeclarationFactory CreateReflectionDeclarationFactory(ITestOutputHelper testOutputHelper)
+        {
+            return new ReflectionDeclarationFactory(
+                new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
+                new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+                new ReflectionGenericDeclarationLoader<StructDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
+                new ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
         }
     }
 }

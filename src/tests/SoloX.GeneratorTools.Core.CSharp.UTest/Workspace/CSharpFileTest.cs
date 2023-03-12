@@ -34,7 +34,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var file = "./Resources/Workspace/BasicClass.cs";
 
-            var csFile = new CSharpFile(file, DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+            var csFile = new CSharpFile(file, DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
 
             Assert.Equal(Path.GetFileName(file), csFile.FileName);
             Assert.Equal(Path.GetDirectoryName(file), csFile.FilePath);
@@ -49,7 +49,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var csFile = new CSharpFile(
                 declarationFile,
-                DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
@@ -65,7 +65,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var file = "./Resources/Workspace/MultiNameSapces.cs";
 
-            var csFile = new CSharpFile(file, DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper));
+            var csFile = new CSharpFile(file, DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 

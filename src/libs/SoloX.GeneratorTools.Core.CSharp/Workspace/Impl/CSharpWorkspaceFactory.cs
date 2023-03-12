@@ -8,7 +8,6 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
@@ -54,15 +53,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         private CSharpWorkspaceItemFactory CreateWorkspaceItemFactory()
         {
             return new CSharpWorkspaceItemFactory(
-                                this.loggerFactory,
-                                new DeclarationFactory(
-                                    new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
-                                    new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>()),
-                                    new MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
-                                    new MetadataGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<ClassDeclarationSyntax>>()),
-                                    new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
-                                    new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
-                                    new ParserGenericDeclarationLoader<StructDeclarationSyntax>()));
+                this.loggerFactory,
+                new ParserDeclarationFactory(
+                    new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
+                    new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
+                    new ParserGenericDeclarationLoader<StructDeclarationSyntax>(),
+                    new ParserGenericDeclarationLoader<RecordDeclarationSyntax>()),
+                new ReflectionDeclarationFactory(
+                    new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
+                    new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>()),
+                    new ReflectionGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>()),
+                    new ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>())),
+                new MetadataDeclarationFactory(
+                    new MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
+                    new MetadataGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<ClassDeclarationSyntax>>()),
+                    new MetadataGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<StructDeclarationSyntax>>()),
+                    new MetadataGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>())));
         }
     }
 }

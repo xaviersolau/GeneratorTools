@@ -32,12 +32,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
                 = s => s.BaseList;
             ParserGenericDeclarationLoader<ClassDeclarationSyntax>.BaseListGetter
                 = s => s.BaseList;
+            ParserGenericDeclarationLoader<RecordDeclarationSyntax>.BaseListGetter
+                = s => s.BaseList;
             ParserGenericDeclarationLoader<StructDeclarationSyntax>.BaseListGetter
                 = s => s.BaseList;
 
             ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.TypeParameterListGetter
                 = s => s.TypeParameterList;
             ParserGenericDeclarationLoader<ClassDeclarationSyntax>.TypeParameterListGetter
+                = s => s.TypeParameterList;
+            ParserGenericDeclarationLoader<RecordDeclarationSyntax>.TypeParameterListGetter
                 = s => s.TypeParameterList;
             ParserGenericDeclarationLoader<StructDeclarationSyntax>.TypeParameterListGetter
                 = s => s.TypeParameterList;

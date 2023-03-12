@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ReflectionLoadingTest.cs" company="Xavier Solau">
+// <copyright file="ClassLoadingTest.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -8,76 +8,57 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
+using SoloX.GeneratorTools.Core.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
-    public class ReflectionLoadingTest
+    public class ClassLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
 
-        public ReflectionLoadingTest(ITestOutputHelper testOutputHelper)
+        public ClassLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
         }
 
         [Theory]
-        [InlineData(typeof(SimpleClass))]
-        [InlineData(typeof(SimpleClassWithBase))]
-        [InlineData(typeof(SimpleClassWithGenericBase))]
-        [InlineData(typeof(GenericClass<>))]
-        [InlineData(typeof(GenericClassWithBase<>))]
-        [InlineData(typeof(GenericClassWithGenericBase<>))]
-        public void BasicReflectionLoadingTest(Type type)
+        [InlineData(typeof(SimpleClass), null)]
+        [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
+        [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
+        [InlineData(typeof(GenericClass<>), null)]
+        [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
+        [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
+        public void ItShouldLoadClassType(Type type, Type baseType)
         {
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(type);
+            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
-            Assert.NotNull(declaration);
-            Assert.Equal(
-                ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name),
-                declaration.Name);
+            var assemblyLoader = new CSharpAssembly(
+                Mock.Of<IGeneratorLogger<CSharpAssembly>>(),
+                DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
+                type.Assembly);
 
-            Assert.NotNull(declaration.SyntaxNodeProvider);
-            Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
+            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
 
-            Assert.Null(declaration.GenericParameters);
-            Assert.Null(declaration.Extends);
-            Assert.Null(declaration.Members);
+            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
-            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+            var classDeclaration = Assert.IsAssignableFrom<IClassDeclaration>(declaration);
 
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.DeepLoad(declarationResolverMock.Object);
-
-            Assert.NotNull(declaration.GenericParameters);
-            Assert.NotNull(declaration.Extends);
-            Assert.NotNull(declaration.Members);
-
-            if (type.IsGenericTypeDefinition)
-            {
-                Assert.NotEmpty(declaration.GenericParameters);
-
-                var typeParams = type.GetTypeInfo().GenericTypeParameters;
-                Assert.Equal(typeParams.Length, declaration.GenericParameters.Count);
-
-                Assert.Equal(typeParams[0].Name, declaration.GenericParameters.First().Name);
-            }
-            else
-            {
-                Assert.Empty(declaration.GenericParameters);
-            }
+            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType);
         }
 
         [Theory]
@@ -85,8 +66,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(GenericClassWithGenericBase<>), nameof(GenericClass<object>))]
         public void LoadExtendsTest(Type type, string baseClassName)
         {
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
@@ -106,11 +87,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(ClassWithArrayProperties), true)]
         public void LoadPropertyListTest(Type type, bool isArray)
         {
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(type);
-            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declarationFactory = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateDeclaration(type);
+            var simpleDeclaration = declarationFactory.CreateDeclaration(typeof(SimpleClass));
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+            var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
@@ -119,13 +101,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             Assert.NotEmpty(classDeclaration.Properties);
             Assert.Equal(2, classDeclaration.Properties.Count);
 
-            var mClass = Assert.Single(declaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
+            var mClass = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
             var pClass = Assert.IsType<PropertyDeclaration>(mClass);
 
             Assert.IsType<GenericDeclarationUse>(pClass.PropertyType);
             Assert.Equal(nameof(SimpleClass), pClass.PropertyType.Declaration.Name);
 
-            var mInt = Assert.Single(declaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
+            var mInt = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
 
             Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
@@ -148,11 +130,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(ClassWithGenericMethods), true)]
         public void LoadMethodListTest(Type type, bool isGeneric)
         {
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(type);
-            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declarationFactory = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateDeclaration(type);
+            var simpleDeclaration = declarationFactory.CreateDeclaration(typeof(SimpleClass));
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
+            var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
@@ -198,8 +181,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         {
             var type = typeof(ClassWithGetterSetterProperties);
 
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(type);
+            var declarationFactory = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper);
+            var declaration = declarationFactory.CreateDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
@@ -227,8 +210,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(RepeatAttributedClass), nameof(RepeatAttribute))]
         public void LoadClassAttributes(Type type, string attributeName)
         {
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(type);
 
             Assert.NotNull(declaration);
             Assert.Equal(

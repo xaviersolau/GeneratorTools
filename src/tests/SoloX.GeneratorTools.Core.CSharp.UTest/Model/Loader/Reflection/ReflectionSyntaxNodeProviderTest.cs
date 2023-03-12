@@ -104,8 +104,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 
         private ClassDeclaration LoadClassDeclarationFrom(Type type)
         {
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(type);
+            var declaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
             var declarationResolverMock = new Mock<IDeclarationResolver>();

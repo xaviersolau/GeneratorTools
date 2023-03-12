@@ -9,7 +9,6 @@
 using FluentAssertions;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -34,12 +33,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Selectors
         [InlineData(typeof(IOther), false)]
         public void ItShouldSelectTheRightInterface(Type type, bool selectionExpected)
         {
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
+            var declarationFactory = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
 
             var declaration2 = declarationFactory
-                .CreateInterfaceDeclaration(type);
+                .CreateDeclaration(type);
 
             declaration2.DeepLoad(declarationResolverMock.Object);
 

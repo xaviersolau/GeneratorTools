@@ -1,22 +1,20 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IDeclarationFactory.cs" company="Xavier Solau">
+// <copyright file="IParserDeclarationFactory.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
     /// <summary>
-    /// Declaration factory used to create declaration instances depending the parsing or the reflection load.
+    /// Declaration factory used to create declaration instances depending the parsing load.
     /// </summary>
-    public interface IDeclarationFactory
+    public interface IParserDeclarationFactory
     {
         /// <summary>
         /// Create an interface declaration from a syntax node.
@@ -33,22 +31,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             string location);
 
         /// <summary>
-        /// Create an interface declaration from a syntax node.
-        /// </summary>
-        /// <param name="type">The interface type to load the declaration from.</param>
-        /// <returns>The created interface declaration object.</returns>
-        IInterfaceDeclaration CreateInterfaceDeclaration(Type type);
-
-        /// <summary>
-        /// Create a interface declaration from a metadata type definition.
-        /// </summary>
-        /// <param name="metadataReader">Metadata reader.</param>
-        /// <param name="typeDefinitionHandle">Type definition.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns></returns>
-        IInterfaceDeclaration CreateInterfaceDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
-
-        /// <summary>
         /// Create a class declaration from a syntax node.
         /// </summary>
         /// <param name="nameSpaceDecl">The class name space.</param>
@@ -61,22 +43,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             IReadOnlyList<string> usingDirectives,
             ClassDeclarationSyntax node,
             string location);
-
-        /// <summary>
-        /// Create a class declaration from a syntax node.
-        /// </summary>
-        /// <param name="type">The class type to load the declaration from.</param>
-        /// <returns>The created class declaration object.</returns>
-        IClassDeclaration CreateClassDeclaration(Type type);
-
-        /// <summary>
-        /// Create a class declaration from a metadata type definition.
-        /// </summary>
-        /// <param name="metadataReader">Metadata reader.</param>
-        /// <param name="typeDefinitionHandle">Type definition.</param>
-        /// <param name="location">Location of the declaration.</param>
-        /// <returns></returns>
-        IClassDeclaration CreateClassDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
 
         /// <summary>
         /// Create a struct declaration from a syntax node.
@@ -104,6 +70,34 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             string nameSpaceDecl,
             IReadOnlyList<string> usingDirectives,
             EnumDeclarationSyntax node,
+            string location);
+
+        /// <summary>
+        /// Create a record declaration from a syntax node.
+        /// </summary>
+        /// <param name="nameSpaceDecl">The record name space.</param>
+        /// <param name="usingDirectives">The using directives.</param>
+        /// <param name="node">The record syntax node to load the declaration from.</param>
+        /// <param name="location">Location of the declaration.</param>
+        /// <returns>The created record declaration object.</returns>
+        IRecordDeclaration CreateRecordDeclaration(
+            string nameSpaceDecl,
+            IReadOnlyList<string> usingDirectives,
+            RecordDeclarationSyntax node,
+            string location);
+
+        /// <summary>
+        /// Create a record struct declaration from a syntax node.
+        /// </summary>
+        /// <param name="nameSpaceDecl">The record name space.</param>
+        /// <param name="usingDirectives">The using directives.</param>
+        /// <param name="node">The record syntax node to load the declaration from.</param>
+        /// <param name="location">Location of the declaration.</param>
+        /// <returns>The created record declaration object.</returns>
+        IRecordStructDeclaration CreateRecordStructDeclaration(
+            string nameSpaceDecl,
+            IReadOnlyList<string> usingDirectives,
+            RecordDeclarationSyntax node,
             string location);
     }
 }

@@ -25,18 +25,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         protected override TNode Generate()
         {
-            var type = "class";
-            if (this.declarationType.IsInterface)
+            var type = string.Empty;
+            if (typeof(TNode) == typeof(InterfaceDeclarationSyntax))
             {
                 type = "interface";
             }
-            else if (this.declarationType.IsEnum)
+            else if (typeof(TNode) == typeof(EnumDeclarationSyntax))
             {
                 type = "enum";
             }
-            else if (this.declarationType.IsValueType)
+            else if (typeof(TNode) == typeof(StructDeclarationSyntax))
             {
                 type = "struct";
+            }
+            else if (typeof(TNode) == typeof(ClassDeclarationSyntax))
+            {
+                type = "class";
+            }
+            else if (typeof(TNode) == typeof(RecordDeclarationSyntax))
+            {
+                if (ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>.ProbeRecordStructType(this.declarationType))
+                {
+                    type = "record struct";
+                }
+                else
+                {
+                    type = "record";
+                }
+            }
+            else
+            {
+                throw new NotSupportedException();
             }
 
             if (this.declarationType.IsGenericType)

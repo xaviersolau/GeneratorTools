@@ -21,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpFile : ICSharpFile, ICSharpWorkspaceItemLoader<ICSharpFile>
     {
-        private readonly IDeclarationFactory declarationFactory;
+        private readonly IParserDeclarationFactory declarationFactory;
 
         private bool isLoaded;
 
@@ -30,7 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// </summary>
         /// <param name="file">The CSharp file.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpFile(string file, IDeclarationFactory declarationFactory)
+        public CSharpFile(string file, IParserDeclarationFactory declarationFactory)
         {
             this.declarationFactory = declarationFactory;
 

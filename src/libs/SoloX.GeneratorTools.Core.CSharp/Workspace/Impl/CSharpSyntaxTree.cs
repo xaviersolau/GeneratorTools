@@ -21,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     /// </summary>
     public class CSharpSyntaxTree : ICSharpSyntaxTree, ICSharpWorkspaceItemLoader<ICSharpSyntaxTree>
     {
-        private readonly IDeclarationFactory declarationFactory;
+        private readonly IParserDeclarationFactory declarationFactory;
 
         private bool isLoaded;
 
@@ -30,7 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// </summary>
         /// <param name="syntaxTree">The CSharp SyntaxTree.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpSyntaxTree(SyntaxTree syntaxTree, IDeclarationFactory declarationFactory)
+        public CSharpSyntaxTree(SyntaxTree syntaxTree, IParserDeclarationFactory declarationFactory)
         {
             if (syntaxTree == null)
             {

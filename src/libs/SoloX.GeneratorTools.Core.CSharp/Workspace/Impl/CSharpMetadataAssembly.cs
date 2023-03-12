@@ -13,7 +13,6 @@ using SoloX.GeneratorTools.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
@@ -25,7 +24,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     public class CSharpMetadataAssembly : ICSharpMetadataAssembly, ICSharpWorkspaceItemLoader<ICSharpMetadataAssembly>
     {
         private readonly IGeneratorLogger<CSharpMetadataAssembly> logger;
-        private readonly IDeclarationFactory declarationFactory;
+        private readonly IMetadataDeclarationFactory declarationFactory;
         private bool isLoaded;
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <param name="logger">The logger to log errors.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
         /// <param name="assemblyPath">The assembly to load declaration from.</param>
-        public CSharpMetadataAssembly(IGeneratorLogger<CSharpMetadataAssembly> logger, IDeclarationFactory declarationFactory, string assemblyPath)
+        public CSharpMetadataAssembly(IGeneratorLogger<CSharpMetadataAssembly> logger, IMetadataDeclarationFactory declarationFactory, string assemblyPath)
         {
             this.logger = logger;
             this.declarationFactory = declarationFactory;
@@ -90,38 +89,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
                 foreach (var typeDefinitionHandle in metadataReader.TypeDefinitions)
                 {
-                    var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
+                    var declaration = this.declarationFactory.CreateDeclaration(metadataReader, typeDefinitionHandle, AssemblyPath);
 
-                    var name = metadataReader.GetString(typeDefinition.Name);
-
-                    if (!name.StartsWith("<", StringComparison.Ordinal))
+                    if (declaration != null)
                     {
-                        var attributes = typeDefinition.Attributes;
-
-                        var visibility = attributes & TypeAttributes.VisibilityMask;
-
-                        if (visibility == TypeAttributes.Public || visibility == TypeAttributes.NestedPublic)
-                        {
-                            var classSemantics = attributes & TypeAttributes.ClassSemanticsMask;
-                            if (classSemantics == TypeAttributes.Interface)
-                            {
-                                var typeInterfaceDeclaration = this.declarationFactory.CreateInterfaceDeclaration(metadataReader, typeDefinitionHandle, this.AssemblyPath);
-                                declarations.Add(typeInterfaceDeclaration);
-                            }
-                            else if (classSemantics == TypeAttributes.Class)
-                            {
-                                var typeClassDeclaration = this.declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, this.AssemblyPath);
-                                declarations.Add(typeClassDeclaration);
-                            }
-                            else
-                            {
-                                // TODO
-                            }
-                        }
-                        else
-                        {
-                            // TODO
-                        }
+                        declarations.Add(declaration);
                     }
                 }
             }

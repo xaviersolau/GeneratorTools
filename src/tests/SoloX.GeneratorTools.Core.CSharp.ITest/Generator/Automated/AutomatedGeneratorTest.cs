@@ -160,7 +160,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                 Mock.Of<IGeneratorLogger<CSharpWorkspace>>(),
                 new CSharpWorkspaceItemFactory(
                     Mock.Of<IGeneratorLoggerFactory>(),
-                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
+                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                    DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
+                    DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)));
 
             var itfDeclarationsList = new List<IInterfaceDeclaration>();
             itfDeclarations = itfDeclarationsList;

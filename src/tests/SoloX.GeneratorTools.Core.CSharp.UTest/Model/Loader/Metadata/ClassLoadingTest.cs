@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="MetadataLoadingTest.cs" company="Xavier Solau">
+// <copyright file="ClassLoadingTest.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -9,85 +9,62 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
+using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
-    public class MetadataLoadingTest
+    public class ClassLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
 
-        public MetadataLoadingTest(ITestOutputHelper testOutputHelper)
+        public ClassLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
         }
 
         [Theory]
-        [InlineData(typeof(SimpleClass))]
-        [InlineData(typeof(SimpleClassWithBase))]
-        [InlineData(typeof(SimpleClassWithGenericBase))]
-        [InlineData(typeof(GenericClass<>))]
-        [InlineData(typeof(GenericClassWithBase<>))]
-        [InlineData(typeof(GenericClassWithGenericBase<>))]
-        public void BasicMetadataLoadingTest(Type type)
+        [InlineData(typeof(SimpleClass), null)]
+        [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
+        [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
+        [InlineData(typeof(GenericClass<>), null)]
+        [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
+        [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
+        public void ItShouldLoadClassType(Type type, Type baseType)
         {
+            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
+
             var assemblyPath = type.Assembly.Location;
 
-            using var portableExecutableReader = new PEReader(File.OpenRead(assemblyPath));
+            var assemblyLoader = new CSharpMetadataAssembly(
+                Mock.Of<IGeneratorLogger<CSharpMetadataAssembly>>(),
+                DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper),
+                assemblyPath);
 
-            var metadataReader = portableExecutableReader.GetMetadataReader();
-            var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
+            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
 
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
-            Assert.NotNull(declaration);
-            Assert.Equal(
-                MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(metadataReader, typeDefinitionHandle),
-                declaration.Name);
+            var classDeclaration = Assert.IsAssignableFrom<IClassDeclaration>(declaration);
 
-            Assert.NotNull(declaration.SyntaxNodeProvider);
-            Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
-
-            Assert.Null(declaration.GenericParameters);
-            Assert.Null(declaration.Extends);
-            Assert.Null(declaration.Members);
-
-            var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
-
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.DeepLoad(declarationResolverMock.Object);
-
-            Assert.NotNull(declaration.GenericParameters);
-            Assert.NotNull(declaration.Extends);
-            Assert.NotNull(declaration.Members);
-
-            if (type.IsGenericTypeDefinition)
-            {
-                Assert.NotEmpty(declaration.GenericParameters);
-
-                var typeParams = type.GetTypeInfo().GenericTypeParameters;
-                Assert.Equal(typeParams.Length, declaration.GenericParameters.Count);
-
-                Assert.Equal(typeParams[0].Name, declaration.GenericParameters.First().Name);
-            }
-            else
-            {
-                Assert.Empty(declaration.GenericParameters);
-            }
+            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType);
         }
 
         [Theory]
@@ -102,8 +79,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
@@ -130,11 +107,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
-            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var simpleDeclaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(typeof(SimpleClass));
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+            var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
@@ -143,13 +122,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             Assert.NotEmpty(classDeclaration.Properties);
             Assert.Equal(2, classDeclaration.Properties.Count);
 
-            var mClass = Assert.Single(declaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
+            var mClass = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
             var pClass = Assert.IsType<PropertyDeclaration>(mClass);
 
             Assert.IsType<GenericDeclarationUse>(pClass.PropertyType);
             Assert.Equal(nameof(SimpleClass), pClass.PropertyType.Declaration.Name);
 
-            var mInt = Assert.Single(declaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
+            var mInt = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
 
             Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
@@ -180,11 +159,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
-            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var simpleDeclaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(typeof(SimpleClass));
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
+            var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
@@ -193,7 +174,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             Assert.NotEmpty(classDeclaration.Properties);
             Assert.Equal(1, classDeclaration.Properties.Count);
 
-            var m = Assert.Single(declaration.Members.Where(m => m.Name == nameof(GenericClassWithProperties<object>.Property)));
+            var m = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(GenericClassWithProperties<object>.Property)));
             var p = Assert.IsType<PropertyDeclaration>(m);
 
             Assert.IsType<GenericParameterDeclarationUse>(p.PropertyType);
@@ -212,7 +193,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [Theory]
         [InlineData(typeof(ClassWithMethods), false)]
         [InlineData(typeof(ClassWithGenericMethods), true)]
+#pragma warning disable CA1506 // Avoid excessive class coupling
         public void LoadMethodListTest(Type type, bool isGeneric)
+#pragma warning restore CA1506 // Avoid excessive class coupling
         {
             var assemblyPath = type.Assembly.Location;
 
@@ -221,11 +204,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
-            var simpleClassDeclaration = declarationFactory.CreateClassDeclaration(typeof(SimpleClass));
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var simpleDeclaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(typeof(SimpleClass));
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
+            var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
@@ -278,8 +263,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declarationFactory = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper);
-            var declaration = declarationFactory.CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
 
@@ -314,8 +299,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var metadataReader = portableExecutableReader.GetMetadataReader();
             var typeDefinitionHandle = GetTypeDefinitionHandle(type, metadataReader);
 
-            var declaration = DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)
-                .CreateClassDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
+            var declaration = DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
 
             Assert.NotNull(declaration);
             Assert.Equal(
@@ -341,7 +326,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             Assert.Contains(attributeName, attrText, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static TypeDefinitionHandle GetTypeDefinitionHandle(Type type, MetadataReader metadataReader)
+        internal static TypeDefinitionHandle GetTypeDefinitionHandle(Type type, MetadataReader metadataReader)
         {
             return metadataReader.TypeDefinitions.Single(th => MetadataGenericDeclarationLoader<SyntaxNode>.GetFullName(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, th),

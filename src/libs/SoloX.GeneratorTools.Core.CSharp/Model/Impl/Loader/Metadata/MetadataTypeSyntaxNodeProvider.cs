@@ -8,8 +8,8 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Metadata;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
@@ -23,23 +23,45 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
         public MetadataTypeSyntaxNodeProvider(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle)
         {
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
-            var attributes = typeDefinition.Attributes;
-            var classSemantics = attributes & TypeAttributes.ClassSemanticsMask;
-            this.name = MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(metadataReader, typeDefinitionHandle);
 
-            this.classSemantic = "class";
-            if (classSemantics == TypeAttributes.Interface)
+            var rawName = MetadataGenericDeclarationLoader<SyntaxNode>.LoadString(metadataReader, typeDefinition.Name);
+
+            this.name = MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(rawName);
+
+            var type = string.Empty;
+            if (typeof(TNode) == typeof(InterfaceDeclarationSyntax))
             {
-                this.classSemantic = "interface";
+                type = "interface";
             }
-            //else if (this.declarationType.IsEnum)
-            //{
-            //    type = "enum";
-            //}
-            //else if (this.declarationType.IsValueType)
-            //{
-            //    type = "struct";
-            //}
+            else if (typeof(TNode) == typeof(EnumDeclarationSyntax))
+            {
+                type = "enum";
+            }
+            else if (typeof(TNode) == typeof(StructDeclarationSyntax))
+            {
+                type = "struct";
+            }
+            else if (typeof(TNode) == typeof(ClassDeclarationSyntax))
+            {
+                type = "class";
+            }
+            else if (typeof(TNode) == typeof(RecordDeclarationSyntax))
+            {
+                if (MetadataGenericDeclarationLoader<RecordDeclarationSyntax>.ProbeRecordStructType(metadataReader, typeDefinition))
+                {
+                    type = "record struct";
+                }
+                else
+                {
+                    type = "record";
+                }
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            this.classSemantic = type;
         }
 
         protected override TNode Generate()

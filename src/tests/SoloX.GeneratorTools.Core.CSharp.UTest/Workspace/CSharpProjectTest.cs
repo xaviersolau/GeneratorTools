@@ -40,7 +40,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
                 .Setup(ws => ws.RegisterFile(It.IsAny<string>()))
                 .Returns<string>(p => new CSharpFile(
                     p,
-                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
+                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper)));
 
             var project = new CSharpProject(projectFile);
             project.Load(workspaceMock.Object);

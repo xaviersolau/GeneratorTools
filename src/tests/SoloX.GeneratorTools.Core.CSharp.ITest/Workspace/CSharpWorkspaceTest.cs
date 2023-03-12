@@ -109,7 +109,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
                 new GeneratorLogger<CSharpWorkspace>(new TestLogger<CSharpWorkspace>(this.testOutputHelper)),
                 new CSharpWorkspaceItemFactory(
                     new GeneratorLoggerFactory(this.testLoggerFactory),
-                    DeclarationHelper.CreateDeclarationFactory(this.testOutputHelper)));
+                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                    DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
+                    DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)));
 
             ws.RegisterProject(projectFile);
 
