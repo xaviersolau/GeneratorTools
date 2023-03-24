@@ -51,6 +51,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 Assert.Equal(typeParams.Length, classDeclaration.GenericParameters.Count);
 
                 Assert.Equal(typeParams[0].Name, classDeclaration.GenericParameters.First().Name);
+                Assert.Equal(typeParams[0].IsValueType, classDeclaration.GenericParameters.First().IsValueType);
             }
             else
             {

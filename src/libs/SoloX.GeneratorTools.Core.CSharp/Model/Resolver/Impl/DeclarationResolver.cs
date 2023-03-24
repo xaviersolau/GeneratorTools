@@ -153,7 +153,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             List<IDeclaration<SyntaxNode>> declarations;
             if (declarationContext != null)
             {
-                foreach (var usingDirective in declarationContext.UsingDirectives)
+                foreach (var usingDirective in declarationContext.UsingDirectives.Usings)
                 {
                     var lookupName = ADeclaration<SyntaxNode>.GetFullName(usingDirective, identifier);
 

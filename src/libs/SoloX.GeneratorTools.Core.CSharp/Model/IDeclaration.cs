@@ -36,6 +36,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         string FullName { get; }
 
         /// <summary>
+        /// Tells if this is a value type.
+        /// </summary>
+        bool IsValueType { get; }
+
+        /// <summary>
         /// Gets the declaration syntax node provider.
         /// </summary>
         ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
@@ -43,7 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// <summary>
         /// Gets the using directives for the current declaration.
         /// </summary>
-        IReadOnlyList<string> UsingDirectives { get; }
+        IUsingDirectives UsingDirectives { get; }
 
         /// <summary>
         /// Gets the used declaration attributes.

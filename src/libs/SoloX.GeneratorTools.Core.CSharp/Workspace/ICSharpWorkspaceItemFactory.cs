@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using System.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -27,8 +28,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Create a ICSharpFile.
         /// </summary>
         /// <param name="file">The CSharp file.</param>
+        /// <param name="globalUsing">Global using referential.</param>
         /// <returns>The created file object.</returns>
-        ICSharpWorkspaceItemLoader<ICSharpFile> CreateFile(string file);
+        ICSharpWorkspaceItemLoader<ICSharpFile> CreateFile(string file, IGlobalUsingDirectives globalUsing);
 
         /// <summary>
         /// Create a ICSharpAssembly.
@@ -48,7 +50,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Create a ICSharpSyntaxTree.
         /// </summary>
         /// <param name="syntaxTree">The CSharp syntax tree.</param>
+        /// <param name="globalUsing">Global using referential.</param>
         /// <returns>The created syntax tree object.</returns>
-        ICSharpWorkspaceItemLoader<ICSharpSyntaxTree> CreateSyntaxTree(SyntaxTree syntaxTree);
+        ICSharpWorkspaceItemLoader<ICSharpSyntaxTree> CreateSyntaxTree(SyntaxTree syntaxTree, IGlobalUsingDirectives globalUsing);
     }
 }

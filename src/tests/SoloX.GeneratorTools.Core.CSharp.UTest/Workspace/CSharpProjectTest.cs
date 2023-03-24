@@ -8,6 +8,7 @@
 
 using System.Linq;
 using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -37,10 +38,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
                 .Returns<string>(p => new CSharpProject(p));
 
             workspaceMock
-                .Setup(ws => ws.RegisterFile(It.IsAny<string>()))
-                .Returns<string>(p => new CSharpFile(
+                .Setup(ws => ws.RegisterFile(It.IsAny<string>(), It.IsAny<IGlobalUsingDirectives>()))
+                .Returns<string, IGlobalUsingDirectives>((p, gud) => new CSharpFile(
                     p,
-                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper)));
+                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                    gud));
 
             var project = new CSharpProject(projectFile);
             project.Load(workspaceMock.Object);

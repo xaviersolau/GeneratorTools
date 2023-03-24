@@ -60,6 +60,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C50EE86F
 		.github\workflows\build-pr.yml = .github\workflows\build-pr.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.GeneratorTools.Generator.Sample2", "src\tools\SoloX.GeneratorTools.Generator.Sample2\SoloX.GeneratorTools.Generator.Sample2.csproj", "{BCBD6732-50D1-40F5-9899-EEEDCCB9C637}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +136,10 @@ Global
 		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCBD6732-50D1-40F5-9899-EEEDCCB9C637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCBD6732-50D1-40F5-9899-EEEDCCB9C637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCBD6732-50D1-40F5-9899-EEEDCCB9C637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCBD6732-50D1-40F5-9899-EEEDCCB9C637}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +162,7 @@ Global
 		{BA3558A9-7427-4E80-94FB-A69AD9C47704} = {38384ACA-C2CB-47CC-BAA8-76EAC066CBDA}
 		{B56055EA-6D81-4DAB-9995-7748EB11EF23} = {38384ACA-C2CB-47CC-BAA8-76EAC066CBDA}
 		{CD111BB3-73AF-4593-A7C3-72C48D76EDDB} = {79744D96-CD07-4319-89CE-32347E6C1482}
+		{BCBD6732-50D1-40F5-9899-EEEDCCB9C637} = {38384ACA-C2CB-47CC-BAA8-76EAC066CBDA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3EEBCA9-F083-4143-96F7-99A6AB364E24}

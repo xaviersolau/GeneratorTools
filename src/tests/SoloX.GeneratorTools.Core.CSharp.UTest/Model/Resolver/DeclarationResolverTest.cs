@@ -48,8 +48,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
 
             var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName", m =>
             {
-                var usingDirectives = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
-                m.SetupGet(d => d.UsingDirectives).Returns(usingDirectives);
+                var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
+                m.SetupGet(d => d.UsingDirectives).Returns(DeclarationHelper.SetupUsingDirectives(usings));
             });
 
             var declResolver = new DeclarationResolver(new[] { declaration });
@@ -87,8 +87,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
 
             var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName", m =>
             {
-                var usingDirectives = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
-                m.SetupGet(d => d.UsingDirectives).Returns(usingDirectives);
+                var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
+                m.SetupGet(d => d.UsingDirectives).Returns(DeclarationHelper.SetupUsingDirectives(usings));
             });
 
             var declarationParam = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(nameSpace, nameParam);

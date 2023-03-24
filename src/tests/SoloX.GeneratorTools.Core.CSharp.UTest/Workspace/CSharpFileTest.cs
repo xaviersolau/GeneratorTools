@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Moq;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -34,7 +35,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var file = "./Resources/Workspace/BasicClass.cs";
 
-            var csFile = new CSharpFile(file, DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
 
             Assert.Equal(Path.GetFileName(file), csFile.FileName);
             Assert.Equal(Path.GetDirectoryName(file), csFile.FilePath);
@@ -49,7 +53,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var csFile = new CSharpFile(
                 declarationFile,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
@@ -65,7 +70,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var file = "./Resources/Workspace/MultiNameSapces.cs";
 
-            var csFile = new CSharpFile(file, DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+            var csFile = new CSharpFile(
+                file,
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -19,34 +20,8 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 {
     internal class ParserGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
-        where TNode : SyntaxNode
+        where TNode : TypeDeclarationSyntax
     {
-        private static readonly Func<TNode, BaseListSyntax> BaseListGetter;
-        private static readonly Func<TNode, TypeParameterListSyntax> TypeParameterListGetter;
-
-#pragma warning disable CA1810 // Initialize reference type static fields inline
-        static ParserGenericDeclarationLoader()
-#pragma warning restore CA1810 // Initialize reference type static fields inline
-        {
-            ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.BaseListGetter
-                = s => s.BaseList;
-            ParserGenericDeclarationLoader<ClassDeclarationSyntax>.BaseListGetter
-                = s => s.BaseList;
-            ParserGenericDeclarationLoader<RecordDeclarationSyntax>.BaseListGetter
-                = s => s.BaseList;
-            ParserGenericDeclarationLoader<StructDeclarationSyntax>.BaseListGetter
-                = s => s.BaseList;
-
-            ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>.TypeParameterListGetter
-                = s => s.TypeParameterList;
-            ParserGenericDeclarationLoader<ClassDeclarationSyntax>.TypeParameterListGetter
-                = s => s.TypeParameterList;
-            ParserGenericDeclarationLoader<RecordDeclarationSyntax>.TypeParameterListGetter
-                = s => s.TypeParameterList;
-            ParserGenericDeclarationLoader<StructDeclarationSyntax>.TypeParameterListGetter
-                = s => s.TypeParameterList;
-        }
-
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             LoadGenericParameters(declaration);
@@ -59,7 +34,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             AGenericDeclaration<TNode> declaration)
         {
             return new ParserSyntaxNodeProvider<TypeParameterListSyntax>(
-                TypeParameterListGetter(declaration.SyntaxNodeProvider.SyntaxNode));
+                declaration.SyntaxNodeProvider.SyntaxNode.TypeParameterList);
         }
 
         /// <summary>
@@ -67,10 +42,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// </summary>
         private static void LoadGenericParameters(AGenericDeclaration<TNode> declaration)
         {
-            var parameterList = TypeParameterListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
+            var parameterList = declaration.SyntaxNodeProvider.SyntaxNode.TypeParameterList;
             if (parameterList != null)
             {
-                var parameterSet = new List<IGenericParameterDeclaration>();
+                var parameterSet = new List<GenericParameterDeclaration>();
                 foreach (var parameter in parameterList.Parameters)
                 {
                     parameterSet.Add(new GenericParameterDeclaration(
@@ -79,6 +54,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
                 }
 
                 declaration.GenericParameters = parameterSet;
+
+                var map = parameterSet.ToDictionary(x => x.Name);
+
+                var constraintClauses = declaration.SyntaxNodeProvider.SyntaxNode.ConstraintClauses;
+
+                foreach (var constraintClause in constraintClauses)
+                {
+                    var parameterName = constraintClause.Name.Identifier.Text;
+
+                    var genericParameterDeclaration = map[parameterName];
+
+                    foreach (var constraint in constraintClause.Constraints)
+                    {
+                        // TODO Process all constraints.
+
+                        if (constraint.Kind() == SyntaxKind.StructConstraint)
+                        {
+                            genericParameterDeclaration.SetValueType(true);
+                        }
+                    }
+                }
             }
             else
             {
@@ -95,7 +91,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
             AGenericDeclaration<TNode> declaration,
             IDeclarationResolver resolver)
         {
-            var baseListSyntax = BaseListGetter(declaration.SyntaxNodeProvider.SyntaxNode);
+            var baseListSyntax = declaration.SyntaxNodeProvider.SyntaxNode.BaseList;
 
             if (baseListSyntax != null)
             {

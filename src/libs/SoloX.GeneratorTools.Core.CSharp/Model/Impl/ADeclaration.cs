@@ -61,19 +61,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
+        /// <param name="isValueType">Tells if this is a valueType.</param>
         protected ADeclaration(
             string nameSpace,
             string name,
             ISyntaxNodeProvider<TNode> syntaxNodeProvider,
-            IReadOnlyList<string> usingDirectives,
-            string location)
+            IUsingDirectives usingDirectives,
+            string location,
+            bool isValueType)
         {
-            this.DeclarationNameSpace = nameSpace;
-            this.Name = name;
-            this.SyntaxNodeProvider = syntaxNodeProvider;
-            this.UsingDirectives = usingDirectives;
-            this.FullName = GetFullName(nameSpace, name);
-            this.Location = location;
+            DeclarationNameSpace = nameSpace;
+            Name = name;
+            SyntaxNodeProvider = syntaxNodeProvider;
+            UsingDirectives = usingDirectives;
+            FullName = GetFullName(nameSpace, name);
+            Location = location;
+            IsValueType = isValueType;
         }
 
         /// <inheritdoc/>
@@ -86,10 +89,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         public string FullName { get; }
 
         /// <inheritdoc/>
+        public bool IsValueType { get; protected set; }
+
+        /// <inheritdoc/>
         public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
 
         /// <inheritdoc/>
-        public IReadOnlyList<string> UsingDirectives { get; }
+        public IUsingDirectives UsingDirectives { get; }
 
         /// <inheritdoc/>
         public IReadOnlyList<IAttributeUse> Attributes { get; internal set; }

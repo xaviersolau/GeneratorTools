@@ -137,10 +137,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 ((CSharpProject)projectItem).Load(workspace);
             }
 
+            var globalUsing = new CSharpGlobalUsing();
+
             // Once project references are loaded, we can get the files to compile.
             this.Files = (
                 from file in projectData.CompileList
-                select workspace.RegisterFile(PathHelper.ResolveRelativePath(this.ProjectPath, file)))
+                select workspace.RegisterFile(PathHelper.ResolveRelativePath(this.ProjectPath, file), globalUsing))
                 .ToArray();
         }
 

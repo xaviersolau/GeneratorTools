@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 using SoloX.GeneratorTools.Core.Utils;
@@ -95,13 +96,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 this.LoadMetadataAssembly(csMetadataAssembly);
             }
 
+            var globalUsing = new CSharpGlobalUsing();
+
             foreach (var syntaxTree in compilation.SyntaxTrees)
             {
                 var syntaxTreeName = syntaxTree.FilePath;
 
                 if (!this.syntaxTrees.ContainsKey(syntaxTreeName))
                 {
-                    var csSyntaxTree = this.factory.CreateSyntaxTree(syntaxTree);
+                    var csSyntaxTree = this.factory.CreateSyntaxTree(syntaxTree, globalUsing);
                     this.syntaxTrees.Add(syntaxTreeName, csSyntaxTree.WorkspaceItem);
 
                     csSyntaxTree.Load(this);
@@ -110,13 +113,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public ICSharpFile RegisterFile(string file)
+        public ICSharpFile RegisterFile(string file, IGlobalUsingDirectives? globalUsing)
         {
+            if (globalUsing == null)
+            {
+                globalUsing = new CSharpGlobalUsing();
+            }
+
             // Resolve the full path
             file = Path.GetFullPath(file);
             if (!this.files.TryGetValue(file, out var csFile))
             {
-                var csFileLoader = this.factory.CreateFile(file);
+                var csFileLoader = this.factory.CreateFile(file, globalUsing);
                 csFile = csFileLoader.WorkspaceItem;
 
                 this.files.Add(file, csFile);

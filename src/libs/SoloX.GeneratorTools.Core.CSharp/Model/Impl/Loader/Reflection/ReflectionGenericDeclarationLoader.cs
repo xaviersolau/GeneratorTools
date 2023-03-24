@@ -203,9 +203,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 var parameterSet = new List<IGenericParameterDeclaration>();
                 foreach (var parameter in methodInfo.GetGenericArguments())
                 {
-                    parameterSet.Add(new GenericParameterDeclaration(
+                    var genericParameter = new GenericParameterDeclaration(
                         parameter.Name,
-                        null));
+                        null);
+
+                    genericParameter.SetValueType(parameter.IsValueType);
+
+                    parameterSet.Add(genericParameter);
                 }
 
                 genericParameters = parameterSet;
@@ -255,7 +259,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
                 foreach (var parameter in declarationType.GetTypeInfo().GenericTypeParameters)
                 {
-                    parameterSet.Add(new GenericParameterDeclaration(parameter.Name, null));
+                    var genericParameter = new GenericParameterDeclaration(parameter.Name, null);
+
+                    genericParameter.SetValueType(parameter.IsValueType);
+
+                    parameterSet.Add(genericParameter);
                 }
 
                 declaration.GenericParameters = parameterSet;

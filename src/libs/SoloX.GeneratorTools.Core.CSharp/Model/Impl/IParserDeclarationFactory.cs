@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
@@ -26,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created interface declaration object.</returns>
         IInterfaceDeclaration CreateInterfaceDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             InterfaceDeclarationSyntax node,
             string location);
 
@@ -40,7 +39,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created class declaration object.</returns>
         IClassDeclaration CreateClassDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             ClassDeclarationSyntax node,
             string location);
 
@@ -54,7 +53,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created struct declaration object.</returns>
         IStructDeclaration CreateStructDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             StructDeclarationSyntax node,
             string location);
 
@@ -68,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created enum declaration object.</returns>
         IEnumDeclaration CreateEnumDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             EnumDeclarationSyntax node,
             string location);
 
@@ -82,7 +81,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created record declaration object.</returns>
         IRecordDeclaration CreateRecordDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             RecordDeclarationSyntax node,
             string location);
 
@@ -96,7 +95,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <returns>The created record declaration object.</returns>
         IRecordStructDeclaration CreateRecordStructDeclaration(
             string nameSpaceDecl,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             RecordDeclarationSyntax node,
             string location);
     }

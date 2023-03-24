@@ -27,18 +27,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
         private readonly string location;
 
-        public DeclarationWalker(IParserDeclarationFactory declarationFactory, IList<IDeclaration<SyntaxNode>> declarations, string location)
+        private readonly IGlobalUsingDirectives globalUsing;
+
+        public DeclarationWalker(IParserDeclarationFactory declarationFactory, IList<IDeclaration<SyntaxNode>> declarations, string location, IGlobalUsingDirectives globalUsing)
         {
             this.declarationFactory = declarationFactory;
             this.declarations = declarations;
             this.location = location;
+            this.globalUsing = globalUsing;
         }
 
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
         {
             var currentUsingDirectives = this.usingDirectives.Peek();
 
-            currentUsingDirectives.Add(node.Name.ToString());
+            if (node.GlobalKeyword != null && node.GlobalKeyword.Kind() == SyntaxKind.GlobalKeyword)
+            {
+                this.globalUsing.Register(node.Name.ToString());
+            }
+            else
+            {
+                currentUsingDirectives.Add(node.Name.ToString());
+            }
 
             base.VisitUsingDirective(node);
         }
@@ -65,7 +75,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var interfaceDeclaration = this.declarationFactory.CreateInterfaceDeclaration(
                 currentNameSpace,
-                currentUsingDirectives,
+                new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                 node,
                 this.location);
 
@@ -79,7 +89,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var classDeclaration = this.declarationFactory.CreateClassDeclaration(
                 currentNameSpace,
-                currentUsingDirectives,
+                new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                 node,
                 this.location);
 
@@ -93,7 +103,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var structDeclaration = this.declarationFactory.CreateStructDeclaration(
                 currentNameSpace,
-                currentUsingDirectives,
+                new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                 node,
                 this.location);
 
@@ -107,7 +117,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var enumDeclaration = this.declarationFactory.CreateEnumDeclaration(
                 currentNameSpace,
-                currentUsingDirectives,
+                new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                 node,
                 this.location);
 
@@ -122,12 +132,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             IDeclaration<SyntaxNode> recordDeclaration = node.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword)
                 ? this.declarationFactory.CreateRecordStructDeclaration(
                     currentNameSpace,
-                    currentUsingDirectives,
+                    new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                     node,
                     this.location)
                 : this.declarationFactory.CreateRecordDeclaration(
                     currentNameSpace,
-                    currentUsingDirectives,
+                    new CSharpUsingDirectives(this.globalUsing, currentUsingDirectives),
                     node,
                     this.location);
 

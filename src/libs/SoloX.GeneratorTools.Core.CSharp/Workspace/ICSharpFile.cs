@@ -6,6 +6,8 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Model;
+
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
 {
     /// <summary>
@@ -22,5 +24,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Gets the CSharp file path.
         /// </summary>
         string FilePath { get; }
+
+        /// <summary>
+        /// Global using referential.
+        /// </summary>
+        IGlobalUsingDirectives GlobalUsing { get; }
     }
 }

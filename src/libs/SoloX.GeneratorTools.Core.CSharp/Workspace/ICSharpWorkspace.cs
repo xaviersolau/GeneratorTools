@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -53,8 +54,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Register the ICSharpFile associated to the given file.
         /// </summary>
         /// <param name="file">The CSharp file.</param>
+        /// <param name="globalUsing">Global using declarations.</param>
         /// <returns>The matching or created ICSharpFile.</returns>
-        ICSharpFile RegisterFile(string file);
+        ICSharpFile RegisterFile(string file, IGlobalUsingDirectives? globalUsing = null);
 
         /// <summary>
         /// Register the ICSharpAssembly associated to the given assembly.

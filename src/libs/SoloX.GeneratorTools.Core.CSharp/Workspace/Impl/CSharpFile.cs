@@ -30,17 +30,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// </summary>
         /// <param name="file">The CSharp file.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpFile(string file, IParserDeclarationFactory declarationFactory)
+        /// <param name="globalUsing">Global using referential.</param>
+        public CSharpFile(string file, IParserDeclarationFactory declarationFactory, IGlobalUsingDirectives globalUsing)
         {
             this.declarationFactory = declarationFactory;
-
             if (!File.Exists(file))
             {
                 throw new FileNotFoundException(file);
             }
 
-            this.FileName = Path.GetFileName(file);
-            this.FilePath = Path.GetDirectoryName(file);
+            GlobalUsing = globalUsing;
+            FileName = Path.GetFileName(file);
+            FilePath = Path.GetDirectoryName(file);
         }
 
         /// <inheritdoc/>
@@ -56,6 +57,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         public ICSharpFile WorkspaceItem => this;
 
         /// <inheritdoc/>
+        public IGlobalUsingDirectives GlobalUsing { get; }
+
+        /// <inheritdoc/>
         public void Load(ICSharpWorkspace workspace)
         {
             if (this.isLoaded)
@@ -67,7 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var declarations = new List<IDeclaration<SyntaxNode>>();
             var location = Path.Combine(this.FilePath, this.FileName);
-            CSharpFileReader.Read(location, new DeclarationWalker(this.declarationFactory, declarations, location));
+            CSharpFileReader.Read(location, new DeclarationWalker(this.declarationFactory, declarations, location, GlobalUsing));
 
             this.Declarations = declarations;
         }

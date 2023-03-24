@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<Target Name="DisplayUsing">
+		<Message Importance="high" Text="{" />
+		<Message Importance="high" Text="&quot;ImplicitUsings&quot; : &quot;$(ImplicitUsings)&quot;," />
+		<Message Condition="'@(Using)' != ''" Importance="high" Text="&quot;Using&quot; : [ &quot;@(Using, '&quot;, &quot;')&quot; ]" />
+		<Message Condition="'@(Using)' == ''" Importance="high" Text="&quot;Using&quot; : [ ]" />
+		<Message Importance="high" Text="}" />
+	</Target>
+	
+</Project>
