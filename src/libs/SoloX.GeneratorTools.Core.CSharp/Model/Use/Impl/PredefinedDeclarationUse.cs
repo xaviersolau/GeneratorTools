@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
@@ -28,6 +29,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         {
             this.SyntaxNodeProvider = syntaxNodeProvider;
             this.Name = name;
+
+            IsValueType = name != "object" && name != "string";
         }
 
         /// <inheritdoc/>
@@ -49,7 +52,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         public string FullName => this.Name;
 
         /// <inheritdoc/>
-        public IReadOnlyList<string> UsingDirectives => Array.Empty<string>();
+        public bool IsValueType { get; }
+
+        /// <inheritdoc/>
+        public IUsingDirectives UsingDirectives => NoUsingDirectives.Instance;
 
         /// <inheritdoc/>
         public IReadOnlyList<IAttributeUse> Attributes => Array.Empty<IAttributeUse>();

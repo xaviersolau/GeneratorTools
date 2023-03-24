@@ -30,7 +30,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// </summary>
         /// <param name="syntaxTree">The CSharp SyntaxTree.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
-        public CSharpSyntaxTree(SyntaxTree syntaxTree, IParserDeclarationFactory declarationFactory)
+        /// <param name="globalUsing">Global using referential.</param>
+        public CSharpSyntaxTree(SyntaxTree syntaxTree, IParserDeclarationFactory declarationFactory, IGlobalUsingDirectives globalUsing)
         {
             if (syntaxTree == null)
             {
@@ -43,8 +44,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var file = syntaxTree.FilePath;
 
-            this.FileName = Path.GetFileName(file);
-            this.FilePath = Path.GetDirectoryName(file);
+            GlobalUsing = globalUsing;
+            FileName = Path.GetFileName(file);
+            FilePath = Path.GetDirectoryName(file);
         }
 
         /// <inheritdoc/>
@@ -58,6 +60,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
         /// <inheritdoc/>
         public string FilePath { get; }
+
+        /// <inheritdoc/>
+        public IGlobalUsingDirectives GlobalUsing { get; }
 
         /// <inheritdoc/>
         public ICSharpSyntaxTree WorkspaceItem => this;
@@ -74,7 +79,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             var declarations = new List<IDeclaration<SyntaxNode>>();
 
-            new DeclarationWalker(this.declarationFactory, declarations, this.SyntaxTree.FilePath).Visit(this.SyntaxTree.GetRoot());
+            new DeclarationWalker(this.declarationFactory, declarations, this.SyntaxTree.FilePath, GlobalUsing).Visit(this.SyntaxTree.GetRoot());
 
             this.Declarations = declarations;
         }

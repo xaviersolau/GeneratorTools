@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -29,9 +28,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             string nameSpace,
             string name,
             ISyntaxNodeProvider<EnumDeclarationSyntax> syntaxNodeProvider,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             string location)
-            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location, true)
         {
         }
 

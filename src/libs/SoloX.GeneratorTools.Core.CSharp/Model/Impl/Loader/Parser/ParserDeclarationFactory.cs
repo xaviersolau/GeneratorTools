@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
@@ -36,7 +35,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IInterfaceDeclaration CreateInterfaceDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             InterfaceDeclarationSyntax node,
             string location)
         {
@@ -52,7 +51,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IClassDeclaration CreateClassDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             ClassDeclarationSyntax node,
             string location)
         {
@@ -68,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IStructDeclaration CreateStructDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             StructDeclarationSyntax node,
             string location)
         {
@@ -84,7 +83,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IEnumDeclaration CreateEnumDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             EnumDeclarationSyntax node,
             string location)
         {
@@ -99,7 +98,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IRecordDeclaration CreateRecordDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             RecordDeclarationSyntax node,
             string location)
         {
@@ -115,7 +114,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         /// <inheritdoc/>
         public IRecordStructDeclaration CreateRecordStructDeclaration(
             string nameSpace,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             RecordDeclarationSyntax node,
             string location)
         {

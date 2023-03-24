@@ -169,15 +169,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 
             foreach (var declarationInterfaceFile in declarationInterfaceFiles)
             {
-                var itfDeclaration = ws.RegisterFile(declarationInterfaceFile)
+                var itfDeclaration = ws.RegisterFile(declarationInterfaceFile, null)
                     .Declarations.First() as IInterfaceDeclaration;
 
                 itfDeclarationsList.Add(itfDeclaration);
             }
 
-            itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile)
+            itfPatternDeclaration = ws.RegisterFile(patternInterfaceFile, null)
                 .Declarations.First() as IInterfaceDeclaration;
-            implPatternDeclaration = ws.RegisterFile(patternImplementationFile)
+            implPatternDeclaration = ws.RegisterFile(patternImplementationFile, null)
                 .Declarations.First() as IClassDeclaration;
 
             files = ws.Files;

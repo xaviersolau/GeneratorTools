@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
@@ -23,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="name">The declaration name.</param>
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         public GenericParameterDeclaration(string name, ISyntaxNodeProvider<TypeParameterSyntax> syntaxNodeProvider)
-            : base(string.Empty, name, syntaxNodeProvider, Array.Empty<string>(), null)
+            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false)
         {
         }
 
@@ -31,6 +30,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         protected override void LoadImpl(IDeclarationResolver resolver)
         {
             // Nothing to load.
+        }
+
+        internal void SetValueType(bool valueType)
+        {
+            IsValueType = valueType;
         }
     }
 }

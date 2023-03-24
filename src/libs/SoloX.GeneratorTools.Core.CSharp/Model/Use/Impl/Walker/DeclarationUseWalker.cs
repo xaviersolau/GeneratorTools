@@ -112,5 +112,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 new ParserSyntaxNodeProvider<PredefinedTypeSyntax>(node),
                 node.Keyword.Text);
         }
+
+        public override IDeclarationUse<SyntaxNode> VisitNullableType(NullableTypeSyntax node)
+        {
+            var declarationUse = this.Visit(node.ElementType);
+
+            if (declarationUse.Declaration.IsValueType)
+            {
+                var tparams = new[] { declarationUse };
+                var genericDeclaration = this.resolver.Resolve("System.Nullable", tparams, this.genericDeclaration);
+
+                // TODO Set ParserSyntaxNodeProvider
+                return new GenericDeclarationUse(
+                    //new ParserSyntaxNodeProvider<NullableTypeSyntax>(null),
+                    null,
+                    genericDeclaration,
+                    tparams);
+            }
+
+            return declarationUse;
+        }
     }
 }

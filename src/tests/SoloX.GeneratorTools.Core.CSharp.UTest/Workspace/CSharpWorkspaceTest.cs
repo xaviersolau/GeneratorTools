@@ -88,10 +88,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration<SyntaxNode>[] { declaration });
 
-            factoryMock.Setup(f => f.CreateFile(It.IsAny<string>()))
-                .Returns<string>(f => fileloaderMock.Object);
+            factoryMock.Setup(f => f.CreateFile(It.IsAny<string>(), It.IsAny<IGlobalUsingDirectives>()))
+                .Returns(fileloaderMock.Object);
 
-            workspace.RegisterFile("Test");
+            workspace.RegisterFile("Test", null);
 
             workspace.DeepLoad();
 

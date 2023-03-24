@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Reflection;
@@ -49,9 +50,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public ICSharpWorkspaceItemLoader<ICSharpFile> CreateFile(string file)
+        public ICSharpWorkspaceItemLoader<ICSharpFile> CreateFile(string file, IGlobalUsingDirectives globalUsing)
         {
-            return new CSharpFile(file, this.parserDeclarationFactory);
+            return new CSharpFile(file, this.parserDeclarationFactory, globalUsing);
         }
 
         /// <inheritdoc/>
@@ -70,9 +71,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public ICSharpWorkspaceItemLoader<ICSharpSyntaxTree> CreateSyntaxTree(SyntaxTree syntaxTree)
+        public ICSharpWorkspaceItemLoader<ICSharpSyntaxTree> CreateSyntaxTree(SyntaxTree syntaxTree, IGlobalUsingDirectives globalUsing)
         {
-            return new CSharpSyntaxTree(syntaxTree, this.parserDeclarationFactory);
+            return new CSharpSyntaxTree(syntaxTree, this.parserDeclarationFactory, globalUsing);
         }
     }
 }

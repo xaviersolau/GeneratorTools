@@ -39,7 +39,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             var location = recordName.ToBasicPath();
             var csFile = new CSharpFile(
                 location,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 

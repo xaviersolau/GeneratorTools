@@ -42,6 +42,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
         [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
         [InlineData(typeof(GenericClass<>), null)]
+        [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
         public void ItShouldLoadClassType(Type type, Type baseType)
@@ -51,7 +52,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             var location = className.ToBasicPath();
             var csFile = new CSharpFile(
                 location,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
 
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
@@ -71,7 +73,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         {
             var csFile = new CSharpFile(
                 className.ToBasicPath(),
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
@@ -102,7 +105,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 
             var csFile = new CSharpFile(
                 file,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
@@ -122,21 +126,34 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         }
 
         [Theory]
-        [InlineData(nameof(ClassWithProperties), false)]
-        [InlineData(nameof(ClassWithArrayProperties), true)]
-        public void LoadPropertyListTest(string className, bool isArray)
+        [InlineData(typeof(ClassWithProperties), false, false)]
+        [InlineData(typeof(ClassWithNulableProperties), false, true)]
+        [InlineData(typeof(ClassWithArrayProperties), true, false)]
+        public void LoadPropertyListTest(Type type, bool isArray, bool isNullable)
         {
+            var className = type.Name;
+
             var file = className.ToBasicPath();
 
             var csFile = new CSharpFile(
                 file,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 
             var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
+                (mock) =>
+                {
+                    var nullableMock = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    nullableMock.Setup(d => d.Name).Returns("Nullable");
+
+                    mock
+                        .Setup(dr => dr.Resolve("System.Nullable", It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
+                        .Returns(nullableMock.Object);
+                },
                 nameof(SimpleClass));
 
             var decl = Assert.IsType<ClassDeclaration>(declaration);
@@ -156,8 +173,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 
             var mInt = Assert.Single(decl.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
-            Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
-            Assert.Equal("int", pInt.PropertyType.Declaration.Name);
+
+            var propertyType = pInt.PropertyType;
+
+            if (isNullable)
+            {
+                var genPropertyType = Assert.IsType<GenericDeclarationUse>(pInt.PropertyType);
+                Assert.Equal("Nullable", genPropertyType.Declaration.Name);
+
+                propertyType = genPropertyType.GenericParameters.Single();
+            }
+
+            Assert.IsType<PredefinedDeclarationUse>(propertyType);
+            Assert.Equal("int", propertyType.Declaration.Name);
 
             if (isArray)
             {
@@ -180,7 +208,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 
             var csFile = new CSharpFile(
                 file,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
@@ -240,7 +269,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 
             var csFile = new CSharpFile(
                 file,
-                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                Mock.Of<IGlobalUsingDirectives>());
             csFile.Load(Mock.Of<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
@@ -267,14 +297,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             Assert.True(wop.HasSetter);
         }
 
-        private IDeclarationResolver SetupDeclarationResolver(IDeclaration<SyntaxNode> contextDeclaration, params string[] classNames)
+        private IDeclarationResolver SetupDeclarationResolver(
+            IDeclaration<SyntaxNode> contextDeclaration,
+            params string[] classNames)
+        {
+            return SetupDeclarationResolver(contextDeclaration, (_) => { }, classNames);
+        }
+
+        private IDeclarationResolver SetupDeclarationResolver(
+            IDeclaration<SyntaxNode> contextDeclaration,
+            Action<Mock<IDeclarationResolver>> setup,
+            params string[] classNames)
         {
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             foreach (var className in classNames)
             {
                 var classFile = new CSharpFile(
                     className.ToBasicPath(),
-                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper));
+                    DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
+                    Mock.Of<IGlobalUsingDirectives>());
                 classFile.Load(Mock.Of<ICSharpWorkspace>());
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
                 if (classDeclarationSingle is IGenericDeclaration<SyntaxNode> genericDeclaration
@@ -291,6 +332,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
                         .Returns(classDeclarationSingle);
                 }
             }
+
+            setup(declarationResolverMock);
 
             return declarationResolverMock.Object;
         }

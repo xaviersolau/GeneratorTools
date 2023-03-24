@@ -220,7 +220,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
             var selectorTypeName = constEvaluator.Visit(selectorExp.Expression);
 
-            var nsBase = this.pattern.UsingDirectives
+            var nsBase = this.pattern.UsingDirectives.Usings
                 .Concat(NameSpaceHelper.GetParentNameSpaces(this.pattern.DeclarationNameSpace));
 
             foreach (var usingDirective in nsBase)

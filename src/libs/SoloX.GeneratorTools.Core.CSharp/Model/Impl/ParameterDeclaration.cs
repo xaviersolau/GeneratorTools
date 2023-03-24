@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -26,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="parameterType">The parameter type use declaration.</param>
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         public ParameterDeclaration(string name, IDeclarationUse<SyntaxNode> parameterType, ISyntaxNodeProvider<ParameterSyntax> syntaxNodeProvider)
-            : base(string.Empty, name, syntaxNodeProvider, Array.Empty<string>(), null)
+            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false)
         {
             this.ParameterType = parameterType;
         }

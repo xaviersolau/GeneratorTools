@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
@@ -44,6 +45,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             setup?.Invoke(declarationMock);
 
             return declarationMock.Object;
+        }
+
+        /// <summary>
+        /// Setup using directives.
+        /// </summary>
+        /// <returns></returns>
+        public static IUsingDirectives SetupUsingDirectives(IReadOnlyList<string> usings)
+        {
+            var usingDirectivesMock = new Mock<IUsingDirectives>();
+
+            usingDirectivesMock.SetupGet(u => u.Usings).Returns(usings);
+
+            return usingDirectivesMock.Object;
         }
 
         /// <summary>

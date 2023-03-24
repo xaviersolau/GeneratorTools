@@ -45,6 +45,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
         [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
         [InlineData(typeof(GenericClass<>), null)]
+        [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
         public void ItShouldLoadClassType(Type type, Type baseType)
@@ -96,9 +97,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         }
 
         [Theory]
-        [InlineData(typeof(ClassWithProperties), false)]
-        [InlineData(typeof(ClassWithArrayProperties), true)]
-        public void LoadPropertyListTest(Type type, bool isArray)
+        [InlineData(typeof(ClassWithProperties), false, false)]
+        [InlineData(typeof(ClassWithNulableProperties), false, true)]
+        [InlineData(typeof(ClassWithArrayProperties), true, false)]
+        public void LoadPropertyListTest(Type type, bool isArray, bool isNullable)
         {
             var assemblyPath = type.Assembly.Location;
 
@@ -111,12 +113,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
                 .CreateDeclaration(metadataReader, typeDefinitionHandle, assemblyPath);
             var simpleDeclaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
                 .CreateDeclaration(typeof(SimpleClass));
+            var nullableDeclaration = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper)
+                .CreateDeclaration(typeof(int?));
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
             var simpleClassDeclaration = Assert.IsType<ClassDeclaration>(simpleDeclaration);
+            var nullableStructDeclaration = Assert.IsType<StructDeclaration>(nullableDeclaration);
 
             var declarationResolverMock = new Mock<IDeclarationResolver>();
             declarationResolverMock.Setup(r => r.Resolve(typeof(SimpleClass))).Returns(simpleClassDeclaration);
+            declarationResolverMock.Setup(r => r.Resolve(typeof(int?))).Returns(nullableStructDeclaration);
+
             classDeclaration.DeepLoad(declarationResolverMock.Object);
 
             Assert.NotEmpty(classDeclaration.Properties);
@@ -131,8 +138,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var mInt = Assert.Single(classDeclaration.Members.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
 
-            Assert.IsType<PredefinedDeclarationUse>(pInt.PropertyType);
-            Assert.Equal("int", pInt.PropertyType.Declaration.Name);
+            var propertyType = pInt.PropertyType;
+
+            if (isNullable)
+            {
+                var genPropertyType = Assert.IsType<GenericDeclarationUse>(pInt.PropertyType);
+                Assert.Equal("Nullable", genPropertyType.Declaration.Name);
+
+                propertyType = genPropertyType.GenericParameters.Single();
+            }
+
+            Assert.IsType<PredefinedDeclarationUse>(propertyType);
+            Assert.Equal("int", propertyType.Declaration.Name);
 
             if (isArray)
             {

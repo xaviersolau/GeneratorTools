@@ -35,14 +35,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="loader">The loader to use when deep loading the declaration.</param>
+        /// <param name="isValueType">Tells if this is a valueType.</param>
         protected AGenericDeclaration(
             string nameSpace,
             string name,
             ISyntaxNodeProvider<TNode> syntaxNodeProvider,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             string location,
-            AGenericDeclarationLoader<TNode> loader)
-            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location)
+            AGenericDeclarationLoader<TNode> loader,
+            bool isValueType)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location, isValueType)
         {
             this.loader = loader;
         }

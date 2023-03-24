@@ -16,6 +16,7 @@ using SoloX.GeneratorTools.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
@@ -56,7 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
             var metadataReader = portableExecutableReader.GetMetadataReader();
 
-            LoadGenericParameters(metadataReader, declaration);
+            LoadGenericParameters(metadataReader, declaration, resolver);
             LoadExtends(metadataReader, declaration, resolver);
             LoadMembers(metadataReader, declaration, resolver);
             LoadAttributes(metadataReader, declaration, resolver);
@@ -159,7 +160,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 var methodName = LoadString(metadataReader, methodDefinition.Name);
                 if (((attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) && (attributes & MethodAttributes.SpecialName) == 0)
                 {
-                    var genericParameters = LoadGenericParameters(metadataReader, methodDefinition);
+                    var genericParameters = LoadGenericParameters(metadataReader, declaration, methodDefinition, resolver);
 
                     var methodSignature = methodDefinition.DecodeSignature(
                         new SignatureTypeProvider(resolver),
@@ -208,9 +209,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return parameterSet;
         }
 
-        private static IReadOnlyCollection<IGenericParameterDeclaration> LoadGenericParameters(MetadataReader metadataReader, MethodDefinition methodDefinition)
+        private static IReadOnlyCollection<IGenericParameterDeclaration> LoadGenericParameters(
+            MetadataReader metadataReader, AGenericDeclaration<TNode> declaration, MethodDefinition methodDefinition, IDeclarationResolver resolver)
         {
-            var parameterSet = new List<IGenericParameterDeclaration>();
+            var parameterSet = new IGenericParameterDeclaration[methodDefinition.GetGenericParameters().Count];
+
             foreach (var genericParameterHandle in methodDefinition.GetGenericParameters())
             {
                 if (!genericParameterHandle.IsNil)
@@ -221,9 +224,39 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
                     var parameterIndex = genericParameter.Index;
 
-                    parameterSet.Add(new GenericParameterDeclaration(
+                    var genericParameterDeclaration = new GenericParameterDeclaration(
                         parameterName,
-                        null));
+                        null);
+
+                    parameterSet[parameterIndex] = genericParameterDeclaration;
+                }
+            }
+
+            foreach (var genericParameterHandle in methodDefinition.GetGenericParameters())
+            {
+                if (!genericParameterHandle.IsNil)
+                {
+                    var genericParameter = metadataReader.GetGenericParameter(genericParameterHandle);
+
+                    var parameterIndex = genericParameter.Index;
+
+                    var genericParameterDeclaration = (GenericParameterDeclaration)parameterSet[parameterIndex];
+
+                    var constraints = genericParameter.GetConstraints();
+
+                    foreach (var constraintHandle in constraints)
+                    {
+                        // TODO handle other constraints.
+
+                        var constraint = metadataReader.GetGenericParameterConstraint(constraintHandle);
+
+                        var use = GetDeclarationUseFrom(metadataReader, constraint.Type, resolver, declaration, parameterSet);
+
+                        if (use.Declaration.FullName == "System.ValueType")
+                        {
+                            genericParameterDeclaration.SetValueType(true);
+                        }
+                    }
                 }
             }
 
@@ -264,7 +297,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             declaration.Extends = uses;
         }
 
-        private static void LoadGenericParameters(MetadataReader metadataReader, AGenericDeclaration<TNode> declaration)
+        private static void LoadGenericParameters(MetadataReader metadataReader, AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             var typeDefinitionHandle = declaration.GetData<TypeDefinitionHandle>();
 
@@ -282,18 +315,49 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
                     var parameterIndex = genericParameter.Index;
 
-                    parameterSet[parameterIndex] = new GenericParameterDeclaration(parameterName, null);
+                    var genericParameterDeclaration = new GenericParameterDeclaration(parameterName, null);
+
+                    parameterSet[parameterIndex] = genericParameterDeclaration;
                 }
             }
 
             declaration.GenericParameters = parameterSet;
+
+            foreach (var genericParameterHandle in typeDefinition.GetGenericParameters())
+            {
+                if (!genericParameterHandle.IsNil)
+                {
+                    var genericParameter = metadataReader.GetGenericParameter(genericParameterHandle);
+
+                    var parameterIndex = genericParameter.Index;
+
+                    var genericParameterDeclaration = (GenericParameterDeclaration)parameterSet[parameterIndex];
+
+                    var constraints = genericParameter.GetConstraints();
+
+                    foreach (var constraintHandle in constraints)
+                    {
+                        // TODO handle other constraints.
+
+                        var constraint = metadataReader.GetGenericParameterConstraint(constraintHandle);
+
+                        var use = GetDeclarationUseFrom(metadataReader, constraint.Type, resolver, declaration);
+
+                        if (use.Declaration.FullName == "System.ValueType")
+                        {
+                            genericParameterDeclaration.SetValueType(true);
+                        }
+                    }
+                }
+            }
         }
 
         private static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
             MetadataReader metadataReader,
             EntityHandle typeHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext)
+            IGenericDeclaration<TNode> declarationContext,
+            IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             if (typeHandle.IsNil)
             {
@@ -308,9 +372,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 case HandleKind.TypeReference:
                     return LoadDeclarationUseFromTypeReference(metadataReader, (TypeReferenceHandle)typeHandle, resolver);
                 case HandleKind.TypeSpecification:
-                    return LoadDeclarationUseFromTypeSpecification(metadataReader, (TypeSpecificationHandle)typeHandle, resolver, declarationContext);
+                    return LoadDeclarationUseFromTypeSpecification(metadataReader, (TypeSpecificationHandle)typeHandle, resolver, declarationContext, genericMethodParameters);
                 case HandleKind.InterfaceImplementation:
-                    return LoadDeclarationUseFromInterfaceImplementation(metadataReader, (InterfaceImplementationHandle)typeHandle, resolver, declarationContext);
+                    return LoadDeclarationUseFromInterfaceImplementation(metadataReader, (InterfaceImplementationHandle)typeHandle, resolver, declarationContext, genericMethodParameters);
                 default:
                     break;
             }
@@ -323,13 +387,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             MetadataReader metadataReader,
             InterfaceImplementationHandle interfaceImplementationHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext)
+            IGenericDeclaration<TNode> declarationContext,
+            IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             var interfaceImplementation = metadataReader.GetInterfaceImplementation(interfaceImplementationHandle);
 
             var interfaceHandle = interfaceImplementation.Interface;
 
-            var declarationUse = GetDeclarationUseFrom(metadataReader, interfaceHandle, resolver, declarationContext);
+            var declarationUse = GetDeclarationUseFrom(metadataReader, interfaceHandle, resolver, declarationContext, genericMethodParameters);
 
             return declarationUse;
         }
@@ -338,13 +403,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             MetadataReader metadataReader,
             TypeSpecificationHandle typeSpecificationHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext)
+            IGenericDeclaration<TNode> declarationContext,
+            IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             var typeSpecification = metadataReader.GetTypeSpecification(typeSpecificationHandle);
 
             var declarationUse = typeSpecification.DecodeSignature(
                     new SignatureTypeProvider(resolver),
-                    new GenericResolver(declarationContext));
+                    new GenericResolver(declarationContext, genericMethodParameters));
 
             return declarationUse;
 
@@ -372,7 +438,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return genericDeclarationUse;
         }
 
-        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromTypeDefinition(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, IDeclarationResolver resolver)
+        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromTypeDefinition(
+            MetadataReader metadataReader,
+            TypeDefinitionHandle typeDefinitionHandle,
+            IDeclarationResolver resolver)
         {
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
 

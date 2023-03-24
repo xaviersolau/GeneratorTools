@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 
@@ -30,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             string nameSpace,
             string name,
             ISyntaxNodeProvider<InterfaceDeclarationSyntax> syntaxNodeProvider,
-            IReadOnlyList<string> usingDirectives,
+            IUsingDirectives usingDirectives,
             string location,
             AGenericDeclarationLoader<InterfaceDeclarationSyntax> loader)
             : base(
@@ -39,7 +38,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                   syntaxNodeProvider,
                   usingDirectives,
                   location,
-                  loader)
+                  loader,
+                  false)
         {
         }
     }
