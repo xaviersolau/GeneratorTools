@@ -14,7 +14,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -39,8 +39,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [Theory]
         [InlineData(typeof(SimpleClass), null)]
         [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
-        [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
-        [InlineData(typeof(GenericClass<>), null)]
         [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]

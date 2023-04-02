@@ -12,7 +12,7 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
 using Xunit.Abstractions;

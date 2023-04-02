@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -19,6 +18,7 @@ using System;
 using Xunit;
 using Xunit.Abstractions;
 using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
@@ -35,6 +35,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(SimpleEnum))]
         public void ItShouldLoadEnumType(Type type)
         {
+            var enumDeclaration = LoadEnumDeclaration(type);
+
+            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
+
+            Assert.Equal(
+                className,
+                enumDeclaration.Name);
+
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+        }
+
+        private IEnumDeclaration LoadEnumDeclaration(Type type)
+        {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
             var assemblyPath = type.Assembly.Location;
@@ -49,13 +63,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
             var enumDeclaration = Assert.IsAssignableFrom<IEnumDeclaration>(declaration);
-
-            Assert.Equal(
-                className,
-                enumDeclaration.Name);
-
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+            return enumDeclaration;
         }
     }
 }

@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic
+namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
 {
     public class GenericClassWithArrayProperties<T>
     {

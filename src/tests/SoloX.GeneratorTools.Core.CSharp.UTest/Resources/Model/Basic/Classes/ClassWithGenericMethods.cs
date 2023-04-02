@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic
+namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
 {
 #pragma warning disable CA1822 // Marquer les membres comme étant static
 #pragma warning disable CA1801

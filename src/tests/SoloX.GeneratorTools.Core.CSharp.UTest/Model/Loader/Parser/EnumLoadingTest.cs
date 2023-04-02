@@ -10,13 +10,13 @@ using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System;
 using Xunit;
 using Xunit.Abstractions;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 {
@@ -33,9 +33,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [InlineData(typeof(SimpleEnum))]
         public void ItShouldLoadEnumType(Type type)
         {
+            var enumDeclaration = LoadEnumDeclaration(type);
+
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
-            var location = className.ToBasicPath();
+            Assert.Equal(
+                className,
+                enumDeclaration.Name);
+
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+        }
+
+        private IEnumDeclaration LoadEnumDeclaration(Type type)
+        {
+            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
+
+            var location = className.ToBasicEnumsPath();
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
@@ -48,13 +62,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             Assert.Equal(location, declaration.Location);
 
             var enumDeclaration = Assert.IsAssignableFrom<IEnumDeclaration>(declaration);
-
-            Assert.Equal(
-                className,
-                enumDeclaration.Name);
-
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+            return enumDeclaration;
         }
     }
 }
