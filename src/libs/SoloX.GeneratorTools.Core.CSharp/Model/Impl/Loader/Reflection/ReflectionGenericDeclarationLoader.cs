@@ -94,12 +94,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
             Type type,
             IDeclarationResolver resolver,
+            IReadOnlyCollection<IGenericParameterDeclaration> methodGenericParameters,
             int arrayCount = 0)
         {
             if (type.IsArray)
             {
                 var eltType = type.GetElementType();
-                return GetDeclarationUseFrom(eltType, resolver, arrayCount + 1);
+                return GetDeclarationUseFrom(eltType, resolver, methodGenericParameters, arrayCount + 1);
             }
 
             if (TryGetPredefinedDeclarationUse(type, out var typeUse))
@@ -108,6 +109,35 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                     arrayCount,
                     typeUse.SyntaxNodeProvider);
                 return typeUse;
+            }
+
+            if (type.IsGenericParameter)
+            {
+                var genType = resolver.Find(type.Name);
+
+                var declType = resolver.Resolve(type.DeclaringType);
+
+                GenericParameterDeclarationUse genTypeUse;
+
+                if (type.DeclaringMethod != null)
+                {
+                    var genericParameter = methodGenericParameters.Single(p => p.Name == type.Name);
+
+                    genTypeUse = new GenericParameterDeclarationUse(null, genericParameter);
+                }
+                else
+                {
+                    var genericParameter = declType.GenericParameters.Single(p => p.Name == type.Name);
+
+                    genTypeUse = new GenericParameterDeclarationUse(null, genericParameter);
+                }
+
+
+                genTypeUse.ArraySpecification = CreateArraySpecification(
+                    arrayCount,
+                    genTypeUse.SyntaxNodeProvider);
+
+                return genTypeUse;
             }
 
             var interfaceDeclaration = resolver.Resolve(type);
@@ -130,7 +160,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
                 foreach (var typeArg in type.GenericTypeArguments)
                 {
-                    uses.Add(GetDeclarationUseFrom(typeArg, resolver));
+                    uses.Add(GetDeclarationUseFrom(typeArg, resolver, methodGenericParameters));
                 }
 
                 genericParameters = uses;
@@ -222,7 +252,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return genericParameters;
         }
 
-        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodInfo method, IDeclarationResolver resolver)
+        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodInfo method, IDeclarationResolver resolver, IReadOnlyCollection<IGenericParameterDeclaration> methodGenericParameters)
         {
             IReadOnlyCollection<IParameterDeclaration> parameters;
 
@@ -233,7 +263,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 var parameterSet = new List<IParameterDeclaration>();
                 foreach (var pi in paramInfos)
                 {
-                    parameterSet.Add(new ParameterDeclaration(pi.Name, GetDeclarationUseFrom(pi.ParameterType, resolver), null));
+                    parameterSet.Add(new ParameterDeclaration(pi.Name, GetDeclarationUseFrom(pi.ParameterType, resolver, methodGenericParameters), null));
                 }
 
                 parameters = parameterSet;
@@ -290,14 +320,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
                 if (declarationType.BaseType != null)
                 {
-                    uses.Add(GetDeclarationUseFrom(declarationType.BaseType, resolver));
+                    uses.Add(GetDeclarationUseFrom(declarationType.BaseType, resolver, null));
                 }
 
                 if (extendedInterfaces != null)
                 {
                     foreach (var extendedInterface in extendedInterfaces)
                     {
-                        uses.Add(GetDeclarationUseFrom(extendedInterface, resolver));
+                        uses.Add(GetDeclarationUseFrom(extendedInterface, resolver, null));
                     }
                 }
 
@@ -322,7 +352,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             {
                 foreach (var property in declaration.GetData<Type>().GetProperties())
                 {
-                    var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver);
+                    var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver, null);
                     memberList.Add(
                         new PropertyDeclaration(
                             property.Name,
@@ -334,11 +364,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
                 foreach (var method in declaration.GetData<Type>().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
                 {
-                    var returnType = GetDeclarationUseFrom(method.ReturnType, resolver);
-
                     var genericParameters = LoadGenericParameters(method);
 
-                    var parameters = LoadParameters(method, resolver);
+                    var returnType = GetDeclarationUseFrom(method.ReturnType, resolver, genericParameters);
+
+                    var parameters = LoadParameters(method, resolver, genericParameters);
 
                     memberList.Add(
                         new MethodDeclaration(
@@ -371,7 +401,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             {
                 attributeList.Add(
                     new AttributeUse(
-                        GetDeclarationUseFrom(customAttribute.AttributeType, resolver).Declaration,
+                        GetDeclarationUseFrom(customAttribute.AttributeType, resolver, null).Declaration,
                         new ReflectionAttributeSyntaxNodeProvider(customAttribute)));
             }
 
