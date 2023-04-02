@@ -35,7 +35,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         {
             var resolverMock = new Mock<IDeclarationResolver>();
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -50,7 +50,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             var type = typeof(List<object>);
             var resolverMock = new Mock<IDeclarationResolver>();
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -67,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             var resolverMock = new Mock<IDeclarationResolver>();
             resolverMock.Setup(r => r.Resolve(type)).Returns(resolvedDeclaration);
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);

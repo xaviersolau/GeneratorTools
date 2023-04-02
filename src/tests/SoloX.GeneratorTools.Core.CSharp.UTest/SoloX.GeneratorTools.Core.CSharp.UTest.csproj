@@ -64,6 +64,15 @@
     <Compile Update="Resources\Model\Basic\ClassWithProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Resources\Model\Basic\GenericClassWithArrayProperties.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\GenericClassWithArrayProperties2.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\GenericClassWithProperties.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources\Model\Basic\GenericClassWithStructConstraint.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
