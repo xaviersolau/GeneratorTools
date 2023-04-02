@@ -12,7 +12,7 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Records;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -35,9 +35,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [InlineData(typeof(SimpleRecordWithBase), typeof(SimpleRecord))]
         public void ItShouldLoadRecordType(Type type, Type baseType)
         {
+            var recordDeclaration = LoadRecordDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+        }
+
+        private IRecordDeclaration LoadRecordDeclaration(Type type)
+        {
             var recordName = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
-            var location = recordName.ToBasicPath();
+            var location = recordName.ToBasicRecordsPath();
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
@@ -50,8 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             Assert.Equal(location, declaration.Location);
 
             var recordDeclaration = Assert.IsAssignableFrom<IRecordDeclaration>(declaration);
-
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+            return recordDeclaration;
         }
     }
 }

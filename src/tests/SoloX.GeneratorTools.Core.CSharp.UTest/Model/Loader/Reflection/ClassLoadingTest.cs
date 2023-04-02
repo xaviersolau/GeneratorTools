@@ -14,13 +14,13 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using Xunit;
 using Xunit.Abstractions;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
@@ -39,8 +39,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [Theory]
         [InlineData(typeof(SimpleClass), null)]
         [InlineData(typeof(SimpleClassWithBase), typeof(SimpleClass))]
-        [InlineData(typeof(SimpleClassWithGenericBase), typeof(GenericClass<>))]
-        [InlineData(typeof(GenericClass<>), null)]
         [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]

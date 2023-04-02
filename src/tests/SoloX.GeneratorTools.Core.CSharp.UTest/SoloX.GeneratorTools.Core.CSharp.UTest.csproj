@@ -46,79 +46,91 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Model\Basic\ClassWithArrayProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithArrayProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\ClassWithGenericMethods.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithGenericMethods.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\ClassWithGetterSetterProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithGetterSetterProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\ClassWithMethods.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithMethods.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\ClassWithNulableProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithNulableProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\ClassWithProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithArrayProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithArrayProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithArrayProperties2.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithArrayProperties2.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithProperties.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithProperties.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithStructConstraint.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithStructConstraint.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithGenericBase.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithGenericBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClassWithBase.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClassWithBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\GenericClass.cs">
+    <Compile Update="Resources\Model\Basic\Classes\GenericClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\PatternAttributedClass.cs">
+    <Compile Update="Resources\Model\Basic\Classes\PatternAttributedClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\RepeatAttributedClass.cs">
+    <Compile Update="Resources\Model\Basic\Classes\RepeatAttributedClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleRecordStruct.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\GenericInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleEnum.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\PatternAttributedInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleStruct.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\RepeatAttributedInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleInterfaceWithBase.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\SimpleInterfaceWithGenericBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleInterface.cs">
+    <Compile Update="Resources\Model\Basic\RecordStructs\SimpleRecordStruct.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleRecordWithBase.cs">
+    <Compile Update="Resources\Model\Basic\Enums\SimpleEnum.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleRecord.cs">
+    <Compile Update="Resources\Model\Basic\Structs\SimpleStruct.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleClassWithGenericBase.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\SimpleInterfaceWithBase.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleClassWithBase.cs">
+    <Compile Update="Resources\Model\Basic\Interfaces\SimpleInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Resources\Model\Basic\SimpleClass.cs">
+    <Compile Update="Resources\Model\Basic\Records\SimpleRecordWithBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Records\SimpleRecord.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\SimpleClassWithGenericBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\SimpleClassWithBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\SimpleClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Workspace\BasicStruct.cs">

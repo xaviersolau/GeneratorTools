@@ -11,7 +11,6 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -20,6 +19,7 @@ using System;
 using Xunit;
 using Xunit.Abstractions;
 using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Structs;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
@@ -36,6 +36,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(SimpleStruct), null)]
         public void ItShouldLoadStructType(Type type, Type baseType)
         {
+            var structDeclaration = LoadStructDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType);
+        }
+
+        private IStructDeclaration LoadStructDeclaration(Type type)
+        {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
             var assemblyLoader = new CSharpAssembly(
@@ -48,8 +55,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
             var structDeclaration = Assert.IsAssignableFrom<IStructDeclaration>(declaration);
-
-            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType);
+            return structDeclaration;
         }
     }
 }

@@ -11,13 +11,13 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System;
 using Xunit;
 using Xunit.Abstractions;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Structs;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 {
@@ -34,9 +34,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [InlineData(typeof(SimpleStruct), null)]
         public void ItShouldLoadStructType(Type type, Type baseType)
         {
+            var structDeclaration = LoadStructDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType);
+        }
+
+        private IStructDeclaration LoadStructDeclaration(Type type)
+        {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
-            var location = className.ToBasicPath();
+            var location = className.ToBasicStructsPath();
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
@@ -49,8 +56,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             Assert.Equal(location, declaration.Location);
 
             var structDeclaration = Assert.IsAssignableFrom<IStructDeclaration>(declaration);
-
-            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType);
+            return structDeclaration;
         }
     }
 }

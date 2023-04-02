@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using System;
 using Xunit;
@@ -20,6 +19,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.RecordStructs;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
@@ -36,6 +36,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(SimpleRecordStruct), null)]
         public void ItShouldLoadRecordStructType(Type type, Type baseType)
         {
+            var recordDeclaration = LoadRecordStructDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+        }
+
+        private IRecordStructDeclaration LoadRecordStructDeclaration(Type type)
+        {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
             var assemblyPath = type.Assembly.Location;
@@ -50,8 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
             var recordDeclaration = Assert.IsAssignableFrom<IRecordStructDeclaration>(declaration);
-
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+            return recordDeclaration;
         }
     }
 }

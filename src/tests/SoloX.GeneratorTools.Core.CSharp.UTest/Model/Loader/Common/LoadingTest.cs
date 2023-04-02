@@ -23,8 +23,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System.Collections.Generic;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 {
@@ -327,7 +326,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 var className = classItem.Name;
 
                 var classFile = new CSharpFile(
-                    className.ToBasicPath(),
+                    className.ToBasicClassesPath(),
                     DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
                     Mock.Of<IGlobalUsingDirectives>());
                 classFile.Load(Mock.Of<ICSharpWorkspace>());

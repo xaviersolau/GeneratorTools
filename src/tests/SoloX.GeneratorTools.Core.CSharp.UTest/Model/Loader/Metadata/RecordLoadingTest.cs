@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using System;
 using Xunit;
@@ -20,6 +19,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Records;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
@@ -37,6 +37,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(SimpleRecordWithBase), typeof(SimpleRecord))]
         public void ItShouldLoadRecordType(Type type, Type baseType)
         {
+            var recordDeclaration = LoadRecordDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+        }
+
+        private IRecordDeclaration LoadRecordDeclaration(Type type)
+        {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
             var assemblyPath = type.Assembly.Location;
@@ -51,8 +58,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
 
             var recordDeclaration = Assert.IsAssignableFrom<IRecordDeclaration>(declaration);
-
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+            return recordDeclaration;
         }
     }
 }
