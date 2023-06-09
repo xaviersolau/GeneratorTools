@@ -24,6 +24,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         IDeclarationUse<SyntaxNode> ReturnType { get; }
 
         /// <summary>
+        /// Return attributes.
+        /// </summary>
+        public IReadOnlyList<IAttributeUse> ReturnAttributes { get; }
+
+        /// <summary>
         /// Gets the generic method parameters.
         /// </summary>
         IReadOnlyCollection<IGenericParameterDeclaration> GenericParameters { get; }

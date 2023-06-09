@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using System.Collections.Generic;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
@@ -22,10 +24,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="name">The member name.</param>
         /// <param name="syntaxNodeProvider">The member syntax node provider.</param>
-        protected AMemberDeclaration(string name, ISyntaxNodeProvider<TNode> syntaxNodeProvider)
+        /// <param name="attributes">Attributes attached to the member.</param>
+        protected AMemberDeclaration(string name, ISyntaxNodeProvider<TNode> syntaxNodeProvider, IReadOnlyList<IAttributeUse> attributes)
         {
             this.Name = name;
             this.SyntaxNodeProvider = syntaxNodeProvider;
+            this.Attributes = attributes;
         }
 
         /// <inheritdoc/>
@@ -33,5 +37,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<IAttributeUse> Attributes { get; }
     }
 }

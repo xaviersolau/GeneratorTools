@@ -104,6 +104,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             this.loadingTest.AssertPropertyGetterSetterLoaded(classDeclaration, type, propertyName);
         }
 
+        [Theory]
+        [InlineData(typeof(ClassWithPropertyAttributes), nameof(ClassWithPropertyAttributes.PropertyWithAttribute))]
+        public void IsShouldLoadPropertyWithAttributes(Type type, string propertyName)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertPropertyAttributesLoaded(classDeclaration, type, propertyName);
+        }
+
+        [Theory]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute1), false)]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), false)]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), true)]
+        public void IsShouldLoadMethodWithAttributes(Type type, string methodName, bool returnAttribute)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertMethodAttributesLoaded(classDeclaration, type, methodName, returnAttribute);
+        }
+
+        [Theory]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute1), 0)]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), 0)]
+        [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute3), 1)]
+        public void IsShouldLoadMethodArgumentWithAttributes(Type type, string methodName, int argumentIndex)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertMethodArgumentAttributesLoaded(classDeclaration, type, methodName, argumentIndex);
+        }
+
         private IClassDeclaration LoadClassDeclaration(Type type)
         {
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);

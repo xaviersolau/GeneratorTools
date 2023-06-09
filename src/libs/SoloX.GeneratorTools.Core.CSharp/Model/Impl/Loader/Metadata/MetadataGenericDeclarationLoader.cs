@@ -64,55 +64,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
         private static void LoadAttributes(MetadataReader metadataReader, AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            var attributeList = new List<IAttributeUse>();
-
             var typeDefinitionHandle = declaration.GetData<TypeDefinitionHandle>();
 
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
 
-            foreach (var attributeHandle in typeDefinition.GetCustomAttributes())
-            {
-                var attribute = metadataReader.GetCustomAttribute(attributeHandle);
+            var customAttributeHandles = typeDefinition.GetCustomAttributes();
 
-                IDeclarationUse<SyntaxNode> attributeDeclarationUse = null;
-
-#pragma warning disable IDE0010 // Add missing cases
-                switch (attribute.Constructor.Kind)
-                {
-                    case HandleKind.MethodDefinition:
-                        var methodDefinitionHandle = (MethodDefinitionHandle)attribute.Constructor;
-
-                        var methodDefinition = metadataReader.GetMethodDefinition(methodDefinitionHandle);
-
-                        //var methodDefinitionName = LoadString(metadataReader, methodDefinition.Name);
-
-                        var methodDeclaringTypeHandle = methodDefinition.GetDeclaringType();
-
-                        attributeDeclarationUse = LoadDeclarationUseFromTypeDefinition(metadataReader, methodDeclaringTypeHandle, resolver);
-
-                        break;
-                    case HandleKind.MemberReference:
-                        var memberReferenceHandler = (MemberReferenceHandle)attribute.Constructor;
-                        var memberReference = metadataReader.GetMemberReference(memberReferenceHandler);
-
-                        attributeDeclarationUse = GetDeclarationUseFrom(metadataReader, memberReference.Parent, resolver, declaration);
-
-                        //var memberReferenceName = LoadString(metadataReader, memberReference.Name);
-
-                        break;
-                    default:
-                        throw new NotSupportedException();
-                }
-#pragma warning restore IDE0010 // Add missing cases
-
-                var value = attribute.DecodeValue(
-                    new CustomAttributeTypeProvider(resolver));
-
-                attributeList.Add(
-                    new AttributeUse(
-                        attributeDeclarationUse.Declaration,
-                        new MetadataAttributeSyntaxNodeProvider(attributeDeclarationUse.Declaration.FullName, value)));
-            }
+            var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
 
             declaration.Attributes = attributeList;
         }
@@ -124,7 +82,57 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             var typeDefinitionHandle = declaration.GetData<TypeDefinitionHandle>();
 
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
+            LoadProperties(metadataReader, declaration, resolver, memberList, typeDefinition);
 
+            foreach (var methodHandle in typeDefinition.GetMethods())
+            {
+                var methodDefinition = metadataReader.GetMethodDefinition(methodHandle);
+
+                var attributes = methodDefinition.Attributes;
+
+                var methodName = LoadString(metadataReader, methodDefinition.Name);
+
+                if (((attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) && (attributes & MethodAttributes.SpecialName) == 0)
+                {
+                    var genericParameters = LoadGenericParameters(metadataReader, declaration, methodDefinition, resolver);
+
+                    var methodSignature = methodDefinition.DecodeSignature(
+                        new SignatureTypeProvider(resolver),
+                        new GenericResolver(declaration, genericParameters));
+
+                    var parameters = LoadParameters(metadataReader, methodDefinition, methodSignature, declaration, resolver, out var returnAttributes);
+
+                    var customAttributeHandles = methodDefinition.GetCustomAttributes();
+
+                    var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
+
+                    var methodDeclaration = new MethodDeclaration(
+                            methodName,
+                            methodSignature.ReturnType,
+                            new ReflectionMethodSyntaxNodeProvider(),
+                            genericParameters,
+                            parameters,
+                            attributeList,
+                            returnAttributes);
+
+                    memberList.Add(methodDeclaration);
+                }
+                else
+                {
+                    // TODO do we need?
+                }
+            }
+
+            declaration.Members = memberList;
+        }
+
+        private static void LoadProperties(
+            MetadataReader metadataReader,
+            AGenericDeclaration<TNode> declaration,
+            IDeclarationResolver resolver,
+            List<IMemberDeclaration<SyntaxNode>> memberList,
+            TypeDefinition typeDefinition)
+        {
             foreach (var propertyHandle in typeDefinition.GetProperties())
             {
                 var property = metadataReader.GetPropertyDefinition(propertyHandle);
@@ -140,69 +148,56 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 var getterHandle = accessors.Getter;
                 var setterHandle = accessors.Setter;
 
+                var customAttributeHandles = property.GetCustomAttributes();
+
+                var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
+
                 var propertyType = propertySignature.ReturnType;
+
                 memberList.Add(
                     new PropertyDeclaration(
                         propertyName,
                         propertyType,
                         new MetadataPropertySyntaxNodeProvider<PropertyDeclarationSyntax>(),
+                        attributeList,
                         !getterHandle.IsNil,
                         !setterHandle.IsNil));
             }
-
-            foreach (var methodHandle in typeDefinition.GetMethods())
-            {
-                var methodDefinition = metadataReader.GetMethodDefinition(methodHandle);
-
-                var attributes = methodDefinition.Attributes;
-
-                var methodName = LoadString(metadataReader, methodDefinition.Name);
-                if (((attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) && (attributes & MethodAttributes.SpecialName) == 0)
-                {
-                    var genericParameters = LoadGenericParameters(metadataReader, declaration, methodDefinition, resolver);
-
-                    var methodSignature = methodDefinition.DecodeSignature(
-                        new SignatureTypeProvider(resolver),
-                        new GenericResolver(declaration, genericParameters));
-
-
-                    var parameters = LoadParameters(metadataReader, methodDefinition, methodSignature);
-
-                    memberList.Add(
-                        new MethodDeclaration(
-                            methodName,
-                            methodSignature.ReturnType,
-                            new ReflectionMethodSyntaxNodeProvider(),
-                            genericParameters,
-                            parameters));
-                }
-            }
-
-            declaration.Members = memberList;
         }
 
         private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(
             MetadataReader metadataReader,
             MethodDefinition methodDefinition,
-            MethodSignature<IDeclarationUse<SyntaxNode>> methodSignature)
+            MethodSignature<IDeclarationUse<SyntaxNode>> methodSignature,
+            AGenericDeclaration<TNode> declaration,
+            IDeclarationResolver resolver,
+            out IReadOnlyList<IAttributeUse> returnAttributes)
         {
+            returnAttributes = Array.Empty<IAttributeUse>();
             var parameterSet = new List<IParameterDeclaration>();
 
             foreach (var parameterHandle in methodDefinition.GetParameters())
             {
+                var customAttributeHandles = metadataReader.GetCustomAttributes(parameterHandle);
+
+                var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
+
                 var parameter = metadataReader.GetParameter(parameterHandle);
 
                 if (parameter.SequenceNumber > 0)
                 {
                     var parameterName = LoadString(metadataReader, parameter.Name);
 
-                    parameterSet.Add(new ParameterDeclaration(parameterName, methodSignature.ParameterTypes[parameter.SequenceNumber - 1], null));
+                    var parameterDeclaration = new ParameterDeclaration(parameterName, methodSignature.ParameterTypes[parameter.SequenceNumber - 1], null);
+
+                    parameterDeclaration.Attributes = attributeList;
+
+                    parameterSet.Add(parameterDeclaration);
                 }
-            }
-
-            if (parameterSet.Count != methodSignature.ParameterTypes.Length)
-            {
-
+                else
+                {
+                    returnAttributes = attributeList;
+                }
             }
 
             return parameterSet;
@@ -355,7 +350,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             MetadataReader metadataReader,
             EntityHandle typeHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext,
+            AGenericDeclaration<TNode> declarationContext,
             IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             if (typeHandle.IsNil)
@@ -386,7 +381,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             MetadataReader metadataReader,
             InterfaceImplementationHandle interfaceImplementationHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext,
+            AGenericDeclaration<TNode> declarationContext,
             IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             var interfaceImplementation = metadataReader.GetInterfaceImplementation(interfaceImplementationHandle);
@@ -402,7 +397,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             MetadataReader metadataReader,
             TypeSpecificationHandle typeSpecificationHandle,
             IDeclarationResolver resolver,
-            IGenericDeclaration<TNode> declarationContext,
+            AGenericDeclaration<TNode> declarationContext,
             IReadOnlyCollection<IGenericParameterDeclaration> genericMethodParameters = null)
         {
             var typeSpecification = metadataReader.GetTypeSpecification(typeSpecificationHandle);
@@ -630,6 +625,60 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 }
             }
             return false;
+        }
+
+        internal static List<IAttributeUse> LoadCustomAttributes(
+            MetadataReader metadataReader,
+            AGenericDeclaration<TNode> declaration,
+            IDeclarationResolver resolver,
+            CustomAttributeHandleCollection customAttributeHandles)
+        {
+            var attributeList = new List<IAttributeUse>();
+
+            foreach (var attributeHandle in customAttributeHandles)
+            {
+                var attribute = metadataReader.GetCustomAttribute(attributeHandle);
+
+                IDeclarationUse<SyntaxNode> attributeDeclarationUse = null;
+
+#pragma warning disable IDE0010 // Add missing cases
+                switch (attribute.Constructor.Kind)
+                {
+                    case HandleKind.MethodDefinition:
+                        var methodDefinitionHandle = (MethodDefinitionHandle)attribute.Constructor;
+
+                        var methodDefinition = metadataReader.GetMethodDefinition(methodDefinitionHandle);
+
+                        var methodDeclaringTypeHandle = methodDefinition.GetDeclaringType();
+
+                        var typeDefinition = metadataReader.GetTypeDefinition(methodDeclaringTypeHandle);
+                        var methodDefinitionName = LoadString(metadataReader, typeDefinition.Name);
+
+                        attributeDeclarationUse = LoadDeclarationUseFromTypeDefinition(metadataReader, methodDeclaringTypeHandle, resolver);
+
+                        break;
+                    case HandleKind.MemberReference:
+                        var memberReferenceHandle = (MemberReferenceHandle)attribute.Constructor;
+                        var memberReference = metadataReader.GetMemberReference(memberReferenceHandle);
+
+                        attributeDeclarationUse = GetDeclarationUseFrom(metadataReader, memberReference.Parent, resolver, declaration);
+
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+#pragma warning restore IDE0010 // Add missing cases
+
+                var value = attribute.DecodeValue(
+                    new CustomAttributeTypeProvider(resolver));
+
+                attributeList.Add(
+                    new AttributeUse(
+                        attributeDeclarationUse.Declaration,
+                        new MetadataAttributeSyntaxNodeProvider(attributeDeclarationUse.Declaration.FullName, value)));
+            }
+
+            return attributeList;
         }
     }
 }

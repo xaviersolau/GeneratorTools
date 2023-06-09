@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using System.Collections.Generic;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
@@ -21,6 +23,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the member name.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Gets the used declaration attributes.
+        /// </summary>
+        IReadOnlyList<IAttributeUse> Attributes { get; }
 
         /// <summary>
         /// Gets the member declaration syntax node provider.
