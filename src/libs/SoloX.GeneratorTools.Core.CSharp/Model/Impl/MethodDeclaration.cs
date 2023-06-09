@@ -26,17 +26,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="syntaxNodeProvider">The property syntax provider.</param>
         /// <param name="genericParameters">The generic method parameters.</param>
         /// <param name="parameters">The method parameters.</param>
+        /// <param name="attributes">Attributes attached to the method.</param>
+        /// <param name="returnAttributes">Return attributes attached to the method return value.</param>
         public MethodDeclaration(
             string name,
             IDeclarationUse<SyntaxNode> returnType,
             ISyntaxNodeProvider<MethodDeclarationSyntax> syntaxNodeProvider,
             IReadOnlyCollection<IGenericParameterDeclaration> genericParameters,
-            IReadOnlyCollection<IParameterDeclaration> parameters)
-            : base(name, syntaxNodeProvider)
+            IReadOnlyCollection<IParameterDeclaration> parameters,
+            IReadOnlyList<IAttributeUse> attributes,
+            IReadOnlyList<IAttributeUse> returnAttributes)
+            : base(name, syntaxNodeProvider, attributes)
         {
             this.ReturnType = returnType;
             this.GenericParameters = genericParameters;
             this.Parameters = parameters;
+            this.ReturnAttributes = returnAttributes;
         }
 
         /// <inheritdoc/>
@@ -47,5 +52,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public IReadOnlyCollection<IParameterDeclaration> Parameters { get; }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<IAttributeUse> ReturnAttributes { get; }
     }
 }

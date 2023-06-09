@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
+using FluentAssertions;
+using System.ComponentModel;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 {
@@ -306,6 +308,104 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             Assert.Equal(property.CanRead, pDeclaration.HasGetter);
             Assert.Equal(property.CanWrite, pDeclaration.HasSetter);
+        }
+
+        public void AssertPropertyAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration, resolver =>
+                {
+                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+
+                    resolver
+                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
+                        .Returns(attributeDeclaration.Object);
+                });
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.NotEmpty(classDeclaration.Members);
+
+            Assert.NotEmpty(classDeclaration.Properties);
+
+            var mDeclaration = Assert.Single(classDeclaration.Members.Where(m => m.Name == propertyName));
+            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+
+            pDeclaration.Attributes.Should().NotBeNullOrEmpty();
+            pDeclaration.Attributes.Should().ContainSingle();
+        }
+
+        public void AssertMethodAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName, bool returnAttribute)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration, resolver =>
+                {
+                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+
+                    resolver
+                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
+                        .Returns(attributeDeclaration.Object);
+                });
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.NotEmpty(classDeclaration.Members);
+
+            Assert.NotEmpty(classDeclaration.Methods);
+
+            var mDeclaration = Assert.Single(classDeclaration.Members.Where(m => m.Name == methodName));
+            var methodDeclaration = Assert.IsType<MethodDeclaration>(mDeclaration);
+
+            if (returnAttribute)
+            {
+                methodDeclaration.ReturnAttributes.Should().NotBeNullOrEmpty();
+                methodDeclaration.ReturnAttributes.Should().ContainSingle();
+            }
+            else
+            {
+                methodDeclaration.Attributes.Should().NotBeNullOrEmpty();
+                methodDeclaration.Attributes.Should().ContainSingle();
+            }
+        }
+
+        public void AssertMethodArgumentAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName, int argumentIndex)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration, resolver =>
+                {
+                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+
+                    resolver
+                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
+                        .Returns(attributeDeclaration.Object);
+                });
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.NotEmpty(classDeclaration.Members);
+
+            Assert.NotEmpty(classDeclaration.Methods);
+
+            var mDeclaration = Assert.Single(classDeclaration.Members.Where(m => m.Name == methodName));
+            var methodDeclaration = Assert.IsType<MethodDeclaration>(mDeclaration);
+
+            methodDeclaration.Parameters.Count.Should().BeGreaterThan(argumentIndex);
+
+            var methodParameter = methodDeclaration.Parameters.ElementAt(argumentIndex);
+            methodParameter.Attributes.Should().NotBeNullOrEmpty();
+            methodParameter.Attributes.Should().ContainSingle();
         }
 
         private IDeclarationResolver SetupDeclarationResolver(

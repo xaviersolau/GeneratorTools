@@ -263,7 +263,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 var parameterSet = new List<IParameterDeclaration>();
                 foreach (var pi in paramInfos)
                 {
-                    parameterSet.Add(new ParameterDeclaration(pi.Name, GetDeclarationUseFrom(pi.ParameterType, resolver, methodGenericParameters), null));
+                    var parameterDeclaration = new ParameterDeclaration(pi.Name, GetDeclarationUseFrom(pi.ParameterType, resolver, methodGenericParameters), null);
+
+                    var attributes = LoadCustomAttributes(resolver, pi.CustomAttributes);
+
+                    parameterDeclaration.Attributes = attributes;
+
+                    parameterSet.Add(parameterDeclaration);
                 }
 
                 parameters = parameterSet;
@@ -352,12 +358,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             {
                 foreach (var property in declaration.GetData<Type>().GetProperties())
                 {
+                    var attributes = LoadCustomAttributes(resolver, property.CustomAttributes);
+
                     var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver, null);
                     memberList.Add(
                         new PropertyDeclaration(
                             property.Name,
                             propertyType,
                             new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
+                            attributes,
                             property.CanRead,
                             property.CanWrite));
                 }
@@ -370,13 +379,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
                     var parameters = LoadParameters(method, resolver, genericParameters);
 
+                    var attributes = LoadCustomAttributes(resolver, method.CustomAttributes);
+
+                    var returnAttributes = LoadCustomAttributes(resolver, method.ReturnParameter.CustomAttributes);
+
                     memberList.Add(
                         new MethodDeclaration(
                             method.Name,
                             returnType,
                             new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider),
                             genericParameters,
-                            parameters));
+                            parameters,
+                            attributes,
+                            returnAttributes));
                 }
             }
             catch (TypeLoadException e)
@@ -393,11 +408,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         private static void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            var attributeList = new List<IAttributeUse>();
-
             var declType = declaration.GetData<Type>();
+            var attributeList = LoadCustomAttributes(resolver, declType.CustomAttributes);
 
-            foreach (var customAttribute in declType.CustomAttributes)
+            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+        }
+
+        private static List<IAttributeUse> LoadCustomAttributes(IDeclarationResolver resolver, IEnumerable<CustomAttributeData> customAttributes)
+        {
+            var attributeList = new List<IAttributeUse>();
+            foreach (var customAttribute in customAttributes)
             {
                 attributeList.Add(
                     new AttributeUse(
@@ -405,7 +425,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                         new ReflectionAttributeSyntaxNodeProvider(customAttribute)));
             }
 
-            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+            return attributeList;
         }
 
         internal static bool ProbeRecordStructType(Type type)

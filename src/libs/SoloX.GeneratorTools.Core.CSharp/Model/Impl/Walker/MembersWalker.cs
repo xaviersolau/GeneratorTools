@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
@@ -58,10 +59,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                 throw new NotImplementedException();
             }
 
+            var attributeList = new List<IAttributeUse>();
+            var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+
+            attributesWalker.Visit(node);
+
+            var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
             this.memberList.Add(new PropertyDeclaration(
                 identifier,
                 use,
                 new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(node),
+                attributes,
                 canRead,
                 canWrite));
         }
@@ -77,16 +86,40 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                 var genericParameters = LoadGenericParameters(node);
                 var parameters = LoadParameters(node, useWalker);
 
+                var attributeList = new List<IAttributeUse>();
+                var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+                foreach (var attributeItem in node.AttributeLists)
+                {
+                    if (attributeItem.Target == null)
+                    {
+                        attributesWalker.Visit(attributeItem);
+                    }
+                }
+
+                var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
+                var returnAttributeList = new List<IAttributeUse>();
+                var returnAttributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, returnAttributeList);
+                foreach (var attributeItem in node.AttributeLists)
+                {
+                    if (attributeItem.Target != null)
+                    {
+                        returnAttributesWalker.Visit(attributeItem);
+                    }
+                }
+
                 this.memberList.Add(new MethodDeclaration(
                     identifier,
                     use,
                     new ParserSyntaxNodeProvider<MethodDeclarationSyntax>(node),
                     genericParameters,
-                    parameters));
+                    parameters,
+                    attributes,
+                    returnAttributeList));
             }
         }
 
-        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
+        private IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
         {
             IReadOnlyCollection<IParameterDeclaration> parameters;
             var parameterList = node.ParameterList?.Parameters;
@@ -97,10 +130,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                 {
                     var use = useWalker.Visit(parameter.Type);
 
-                    parameterSet.Add(new ParameterDeclaration(
+                    var parameterDeclaration = new ParameterDeclaration(
                         parameter.Identifier.Text,
                         use,
-                        new ParserSyntaxNodeProvider<ParameterSyntax>(parameter)));
+                        new ParserSyntaxNodeProvider<ParameterSyntax>(parameter));
+
+                    var attributeList = new List<IAttributeUse>();
+                    var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+
+                    attributesWalker.Visit(parameter);
+
+                    var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
+                    parameterDeclaration.Attributes = attributes;
+
+                    parameterSet.Add(parameterDeclaration);
                 }
 
                 parameters = parameterSet;
