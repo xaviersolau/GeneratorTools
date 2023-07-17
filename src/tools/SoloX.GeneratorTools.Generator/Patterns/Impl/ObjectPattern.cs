@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Impl
     /// <summary>
     /// Implementation of Object pattern interface.
     /// </summary>
-    [Pattern(typeof(AttributeSelector<FactoryAttribute>))]
+    [Pattern<AttributeSelector<FactoryAttribute>>]
     [Repeat(Pattern = nameof(IObjectPattern), Prefix = "I")]
     public class ObjectPattern : IObjectPattern
     {

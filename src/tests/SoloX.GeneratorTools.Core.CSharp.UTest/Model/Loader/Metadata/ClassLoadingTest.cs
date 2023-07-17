@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
@@ -50,7 +51,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         }
 
         [Theory]
-        [InlineData(typeof(PatternAttributedClass), typeof(PatternAttribute))]
+        [InlineData(typeof(PatternAttributedClass), typeof(PatternAttribute<AttributeSelector<Attribute>>))]
         [InlineData(typeof(RepeatAttributedClass), typeof(RepeatAttribute))]
         public void ItShouldLoadClassAttributes(Type type, Type attributeType)
         {
@@ -97,7 +98,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(ClassWithGetterSetterProperties), nameof(ClassWithGetterSetterProperties.ReadWriteProperty))]
         [InlineData(typeof(ClassWithGetterSetterProperties), nameof(ClassWithGetterSetterProperties.WriteOnlyProperty))]
         [InlineData(typeof(ClassWithGetterSetterProperties), nameof(ClassWithGetterSetterProperties.ReadOnlyProperty))]
-        public void IsShouldLoadPropertyWithGetterSetter(Type type, string propertyName)
+        public void ItShouldLoadPropertyWithGetterSetter(Type type, string propertyName)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
@@ -106,7 +107,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 
         [Theory]
         [InlineData(typeof(ClassWithPropertyAttributes), nameof(ClassWithPropertyAttributes.PropertyWithAttribute))]
-        public void IsShouldLoadPropertyWithAttributes(Type type, string propertyName)
+        public void ItShouldLoadPropertyWithAttributes(Type type, string propertyName)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
@@ -117,7 +118,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute1), false)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), false)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), true)]
-        public void IsShouldLoadMethodWithAttributes(Type type, string methodName, bool returnAttribute)
+        public void ItShouldLoadMethodWithAttributes(Type type, string methodName, bool returnAttribute)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
@@ -128,7 +129,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute1), 0)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), 0)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute3), 1)]
-        public void IsShouldLoadMethodArgumentWithAttributes(Type type, string methodName, int argumentIndex)
+        public void ItShouldLoadMethodArgumentWithAttributes(Type type, string methodName, int argumentIndex)
         {
             var classDeclaration = LoadClassDeclaration(type);
 

@@ -78,7 +78,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         public static bool IsAttributeName<TAttribute>(this AttributeSyntax attributeSyntax)
             where TAttribute : Attribute
         {
-            var name = attributeSyntax?.Name.ToString();
+            string name = null;
+            if (attributeSyntax != null)
+            {
+                if (attributeSyntax.Name.Kind() == Microsoft.CodeAnalysis.CSharp.SyntaxKind.GenericName)
+                {
+                    name = ((GenericNameSyntax)attributeSyntax.Name).Identifier.ToString();
+                }
+                else
+                {
+                    name = attributeSyntax.Name.ToString();
+                }
+            }
+
             var attributeName = typeof(TAttribute).Name;
             if (attributeName.Equals(name, StringComparison.Ordinal))
             {

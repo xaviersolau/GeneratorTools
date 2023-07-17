@@ -215,17 +215,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private ISelector GetSelectorFromPatternAttribute(AttributeSyntax attributeSyntax)
         {
-            var selectorExp = attributeSyntax.ArgumentList.Arguments.First();
-
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
-            var selectorTypeName = constEvaluator.Visit(selectorExp.Expression);
+            var selectorType = ((GenericNameSyntax)attributeSyntax.Name).TypeArgumentList.Arguments.First();
 
             var nsBase = this.pattern.UsingDirectives.Usings
                 .Concat(NameSpaceHelper.GetParentNameSpaces(this.pattern.DeclarationNameSpace));
 
             foreach (var usingDirective in nsBase)
             {
-                var selectorName = $"{usingDirective}.{selectorTypeName}";
+                var selectorName = $"{usingDirective}.{selectorType}";
 
                 var selector = this.selectorResolver.GetSelector(selectorName);
                 if (selector != null)
@@ -234,7 +231,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 }
             }
 
-            throw new ArgumentException($"Unknown selector {selectorTypeName}");
+            throw new ArgumentException($"Unknown selector {selectorType}");
         }
 
         public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)

@@ -26,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.ReplacePattern
         [InlineData("IPattern", "Declaration", "I", "", "IPattern", "Declaration")]
         [InlineData("IPatternList", "IDeclarationList", "I", "List", "ToPattern", "ToDeclaration")]
         [InlineData("IPatternText", "DeclarationText", "I", "", "IPatternText", "DeclarationText")]
-        public void IsShouldReplacePatternWithDeclarationInText(string pattern, string declaration, string optionalPrefix, string optionalSuffix, string text, string expected)
+        public void ItShouldReplacePatternWithDeclarationInText(string pattern, string declaration, string optionalPrefix, string optionalSuffix, string text, string expected)
         {
             var textPatternHelper = new TextPatternHelper(pattern, declaration, optionalPrefix, optionalSuffix);
 

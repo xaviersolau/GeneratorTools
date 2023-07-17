@@ -19,13 +19,13 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Itf
         /// <summary>
         /// Gets SomeReadOnlyValue.
         /// </summary>
-        [Pattern(typeof(ReadOnlyPropertySelector))]
+        [Pattern<ReadOnlyPropertySelector>]
         object SomeReadOnlyValue { get; }
 
         /// <summary>
         /// Gets or sets SomeValue.
         /// </summary>
-        [Pattern(typeof(ReadWritePropertySelector))]
+        [Pattern<ReadWritePropertySelector>]
         object SomeValue { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Itf
     /// <summary>
     /// factory interface to use as pattern.
     /// </summary>
-    [Pattern(typeof(AttributeSelector<FactoryAttribute>))]
+    [Pattern<AttributeSelector<FactoryAttribute>>]
     public interface IFactoryPattern
     {
         /// <summary>

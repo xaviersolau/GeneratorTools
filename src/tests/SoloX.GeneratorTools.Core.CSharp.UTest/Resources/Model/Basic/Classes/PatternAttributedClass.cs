@@ -7,10 +7,12 @@
 // ----------------------------------------------------------------------
 
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using System;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
 {
-    [Pattern(typeof(object))]
+    [Pattern<AttributeSelector<Attribute>>]
     public class PatternAttributedClass
     {
     }
