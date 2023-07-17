@@ -13,7 +13,7 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.Statement
 {
 #pragma warning disable CA2201 // Ne pas lever de types d'exception réservés
-    [Pattern(typeof(SampleSelector))]
+    [Pattern<SampleSelector>]
     [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
     public class ThrowStatementSimplePattern : ISimplePattern
     {

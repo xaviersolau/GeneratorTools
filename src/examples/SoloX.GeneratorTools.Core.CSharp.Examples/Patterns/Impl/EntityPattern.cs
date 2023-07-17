@@ -19,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
     /// Entity implementation pattern used in the generator.
     /// </summary>
     [GeneratedCode("TOOL", "VERSION")]
-    [Pattern(typeof(InterfaceBasedOnSelector<IEntityBase>))]
+    [Pattern<InterfaceBasedOnSelector<IEntityBase>>]
     [Repeat(Pattern = nameof(IEntityPattern), Prefix = "I")]
     public partial class EntityPattern : IEntityPattern
     {

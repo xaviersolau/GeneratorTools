@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
     /// <summary>
     /// Model pattern implementation.
     /// </summary>
-    [Pattern(typeof(InterfaceBasedOnSelector<IModelBase>))]
+    [Pattern<InterfaceBasedOnSelector<IModelBase>>]
     [Repeat(Pattern = nameof(IModelPattern), Prefix = "I")]
     public class ModelPattern : IModelPattern
     {

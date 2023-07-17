@@ -12,30 +12,36 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
 {
     /// <summary>
+    /// APatternAttribute
+    /// </summary>
+    public abstract class PatternAttribute : Attribute
+    {
+        /// <summary>
+        /// Gets the selector.
+        /// </summary>
+        public ISelector Selector { get; protected set; }
+    }
+
+    /// <summary>
     /// Attribute used to tell that the class/interface/struct/enum is a pattern.
     /// </summary>
+    /// <typeparam name="TSelector"></typeparam>
     [AttributeUsage(
         AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct |
         AttributeTargets.Enum | AttributeTargets.Property)]
-    public sealed class PatternAttribute : Attribute
+    public sealed class PatternAttribute<TSelector> : PatternAttribute where TSelector : class, ISelector, new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PatternAttribute"/> class.
         /// </summary>
-        /// <param name="selectorType">The type of the selector to use to find where the pattern must be applied.</param>
-        public PatternAttribute(Type selectorType)
+        public PatternAttribute()
         {
-            this.Selector = (ISelector)Activator.CreateInstance(selectorType);
+            this.Selector = new TSelector();
         }
-
-        /// <summary>
-        /// Gets the selector.
-        /// </summary>
-        public ISelector Selector { get; }
 
         /// <summary>
         /// Gets the selector type.
         /// </summary>
-        public Type SelectorType { get; }
+        public Type SelectorType => typeof(TSelector);
     }
 }

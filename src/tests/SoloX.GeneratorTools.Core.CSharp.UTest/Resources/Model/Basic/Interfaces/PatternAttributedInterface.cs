@@ -7,13 +7,15 @@
 // ----------------------------------------------------------------------
 
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using System;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Interfaces
 {
 #pragma warning disable CA1040 // Avoid empty interfaces
 #pragma warning disable CA1715 // Identifiers should have correct prefix
 #pragma warning disable IDE1006 // Naming Styles
-    [Pattern(typeof(object))]
+    [Pattern<AttributeSelector<Attribute>>]
     public interface PatternAttributedInterface
     {
     }

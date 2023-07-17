@@ -19,6 +19,7 @@ using Xunit;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Interfaces;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
 {
@@ -46,7 +47,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         }
 
         [Theory]
-        [InlineData(typeof(PatternAttributedInterface), typeof(PatternAttribute))]
+        [InlineData(typeof(PatternAttributedInterface), typeof(PatternAttribute<AttributeSelector<Attribute>>))]
         [InlineData(typeof(RepeatAttributedInterface), typeof(RepeatAttribute))]
         public void ItShouldLoadInterfaceAttributes(Type type, Type attributeType)
         {

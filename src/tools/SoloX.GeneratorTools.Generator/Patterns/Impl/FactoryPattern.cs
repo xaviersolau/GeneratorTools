@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Impl
     /// <summary>
     /// Implemented factory to use as pattern.
     /// </summary>
-    [Pattern(typeof(AttributeSelector<FactoryAttribute>))]
+    [Pattern<AttributeSelector<FactoryAttribute>>]
     public class FactoryPattern : IFactoryPattern
     {
         /// <inheritdoc/>

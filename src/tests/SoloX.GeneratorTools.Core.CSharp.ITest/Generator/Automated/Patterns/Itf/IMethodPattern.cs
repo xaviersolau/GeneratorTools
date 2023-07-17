@@ -11,7 +11,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf
 {
 
-    [Pattern(typeof(MultiSelector))]
+    [Pattern<MultiSelector>]
     public interface IMethodPattern
     {
         [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]

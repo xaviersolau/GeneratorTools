@@ -11,7 +11,7 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.Method
 {
-    [Pattern(typeof(SampleSelector))]
+    [Pattern<SampleSelector>]
     [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
     public class SimpleMethodSimplePattern : ISimplePattern
     {
