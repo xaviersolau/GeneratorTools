@@ -119,6 +119,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             }
         }
 
+        public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            if (node.Modifiers.Any(m => m.Kind() == SyntaxKind.ConstKeyword))
+            {
+                var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+                var use = useWalker.Visit(node.Declaration.Type);
+
+                foreach (var variableItem in node.Declaration.Variables)
+                {
+                    var identifier = variableItem.Identifier.ToString();
+
+                    var attributeList = new List<IAttributeUse>();
+                    var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+
+                    attributesWalker.Visit(node);
+
+                    var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
+                    this.memberList.Add(new ConstantDeclaration(
+                        identifier,
+                        use,
+                        new ParserSyntaxNodeProvider<VariableDeclaratorSyntax>(variableItem),
+                        attributes));
+                }
+            }
+        }
+
         private IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
         {
             IReadOnlyCollection<IParameterDeclaration> parameters;

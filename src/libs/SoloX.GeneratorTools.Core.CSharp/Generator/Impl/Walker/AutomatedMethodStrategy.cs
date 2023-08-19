@@ -9,11 +9,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
@@ -22,15 +24,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IMethodDeclaration pattern;
         private readonly IMethodDeclaration declaration;
         private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
+        private readonly IDeclarationResolver resolver;
+        private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
         public AutomatedMethodStrategy(
             IMethodDeclaration pattern,
             IMethodDeclaration declaration,
-            IEnumerable<IReplacePatternHandler> replacePatternHandlers)
+            IEnumerable<IReplacePatternHandler> replacePatternHandlers,
+            IDeclarationResolver resolver,
+            IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
             this.pattern = pattern;
             this.declaration = declaration;
             this.replacePatternHandlers = replacePatternHandlers;
+            this.resolver = resolver;
+            this.genericDeclaration = genericDeclaration;
         }
 
         public bool IsPackStatementEnabled => false;
@@ -65,7 +73,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public void RepeatDeclaration(AttributeSyntax repeatAttributeSyntax, Action<IAutomatedStrategy> callback)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.genericDeclaration);
             var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
             var patternParameter = this.pattern.Parameters.Single(x => x.Name == patternName);
@@ -93,7 +101,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.genericDeclaration);
             var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
             // get the property from the current pattern generic definition.

@@ -72,6 +72,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         }
 
         [Theory]
+        [InlineData(typeof(ClassWithConstants), 2, nameof(ClassWithConstants.ValueString))]
+        [InlineData(typeof(ClassWithConstants), 2, nameof(ClassWithConstants.ValueInt))]
+        public void ItShouldLoadConstantList(Type type, int nbConst, string nameOfConst)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertConstantListLoaded(classDeclaration, nbConst, nameOfConst);
+        }
+
+        [Theory]
         [InlineData(typeof(GenericClassWithProperties<>), nameof(GenericClassWithProperties<object>.Property))]
         [InlineData(typeof(GenericClassWithArrayProperties<>), nameof(GenericClassWithArrayProperties<object>.Property))]
         [InlineData(typeof(GenericClassWithArrayProperties2<>), nameof(GenericClassWithArrayProperties2<object>.Property))]
@@ -106,12 +116,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         }
 
         [Theory]
-        [InlineData(typeof(ClassWithPropertyAttributes), nameof(ClassWithPropertyAttributes.PropertyWithAttribute))]
-        public void ItShouldLoadPropertyWithAttributes(Type type, string propertyName)
+        [InlineData(typeof(ClassWithPropertyAttributes), nameof(ClassWithPropertyAttributes.PropertyWithAttribute), "Some description")]
+        [InlineData(typeof(ClassWithPropertyAttributes), nameof(ClassWithPropertyAttributes.PropertyWithAttributeComplexArg), "Some description with use of const")]
+        public void ItShouldLoadPropertyWithAttributes(Type type, string propertyName, string descriptionArgument)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            this.loadingTest.AssertPropertyAttributesLoaded(classDeclaration, type, propertyName);
+            this.loadingTest.AssertPropertyAttributesLoaded(classDeclaration, type, propertyName, descriptionArgument);
         }
 
         [Theory]

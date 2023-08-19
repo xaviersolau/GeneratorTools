@@ -16,6 +16,7 @@ using SoloX.GeneratorTools.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
@@ -23,6 +24,7 @@ using System.Runtime.CompilerServices;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {
+#pragma warning disable CA1506
     internal class MetadataGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
         where TNode : SyntaxNode
     {
@@ -82,6 +84,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             var typeDefinitionHandle = declaration.GetData<TypeDefinitionHandle>();
 
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
+
+            LoadConstants(metadataReader, declaration, resolver, memberList, typeDefinition);
+
             LoadProperties(metadataReader, declaration, resolver, memberList, typeDefinition);
 
             foreach (var methodHandle in typeDefinition.GetMethods())
@@ -109,7 +114,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                     var methodDeclaration = new MethodDeclaration(
                             methodName,
                             methodSignature.ReturnType,
-                            new ReflectionMethodSyntaxNodeProvider(),
+                            new MetadataMethodSyntaxNodeProvider(),
                             genericParameters,
                             parameters,
                             attributeList,
@@ -124,6 +129,53 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             }
 
             declaration.Members = memberList;
+        }
+
+        private static void LoadConstants(
+            MetadataReader metadataReader,
+            AGenericDeclaration<TNode> declaration,
+            IDeclarationResolver resolver,
+            List<IMemberDeclaration<SyntaxNode>> memberList,
+            TypeDefinition typeDefinition)
+        {
+            foreach (var propertyHandle in typeDefinition.GetFields())
+            {
+                var field = metadataReader.GetFieldDefinition(propertyHandle);
+
+                var staticField = field.Attributes & FieldAttributes.Static;
+                var literalField = field.Attributes & FieldAttributes.Literal;
+                var defaultField = field.Attributes & FieldAttributes.HasDefault;
+
+                if (staticField == FieldAttributes.Static &&
+                    literalField == FieldAttributes.Literal &&
+                    defaultField == FieldAttributes.HasDefault)
+                {
+                    var constantValueHandler = field.GetDefaultValue();
+                    var constantValue = metadataReader.GetConstant(constantValueHandler);
+
+                    var reader = metadataReader.GetBlobReader(constantValue.Value);
+                    var value = reader.ReadConstant(constantValue.TypeCode);
+
+                    var fieldName = LoadString(metadataReader, field.Name);
+
+                    var fieldSignature = field.DecodeSignature(
+                        new SignatureTypeProvider(resolver),
+                        new GenericResolver(declaration));
+
+                    var customAttributeHandles = field.GetCustomAttributes();
+
+                    var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
+
+                    var fieldType = fieldSignature;
+
+                    memberList.Add(
+                        new ConstantDeclaration(
+                            fieldName,
+                            fieldType,
+                            new MetadataVariableDeclaratorSyntaxProvider(fieldName, value, fieldType.SyntaxNodeProvider),
+                            attributeList));
+                }
+            }
         }
 
         private static void LoadProperties(
@@ -672,13 +724,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 var value = attribute.DecodeValue(
                     new CustomAttributeTypeProvider(resolver));
 
+                var namedArguments = value.NamedArguments.ToDictionary(a => a.Name, a => a.Value);
+                var constructorArguments = value.FixedArguments.Select(a => a.Value).ToArray();
+
                 attributeList.Add(
                     new AttributeUse(
-                        attributeDeclarationUse.Declaration,
-                        new MetadataAttributeSyntaxNodeProvider(attributeDeclarationUse.Declaration.FullName, value)));
+                        attributeDeclarationUse,
+                        new MetadataAttributeSyntaxNodeProvider(attributeDeclarationUse.Declaration.FullName, value),
+                        namedArguments,
+                        constructorArguments));
             }
 
             return attributeList;
         }
     }
+#pragma warning restore CA1506
 }

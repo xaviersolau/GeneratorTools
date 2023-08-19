@@ -100,7 +100,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
             var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
             // get the property from the current pattern generic definition.
@@ -120,7 +120,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var patternSuffixExp = repeatAttributeSyntax.ArgumentList?.Arguments
                 .FirstOrDefault(a => a.NameEquals.Name.ToString() == nameof(RepeatAttribute.Suffix))?.Expression;
 
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
 
             var patternName = patternArgumentExp != null ? constEvaluator.Visit(patternArgumentExp) : null;
             var patternPrefix = patternPrefixExp != null ? constEvaluator.Visit(patternPrefixExp) : null;
@@ -187,7 +187,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
-                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers);
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers, this.resolver, this.declaration);
 
                     callback(strategy);
                 }
@@ -236,10 +236,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
             var patternName = constEvaluator.Visit(repeatStatementsAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
-            var constBoolEvaluator = new ConstantExpressionSyntaxEvaluator<bool>();
+            var constBoolEvaluator = new ConstantExpressionSyntaxEvaluator<bool>(this.resolver, this.declaration);
             var packArgument = repeatStatementsAttributeSyntax.ArgumentList.Arguments.Skip(1).FirstOrDefault();
             var pack = packArgument != null ? constBoolEvaluator.Visit(packArgument.Expression) : false;
 

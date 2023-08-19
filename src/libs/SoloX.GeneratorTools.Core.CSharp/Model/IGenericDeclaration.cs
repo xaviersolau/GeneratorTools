@@ -55,5 +55,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the method list.
         /// </summary>
         IReadOnlyCollection<IMethodDeclaration> Methods { get; }
+
+        /// <summary>
+        /// Gets the constant list.
+        /// </summary>
+        IReadOnlyCollection<IConstantDeclaration> Constants { get; }
     }
 }
