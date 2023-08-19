@@ -8,6 +8,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Collections.Generic;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
 {
@@ -29,6 +30,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
         /// <summary>
         /// Gets attribute declaration.
         /// </summary>
-        IDeclaration<SyntaxNode> Declaration { get; }
+        IDeclarationUse<SyntaxNode> DeclarationUse { get; }
+
+        /// <summary>
+        /// Attribute named arguments.
+        /// </summary>
+        public IReadOnlyDictionary<string, object> NamedArguments { get; }
+
+        /// <summary>
+        /// Attribute constructor arguments.
+        /// </summary>
+        public IReadOnlyCollection<object> ConstructorArguments { get; }
     }
 }

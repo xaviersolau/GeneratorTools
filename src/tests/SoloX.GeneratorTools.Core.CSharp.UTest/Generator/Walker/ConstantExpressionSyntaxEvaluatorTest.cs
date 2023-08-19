@@ -6,7 +6,12 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using FluentAssertions;
+using Microsoft.CodeAnalysis;
+using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
+using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
 
@@ -17,8 +22,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
         [Fact]
         public void SimpleStringConstEvaluatorTest()
         {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
             var textValue = "MyValue";
-            var walker = new ConstantExpressionSyntaxEvaluator<string>();
+            var walker = new ConstantExpressionSyntaxEvaluator<string>(resolver, genericDeclaration);
             var exp = SyntaxTreeHelper.GetExpressionSyntax($@"""{textValue}""");
 
             var value = walker.Visit(exp);
@@ -26,16 +34,34 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
             Assert.Equal(textValue, value);
         }
 
+        [Fact]
+        public void SimpleIntegerConstEvaluatorTest()
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var textValue = "123";
+            var walker = new ConstantExpressionSyntaxEvaluator<int>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax($@"{textValue}");
+
+            var value = walker.Visit(exp);
+
+            Assert.Equal(123, value);
+        }
+
         [Theory]
         [InlineData("new string[]")]
         [InlineData("new []")]
         public void StringArrayConstEvaluatorTest(string arrayDecl)
         {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
             var textValue1 = "textValue1";
             var textValue2 = "textValue2";
             var textExp = $@"{arrayDecl} {{ ""{textValue1}"", ""{textValue2}"" }}";
 
-            var walker = new ConstantExpressionSyntaxEvaluator<string[]>();
+            var walker = new ConstantExpressionSyntaxEvaluator<string[]>(resolver, genericDeclaration);
             var exp = SyntaxTreeHelper.GetExpressionSyntax(textExp);
 
             var array = walker.Visit(exp);
@@ -52,12 +78,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
         [InlineData("SomeClass.MyValue", "MyValue")]
         public void NameOfConstEvaluatorTest(string textExpression, string expectedValue)
         {
-            var walker = new ConstantExpressionSyntaxEvaluator<string>();
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var walker = new ConstantExpressionSyntaxEvaluator<string>(resolver, genericDeclaration);
             var exp = SyntaxTreeHelper.GetExpressionSyntax($"nameof({textExpression})");
 
             var value = walker.Visit(exp);
 
             Assert.Equal(expectedValue, value);
+        }
+
+        [Theory]
+        [InlineData("object")]
+        [InlineData("string")]
+        public void TypeOfConstEvaluatorTest(string textExpression)
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax($"typeof({textExpression})");
+
+            var value = walker.Visit(exp);
+
+            value.Should().BeOfType<TypeOfExpression>().Subject.TypeExpression.Should().Be(textExpression);
         }
     }
 }

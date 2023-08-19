@@ -184,6 +184,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             }
         }
 
+        public void AssertConstantListLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, int nbConst, string nameOfConst)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration,
+                (mock) =>
+                {
+                    // nothing
+                });
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.Empty(classDeclaration.GenericParameters);
+            Assert.Empty(classDeclaration.Extends);
+
+            Assert.NotEmpty(classDeclaration.Members);
+            Assert.Equal(nbConst, classDeclaration.Constants.Count);
+
+            var constNameDecl = classDeclaration.Constants.SingleOrDefault(c => c.Name == nameOfConst);
+
+            constNameDecl.Should().NotBeNull();
+            constNameDecl.SyntaxNodeProvider.Should().NotBeNull();
+            constNameDecl.SyntaxNodeProvider.SyntaxNode.Should().NotBeNull();
+        }
+
         public void AssertMethodLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName)
             where TSyntaxNode : SyntaxNode
         {
@@ -310,7 +337,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             Assert.Equal(property.CanWrite, pDeclaration.HasSetter);
         }
 
-        public void AssertPropertyAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName)
+        public void AssertPropertyAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName, string descriptionArgument)
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
@@ -336,7 +363,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
 
             pDeclaration.Attributes.Should().NotBeNullOrEmpty();
-            pDeclaration.Attributes.Should().ContainSingle();
+
+            var attributeUse = pDeclaration.Attributes.Should().ContainSingle().Subject;
+
+            attributeUse.Name.Should().Be(nameof(DescriptionAttribute));
+
+            attributeUse.ConstructorArguments.Should().ContainSingle().Subject.Should().Be(descriptionArgument);
         }
 
         public void AssertMethodAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName, bool returnAttribute)

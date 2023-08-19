@@ -356,6 +356,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             try
             {
+                foreach (var field in declaration.GetData<Type>().GetFields().Where(f => f.IsStatic && f.IsLiteral))
+                {
+                    var attributes = LoadCustomAttributes(resolver, field.CustomAttributes);
+
+                    var fieldType = GetDeclarationUseFrom(field.FieldType, resolver, null);
+                    memberList.Add(
+                        new ConstantDeclaration(
+                            field.Name,
+                            fieldType,
+                            new ReflectionVariableDeclaratorSyntaxProvider(field, fieldType.SyntaxNodeProvider),
+                            attributes));
+                }
+
                 foreach (var property in declaration.GetData<Type>().GetProperties())
                 {
                     var attributes = LoadCustomAttributes(resolver, property.CustomAttributes);
@@ -419,10 +432,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var attributeList = new List<IAttributeUse>();
             foreach (var customAttribute in customAttributes)
             {
+                var namedArgs = customAttribute.NamedArguments.ToDictionary(a => a.MemberName, a => a.TypedValue.Value);
+
+                var args = customAttribute.ConstructorArguments.Select(a => a.Value).ToArray();
+
                 attributeList.Add(
                     new AttributeUse(
-                        GetDeclarationUseFrom(customAttribute.AttributeType, resolver, null).Declaration,
-                        new ReflectionAttributeSyntaxNodeProvider(customAttribute)));
+                        GetDeclarationUseFrom(customAttribute.AttributeType, resolver, null),
+                        new ReflectionAttributeSyntaxNodeProvider(customAttribute), namedArgs, args));
             }
 
             return attributeList;

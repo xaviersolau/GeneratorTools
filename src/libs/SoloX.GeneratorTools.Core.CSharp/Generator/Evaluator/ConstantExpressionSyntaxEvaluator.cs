@@ -8,9 +8,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator.SubEvaluator;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 {
@@ -21,6 +24,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
     public class ConstantExpressionSyntaxEvaluator<T> : CSharpSyntaxVisitor<T>
     {
         private static readonly NameOfExpressionSyntaxEvaluator NameOfEvaluator = new NameOfExpressionSyntaxEvaluator();
+
+        private readonly IDeclarationResolver resolver;
+        private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
+
+        /// <summary>
+        /// setup instance.
+        /// </summary>
+        /// <param name="resolver"></param>
+        /// <param name="genericDeclaration"></param>
+        public ConstantExpressionSyntaxEvaluator(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration)
+        {
+            this.resolver = resolver;
+            this.genericDeclaration = genericDeclaration;
+        }
 
 #pragma warning disable CA1062 // Valider les arguments de méthodes publiques
         /// <inheritdoc/>
@@ -39,13 +56,55 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         /// <inheritdoc/>
         public override T VisitTypeOfExpression(TypeOfExpressionSyntax node)
         {
-            return ConvertToT(node.Type.ToString());
+            if (typeof(T) == typeof(object))
+            {
+                var type = node.Type.ToString();
+
+                return ConvertToT(new TypeOfExpression(type));
+            }
+            else
+            {
+                return ConvertToT(node.Type.ToString());
+            }
         }
 
         /// <inheritdoc/>
         public override T VisitLiteralExpression(LiteralExpressionSyntax node)
         {
             return ConvertToT(node.Token.Value);
+        }
+
+        /// <inheritdoc/>
+        public override T? VisitInterpolatedStringExpression(InterpolatedStringExpressionSyntax node)
+        {
+            var strConstEval = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.genericDeclaration);
+
+            var str = string.Empty;
+            foreach (var contentItem in node.Contents)
+            {
+                var word = strConstEval.Visit(contentItem);
+                str += word;
+            }
+
+            return ConvertToT(str);
+        }
+
+        /// <inheritdoc/>
+        public override T? VisitInterpolatedStringText(InterpolatedStringTextSyntax node)
+        {
+            return ConvertToT(node.TextToken.Text);
+        }
+
+        /// <inheritdoc/>
+        public override T? VisitInterpolation(InterpolationSyntax node)
+        {
+            var identifier = node.Expression.ToString();
+
+            var constant = this.genericDeclaration.Constants.SingleOrDefault(c => c.Name == identifier);
+
+            var value = Visit(constant.SyntaxNodeProvider.SyntaxNode.Initializer.Value);
+
+            return ConvertToT(value);
         }
 
         /// <inheritdoc/>
@@ -61,7 +120,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 #pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 
-        private static T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer)
+        private T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer)
         {
             if (IsTArrayOfType<string>())
             {
@@ -79,12 +138,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             return default;
         }
 
-        private static T LoadArray<TItem>(InitializerExpressionSyntax initializer)
+        private T LoadArray<TItem>(InitializerExpressionSyntax initializer)
         {
             var size = initializer.Expressions.Count;
             var values = new TItem[size];
 
-            var evaluator = new ConstantExpressionSyntaxEvaluator<TItem>();
+            var evaluator = new ConstantExpressionSyntaxEvaluator<TItem>(this.resolver, this.genericDeclaration);
             var idx = 0;
             foreach (var expression in initializer.Expressions)
             {

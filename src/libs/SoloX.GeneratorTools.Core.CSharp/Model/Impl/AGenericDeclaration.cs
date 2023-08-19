@@ -75,6 +75,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             => this.Members.OfType<IMethodDeclaration>().ToArray();
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<IConstantDeclaration> Constants
+            => this.Members.OfType<IConstantDeclaration>().ToArray();
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             if (this.Extends?.Any() ?? false)

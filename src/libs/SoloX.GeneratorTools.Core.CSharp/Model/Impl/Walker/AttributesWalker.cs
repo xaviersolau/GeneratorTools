@@ -6,12 +6,11 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
@@ -26,9 +25,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
         private readonly List<IAttributeUse> attributesList;
         private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
 
-        private string? identifier;
-        private IReadOnlyList<IDeclarationUse<SyntaxNode>> genericAttributeArguments = Array.Empty<IDeclarationUse<SyntaxNode>>();
-
         public AttributesWalker(
             IDeclarationResolver resolver,
             IGenericDeclaration<SyntaxNode> genericDeclaration,
@@ -41,66 +37,64 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
         public override void VisitAttribute(AttributeSyntax node)
         {
-            this.identifier = null;
-            this.genericAttributeArguments = Array.Empty<IDeclarationUse<SyntaxNode>>();
-
-            this.Visit(node.Name);
-
             var syntaxNodeProvider = new ParserSyntaxNodeProvider<AttributeSyntax>(node);
 
-            var attributeDeclaration = this.resolver.Resolve(
-                this.identifier,
-                this.genericAttributeArguments,
-                this.genericDeclaration);
-
-            if (attributeDeclaration != null)
-            {
-                this.attributesList.Add(new AttributeUse(
-                    attributeDeclaration,
-                    syntaxNodeProvider));
-            }
-            else
-            {
-                this.attributesList.Add(new UnknownAttributeUse(
-                    new UnknownDeclaration(this.identifier),
-                    syntaxNodeProvider));
-            }
-        }
-
-        public override void VisitGenericName(GenericNameSyntax node)
-        {
-            LoadIdentifierToken(node.Identifier);
-
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+            var use = useWalker.Visit(node.Name);
 
-            var typeArgumentes = new List<IDeclarationUse<SyntaxNode>>();
+            this.attributesList.Add(new AttributeUse(
+                use,
+                syntaxNodeProvider,
+                () =>
+                {
+                    var namedArguments = new Dictionary<string, object>();
 
-            foreach (var typeArgument in node.TypeArgumentList.Arguments)
-            {
-                var use = useWalker.Visit(typeArgument);
+                    if (node.ArgumentList != null)
+                    {
+                        foreach (var argumentNode in node.ArgumentList.Arguments)
+                        {
+                            var exp = argumentNode.Expression;
 
-                typeArgumentes.Add(use);
-            }
+                            var constEvaluator = new ConstantExpressionSyntaxEvaluator<object>(this.resolver, this.genericDeclaration);
+                            var value = constEvaluator.Visit(exp);
 
-            this.genericAttributeArguments = typeArgumentes;
-        }
+                            if (argumentNode.NameEquals != null)
+                            {
+                                var name = argumentNode.NameEquals.Name.Identifier.Text;
 
-        public override void VisitIdentifierName(IdentifierNameSyntax node)
-        {
-            var identifierToken = node.Identifier;
-            LoadIdentifierToken(identifierToken);
-        }
+                                namedArguments.Add(name, value);
+                            }
+                            else if (argumentNode.NameColon != null)
+                            {
+                                var name = argumentNode.NameColon.Name.Identifier.Text;
 
-        private void LoadIdentifierToken(SyntaxToken identifierToken)
-        {
-            var identifier = identifierToken.ToString();
+                                namedArguments.Add(name, value);
+                            }
+                        }
+                    }
+                    return namedArguments;
+                },
+                () =>
+                {
+                    var constructorArguments = new List<object>();
 
-            if (!identifier.EndsWith(nameof(Attribute), StringComparison.InvariantCulture))
-            {
-                identifier = $"{identifier}{nameof(Attribute)}";
-            }
+                    if (node.ArgumentList != null)
+                    {
+                        foreach (var argumentNode in node.ArgumentList.Arguments)
+                        {
+                            var exp = argumentNode.Expression;
 
-            this.identifier = identifier;
+                            var constEvaluator = new ConstantExpressionSyntaxEvaluator<object>(this.resolver, this.genericDeclaration);
+                            var value = constEvaluator.Visit(exp);
+
+                            if (argumentNode.NameEquals == null && argumentNode.NameColon == null)
+                            {
+                                constructorArguments.Add(value);
+                            }
+                        }
+                    }
+                    return constructorArguments;
+                }));
         }
     }
 }

@@ -8,7 +8,7 @@
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
-using System;
+using System.Linq;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {
@@ -23,7 +23,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
         protected override PredefinedTypeSyntax Generate()
         {
-            throw new NotImplementedException();
+            var node = GetSyntaxNode($"{this.typeName} x;");
+
+            var statement = (LocalDeclarationStatementSyntax)(((GlobalStatementSyntax)((CompilationUnitSyntax)node).Members.Single()).Statement);
+            return (PredefinedTypeSyntax)statement.Declaration.Type;
         }
     }
 }

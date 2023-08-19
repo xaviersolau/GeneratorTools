@@ -71,7 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             AttributeSyntax repeatAttributeSyntax,
             Action<IAutomatedStrategy> callback)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, null);
             var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
             var repeatPattern = this.resolver.Resolve(patternName, this.pattern);
