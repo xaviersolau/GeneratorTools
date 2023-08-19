@@ -12,6 +12,7 @@ using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using Xunit;
 
@@ -94,15 +95,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
         [InlineData("string")]
         public void TypeOfConstEvaluatorTest(string textExpression)
         {
-            var resolver = Mock.Of<IDeclarationResolver>();
+            var resolverMock = new Mock<IDeclarationResolver>();
             var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
 
-            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolverMock.Object, genericDeclaration);
             var exp = SyntaxTreeHelper.GetExpressionSyntax($"typeof({textExpression})");
 
             var value = walker.Visit(exp);
 
-            value.Should().BeOfType<TypeOfExpression>().Subject.TypeExpression.Should().Be(textExpression);
+            var typeDeclarationUse = value.Should().BeAssignableTo<IDeclarationUse<SyntaxNode>>().Subject;
+            typeDeclarationUse.Declaration.Name.Should().Be(textExpression);
         }
     }
 }

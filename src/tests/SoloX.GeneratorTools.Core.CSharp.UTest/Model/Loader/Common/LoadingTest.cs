@@ -371,6 +371,48 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             attributeUse.ConstructorArguments.Should().ContainSingle().Subject.Should().Be(descriptionArgument);
         }
 
+        public void AssertPropertyTestAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName, string typeName, bool named, string attributeName)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration, resolver =>
+                {
+                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+
+                    resolver
+                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
+                        .Returns(attributeDeclaration.Object);
+                });
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.NotEmpty(classDeclaration.Members);
+
+            Assert.NotEmpty(classDeclaration.Properties);
+
+            var mDeclaration = Assert.Single(classDeclaration.Members.Where(m => m.Name == propertyName));
+            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+
+            pDeclaration.Attributes.Should().NotBeNullOrEmpty();
+
+            var attributeUse = pDeclaration.Attributes.Should().ContainSingle().Subject;
+
+            attributeUse.Name.Should().Be(attributeName);
+
+            var arg = named
+                ? attributeUse.NamedArguments.Should().ContainSingle().Subject.Value
+                : attributeUse.ConstructorArguments.Should().ContainSingle().Subject;
+
+            arg.Should().NotBeNull();
+
+            var use = arg.Should().BeAssignableTo<IDeclarationUse<SyntaxNode>>().Subject;
+
+            use.Declaration.Name.Should().BeEquivalentTo(typeName);
+        }
+
         public void AssertMethodAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName, bool returnAttribute)
             where TSyntaxNode : SyntaxNode
         {

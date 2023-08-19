@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator.SubEvaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 {
@@ -56,15 +57,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         /// <inheritdoc/>
         public override T VisitTypeOfExpression(TypeOfExpressionSyntax node)
         {
-            if (typeof(T) == typeof(object))
-            {
-                var type = node.Type.ToString();
+            var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+            var use = useWalker.Visit(node.Type);
 
-                return ConvertToT(new TypeOfExpression(type));
+            if (typeof(T) == typeof(string))
+            {
+                return ConvertToT(use.Declaration.FullName);
             }
             else
             {
-                return ConvertToT(node.Type.ToString());
+                return ConvertToT(use);
             }
         }
 
