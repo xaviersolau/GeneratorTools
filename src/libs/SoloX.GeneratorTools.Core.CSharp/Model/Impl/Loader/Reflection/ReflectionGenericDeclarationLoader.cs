@@ -432,9 +432,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var attributeList = new List<IAttributeUse>();
             foreach (var customAttribute in customAttributes)
             {
-                var namedArgs = customAttribute.NamedArguments.ToDictionary(a => a.MemberName, a => a.TypedValue.Value);
+                var namedArgs = customAttribute.NamedArguments.ToDictionary(a => a.MemberName, a => a.TypedValue.Value is Type vt ? GetDeclarationUseFrom(vt, resolver, null) : a.TypedValue.Value);
 
-                var args = customAttribute.ConstructorArguments.Select(a => a.Value).ToArray();
+                var args = customAttribute.ConstructorArguments.Select(a => a.Value is Type vt ? GetDeclarationUseFrom(vt, resolver, null) : a.Value).ToArray();
 
                 attributeList.Add(
                     new AttributeUse(

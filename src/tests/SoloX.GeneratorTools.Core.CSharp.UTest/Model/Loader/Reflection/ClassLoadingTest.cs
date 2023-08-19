@@ -126,6 +126,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         }
 
         [Theory]
+        [InlineData(typeof(ClassWithPropertyTestAttributes), nameof(ClassWithPropertyTestAttributes.PropertyWithAttribute), "object", false, nameof(TestAttribute))]
+        [InlineData(typeof(ClassWithPropertyTestAttributes), nameof(ClassWithPropertyTestAttributes.PropertyWithAttributeNamed), "object", true, nameof(Test2Attribute))]
+        public void ItShouldLoadPropertyWithTestAttributes(Type type, string propertyName, string descriptionArgument, bool named, string attributeName)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertPropertyTestAttributesLoaded(classDeclaration, type, propertyName, descriptionArgument, named, attributeName);
+        }
+
+        [Theory]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute1), false)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), false)]
         [InlineData(typeof(ClassWithMethodAttributes), nameof(ClassWithMethodAttributes.MethodWithAttribute2), true)]
