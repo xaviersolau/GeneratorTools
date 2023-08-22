@@ -14,6 +14,8 @@ using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
@@ -50,6 +52,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
             Assert.Equal(123, value);
         }
 
+        [Fact]
+        public void SimpleIntegerConstEvaluatorAsObjectTest()
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var textValue = "123";
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax($@"{textValue}");
+
+            var value = walker.Visit(exp);
+
+            Assert.Equal(123, value);
+        }
+
         [Theory]
         [InlineData("new string[]")]
         [InlineData("new []")]
@@ -72,6 +89,64 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
             Assert.Equal(2, array.Length);
             Assert.Equal(textValue1, array[0]);
             Assert.Equal(textValue2, array[1]);
+        }
+
+        [Theory]
+        [InlineData("new string[]")]
+        [InlineData("new String[]")]
+        [InlineData("new []")]
+        public void StringArrayConstEvaluatorWithTypeProbeTest(string arrayDecl)
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var stringDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+            Mock.Get(stringDeclaration).SetupGet(d => d.FullName).Returns(typeof(string).FullName);
+
+            Mock.Get(resolver).Setup(r => r.Resolve("String", genericDeclaration)).Returns(stringDeclaration);
+
+            var textValue1 = "textValue1";
+            var textValue2 = "textValue2";
+            var textExp = $@"{arrayDecl} {{ ""{textValue1}"", ""{textValue2}"" }}";
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExp);
+
+            var arrayObject = walker.Visit(exp);
+
+            Assert.NotNull(arrayObject);
+
+            var array = arrayObject.Should().BeAssignableTo<IEnumerable<string>>().Subject;
+
+            Assert.Equal(2, array.Count());
+            Assert.Equal(textValue1, array.ElementAt(0));
+            Assert.Equal(textValue2, array.ElementAt(1));
+        }
+
+        [Theory]
+        [InlineData("new int[]")]
+        [InlineData("new []")]
+        public void IntArrayConstEvaluatorWithTypeProbeTest(string arrayDecl)
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var intValue1 = 10;
+            var intValue2 = 20;
+            var textExp = $@"{arrayDecl} {{ {intValue1}, {intValue2} }}";
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExp);
+
+            var arrayObject = walker.Visit(exp);
+
+            Assert.NotNull(arrayObject);
+
+            var array = arrayObject.Should().BeAssignableTo<IEnumerable<int>>().Subject;
+
+            Assert.Equal(2, array.Count());
+            Assert.Equal(intValue1, array.ElementAt(0));
+            Assert.Equal(intValue2, array.ElementAt(1));
         }
 
         [Theory]
