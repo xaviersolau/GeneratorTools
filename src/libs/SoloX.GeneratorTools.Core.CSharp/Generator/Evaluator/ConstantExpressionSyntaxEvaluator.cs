@@ -15,6 +15,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator.SubEvaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
+using System;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 {
@@ -112,7 +113,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         /// <inheritdoc/>
         public override T VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
         {
-            return LoadFromArrayInitializerExpression(node.Initializer);
+            if (node.Type.ElementType.Kind() == SyntaxKind.PredefinedType)
+            {
+                return LoadFromArrayInitializerExpression(node.Initializer, node.Type.ElementType.ToString());
+            }
+            else
+            {
+                var typeIdentifier = node.Type.ElementType.ToString();
+                var decl = this.resolver.Resolve(typeIdentifier, this.genericDeclaration);
+
+                if (decl != null)
+                {
+                    return LoadFromArrayInitializerExpression(node.Initializer, decl.FullName);
+                }
+                else
+                {
+                    return LoadFromArrayInitializerExpression(node.Initializer);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -122,19 +140,76 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 #pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 
+        private static readonly IReadOnlyDictionary<string, Type> PredefinedTypeMap =
+            new Dictionary<string, Type>
+            {
+                ["string"] = typeof(string),
+                ["System.String"] = typeof(string),
+                ["char"] = typeof(char),
+                ["int"] = typeof(int),
+                ["double"] = typeof(double),
+                ["decimal"] = typeof(decimal),
+                ["object"] = typeof(object),
+            };
+
+        private static readonly IReadOnlyDictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>> TypeToLoaderMap =
+            new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>>
+            {
+                [typeof(string)] = (l, i) => l.LoadArray<string>(i),
+                [typeof(char)] = (l, i) => l.LoadArray<char>(i),
+                [typeof(int)] = (l, i) => l.LoadArray<int>(i),
+                [typeof(double)] = (l, i) => l.LoadArray<double>(i),
+                [typeof(decimal)] = (l, i) => l.LoadArray<decimal>(i),
+                [typeof(object)] = (l, i) => l.LoadArray<object>(i),
+            };
+
+        private T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer, string typeName)
+        {
+            if (PredefinedTypeMap.TryGetValue(typeName, out var type))
+            {
+                return LoadArray(initializer, type);
+            }
+
+            return default;
+        }
+
         private T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer)
         {
-            if (IsTArrayOfType<string>())
+            if (typeof(T) == typeof(object))
             {
-                return LoadArray<string>(initializer);
+                // Prob
+                var size = initializer.Expressions.Count;
+                if (size == 0)
+                {
+                    return ConvertToT(Array.Empty<object>());
+                }
+                else
+                {
+                    var first = Visit(initializer.Expressions[0]);
+
+                    if (first != null)
+                    {
+                        return LoadArray(initializer, first.GetType());
+                    }
+                }
             }
-            else if (IsTArrayOfType<int>())
+
+            foreach (var typeItem in TypeToLoaderMap)
             {
-                return LoadArray<int>(initializer);
+                if (IsTArrayOfType(typeItem.Key))
+                {
+                    return typeItem.Value(this, initializer);
+                }
             }
-            else if (IsTArrayOfType<double>())
+
+            return default;
+        }
+
+        private T LoadArray(InitializerExpressionSyntax initializer, Type eltType)
+        {
+            if (TypeToLoaderMap.TryGetValue(eltType, out var func))
             {
-                return LoadArray<double>(initializer);
+                return func(this, initializer);
             }
 
             return default;
@@ -161,7 +236,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             return (value is T t) ? t : default;
         }
 
-        private static bool IsTArrayOfType<TItem>()
-            => typeof(T) == typeof(TItem[]) || typeof(T) == typeof(IEnumerable<TItem>);
+        private static bool IsTArrayOfType(Type typeItem)
+        {
+            var enumerableType = typeof(IEnumerable<>).MakeGenericType(typeItem);
+            return enumerableType.IsAssignableFrom(typeof(T));
+        }
     }
 }
