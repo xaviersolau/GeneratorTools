@@ -13,7 +13,7 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.Statement
 {
-    [Pattern<SampleSelector>]
+    [Pattern<MultiSelector>]
     [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
     public class PackedForEachStatementSimplePattern : ISimplePattern
     {

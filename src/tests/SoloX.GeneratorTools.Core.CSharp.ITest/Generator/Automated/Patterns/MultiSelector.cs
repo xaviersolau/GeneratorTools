@@ -26,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns
         {
             return files
                 .SelectMany(file => file.Declarations)
-                .Where(d => d.Name == nameof(ISimpleSample) || d.Name == nameof(IOtherSample));
+                .Where(d => d.Name == nameof(ISimpleSample) || d.Name == nameof(IOtherSample) || d.Name == nameof(IConstSample) || d.Name == nameof(IRepeatSample) || d.Name == nameof(IAttributeSelectorSample));
         }
 
         public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
@@ -35,6 +35,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns
         }
 
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
         {
             throw new NotImplementedException();
         }

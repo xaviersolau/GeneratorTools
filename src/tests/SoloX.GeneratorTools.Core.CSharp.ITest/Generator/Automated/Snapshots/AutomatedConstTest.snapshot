@@ -1,0 +1,34 @@
+---------------------
+ConstSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="ConstSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class ConstSample : IConstSample
+    {
+        private object const1Field;
+        private object const2Field;
+
+        public object Const1Property
+        {
+            get { return this.const1Field; }
+            set { this.const1Field = value; }
+        }
+
+        public object Const2Property
+        {
+            get { return this.const2Field; }
+            set { this.const2Field = value; }
+        }
+    }
+}
+

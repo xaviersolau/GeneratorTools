@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -25,6 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
     {
         private readonly IGeneratorLogger<CSharpAssembly> logger;
         private readonly IReflectionDeclarationFactory declarationFactory;
+        private readonly IEnumerable<Type> types;
         private bool isLoaded;
 
         /// <summary>
@@ -33,9 +35,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <param name="logger">The logger to log errors.</param>
         /// <param name="declarationFactory">The declaration factory to use to create declaration instances.</param>
         /// <param name="assembly">The assembly to load declaration from.</param>
-        public CSharpAssembly(IGeneratorLogger<CSharpAssembly> logger, IReflectionDeclarationFactory declarationFactory, Assembly assembly)
+        /// <param name="types">Selected types to be loaded.</param>
+        public CSharpAssembly(IGeneratorLogger<CSharpAssembly> logger, IReflectionDeclarationFactory declarationFactory, Assembly assembly, IEnumerable<Type> types = null)
         {
             this.Assembly = assembly;
+            this.types = types;
             this.logger = logger;
             this.declarationFactory = declarationFactory;
         }
@@ -63,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
 
             try
             {
-                foreach (var type in this.Assembly.GetExportedTypes())
+                foreach (var type in this.types ?? this.Assembly.GetExportedTypes())
                 {
                     var declaration = this.declarationFactory.CreateDeclaration(type);
 

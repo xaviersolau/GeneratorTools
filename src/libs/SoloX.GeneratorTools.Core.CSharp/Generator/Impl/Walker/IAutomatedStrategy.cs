@@ -62,9 +62,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// Process repeat statements handling.
         /// </summary>
         /// <param name="repeatStatementsAttributeSyntax">The repeat statements attribute syntax.</param>
+        /// <param name="parentStrategy">Parent strategy that can be specified.</param>
         /// <param name="callback">Declaration callback.</param>
         void RepeatStatements(
             AttributeSyntax repeatStatementsAttributeSyntax,
+            IAutomatedStrategy parentStrategy,
             Action<IAutomatedStrategy> callback);
 
         /// <summary>

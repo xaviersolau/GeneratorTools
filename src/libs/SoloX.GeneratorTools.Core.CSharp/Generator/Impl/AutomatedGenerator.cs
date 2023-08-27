@@ -45,7 +45,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <param name="patternType">The pattern type to use.</param>
         /// <param name="logger">Logger instance.</param>
         /// <param name="selectorResolver">Selector resolver or null to use the default one.</param>
-        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, IGeneratorLogger logger, ISelectorResolver selectorResolver = null)
+        public AutomatedGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, Type patternType, ISelectorResolver selectorResolver, IGeneratorLogger logger)
         {
             if (writer == null)
             {

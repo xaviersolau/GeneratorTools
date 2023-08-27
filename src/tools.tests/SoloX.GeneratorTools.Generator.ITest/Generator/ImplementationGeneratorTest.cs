@@ -6,11 +6,13 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
@@ -56,6 +58,10 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
                 {
                     workspace.RegisterFile(file);
                 }
+                workspace.RegisterAssemblyTypes(typeof(AllSelector).Assembly,
+                    new Type[] {
+                        typeof(AllSelector), typeof(InterfaceBasedOnSelector<>), typeof(ReadOnlyPropertySelector), typeof(ReadWritePropertySelector)
+                    });
 
                 var generator = new ToolsGenerator(
                     sp.GetService<IGeneratorLogger<ToolsGenerator>>(),

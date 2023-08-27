@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="SimplePattern.cs" company="Xavier Solau">
+// <copyright file="ConstPattern.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -12,17 +12,17 @@ using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl
 {
     [Pattern<MultiSelector>]
-    [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
-    public class SimplePattern : ISimplePattern
+    [Repeat(Pattern = nameof(IConstPattern), Prefix = "I")]
+    public class ConstPattern : IConstPattern
     {
-        [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
-        private object patternProperty;
+        [Repeat(Pattern = nameof(IConstPattern.PatternConst))]
+        private object patternConstField;
 
-        [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
-        public object PatternProperty
+        [Repeat(Pattern = nameof(IConstPattern.PatternConst))]
+        public object PatternConstProperty
         {
-            get { return this.patternProperty; }
-            set { this.patternProperty = value; }
+            get { return this.patternConstField; }
+            set { this.patternConstField = value; }
         }
     }
 }

@@ -1,0 +1,51 @@
+---------------------
+RepeatSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="RepeatSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class RepeatSample : IRepeatSample
+    {
+        public string Statement1 { get; set; }
+        public string Statement2 { get; set; }
+
+        public string Property1 { get; private set; }
+
+        public string Property2 { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public void Property1Method()
+        {
+            DoSome(Statement1, Property1);
+            DoSome(Statement2, Property1);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public void Property2Method()
+        {
+            DoSome(Statement1, Property2);
+            DoSome(Statement2, Property2);
+        }
+
+        private static void DoSome(object arg1, object arg2)
+        {
+            // Any code...
+        }
+    }
+}
+

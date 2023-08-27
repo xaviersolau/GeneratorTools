@@ -33,13 +33,40 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <inheritdoc/>
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
-            throw new NotImplementedException();
+            if (declaration == null)
+            {
+                return Array.Empty<IPropertyDeclaration>();
+            }
+
+            return declaration
+                .Properties
+                .Where(d => d.Attributes.Any(a => a.Name == typeof(TAttribute).Name));
         }
 
         /// <inheritdoc/>
         public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
         {
-            throw new NotImplementedException();
+            if (declaration == null)
+            {
+                return Array.Empty<IMethodDeclaration>();
+            }
+
+            return declaration
+                .Methods
+                .Where(d => d.Attributes.Any(a => a.Name == typeof(TAttribute).Name));
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            if (declaration == null)
+            {
+                return Array.Empty<IConstantDeclaration>();
+            }
+
+            return declaration
+                .Constants
+                .Where(d => d.Attributes.Any(a => a.Name == typeof(TAttribute).Name));
         }
     }
 }

@@ -17,6 +17,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
 using SoloX.GeneratorTools.Core.Utils;
 
@@ -24,20 +25,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
     internal class AutomatedGenericStrategy : IAutomatedStrategy
     {
-        private class DefaultSelectorResolver : ISelectorResolver
-        {
-            public ISelector GetSelector(string selectorName)
-            {
-                var selectorType = Type.GetType(selectorName);
-                if (selectorType != null)
-                {
-                    return (ISelector)Activator.CreateInstance(selectorType);
-                }
-
-                return null;
-            }
-        }
-
         private readonly IGenericDeclaration<SyntaxNode> declaration;
         private readonly IGenericDeclaration<SyntaxNode> pattern;
         private readonly IDeclarationResolver resolver;
@@ -61,8 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.ignoreUsingList = ignoreUsingList;
             this.targetDeclarationName = GeneratorHelper.ComputeClassName(declaration.Name);
             this.targetPatternName = GeneratorHelper.ComputeClassName(pattern.Name);
-
-            this.selectorResolver = selectorResolver ?? new DefaultSelectorResolver();
+            this.selectorResolver = selectorResolver;
 
             this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
@@ -148,21 +134,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 ? this.pattern.Members.Single()
                 : this.pattern.Members.First(p => p.Name == patternName);
 
+            ISelector selector;
+
+            // Get the selector if any from the matching property.
+            if (repeatPatternMember.Attributes
+                .TryMatchAttributeName<PatternAttribute>(out var attribute))
+            {
+                selector = this.GetSelectorFromPatternAttribute(attribute);
+            }
+            else
+            {
+                selector = new AllSelector();
+            }
+
             if (repeatPatternMember is IPropertyDeclaration repeatProperty)
             {
-                ISelector selector;
-
-                // Get the selector if any from the matching property.
-                if (repeatProperty.SyntaxNodeProvider.SyntaxNode.AttributeLists
-                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
-                {
-                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
-                }
-                else
-                {
-                    selector = new AllPropertySelector();
-                }
-
                 foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
                 {
                     var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, this.replacePatternHandlers, patternPrefix, patternSuffix);
@@ -172,22 +158,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
             else if (repeatPatternMember is IMethodDeclaration repeatMethod)
             {
-                ISelector selector;
-
-                // Get the selector if any from the matching property.
-                if (repeatMethod.SyntaxNodeProvider.SyntaxNode.AttributeLists
-                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
-                {
-                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
-                }
-                else
-                {
-                    selector = new AllMethodSelector();
-                }
-
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
                     var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers, this.resolver, this.declaration);
+
+                    callback(strategy);
+                }
+            }
+            else if (repeatPatternMember is IConstantDeclaration repeatConstant)
+            {
+                foreach (var constantDeclaration in selector.GetConstants(this.declaration))
+                {
+                    var strategy = new AutomatedConstantStrategy(repeatConstant, constantDeclaration, this.replacePatternHandlers, patternPrefix, patternSuffix);
 
                     callback(strategy);
                 }
@@ -213,28 +195,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.targetDeclarationName;
         }
 
-        private ISelector GetSelectorFromPatternAttribute(AttributeSyntax attributeSyntax)
+        private ISelector GetSelectorFromPatternAttribute(IAttributeUse attribute)
         {
-            var selectorType = ((GenericNameSyntax)attributeSyntax.Name).TypeArgumentList.Arguments.First();
+            var patternAttributeUse = (IGenericDeclarationUse)attribute.DeclarationUse;
 
-            var nsBase = this.pattern.UsingDirectives.Usings
-                .Concat(NameSpaceHelper.GetParentNameSpaces(this.pattern.DeclarationNameSpace));
+            var selectorTypeUse = patternAttributeUse.GenericParameters.First();
 
-            foreach (var usingDirective in nsBase)
+            var selector = this.selectorResolver.GetSelector(selectorTypeUse);
+            if (selector != null)
             {
-                var selectorName = $"{usingDirective}.{selectorType}";
-
-                var selector = this.selectorResolver.GetSelector(selectorName);
-                if (selector != null)
-                {
-                    return selector;
-                }
+                return selector;
             }
 
-            throw new ArgumentException($"Unknown selector {selectorType}");
+            throw new ArgumentException($"Unknown selector {attribute}");
         }
 
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
         {
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
             var patternName = constEvaluator.Visit(repeatStatementsAttributeSyntax.ArgumentList.Arguments.First().Expression);
@@ -246,22 +222,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             // get the member from the current pattern generic definition.
             var repeatMember = this.pattern.Members.First(p => p.Name == patternName);
 
+            ISelector selector;
+
+            // Get the selector if any from the matching property.
+            if (repeatMember.Attributes
+                .TryMatchAttributeName<PatternAttribute>(out var attribute))
+            {
+                selector = this.GetSelectorFromPatternAttribute(attribute);
+            }
+            else
+            {
+                selector = new AllSelector();
+            }
+
             if (repeatMember is IPropertyDeclaration repeatProperty)
             {
-                ISelector selector;
-
-                // Get the selector if any from the matching property.
-                if (repeatProperty.SyntaxNodeProvider.SyntaxNode.AttributeLists
-                    .TryMatchAttributeName<PatternAttribute>(out var attributeSyntax))
-                {
-                    selector = this.GetSelectorFromPatternAttribute(attributeSyntax);
-                }
-                else
-                {
-                    selector = new AllPropertySelector();
-                }
-
-                var methodStatementsStrategy = new AutomatedMethodStatementsStrategy(selector.GetProperties(this.declaration), repeatProperty, this, pack);
+                var methodStatementsStrategy = new AutomatedMethodStatementsStrategy(selector.GetProperties(this.declaration), repeatProperty, parentStrategy, pack);
 
                 callback(methodStatementsStrategy);
             }

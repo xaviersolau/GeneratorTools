@@ -6,6 +6,9 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
 {
     /// <summary>
@@ -16,8 +19,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <summary>
         /// Try get a selector matching a given name.
         /// </summary>
-        /// <param name="selectorName"></param>
+        /// <param name="selectorTypeUse"></param>
         /// <returns></returns>
-        ISelector GetSelector(string selectorName);
+        ISelector GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse);
     }
 }

@@ -177,6 +177,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
+        public ICSharpAssembly RegisterAssemblyTypes(Assembly assembly, IEnumerable<Type> types = null)
+        {
+            if (assembly == null)
+            {
+                return null;
+            }
+
+            var assemblyFileName = Path.GetFileName(assembly.FullName);
+
+            if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
+            {
+                var csAssemblyLoader = this.factory.CreateAssembly(assembly, types);
+                csAssembly = csAssemblyLoader.WorkspaceItem;
+
+                this.assemblies.Add(assemblyFileName, csAssembly);
+
+                csAssemblyLoader.Load(this);
+            }
+
+            return csAssembly;
+        }
+
+        /// <inheritdoc/>
         public ICSharpMetadataAssembly RegisterMetadataAssembly(string assemblyFile)
         {
             if (assemblyFile == null)
