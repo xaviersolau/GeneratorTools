@@ -38,5 +38,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <param name="declaration">declaration where to make the selection.</param>
         /// <returns>The selected method declarations.</returns>
         IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration);
+
+        /// <summary>
+        /// Select the target where to apply the pattern.
+        /// </summary>
+        /// <param name="declaration">declaration where to make the selection.</param>
+        /// <returns>The selected constant declarations.</returns>
+        IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration);
     }
 }

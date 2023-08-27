@@ -24,6 +24,8 @@ using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using Xunit;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using System.ComponentModel;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 {
@@ -50,6 +52,57 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                 patternImplementationFile,
                 targetNameSpace,
                 nameof(this.AutomatedSimpleTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedConstTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IConstPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/ConstPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/IConstSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(ConstPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedConstTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedAttributeSelectorTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IAttributeSelectorPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/AttributeSelectorPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/IAttributeSelectorSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(AttributeSelectorPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedAttributeSelectorTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedBothRepeatAndRepeatStatementTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IRepeatPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/IRepeatSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(RepeatPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedBothRepeatAndRepeatStatementTest),
                 declarationInterfaceFile);
         }
 
@@ -137,14 +190,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 
             var snapshotGenerator = new SnapshotWriter();
 
+            var selectorResolver = CreateSelectorResolver();
+
             var implGenerator = new AutomatedGenerator(
-                snapshotGenerator, locator, resolver, patternType, Mock.Of<IGeneratorLogger>());
+                snapshotGenerator, locator, resolver, patternType, selectorResolver, Mock.Of<IGeneratorLogger>());
 
             implGenerator.Generate(files);
 
             var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot("Generator/Automated");
 
             SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+        }
+
+        private static ISelectorResolver CreateSelectorResolver()
+        {
+            return new DefaultSelectorResolver(typeof(DescriptionAttribute));
         }
 
         private IDeclarationResolver LoadWorkSpace(

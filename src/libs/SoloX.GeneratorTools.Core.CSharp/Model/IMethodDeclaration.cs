@@ -26,7 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// <summary>
         /// Return attributes.
         /// </summary>
-        public IReadOnlyList<IAttributeUse> ReturnAttributes { get; }
+        IReadOnlyList<IAttributeUse> ReturnAttributes { get; }
 
         /// <summary>
         /// Gets the generic method parameters.

@@ -37,5 +37,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         {
             throw new NotImplementedException();
         }
+
+        /// <inheritdoc/>
+        public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            return Array.Empty<IConstantDeclaration>();
+        }
     }
 }

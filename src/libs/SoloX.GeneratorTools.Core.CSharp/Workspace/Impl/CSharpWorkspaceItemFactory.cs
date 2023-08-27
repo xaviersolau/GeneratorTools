@@ -10,6 +10,8 @@ using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.Utils;
+using System.Collections.Generic;
+using System;
 using System.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
@@ -41,12 +43,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         }
 
         /// <inheritdoc/>
-        public ICSharpWorkspaceItemLoader<ICSharpAssembly> CreateAssembly(Assembly assembly)
+        public ICSharpWorkspaceItemLoader<ICSharpAssembly> CreateAssembly(Assembly assembly, IEnumerable<Type> types = null)
         {
             return new CSharpAssembly(
                 this.loggerFactory.CreateLogger<CSharpAssembly>(),
                 this.reflectionDeclarationFactory,
-                assembly);
+                assembly,
+                types);
         }
 
         /// <inheritdoc/>

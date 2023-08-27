@@ -8,6 +8,8 @@
 
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Workspace
@@ -36,8 +38,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// Create a ICSharpAssembly.
         /// </summary>
         /// <param name="assembly">The CSharp assembly.</param>
+        /// <param name="types">The selected type to be loaded.</param>
         /// <returns>The created assembly object.</returns>
-        ICSharpWorkspaceItemLoader<ICSharpAssembly> CreateAssembly(Assembly assembly);
+        ICSharpWorkspaceItemLoader<ICSharpAssembly> CreateAssembly(Assembly assembly, IEnumerable<Type> types = null);
 
         /// <summary>
         /// Create a ICSharpMetadataAssembly.

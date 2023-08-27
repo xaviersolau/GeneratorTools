@@ -9,6 +9,7 @@
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,13 +33,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <inheritdoc/>
         public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
         {
-            throw new System.NotImplementedException();
+            return Array.Empty<IMethodDeclaration>();
         }
 
         /// <inheritdoc/>
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
-            throw new System.NotImplementedException();
+            return Array.Empty<IPropertyDeclaration>();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            return Array.Empty<IConstantDeclaration>();
         }
     }
 }

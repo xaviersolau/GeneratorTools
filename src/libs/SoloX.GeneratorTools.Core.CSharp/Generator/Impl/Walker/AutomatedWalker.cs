@@ -302,14 +302,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     attributeSyntax,
                     itemStrategy =>
                     {
-                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
-                            .WriteMethodDeclaration(node);
+                        if (node.AttributeLists.TryMatchAttributeName<RepeatStatementsAttribute>(out attributeSyntax))
+                        {
+                            this.strategy.RepeatStatements(
+                                attributeSyntax,
+                                itemStrategy,
+                                subItemStrategy =>
+                                {
+                                    new AutomatedWalker(this.textWriter, this.pattern, subItemStrategy)
+                                        .WriteMethodDeclaration(node);
+                                });
+                        }
+                        else
+                        {
+                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                                .WriteMethodDeclaration(node);
+                        }
                     });
             }
             else if (node.AttributeLists.TryMatchAttributeName<RepeatStatementsAttribute>(out attributeSyntax))
             {
                 this.strategy.RepeatStatements(
                     attributeSyntax,
+                    this.strategy,
                     itemStrategy =>
                     {
                         new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)

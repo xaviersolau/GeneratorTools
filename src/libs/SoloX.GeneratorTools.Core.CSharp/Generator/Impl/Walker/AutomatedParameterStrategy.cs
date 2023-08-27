@@ -93,7 +93,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return expression.Contains(repeatParameter.Name) || expression.Contains(firstUpperPatternName);
         }
 
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
         {
             throw new NotImplementedException();
         }

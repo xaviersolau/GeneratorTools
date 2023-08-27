@@ -1,0 +1,38 @@
+---------------------
+AttributeSelectorSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="AttributeSelectorSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class AttributeSelectorSample : IAttributeSelectorSample
+    {
+        public string PropertyWithAttribute1 { get; set; }
+        public string PropertyWithAttribute2 { get; set; }
+
+        public string PropertyWithNoAttribute3 { get; set; }
+
+        public string PropertyWithNoAttribute4 { get; set; }
+
+        public string PropertyWithNoAttribute5 { get; set; }
+
+        public string ProcessPropertyWithAttribute1()
+        {
+            return PropertyWithAttribute1;
+        }
+
+        public string ProcessPropertyWithAttribute2()
+        {
+            return PropertyWithAttribute2;
+        }
+    }
+}
+

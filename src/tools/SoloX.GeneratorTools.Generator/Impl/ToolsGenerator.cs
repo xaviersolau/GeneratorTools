@@ -68,11 +68,14 @@ namespace SoloX.GeneratorTools.Generator.Impl
 
             var resolver = workspace.DeepLoad();
 
+            var selectorResolver = new DefaultSelectorResolver();
+
             var generator1 = new AutomatedGenerator(
                 fileGenerator,
                 locator,
                 resolver,
                 typeof(IFactoryPattern),
+                selectorResolver,
                 this.logger);
 
             var generatedItems1 = generator1.Generate(files);
@@ -82,6 +85,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 resolver,
                 typeof(FactoryPattern),
+                selectorResolver,
                 this.logger);
 
             var generatedItems2 = generator2.Generate(files);
@@ -91,6 +95,7 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 resolver,
                 typeof(ObjectPattern),
+                selectorResolver,
                 this.logger);
 
             var generatedItems3 = generator3.Generate(files);

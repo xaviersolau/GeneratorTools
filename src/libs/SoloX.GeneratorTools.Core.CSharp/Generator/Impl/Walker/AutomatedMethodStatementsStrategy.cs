@@ -76,7 +76,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             throw new NotImplementedException();
         }
 
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, Action<IAutomatedStrategy> callback)
+        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
         {
             throw new NotImplementedException();
         }

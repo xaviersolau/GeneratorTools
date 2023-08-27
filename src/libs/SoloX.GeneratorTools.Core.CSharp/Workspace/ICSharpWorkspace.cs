@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -64,6 +65,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace
         /// <param name="assembly">The CSharp assembly.</param>
         /// <returns>The matching or created ICSharpAssembly.</returns>
         ICSharpAssembly RegisterAssembly(Assembly assembly);
+
+        /// <summary>
+        /// Register the ICSharpAssembly and load only the given types.
+        /// </summary>
+        /// <param name="assembly">The CSharp assembly.</param>
+        /// <param name="types">The CSharp types included in the given assembly (default is null).</param>
+        /// <returns>The matching or created ICSharpAssembly.</returns>
+        ICSharpAssembly RegisterAssemblyTypes(Assembly assembly, IEnumerable<Type>? types = null);
 
         /// <summary>
         /// Register the ICSharpMetadataAssembly associated to the given assembly file.
