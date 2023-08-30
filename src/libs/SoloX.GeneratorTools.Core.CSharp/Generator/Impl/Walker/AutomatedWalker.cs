@@ -240,6 +240,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                             .WritePropertyDeclaration(node);
                     });
             }
+            else if (node.AttributeLists.TryMatchAttributeName<RepeatStatementsAttribute>(out attributeSyntax))
+            {
+                this.strategy.RepeatStatements(
+                    attributeSyntax,
+                    this.strategy,
+                    itemStrategy =>
+                    {
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                            .WritePropertyDeclaration(node);
+                    });
+            }
             else
             {
                 this.WritePropertyDeclaration(node);
@@ -287,11 +298,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
-            this.WriteAttributeLists(node.AttributeLists);
-            this.Write(node.Modifiers.ToFullString());
-            this.WriteToken(node.Identifier);
-            this.WriteNode(node.ParameterList);
-            this.Visit(node.Body);
+            if (node.AttributeLists.TryMatchAttributeName<RepeatStatementsAttribute>(out var attributeSyntax))
+            {
+                this.strategy.RepeatStatements(
+                    attributeSyntax,
+                    this.strategy,
+                    itemStrategy =>
+                    {
+                        new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+                            .WriteConstructorDeclaration(node);
+                    });
+            }
+            else
+            {
+                this.WriteConstructorDeclaration(node);
+            }
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -386,13 +407,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node.Type);
             if (node.ArgumentList != null)
             {
-                this.WriteToken(node.ArgumentList.OpenParenToken);
-                foreach (var argument in node.ArgumentList.Arguments)
-                {
-                    this.WriteNode(argument);
-                }
-
-                this.WriteToken(node.ArgumentList.CloseParenToken);
+                this.Visit(node.ArgumentList);
             }
 
             if (node.Initializer != null)
@@ -444,6 +459,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
             this.WriteNode(node);
+        }
+
+        public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+        {
+            this.Visit(node.Declaration);
+            this.WriteToken(node.SemicolonToken);
         }
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
@@ -705,6 +726,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
 
             this.Write(node.CloseBraceToken.ToFullString());
+        }
+
+        private void WriteConstructorDeclaration(ConstructorDeclarationSyntax node)
+        {
+            this.WriteAttributeLists(node.AttributeLists);
+            this.Write(node.Modifiers.ToFullString());
+            this.WriteToken(node.Identifier);
+            this.WriteNode(node.ParameterList);
+            this.Visit(node.Body);
         }
 
         private void WriteMethodDeclaration(MethodDeclarationSyntax node)

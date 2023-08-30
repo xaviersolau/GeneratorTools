@@ -1,0 +1,38 @@
+---------------------
+SimpleSampleWithCreate
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleSampleWithCreate.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleSampleWithCreate : ISimpleSample
+    {
+        public int Property1
+        {
+            get { return new SomeClass("some", "arg"); }
+        }
+        public double Property2
+        {
+            get { return new SomeClass("some", "arg"); }
+        }
+
+#pragma warning disable CA1034 // Nested types should not be visible
+        public class SomeClass
+        {
+            public SomeClass(object arg1, object arg2)
+            {
+                // setup.
+            }
+        }
+#pragma warning restore CA1034 // Nested types should not be visible
+    }
+}
+

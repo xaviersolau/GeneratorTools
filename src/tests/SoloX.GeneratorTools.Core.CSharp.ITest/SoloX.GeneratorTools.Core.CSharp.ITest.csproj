@@ -43,16 +43,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Generator\Automated\Patterns\Impl\Method\TypeNameReplaceMethodSimplePattern.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Generator\Automated\Patterns\Itf\IAttributeSelectorPattern.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Generator\Automated\Samples\IRepeatSample.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-
 </Project>

@@ -1,31 +1,31 @@
 ---------------------
-ForStatementSimpleSample
+RepeatStatementInPropertyPattern
 ---------------------
 // ----------------------------------------------------------------------
-// <copyright file="ForStatementSimpleSample.cs" company="Xavier Solau">
+// <copyright file="RepeatStatementInPropertyPattern.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System.Collections.Generic;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 {
-    public class ForStatementSimpleSample : ISimpleSample
+    public class RepeatStatementInPropertyPattern : ISimpleSample
     {
         public int Property1 { get; set; }
         public double Property2 { get; set; }
 
-        public void PatternMethodWithForStatement(IList<object> withSomeArguments)
+        public string PatternWithStatementInProperty
         {
-            var len = withSomeArguments.Count;
-            for (var i = 0; i < len; i++)
+            get
             {
-                withSomeArguments[i] = this.Property1;
-                withSomeArguments[i] = this.Property2;
+                var txt = string.Empty;
+                txt = txt + Property1.ToString();
+                txt = txt + Property2.ToString();
+                return txt;
             }
         }
     }
