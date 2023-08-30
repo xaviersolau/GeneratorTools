@@ -1,0 +1,30 @@
+---------------------
+RepeatStatementInConstructorPattern
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="RepeatStatementInConstructorPattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class RepeatStatementInConstructorPattern : ISimpleSample
+    {
+        public RepeatStatementInConstructorPattern()
+        {
+            var txt = string.Empty;
+            txt = txt + Property1.ToString();
+            txt = txt + Property2.ToString();
+        }
+
+        public int Property1 { get; set; }
+
+        public double Property2 { get; set; }
+    }
+}
+

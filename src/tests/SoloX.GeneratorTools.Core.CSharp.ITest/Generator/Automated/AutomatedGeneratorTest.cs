@@ -56,6 +56,74 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleWithCallTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithCall.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimplePatternWithCall),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleWithCallTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedSimpleWithCreateTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithCreate.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimplePatternWithCreate),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleWithCreateTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedRepeatStatementInProperty()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatStatementInPropertyPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(RepeatStatementInPropertyPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedRepeatStatementInProperty),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedRepeatStatementInConstructor()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatStatementInConstructorPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(RepeatStatementInConstructorPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedRepeatStatementInConstructor),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedConstTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IConstPattern.cs";
