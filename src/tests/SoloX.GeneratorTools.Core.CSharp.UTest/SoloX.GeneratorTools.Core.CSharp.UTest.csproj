@@ -67,6 +67,9 @@
     <Compile Update="Resources\Model\Basic\Classes\ClassWithConstants.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\ClassWithPropertyTestGenericAttributes.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources\Model\Basic\Classes\ClassWithPropertyTestAttributes.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

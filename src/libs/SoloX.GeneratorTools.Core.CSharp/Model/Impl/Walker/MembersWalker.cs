@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
@@ -41,6 +42,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
+
+            if (use == null)
+            {
+                throw new ParserException("Unable to load Declaration use.", node.Type);
+            }
 
             var canRead = false;
             var canWrite = false;
@@ -83,6 +89,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             {
                 var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
                 var use = useWalker.Visit(node.ReturnType);
+
+                if (use == null)
+                {
+                    throw new ParserException("Unable to load Declaration use.", node.ReturnType);
+                }
+
                 var genericParameters = LoadGenericParameters(node);
                 var parameters = LoadParameters(node, useWalker);
 
@@ -125,6 +137,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             {
                 var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
                 var use = useWalker.Visit(node.Declaration.Type);
+
+                if (use == null)
+                {
+                    throw new ParserException("Unable to load Declaration use.", node.Declaration.Type);
+                }
 
                 foreach (var variableItem in node.Declaration.Variables)
                 {

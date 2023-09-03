@@ -16,6 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
 using System;
+using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 {
@@ -60,6 +61,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         {
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
+
+            if (use == null)
+            {
+                throw new ParserException("Unable to load Declaration use.", node.Type);
+            }
 
             if (typeof(T) == typeof(string))
             {

@@ -55,10 +55,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             return new CSharpWorkspaceItemFactory(
                 this.loggerFactory,
                 new ParserDeclarationFactory(
-                    new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
-                    new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
-                    new ParserGenericDeclarationLoader<StructDeclarationSyntax>(),
-                    new ParserGenericDeclarationLoader<RecordDeclarationSyntax>()),
+                    new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
+                    new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<ClassDeclarationSyntax>>()),
+                    new ParserGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<StructDeclarationSyntax>>()),
+                    new ParserGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>())),
                 new ReflectionDeclarationFactory(
                     new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
                     new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>()),

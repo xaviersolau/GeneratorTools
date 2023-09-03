@@ -235,7 +235,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 .Concat(this.SyntaxTrees.SelectMany(s => s.Declarations));
             var resolver = new DeclarationResolver(declarations);
 
-            resolver.Load();
+            resolver.Load(this.logger);
 
             return resolver;
         }

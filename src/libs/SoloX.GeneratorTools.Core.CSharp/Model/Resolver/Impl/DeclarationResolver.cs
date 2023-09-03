@@ -10,10 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
+using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
 {
@@ -135,14 +137,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// <summary>
         /// Load all declarations.
         /// </summary>
-        internal void Load()
+        internal void Load(IGeneratorLogger logger)
         {
             foreach (var declarationItem in this.declarationMap)
             {
                 var declarationList = declarationItem.Value;
                 foreach (var declaration in declarationList)
                 {
-                    declaration.DeepLoad(this);
+                    try
+                    {
+                        declaration.DeepLoad(this);
+                    }
+                    catch (ParserException e)
+                    {
+                        logger.LogError(e, $"Loading error on {declaration.FullName} in {declaration.Location}");
+                    }
                 }
             }
         }

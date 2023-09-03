@@ -26,4 +26,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
     {
         public Type TypeValue { get; set; }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class Test3Attribute<T> : Attribute
+    {
+    }
 }

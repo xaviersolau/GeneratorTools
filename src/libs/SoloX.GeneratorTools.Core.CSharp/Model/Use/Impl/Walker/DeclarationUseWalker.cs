@@ -22,6 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
     {
         private readonly IDeclarationResolver resolver;
         private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
+        private string currentQualifiedName = string.Empty;
 
         public DeclarationUseWalker(IDeclarationResolver resolver, IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
@@ -37,6 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
         public override IDeclarationUse<SyntaxNode> VisitGenericName(GenericNameSyntax node)
         {
             var identifier = node.Identifier.Text;
+            var fullIdentifier = MakeFullQualifiedName(identifier);
 
             var tparams = new List<IDeclarationUse<SyntaxNode>>();
             foreach (var item in node.TypeArgumentList.Arguments)
@@ -44,7 +46,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 tparams.Add(item.Accept(this));
             }
 
-            var genericDeclaration = this.resolver.Resolve(identifier, tparams, this.genericDeclaration);
+            var genericDeclaration = this.resolver.Resolve(fullIdentifier, tparams, this.genericDeclaration);
 
             if (genericDeclaration != null)
             {
@@ -56,16 +58,39 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             return new UnknownGenericDeclarationUse(
                 new ParserSyntaxNodeProvider<GenericNameSyntax>(node),
-                new UnknownDeclaration(identifier),
+                new UnknownDeclaration(this.currentQualifiedName, identifier),
                 tparams);
+        }
+
+        private string MakeFullQualifiedName(string identifier)
+        {
+            return string.IsNullOrEmpty(this.currentQualifiedName)
+                ? identifier
+                : this.currentQualifiedName + '.' + identifier;
+        }
+
+        public override IDeclarationUse<SyntaxNode> VisitQualifiedName(QualifiedNameSyntax node)
+        {
+            var left = node.Left;
+
+            this.currentQualifiedName = left.ToString();
+
+            var right = node.Right;
+
+            var use = Visit(right);
+
+            this.currentQualifiedName = string.Empty;
+
+            return use;
         }
 
         public override IDeclarationUse<SyntaxNode> VisitIdentifierName(IdentifierNameSyntax node)
         {
             var identifier = node.Identifier.Text;
+            var fullIdentifier = MakeFullQualifiedName(identifier);
 
             IDeclaration<SyntaxNode> declaration = this.genericDeclaration.GenericParameters
-                .FirstOrDefault(p => p.Name == identifier);
+                .FirstOrDefault(p => p.Name == fullIdentifier);
             if (declaration != null)
             {
                 return new GenericParameterDeclarationUse(
@@ -73,7 +98,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                     declaration);
             }
 
-            declaration = this.resolver.Resolve(identifier, this.genericDeclaration);
+            declaration = this.resolver.Resolve(fullIdentifier, this.genericDeclaration);
 
             if (declaration != null)
             {
@@ -92,7 +117,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             return new UnknownDeclarationUse(
                 new ParserSyntaxNodeProvider<IdentifierNameSyntax>(node),
-                new UnknownDeclaration(identifier));
+                new UnknownDeclaration(this.currentQualifiedName, identifier));
         }
 
         public override IDeclarationUse<SyntaxNode> VisitArrayType(ArrayTypeSyntax node)
