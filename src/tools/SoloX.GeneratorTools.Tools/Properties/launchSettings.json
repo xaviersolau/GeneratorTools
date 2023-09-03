@@ -4,6 +4,11 @@
       "commandName": "Project",
       "commandLineArgs": "--project SoloX.GeneratorTools.Generator.Sample2.csproj",
       "workingDirectory": "C:\\Work\\Net\\GeneratorTools\\src\\tools\\SoloX.GeneratorTools.Generator.Sample2"
+    },
+    "JsonLocalizer": {
+      "commandName": "Project",
+      "commandLineArgs": "--project SoloX.BlazorJsonLocalization.Generator.Sample.csproj",
+      "workingDirectory": "C:\\Work\\Net\\BlazorJsonLocalization\\src\\tools.examples\\SoloX.BlazorJsonLocalization.Generator.Sample"
     }
   }
 }

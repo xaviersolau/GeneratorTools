@@ -12,16 +12,25 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 {
     internal class ParserGenericDeclarationLoader<TNode> : AGenericDeclarationLoader<TNode>
         where TNode : TypeDeclarationSyntax
     {
+        private readonly IGeneratorLogger<ParserGenericDeclarationLoader<TNode>> logger;
+
+        public ParserGenericDeclarationLoader(IGeneratorLogger<ParserGenericDeclarationLoader<TNode>> logger)
+        {
+            this.logger = logger;
+        }
+
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
             LoadGenericParameters(declaration);
@@ -101,6 +110,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
                 foreach (var node in baseListSyntax.ChildNodes())
                 {
                     var use = baseWalker.Visit(node);
+
+                    if (use == null)
+                    {
+                        throw new ParserException("Unable to load Declaration use.", node);
+                    }
 
                     if (use.Declaration is IGenericDeclarationImpl genericDeclaration)
                     {

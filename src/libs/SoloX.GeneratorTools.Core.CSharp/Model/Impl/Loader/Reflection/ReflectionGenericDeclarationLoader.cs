@@ -409,11 +409,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             }
             catch (TypeLoadException e)
             {
-                this.logger?.LogWarning($"Could not load properties from {declaration.GetData<Type>()} ({e.Message})");
+                this.logger?.LogWarning(e, $"Could not load properties from {declaration.GetData<Type>()}");
             }
             catch (FileNotFoundException e)
             {
-                this.logger?.LogWarning($"Could not load properties from {declaration.GetData<Type>()} ({e.Message})");
+                this.logger?.LogWarning(e, $"Could not load properties from {declaration.GetData<Type>()}");
             }
 
             declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();

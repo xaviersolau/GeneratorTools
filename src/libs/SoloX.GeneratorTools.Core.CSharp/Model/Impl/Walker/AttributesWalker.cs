@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -41,6 +42,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Name);
+
+            if (use == null)
+            {
+                throw new ParserException("Unable to load Declaration use.", node.Name);
+            }
 
             this.attributesList.Add(new AttributeUse(
                 use,

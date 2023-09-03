@@ -12,7 +12,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
 {
     public class ClassWithMethodAttributes
     {
-        [Description("Some description")]
+        [global::System.ComponentModel.Description("Some description")]
 #pragma warning disable CA1822 // Mark members as static
         public int MethodWithAttribute1([Description("Some arg description")] int arg)
         {

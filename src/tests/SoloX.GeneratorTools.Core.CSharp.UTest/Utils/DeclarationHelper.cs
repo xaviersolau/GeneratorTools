@@ -109,10 +109,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         public static IParserDeclarationFactory CreateParserDeclarationFactory(ITestOutputHelper testOutputHelper)
         {
             return new ParserDeclarationFactory(
-                new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(),
-                new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(),
-                new ParserGenericDeclarationLoader<StructDeclarationSyntax>(),
-                new ParserGenericDeclarationLoader<RecordDeclarationSyntax>());
+                new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>>(testOutputHelper)),
+                new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<ClassDeclarationSyntax>>(testOutputHelper)),
+                new ParserGenericDeclarationLoader<StructDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
+                new ParserGenericDeclarationLoader<RecordDeclarationSyntax>(
+                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
         }
 
         /// <summary>
