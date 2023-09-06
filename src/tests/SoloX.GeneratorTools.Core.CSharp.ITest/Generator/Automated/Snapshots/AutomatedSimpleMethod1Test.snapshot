@@ -1,0 +1,32 @@
+---------------------
+SimpleMethod1Pattern
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleMethod1Pattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+using System;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleMethod1Pattern : ISimpleMethodSample
+    {
+        public int Method()
+            => this.ProcessReturns<int>();
+        public int Method1( string arg)
+            => this.ProcessReturns<int>(arg);
+        public double Method2( int arg1,  double arg2)
+            => this.ProcessReturns<double>(arg1, arg2);
+
+        private T ProcessReturns<T>(params object[] objects)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+

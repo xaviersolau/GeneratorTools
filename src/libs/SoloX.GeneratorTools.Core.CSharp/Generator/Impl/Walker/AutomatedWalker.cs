@@ -421,25 +421,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
                 foreach (var expression in node.Initializer.Expressions)
                 {
-                    var textExpression = expression.ToFullString();
-
-                    if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                    ProcessSubRepeatAttribute(expression, walker =>
                     {
-                        this.strategy.RepeatDeclaration(
-                            attributeSyntax,
-                            itemStrategy =>
-                            {
-                                this.textWriter.Write(itemStrategy.ApplyPatternReplace(textExpression));
+                        walker.WriteNode(expression);
+                        walker.Write(tkns);
+                    });
 
-                                this.Write(tkns);
-                            });
-                    }
-                    else
-                    {
-                        this.WriteNode(expression);
+                    //var textExpression = expression.ToFullString();
 
-                        this.Write(tkns);
-                    }
+                    //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                    //{
+                    //    this.strategy.RepeatDeclaration(
+                    //        attributeSyntax,
+                    //        itemStrategy =>
+                    //        {
+                    //            this.textWriter.Write(itemStrategy.ApplyPatternReplace(textExpression));
+
+                    //            this.Write(tkns);
+                    //        });
+                    //}
+                    //else
+                    //{
+                    //    this.WriteNode(expression);
+
+                    //    this.Write(tkns);
+                    //}
                 }
 
                 this.WriteToken(node.Initializer.CloseBraceToken);
@@ -458,13 +464,53 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            this.WriteNode(node);
+            ProcessSubRepeatAttribute(node, walker =>
+            {
+                walker.WriteNode(node);
+            });
+
+            //var textExpression = node.ToFullString();
+            //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+            //{
+            //    this.strategy.RepeatDeclaration(
+            //        attributeSyntax,
+            //        itemStrategy =>
+            //        {
+            //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).WriteNode(node);
+            //        });
+            //}
+            //else
+            //{
+            //    this.WriteNode(node);
+            //}
         }
 
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
-            this.Visit(node.Declaration);
-            this.WriteToken(node.SemicolonToken);
+            ProcessSubRepeatAttribute(node, walker =>
+            {
+                walker.Visit(node.Declaration);
+                walker.WriteToken(node.SemicolonToken);
+            });
+
+            //var textExpression = node.ToFullString();
+            //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+            //{
+            //    this.strategy.RepeatDeclaration(
+            //        attributeSyntax,
+            //        itemStrategy =>
+            //        {
+            //            var walker = new AutomatedWalker(this.textWriter, this.pattern, itemStrategy);
+
+            //            walker.Visit(node.Declaration);
+            //            walker.WriteToken(node.SemicolonToken);
+            //        });
+            //}
+            //else
+            //{
+            //    this.Visit(node.Declaration);
+            //    this.WriteToken(node.SemicolonToken);
+            //}
         }
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
@@ -487,26 +533,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             foreach (var argument in node.Arguments)
             {
-                var textExpression = argument.ToFullString();
-                if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
-                {
-                    this.strategy.RepeatDeclaration(
-                        attributeSyntax,
-                        itemStrategy =>
-                        {
-                            if (isFirst)
-                            {
-                                isFirst = false;
-                            }
-                            else
-                            {
-                                this.Write(", ");
-                            }
-
-                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
-                        });
-                }
-                else
+                ProcessSubRepeatAttribute(argument, walker =>
                 {
                     if (isFirst)
                     {
@@ -517,8 +544,41 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                         this.Write(", ");
                     }
 
-                    this.Visit(argument);
-                }
+                    walker.Visit(argument);
+                });
+
+                //var textExpression = argument.ToFullString();
+                //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                //{
+                //    this.strategy.RepeatDeclaration(
+                //        attributeSyntax,
+                //        itemStrategy =>
+                //        {
+                //            if (isFirst)
+                //            {
+                //                isFirst = false;
+                //            }
+                //            else
+                //            {
+                //                this.Write(", ");
+                //            }
+
+                //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
+                //        });
+                //}
+                //else
+                //{
+                //    if (isFirst)
+                //    {
+                //        isFirst = false;
+                //    }
+                //    else
+                //    {
+                //        this.Write(", ");
+                //    }
+
+                //    this.Visit(argument);
+                //}
             }
 
             this.WriteToken(node.CloseParenToken);
@@ -532,26 +592,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             foreach (var argument in node.Arguments)
             {
-                var textExpression = argument.ToFullString();
-                if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
-                {
-                    this.strategy.RepeatDeclaration(
-                        attributeSyntax,
-                        itemStrategy =>
-                        {
-                            if (isFirst)
-                            {
-                                isFirst = false;
-                            }
-                            else
-                            {
-                                this.Write(", ");
-                            }
-
-                            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
-                        });
-                }
-                else
+                ProcessSubRepeatAttribute(argument, walker =>
                 {
                     if (isFirst)
                     {
@@ -562,8 +603,41 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                         this.Write(", ");
                     }
 
-                    this.Visit(argument);
-                }
+                    walker.Visit(argument);
+                });
+
+                //var textExpression = argument.ToFullString();
+                //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+                //{
+                //    this.strategy.RepeatDeclaration(
+                //        attributeSyntax,
+                //        itemStrategy =>
+                //        {
+                //            if (isFirst)
+                //            {
+                //                isFirst = false;
+                //            }
+                //            else
+                //            {
+                //                this.Write(", ");
+                //            }
+
+                //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
+                //        });
+                //}
+                //else
+                //{
+                //    if (isFirst)
+                //    {
+                //        isFirst = false;
+                //    }
+                //    else
+                //    {
+                //        this.Write(", ");
+                //    }
+
+                //    this.Visit(argument);
+                //}
             }
 
             this.WriteToken(node.CloseBracketToken);
@@ -574,7 +648,93 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteToken(node.Identifier);
         }
 
+        public override void VisitGenericName(GenericNameSyntax node)
+        {
+            this.WriteToken(node.Identifier);
+
+            this.Visit(node.TypeArgumentList);
+        }
+
+        public override void VisitTypeArgumentList(TypeArgumentListSyntax node)
+        {
+            this.WriteToken(node.LessThanToken);
+
+            var isFirst = true;
+
+            foreach (var argument in node.Arguments)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    this.Write(", ");
+                }
+
+                this.Visit(argument);
+            }
+
+            this.WriteToken(node.GreaterThanToken);
+        }
+
+        public override void VisitPredefinedType(PredefinedTypeSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitThisExpression(ThisExpressionSyntax node)
+        {
+            this.WriteNode(node);
+        }
+
+        public override void VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        {
+            WriteToken(node.NewKeyword);
+            Visit(node.Type);
+            Visit(node.Initializer);
+        }
+
+        public override void VisitArrayType(ArrayTypeSyntax node)
+        {
+            Visit(node.ElementType);
+            foreach (var rankSpecifier in node.RankSpecifiers)
+            {
+                Visit(rankSpecifier);
+            }
+        }
+
+        public override void VisitArrayRankSpecifier(ArrayRankSpecifierSyntax node)
+        {
+            WriteNode(node);
+        }
+
         public override void VisitIfStatement(IfStatementSyntax node)
+        {
+            ProcessSubRepeatAttribute(node.Condition, walker =>
+            {
+                walker.WriteIfStatement(node);
+            });
+
+            //var textExpression = node.Condition.ToFullString();
+
+            //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
+            //{
+            //    this.strategy.RepeatDeclaration(
+            //        attributeSyntax,
+            //        itemStrategy =>
+            //        {
+            //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy)
+            //                .WriteIfStatement(node);
+            //        });
+            //}
+            //else
+            //{
+            //    WriteIfStatement(node);
+            //}
+        }
+
+        private void WriteIfStatement(IfStatementSyntax node)
         {
             if (this.strategy.IsPackStatementEnabled)
             {
@@ -653,20 +813,42 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node);
         }
 
-        private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
+        private void ProcessSubRepeatAttribute(SyntaxNode expressionNode, Action<AutomatedWalker> repeatHandler)
         {
-            attributeSyntax = null;
             foreach (var subRepeatAttribute in this.subRepeatAttributes)
             {
-                if (this.strategy.TryMatchRepeatDeclaration(subRepeatAttribute, expression))
+                if (this.strategy.TryMatchRepeatDeclaration(subRepeatAttribute, expressionNode))
                 {
-                    attributeSyntax = subRepeatAttribute;
-                    return true;
+                    this.strategy.RepeatDeclaration(
+                        subRepeatAttribute,
+                        itemStrategy =>
+                        {
+                            var automatedWalker = new AutomatedWalker(this.textWriter, this.pattern, itemStrategy);
+
+                            repeatHandler(automatedWalker);
+                        });
+
+                    return;
                 }
             }
 
-            return false;
+            repeatHandler(this);
         }
+
+        //private bool TryMatchSubRepeatAttribute(out AttributeSyntax attributeSyntax, string expression)
+        //{
+        //    attributeSyntax = null;
+        //    foreach (var subRepeatAttribute in this.subRepeatAttributes)
+        //    {
+        //        if (this.strategy.TryMatchRepeatDeclaration(subRepeatAttribute, expression))
+        //        {
+        //            attributeSyntax = subRepeatAttribute;
+        //            return true;
+        //        }
+        //    }
+
+        //    return false;
+        //}
 
         private void WriteInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {

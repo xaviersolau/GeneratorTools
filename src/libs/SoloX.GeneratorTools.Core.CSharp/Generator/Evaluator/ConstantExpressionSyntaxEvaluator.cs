@@ -107,13 +107,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         /// <inheritdoc/>
         public override T? VisitInterpolation(InterpolationSyntax node)
         {
-            var identifier = node.Expression.ToString();
+            return Visit(node.Expression);
+        }
+
+        /// <inheritdoc/>
+        public override T? VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            var identifier = node.Identifier.ValueText;
 
             var constant = this.genericDeclaration.Constants.SingleOrDefault(c => c.Name == identifier);
 
             var value = Visit(constant.SyntaxNodeProvider.SyntaxNode.Initializer.Value);
 
             return ConvertToT(value);
+        }
+
+        /// <inheritdoc/>
+        public override T? VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            if (node.Expression is IdentifierNameSyntax identifier)
+            {
+                var declaration = this.resolver.Resolve(identifier.Identifier.ValueText, this.genericDeclaration);
+
+                if (declaration is IGenericDeclaration<SyntaxNode> genDeclaration)
+                {
+                    var memberVisitor = new ConstantExpressionSyntaxEvaluator<T>(this.resolver, genDeclaration);
+
+                    return memberVisitor.Visit(node.Name);
+                }
+            }
+
+            return base.VisitMemberAccessExpression(node);
         }
 
         /// <inheritdoc/>

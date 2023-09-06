@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using System;
@@ -81,9 +82,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             throw new NotImplementedException();
         }
 
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression)
+        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
