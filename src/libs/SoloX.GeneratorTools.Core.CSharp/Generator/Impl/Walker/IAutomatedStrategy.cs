@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
@@ -47,7 +48,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <param name="repeatAttributeSyntax">The repeat attribute syntax.</param>
         /// <param name="expression">The text expression to test.</param>
         /// <returns>True if there is a match.</returns>
-        bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression);
+        bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression);
 
         /// <summary>
         /// Process repeat declaration handling.

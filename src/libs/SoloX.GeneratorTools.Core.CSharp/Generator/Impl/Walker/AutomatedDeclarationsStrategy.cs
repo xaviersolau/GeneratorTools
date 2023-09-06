@@ -62,7 +62,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.currentNameSpace;
         }
 
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression)
+        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
         {
             return false;
         }

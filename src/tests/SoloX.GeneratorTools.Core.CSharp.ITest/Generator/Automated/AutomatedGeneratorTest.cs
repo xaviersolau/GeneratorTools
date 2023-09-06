@@ -56,6 +56,74 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleMethod1Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod1Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod1Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod1Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedSimpleMethod2Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod2Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod2Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod2Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedSimpleMethod3Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod3Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod3Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod3Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedSimpleMethod4Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod4Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod4Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod4Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedSimpleWithCallTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";

@@ -84,7 +84,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.declaration.DeclarationNameSpace;
         }
 
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, string expression)
+        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
         {
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
             var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
@@ -92,7 +92,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             // get the property from the current pattern generic definition.
             var repeatProperty = this.pattern.Properties.First(p => p.Name == patternName);
 
-            return AutomatedPropertyStrategy.Match(repeatProperty, expression);
+            return AutomatedPropertyStrategy.Match(repeatProperty, expression.ToFullString());
         }
 
         public void RepeatDeclaration(
@@ -160,7 +160,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
-                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers, this.resolver, this.declaration);
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers, this.resolver, this.declaration, patternPrefix, patternSuffix);
 
                     callback(strategy);
                 }

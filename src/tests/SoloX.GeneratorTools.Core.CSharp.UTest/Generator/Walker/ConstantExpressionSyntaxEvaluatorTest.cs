@@ -8,6 +8,7 @@
 
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -180,6 +181,75 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var typeDeclarationUse = value.Should().BeAssignableTo<IDeclarationUse<SyntaxNode>>().Subject;
             typeDeclarationUse.Declaration.Name.Should().Be(textExpression);
+        }
+
+        [Theory]
+        [InlineData("$\"Name of is {nameof(Arg1)}\"", "Name of is Arg1")]
+        public void InterpolationEvaluatorTest(string textExpression, string expectedValue)
+        {
+            var resolverMock = new Mock<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolverMock.Object, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExpression);
+
+            var value = walker.Visit(exp);
+
+            Assert.Equal(expectedValue, value);
+        }
+
+        [Theory]
+        [InlineData("ConstField", 123)]
+        public void ConstFieldEvaluatorTest(string textExpression, object expectedValue)
+        {
+            var resolverMock = new Mock<IDeclarationResolver>();
+            var genericDeclarationMock = MockGenericDeclarationWithConstant(textExpression, expectedValue);
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolverMock.Object, genericDeclarationMock.Object);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExpression);
+
+            var value = walker.Visit(exp);
+
+            Assert.Equal(expectedValue, value);
+        }
+
+        [Theory]
+        [InlineData("ClassName", "ConstField", 123)]
+        public void ExternalClassConstFieldEvaluatorTest(string classExpression, string textExpression, object expectedValue)
+        {
+            var resolverMock = new Mock<IDeclarationResolver>();
+
+            var genericDeclarationMock = MockGenericDeclarationWithConstant(textExpression, expectedValue);
+
+            var currentGenericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            resolverMock.Setup(r => r.Resolve(classExpression, currentGenericDeclaration)).Returns(genericDeclarationMock.Object);
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolverMock.Object, currentGenericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax($"{classExpression}.{textExpression}");
+
+            var value = walker.Visit(exp);
+
+            Assert.Equal(expectedValue, value);
+        }
+
+        private static Mock<IGenericDeclaration<SyntaxNode>> MockGenericDeclarationWithConstant(string constantName, object constantValue)
+        {
+            var genericDeclarationMock = new Mock<IGenericDeclaration<SyntaxNode>>();
+            var constantDeclarationMock = new Mock<IConstantDeclaration>();
+            var constantDeclarationSyntaxProviderMock = new Mock<ISyntaxNodeProvider<VariableDeclaratorSyntax>>();
+
+            constantDeclarationMock.SetupGet(c => c.Name).Returns(constantName);
+            constantDeclarationMock.SetupGet(c => c.SyntaxNodeProvider).Returns(constantDeclarationSyntaxProviderMock.Object);
+
+            var constExp = SyntaxTreeHelper.GetFieldSyntax("object", $"{constantName} = {constantValue}");
+
+            constantDeclarationSyntaxProviderMock.SetupGet(p => p.SyntaxNode).Returns(constExp.Declaration.Variables.First());
+
+            var constants = new IConstantDeclaration[] { constantDeclarationMock.Object };
+
+            genericDeclarationMock.SetupGet(d => d.Constants).Returns(constants);
+            return genericDeclarationMock;
         }
     }
 }

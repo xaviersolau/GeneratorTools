@@ -1,0 +1,106 @@
+---------------------
+SimpleMethod4Pattern
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleMethod4Pattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleMethod4Pattern : ISimpleMethodSample
+    {
+        public int Method()
+        {
+
+            if (true)
+            {
+            }
+
+
+            return string.Join(',');
+        }
+        public int Method1( string arg)
+        {
+            var argVar = arg.ToString();
+
+            string argVar2;
+
+            argVar2 = arg.ToString();
+
+            Process(arg);
+
+            Process(arg.ToString());
+
+            Process(argVar);
+
+            if (argVar2 != null)
+            {
+                Process(argVar2);
+            }
+
+            if (true)
+            {
+                Process(argVar2);
+            }
+
+
+            return string.Join(',', new string[] argVar );
+        }
+        public double Method2( int arg1,  double arg2)
+        {
+            var arg1Var = arg1.ToString();
+            var arg2Var = arg2.ToString();
+
+            string arg1Var2;
+
+            string arg2Var2;
+
+            arg1Var2 = arg1.ToString();
+
+            arg2Var2 = arg2.ToString();
+
+            Process(arg1);
+
+            Process(arg2);
+
+            Process(arg1.ToString());
+
+            Process(arg2.ToString());
+
+            Process(arg1Var);
+
+            Process(arg2Var);
+
+            if (arg1Var2 != null)
+            {
+                Process(arg1Var2);
+            }
+
+            if (arg2Var2 != null)
+            {
+                Process(arg2Var2);
+            }
+
+            if (true)
+            {
+                Process(arg1Var2);
+                Process(arg2Var2);
+            }
+
+
+            return string.Join(',', new string[] arg1Var , new string[] arg2Var );
+        }
+
+        private static void Process(params object[] strings)
+        {
+            // ...
+        }
+    }
+}
+
