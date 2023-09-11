@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
@@ -18,30 +19,42 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         [Repeat(Pattern = nameof(ISimpleMethodPattern.PatternMethod))]
         public object PatternMethod([Repeat(Pattern = "someArgument")] object someArgument)
         {
-            var someArgumentVar = someArgument.ToString();
+            var s1 = "???";
 
-            string someArgumentVar2;
+            var someArgumentVar = Repeat.Affectation(someArgument.ToString());
 
-            someArgumentVar2 = someArgument.ToString();
+            var someArgumentVar2 = Repeat.Affectation<string>(default);
 
-            Process(someArgument);
+            s1 = s1 + "111";
 
-            Process(someArgument.ToString());
+            someArgumentVar2 = Repeat.Affectation<string>(someArgument.ToString());
 
-            Process(someArgumentVar);
+            Process(Repeat.Argument(someArgument));
 
-            if (someArgumentVar2 != null)
+            Repeat.Statements(() =>
             {
-                Process(someArgumentVar2);
-            }
+                Process(someArgument.ToString());
+
+                Process(someArgumentVar);
+            });
+
+            Repeat.Statements(() =>
+            {
+                if (someArgumentVar2 != null)
+                {
+                    Process(someArgumentVar2);
+                }
+            });
 
             if (true)
             {
-                Process(someArgumentVar2);
+                Repeat.Statements(() =>
+                {
+                    Process(someArgumentVar2);
+                });
             }
 
-
-            return string.Join(',', new string[] { someArgumentVar });
+            return string.Join(',', new string[] { Repeat.Argument(someArgumentVar2) });
         }
 
         private static void Process(params object[] strings)
