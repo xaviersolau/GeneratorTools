@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
@@ -20,7 +21,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         {
             var txt = string.Empty;
 
-            txt += someArgument.ToString();
+            Repeat.Statements(() =>
+            {
+                txt += someArgument.ToString();
+            });
 
             return txt;
         }

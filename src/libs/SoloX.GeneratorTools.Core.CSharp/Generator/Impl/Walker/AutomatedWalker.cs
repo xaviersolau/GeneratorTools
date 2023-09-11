@@ -464,53 +464,45 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public override void VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            ProcessSubRepeatAttribute(node, walker =>
+            if (!ProcessRepeatStatements(node))
             {
-                walker.WriteNode(node);
-            });
+                if (!ProcessRepeatAffectation(node))
+                {
+                    Visit(node.Expression);
+                    WriteToken(node.SemicolonToken);
+                }
+            }
+        }
 
-            //var textExpression = node.ToFullString();
-            //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
-            //{
-            //    this.strategy.RepeatDeclaration(
-            //        attributeSyntax,
-            //        itemStrategy =>
-            //        {
-            //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).WriteNode(node);
-            //        });
-            //}
-            //else
-            //{
-            //    this.WriteNode(node);
-            //}
+        public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
+        {
+            Visit(node.Left);
+            WriteToken(node.OperatorToken);
+            Visit(node.Right);
+        }
+
+        public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            base.VisitInvocationExpression(node);
         }
 
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
-            ProcessSubRepeatAttribute(node, walker =>
+            if (!ProcessRepeatAffectation(node))
             {
-                walker.Visit(node.Declaration);
-                walker.WriteToken(node.SemicolonToken);
-            });
+                Visit(node.Declaration);
+                WriteToken(node.SemicolonToken);
+            }
+        }
 
-            //var textExpression = node.ToFullString();
-            //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
-            //{
-            //    this.strategy.RepeatDeclaration(
-            //        attributeSyntax,
-            //        itemStrategy =>
-            //        {
-            //            var walker = new AutomatedWalker(this.textWriter, this.pattern, itemStrategy);
+        public override void VisitVariableDeclaration(VariableDeclarationSyntax node)
+        {
+            WriteNode(node.Type);
 
-            //            walker.Visit(node.Declaration);
-            //            walker.WriteToken(node.SemicolonToken);
-            //        });
-            //}
-            //else
-            //{
-            //    this.Visit(node.Declaration);
-            //    this.WriteToken(node.SemicolonToken);
-            //}
+            foreach (var variable in node.Variables)
+            {
+                Visit(variable);
+            }
         }
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
@@ -533,7 +525,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             foreach (var argument in node.Arguments)
             {
-                ProcessSubRepeatAttribute(argument, walker =>
+                var writeComma = () =>
                 {
                     if (isFirst)
                     {
@@ -543,30 +535,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                     {
                         this.Write(", ");
                     }
+                };
 
-                    walker.Visit(argument);
-                });
+                if (!ProcessRepeatArgument(argument, writeComma))
+                {
+                    writeComma();
+                    Visit(argument);
+                }
 
-                //var textExpression = argument.ToFullString();
-                //if (this.TryMatchSubRepeatAttribute(out var attributeSyntax, textExpression))
-                //{
-                //    this.strategy.RepeatDeclaration(
-                //        attributeSyntax,
-                //        itemStrategy =>
-                //        {
-                //            if (isFirst)
-                //            {
-                //                isFirst = false;
-                //            }
-                //            else
-                //            {
-                //                this.Write(", ");
-                //            }
-
-                //            new AutomatedWalker(this.textWriter, this.pattern, itemStrategy).Visit(argument);
-                //        });
-                //}
-                //else
+                //ProcessSubRepeatAttribute(argument, walker =>
                 //{
                 //    if (isFirst)
                 //    {
@@ -577,8 +554,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 //        this.Write(", ");
                 //    }
 
-                //    this.Visit(argument);
-                //}
+                //    walker.Visit(argument);
+                //});
             }
 
             this.WriteToken(node.CloseParenToken);
@@ -812,6 +789,130 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             this.WriteNode(node);
         }
+
+        private bool ProcessRepeatAffectation(LocalDeclarationStatementSyntax node)
+        {
+            if (node.Declaration.Variables.Count > 1)
+            {
+                return false;
+            }
+
+            var variable = node.Declaration.Variables[0];
+
+            var initializer = variable.Initializer;
+
+            if (initializer == null)
+            {
+                return false;
+            }
+
+            if (initializer.Value is InvocationExpressionSyntax invocation)
+            {
+                var method = invocation.Expression.ToString();
+                if (method == "Repeat.Affectation"
+                    || (method.StartsWith("Repeat.Affectation<", StringComparison.Ordinal) && method.EndsWith(">", StringComparison.Ordinal)))
+                {
+                    var expression = invocation.ArgumentList.Arguments.First().Expression;
+
+                    ProcessSubRepeatAttribute(node, walker =>
+                    {
+                        walker.WriteToken(node.UsingKeyword);
+                        walker.WriteNode(node.Declaration.Type);
+                        walker.WriteToken(variable.Identifier);
+                        walker.WriteToken(initializer.EqualsToken);
+                        walker.WriteNode(expression);
+                        walker.WriteToken(node.SemicolonToken);
+                    });
+
+                    return true;
+                }
+            }
+
+
+            return false;
+        }
+
+        private bool ProcessRepeatAffectation(ExpressionStatementSyntax node)
+        {
+            if (node.Expression is AssignmentExpressionSyntax assignment)
+            {
+                if (assignment.Right is InvocationExpressionSyntax invocation)
+                {
+                    var method = invocation.Expression.ToString();
+                    if (method == "Repeat.Affectation"
+                        || (method.StartsWith("Repeat.Affectation<", StringComparison.Ordinal) && method.EndsWith(">", StringComparison.Ordinal)))
+                    {
+                        var expression = invocation.ArgumentList.Arguments.First().Expression;
+
+                        ProcessSubRepeatAttribute(node, walker =>
+                        {
+                            walker.WriteNode(assignment.Left);
+                            walker.WriteToken(assignment.OperatorToken);
+                            walker.WriteNode(expression);
+                            walker.WriteToken(node.SemicolonToken);
+                        });
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private bool ProcessRepeatStatements(ExpressionStatementSyntax expressionNode)
+        {
+            if (expressionNode.Expression is InvocationExpressionSyntax invocation)
+            {
+                var method = invocation.Expression.ToString();
+                if (method == "Repeat.Statements")
+                {
+                    var repeatWalker = new RepeatWalker();
+                    var statements = repeatWalker.Visit(invocation.ArgumentList.Arguments.First().Expression);
+
+                    ProcessSubRepeatAttribute(statements, walker =>
+                    {
+                        walker.WriteNode(statements);
+                    });
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ProcessRepeatArgument(ArgumentSyntax argument, Action writeCommaToken)
+        {
+            if (argument.Expression is InvocationExpressionSyntax invocation)
+            {
+                var method = invocation.Expression.ToString();
+                if (method == "Repeat.Argument")
+                {
+                    var expression = invocation.ArgumentList.Arguments.First().Expression;
+
+                    ProcessSubRepeatAttribute(argument, walker =>
+                    {
+                        writeCommaToken();
+
+                        walker.WriteNode(expression);
+                    });
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal class RepeatWalker : CSharpSyntaxVisitor<SyntaxNode>
+        {
+            public override SyntaxNode VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
+            {
+                return node.Body;
+            }
+        }
+
 
         private void ProcessSubRepeatAttribute(SyntaxNode expressionNode, Action<AutomatedWalker> repeatHandler)
         {
@@ -1074,13 +1175,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         {
             if (node != null)
             {
-                this.Write(node.ToFullString());
+                Write(node.ToFullString());
             }
         }
 
         private void WriteToken(SyntaxToken token)
         {
-            this.Write(token.ToFullString());
+            if (token != null)
+            {
+                Write(token.ToFullString());
+            }
         }
 
         private void Write(string text)
