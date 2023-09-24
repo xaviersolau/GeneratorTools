@@ -1,14 +1,6 @@
 ---------------------
 RepeatStatementInPropertyPattern
 ---------------------
-// ----------------------------------------------------------------------
-// <copyright file="RepeatStatementInPropertyPattern.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
-// Licensed under the MIT license.
-// See LICENSE file in the project root for full license information.
-// </copyright>
-// ----------------------------------------------------------------------
-
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
@@ -23,8 +15,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
             get
             {
                 var txt = string.Empty;
-                txt = txt + Property1.ToString();
-                txt = txt + Property2.ToString();
+                {
+                    txt = txt + Property1.ToString();
+                }
+                {
+                    txt = txt + Property2.ToString();
+                }
                 return txt;
             }
         }

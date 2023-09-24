@@ -24,8 +24,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
             var len = withSomeArguments.Count;
             for (var i = 0; i < len; i++)
             {
-                withSomeArguments[i] = this.Property1;
-                withSomeArguments[i] = this.Property2;
+                {
+                    withSomeArguments[i] = this.Property1;
+                }
+                {
+                    withSomeArguments[i] = this.Property2;
+                }
             }
         }
     }

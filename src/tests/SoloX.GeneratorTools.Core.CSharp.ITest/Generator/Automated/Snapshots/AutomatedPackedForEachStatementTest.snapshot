@@ -23,14 +23,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PatternMethodWithPackedForEachStatement(IEnumerable<object> withSomeArguments)
         {
-            foreach (var arg in withSomeArguments)
             {
-                this.Property1 = default;
-            }
-            foreach (var arg in withSomeArguments)
+                    foreach (var arg in withSomeArguments)
+                    {
+                        this.Property1 = default;
+                    }
+                }
             {
-                this.Property2 = default;
-            }
+                    foreach (var arg in withSomeArguments)
+                    {
+                        this.Property2 = default;
+                    }
+                }
         }
     }
 }

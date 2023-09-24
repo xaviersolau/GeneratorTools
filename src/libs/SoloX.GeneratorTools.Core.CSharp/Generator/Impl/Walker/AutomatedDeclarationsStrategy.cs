@@ -50,21 +50,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.selectorResolver = selectorResolver;
         }
 
-        public bool IsPackStatementEnabled => false;
-
-        public string ApplyPatternReplace(string text)
+        public IReplacePatternHandler CreateReplacePatternHandler()
         {
-            return text.Replace(this.pattern.Name, this.targetName);
+            return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
+
+        private string ApplyPatternReplace(string text)
+        {
+            var result = text.Replace(this.pattern.Name, this.targetName);
+            return result;
         }
 
         public string GetCurrentNameSpace()
         {
             return this.currentNameSpace;
-        }
-
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
-        {
-            return false;
         }
 
         public void RepeatDeclaration(
@@ -109,9 +108,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.targetName;
         }
 
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
+        public bool TryMatchAndRepeatStatement(
+            SyntaxNode? patternNameExpression,
+            SyntaxNode? patternPrefixExpression,
+            SyntaxNode? patternSuffixExpression,
+            Action<IAutomatedStrategy> callback)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

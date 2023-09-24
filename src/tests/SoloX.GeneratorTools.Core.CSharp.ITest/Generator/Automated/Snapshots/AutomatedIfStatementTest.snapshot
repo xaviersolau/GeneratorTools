@@ -1,14 +1,6 @@
 ---------------------
 IfStatementSimpleSample
 ---------------------
-// ----------------------------------------------------------------------
-// <copyright file="IfStatementSimpleSample.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
-// Licensed under the MIT license.
-// See LICENSE file in the project root for full license information.
-// </copyright>
-// ----------------------------------------------------------------------
-
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
@@ -22,8 +14,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
         {
             if (withSomeArguments)
             {
-                this.Property1 = default;
-                this.Property2 = default;
+                {
+                    this.Property1 = default;
+                }
+                {
+                    this.Property2 = default;
+                }
             }
         }
     }

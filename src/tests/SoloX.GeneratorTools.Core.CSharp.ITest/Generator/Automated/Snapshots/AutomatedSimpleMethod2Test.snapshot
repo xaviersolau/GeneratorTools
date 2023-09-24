@@ -1,14 +1,6 @@
 ---------------------
 SimpleMethod2Pattern
 ---------------------
-// ----------------------------------------------------------------------
-// <copyright file="SimpleMethod2Pattern.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
-// Licensed under the MIT license.
-// See LICENSE file in the project root for full license information.
-// </copyright>
-// ----------------------------------------------------------------------
-
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 using System;
 
@@ -18,9 +10,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
     {
         public int Method()
             => this[];
-        public int Method1( string arg)
+        public int Method1(string arg)
             => this[arg];
-        public double Method2( int arg1,  double arg2)
+        public double Method2(int arg1, double arg2)
             => this[arg1, arg2];
 
         private object this[params object[] objects]

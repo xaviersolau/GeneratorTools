@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
@@ -18,13 +19,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]
         public object PatternProperty { get; set; }
 
-        [RepeatStatements(Pattern = nameof(ISimplePattern.PatternProperty))]
         public string PatternWithStatementInProperty
         {
             get
             {
                 var txt = string.Empty;
-                txt = txt + PatternProperty.ToString();
+                Repeat.Statements(nameof(ISimplePattern.PatternProperty), () =>
+                {
+                    txt = txt + PatternProperty.ToString();
+                });
                 return txt;
             }
         }

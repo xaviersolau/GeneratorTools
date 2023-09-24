@@ -21,24 +21,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         {
             var s1 = "???";
 
-            var someArgumentVar = Repeat.Affectation(someArgument.ToString());
+            var someArgumentVar = Repeat.Affectation("someArgument", someArgument.ToString());
 
-            var someArgumentVar2 = Repeat.Affectation<string>(default);
+            var someArgumentVar2 = Repeat.Affectation<string>("someArgument", default);
 
             s1 = s1 + "111";
 
-            someArgumentVar2 = Repeat.Affectation<string>(someArgument.ToString());
+            someArgumentVar2 = Repeat.Affectation<string>("someArgument", someArgument.ToString());
 
-            Process(Repeat.Argument(someArgument));
+            Process(Repeat.Argument("someArgument", someArgument));
 
-            Repeat.Statements(() =>
+            Repeat.Statements("someArgument", () =>
             {
                 Process(someArgument.ToString());
 
                 Process(someArgumentVar);
             });
 
-            Repeat.Statements(() =>
+            Repeat.Statements("someArgument", () =>
             {
                 if (someArgumentVar2 != null)
                 {
@@ -48,13 +48,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
 
             if (true)
             {
-                Repeat.Statements(() =>
+                Repeat.Statements("someArgument", () =>
                 {
                     Process(someArgumentVar2);
                 });
             }
 
-            return string.Join(',', new string[] { Repeat.Argument(someArgumentVar2) });
+            return default;
         }
 
         private static void Process(params object[] strings)

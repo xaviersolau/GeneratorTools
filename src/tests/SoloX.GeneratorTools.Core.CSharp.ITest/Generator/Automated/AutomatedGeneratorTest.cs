@@ -124,6 +124,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleMethod5Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod5Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod5Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod5Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedSimpleWithCallTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
