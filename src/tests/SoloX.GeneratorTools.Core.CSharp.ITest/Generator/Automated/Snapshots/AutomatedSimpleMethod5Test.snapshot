@@ -1,0 +1,51 @@
+---------------------
+SimpleMethod5Pattern
+---------------------
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleMethod5Pattern : ISimpleMethodSample
+    {
+        public int Method()
+        {
+            var tmp = new int[] { 1, 2, 3 };
+
+            var tmp2 = new string[] { "Any element"};
+
+
+            string[] tmp3;
+
+            tmp3 = new string[] { "Any element"};
+
+            return string.Join(',', new string[] { "Any element"});
+        }
+        public int Method1(string arg)
+        {
+            var tmp = new int[] { 1, 2, 3 };
+
+            var tmp2 = new string[] { "Any element", arg.ToString()};
+
+
+            string[] tmp3;
+
+            tmp3 = new string[] { "Any element", arg.ToString()};
+
+            return string.Join(',', new string[] { "Any element", arg.ToString()});
+        }
+        public double Method2(int arg1, double arg2)
+        {
+            var tmp = new int[] { 1, 2, 3 };
+
+            var tmp2 = new string[] { "Any element", arg1.ToString(), arg2.ToString()};
+
+
+            string[] tmp3;
+
+            tmp3 = new string[] { "Any element", arg1.ToString(), arg2.ToString()};
+
+            return string.Join(',', new string[] { "Any element", arg1.ToString(), arg2.ToString()});
+        }
+    }
+}
+

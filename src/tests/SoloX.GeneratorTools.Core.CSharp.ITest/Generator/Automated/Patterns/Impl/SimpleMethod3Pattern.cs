@@ -21,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         {
             var txt = string.Empty;
 
-            Repeat.Statements(() =>
+            Repeat.Statements("someArgument", () =>
             {
                 txt += someArgument.ToString();
             });

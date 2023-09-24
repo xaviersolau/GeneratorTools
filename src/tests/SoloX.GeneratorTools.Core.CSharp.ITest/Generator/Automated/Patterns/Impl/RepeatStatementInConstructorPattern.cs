@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
@@ -15,11 +16,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
     [Repeat(Pattern = nameof(ISimplePattern), Prefix = "I")]
     public class RepeatStatementInConstructorPattern : ISimplePattern
     {
-        [RepeatStatements(Pattern = nameof(ISimplePattern.PatternProperty))]
         public RepeatStatementInConstructorPattern()
         {
             var txt = string.Empty;
-            txt = txt + PatternProperty.ToString();
+            txt = Repeat.Affectation(nameof(ISimplePattern.PatternProperty), txt + PatternProperty.ToString());
         }
 
         [Repeat(Pattern = nameof(ISimplePattern.PatternProperty))]

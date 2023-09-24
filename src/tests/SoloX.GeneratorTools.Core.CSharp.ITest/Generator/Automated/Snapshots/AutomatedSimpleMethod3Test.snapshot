@@ -1,14 +1,6 @@
 ---------------------
 SimpleMethod3Pattern
 ---------------------
-// ----------------------------------------------------------------------
-// <copyright file="SimpleMethod3Pattern.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
-// Licensed under the MIT license.
-// See LICENSE file in the project root for full license information.
-// </copyright>
-// ----------------------------------------------------------------------
-
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
@@ -21,21 +13,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 
             return txt;
         }
-        public int Method1( string arg)
+        public int Method1(string arg)
         {
             var txt = string.Empty;
 
-            txt += arg.ToString();
+            {
+                txt += arg.ToString();
+            }
 
             return txt;
         }
-        public double Method2( int arg1,  double arg2)
+        public double Method2(int arg1, double arg2)
         {
             var txt = string.Empty;
 
-            txt += arg1.ToString();
+            {
+                txt += arg1.ToString();
+            }
 
-            txt += arg2.ToString();
+            {
+                txt += arg2.ToString();
+            }
 
             return txt;
         }

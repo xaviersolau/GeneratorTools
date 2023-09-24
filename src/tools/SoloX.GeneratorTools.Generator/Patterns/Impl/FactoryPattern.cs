@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using SoloX.GeneratorTools.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Generator.Patterns.Itf;
@@ -29,8 +30,8 @@ namespace SoloX.GeneratorTools.Generator.Patterns.Impl
         {
             return new ObjectPattern()
             {
-                SomeReadOnlyValue = someReadOnlyValue,
-                SomeValue = someValue,
+                SomeReadOnlyValue = Repeat.Affectation(nameof(IObjectPattern.SomeReadOnlyValue), someReadOnlyValue),
+                SomeValue = Repeat.Affectation(nameof(IObjectPattern.SomeValue), someValue),
             };
         }
     }

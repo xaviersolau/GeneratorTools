@@ -25,8 +25,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
         {
             foreach (var arg in withSomeArguments)
             {
-                this.Property1 = default;
-                this.Property2 = default;
+                {
+                    this.Property1 = default;
+                }
+                {
+                    this.Property2 = default;
+                }
             }
         }
     }

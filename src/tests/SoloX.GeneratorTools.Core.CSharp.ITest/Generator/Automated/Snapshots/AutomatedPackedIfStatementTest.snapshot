@@ -1,14 +1,6 @@
 ---------------------
 PackedIfStatementSimpleSample
 ---------------------
-// ----------------------------------------------------------------------
-// <copyright file="PackedIfStatementSimpleSample.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
-// Licensed under the MIT license.
-// See LICENSE file in the project root for full license information.
-// </copyright>
-// ----------------------------------------------------------------------
-
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
@@ -20,13 +12,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 
         public void PatternMethodWithPackedIfStatement(bool withSomeArguments)
         {
-            if (withSomeArguments)
             {
-                this.Property1 = default;
+                if (withSomeArguments)
+                {
+                    this.Property1 = default;
+                }
             }
-            if (withSomeArguments)
             {
-                this.Property2 = default;
+                if (withSomeArguments)
+                {
+                    this.Property2 = default;
+                }
             }
         }
     }

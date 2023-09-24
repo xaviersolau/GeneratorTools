@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 using System;
@@ -18,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
     {
         [Repeat(Pattern = nameof(ISimpleMethodPattern.PatternMethod))]
         public object PatternMethod([Repeat(Pattern = "someArgument")] object someArgument)
-            => this[someArgument];
+            => this[Repeat.Argument("someArgument", someArgument)];
 
         private object this[params object[] objects]
             => throw new NotImplementedException();

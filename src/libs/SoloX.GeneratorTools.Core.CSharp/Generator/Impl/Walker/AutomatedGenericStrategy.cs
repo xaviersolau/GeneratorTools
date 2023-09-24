@@ -53,7 +53,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
 
-        public bool IsPackStatementEnabled => false;
+        public IReplacePatternHandler CreateReplacePatternHandler()
+        {
+            return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
 
         public string ApplyPatternReplace(string text)
         {
@@ -82,17 +85,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public string GetCurrentNameSpace()
         {
             return this.declaration.DeclarationNameSpace;
-        }
-
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
-        {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
-            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
-
-            // get the property from the current pattern generic definition.
-            var repeatProperty = this.pattern.Properties.First(p => p.Name == patternName);
-
-            return AutomatedPropertyStrategy.Match(repeatProperty, expression.ToFullString());
         }
 
         public void RepeatDeclaration(
@@ -151,7 +143,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
                 {
-                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, this.replacePatternHandlers, patternPrefix, patternSuffix);
+                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, patternPrefix, patternSuffix, this);
 
                     callback(strategy);
                 }
@@ -160,7 +152,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
-                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.replacePatternHandlers, this.resolver, this.declaration, patternPrefix, patternSuffix);
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix);
 
                     callback(strategy);
                 }
@@ -169,7 +161,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var constantDeclaration in selector.GetConstants(this.declaration))
                 {
-                    var strategy = new AutomatedConstantStrategy(repeatConstant, constantDeclaration, this.replacePatternHandlers, patternPrefix, patternSuffix);
+                    var strategy = new AutomatedConstantStrategy(repeatConstant, constantDeclaration, patternPrefix, patternSuffix);
 
                     callback(strategy);
                 }
@@ -210,22 +202,37 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             throw new ArgumentException($"Unknown selector {attribute}");
         }
 
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
+        public bool TryMatchAndRepeatStatement(
+            SyntaxNode? patternNameExpression,
+            SyntaxNode? patternPrefixExpression,
+            SyntaxNode? patternSuffixExpression,
+            Action<IAutomatedStrategy> callback)
         {
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.declaration);
-            var patternName = constEvaluator.Visit(repeatStatementsAttributeSyntax.ArgumentList.Arguments.First().Expression);
 
-            var constBoolEvaluator = new ConstantExpressionSyntaxEvaluator<bool>(this.resolver, this.declaration);
-            var packArgument = repeatStatementsAttributeSyntax.ArgumentList.Arguments.Skip(1).FirstOrDefault();
-            var pack = packArgument != null ? constBoolEvaluator.Visit(packArgument.Expression) : false;
+            var pName = constEvaluator.Visit(patternNameExpression);
 
-            // get the member from the current pattern generic definition.
-            var repeatMember = this.pattern.Members.First(p => p.Name == patternName);
+            string patternPrefix = null;
+            string patternSuffix = null;
+
+            if (string.IsNullOrEmpty(pName))
+            {
+                return false;
+            }
+
+            var repeatPatternMember = string.IsNullOrEmpty(pName)
+                ? this.pattern.Members.SingleOrDefault()
+                : this.pattern.Members.FirstOrDefault(p => p.Name == pName);
+
+            if (repeatPatternMember == null)
+            {
+                return false;
+            }
 
             ISelector selector;
 
             // Get the selector if any from the matching property.
-            if (repeatMember.Attributes
+            if (repeatPatternMember.Attributes
                 .TryMatchAttributeName<PatternAttribute>(out var attribute))
             {
                 selector = this.GetSelectorFromPatternAttribute(attribute);
@@ -235,16 +242,39 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 selector = new AllSelector();
             }
 
-            if (repeatMember is IPropertyDeclaration repeatProperty)
+            if (repeatPatternMember is IPropertyDeclaration repeatProperty)
             {
-                var methodStatementsStrategy = new AutomatedMethodStatementsStrategy(selector.GetProperties(this.declaration), repeatProperty, parentStrategy, pack);
+                foreach (var propertyDeclaration in selector.GetProperties(this.declaration))
+                {
+                    var strategy = new AutomatedPropertyStrategy(repeatProperty, propertyDeclaration, patternPrefix, patternSuffix, this);
 
-                callback(methodStatementsStrategy);
+                    callback(strategy);
+                }
+            }
+            else if (repeatPatternMember is IMethodDeclaration repeatMethod)
+            {
+                foreach (var methodDeclaration in selector.GetMethods(this.declaration))
+                {
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix);
+
+                    callback(strategy);
+                }
+            }
+            else if (repeatPatternMember is IConstantDeclaration repeatConstant)
+            {
+                foreach (var constantDeclaration in selector.GetConstants(this.declaration))
+                {
+                    var strategy = new AutomatedConstantStrategy(repeatConstant, constantDeclaration, patternPrefix, patternSuffix);
+
+                    callback(strategy);
+                }
             }
             else
             {
-                throw new NotSupportedException();
+                return false;
             }
+
+            return true;
         }
     }
 }

@@ -9,6 +9,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
@@ -43,14 +44,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         bool IgnoreUsingDirective(string ns);
 
         /// <summary>
-        /// Try to match if the repeat declaration can apply on the given text expression.
-        /// </summary>
-        /// <param name="repeatAttributeSyntax">The repeat attribute syntax.</param>
-        /// <param name="expression">The text expression to test.</param>
-        /// <returns>True if there is a match.</returns>
-        bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression);
-
-        /// <summary>
         /// Process repeat declaration handling.
         /// </summary>
         /// <param name="repeatAttributeSyntax">The repeat attribute syntax.</param>
@@ -60,26 +53,46 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             Action<IAutomatedStrategy> callback);
 
         /// <summary>
-        /// Process repeat statements handling.
+        /// Create the IReplacePatternHandler from the current strategy.
         /// </summary>
-        /// <param name="repeatStatementsAttributeSyntax">The repeat statements attribute syntax.</param>
-        /// <param name="parentStrategy">Parent strategy that can be specified.</param>
-        /// <param name="callback">Declaration callback.</param>
-        void RepeatStatements(
-            AttributeSyntax repeatStatementsAttributeSyntax,
-            IAutomatedStrategy parentStrategy,
+        /// <returns></returns>
+        IReplacePatternHandler CreateReplacePatternHandler();
+
+        /// <summary>
+        /// Try to match the given pattern name expression and Repeat statement.
+        /// </summary>
+        /// <param name="patternNameExpression"></param>
+        /// <param name="patternPrefixExpression"></param>
+        /// <param name="patternSuffixExpression"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        bool TryMatchAndRepeatStatement(
+            SyntaxNode? patternNameExpression,
+            SyntaxNode? patternPrefixExpression,
+            SyntaxNode? patternSuffixExpression,
             Action<IAutomatedStrategy> callback);
+    }
+
+    /// <summary>
+    /// Strategy ReplacePatternHandler implementation.
+    /// </summary>
+    public class StrategyReplacePatternHandler : IReplacePatternHandler
+    {
+        private readonly Func<string, string> handler;
 
         /// <summary>
-        /// Tells is PackStatement is enabled.
+        /// Setup instance with the given handler.
         /// </summary>
-        bool IsPackStatementEnabled { get; }
+        /// <param name="handler"></param>
+        public StrategyReplacePatternHandler(Func<string, string> handler)
+        {
+            this.handler = handler;
+        }
 
-        /// <summary>
-        /// Apply the pattern substitution on the given text.
-        /// </summary>
-        /// <param name="text">Source text to match the pattern from.</param>
-        /// <returns>The output text with the pattern replaced.</returns>
-        string ApplyPatternReplace(string text);
+        /// <inheritdoc/>
+        public string ApplyOn(string patternText)
+        {
+            return this.handler(patternText);
+        }
     }
 }

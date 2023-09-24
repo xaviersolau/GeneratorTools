@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
@@ -19,19 +18,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
     {
         private readonly IConstantDeclaration pattern;
         private readonly IConstantDeclaration declaration;
-        private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
         private readonly TextPatternHelper textReplaceHelper;
         private readonly TextPatternHelper typeReplaceHelper;
 
         public AutomatedConstantStrategy(
             IConstantDeclaration pattern,
             IConstantDeclaration declaration,
-            IEnumerable<IReplacePatternHandler> replacePatternHandlers,
             string patternPrefix, string patternSuffix)
         {
             this.pattern = pattern;
             this.declaration = declaration;
-            this.replacePatternHandlers = replacePatternHandlers;
 
             var patternName = this.pattern.Name;
             var declarationName = this.declaration.Name;
@@ -43,17 +39,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.typeReplaceHelper = new TextPatternHelper(patternTypeName, declarationTypeName, patternPrefix, patternSuffix);
         }
 
-        public bool IsPackStatementEnabled => false;
+        public IReplacePatternHandler CreateReplacePatternHandler()
+        {
+            return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
 
-        public string ApplyPatternReplace(string text)
+        private string ApplyPatternReplace(string text)
         {
             var result = this.textReplaceHelper.ReplacePattern(text);
             result = this.typeReplaceHelper.ReplacePattern(result);
-
-            foreach (var replacePatternHandler in this.replacePatternHandlers)
-            {
-                result = replacePatternHandler.ApplyOn(result);
-            }
 
             return result;
         }
@@ -61,11 +55,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public string GetCurrentNameSpace()
         {
             throw new NotImplementedException();
-        }
-
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
-        {
-            return false;
         }
 
         public void RepeatDeclaration(AttributeSyntax repeatAttributeSyntax, Action<IAutomatedStrategy> callback)
@@ -88,15 +77,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return this.declaration.Name;
         }
 
-        //internal static bool Match(IPropertyDeclaration repeatProperty, string expression)
-        //{
-        //    var firstLowerPatternName = char.ToLowerInvariant(repeatProperty.Name[0]) + repeatProperty.Name.Substring(1);
-        //    return expression.Contains(repeatProperty.Name) || expression.Contains(firstLowerPatternName);
-        //}
-
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
+        public bool TryMatchAndRepeatStatement(
+            SyntaxNode? patternNameExpression,
+            SyntaxNode? patternPrefixExpression,
+            SyntaxNode? patternSuffixExpression,
+            Action<IAutomatedStrategy> callback)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

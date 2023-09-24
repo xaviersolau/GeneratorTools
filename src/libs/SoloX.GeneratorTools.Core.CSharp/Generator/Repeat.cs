@@ -18,8 +18,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <summary>
         /// Repeat statements on the pattern.
         /// </summary>
+        /// <param name="patternName"></param>
         /// <param name="statements"></param>
-        public static void Statements(Action statements)
+        public static void Statements(string patternName, Action statements)
         {
             if (statements == null)
             {
@@ -32,8 +33,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <summary>
         /// Repeat var affectation on the pattern.
         /// </summary>
+        /// <param name="patternName"></param>
         /// <param name="initExpression"></param>
-        public static T Affectation<T>(T initExpression)
+        public static T Affectation<T>(string patternName, T initExpression)
         {
             return initExpression;
         }
@@ -41,8 +43,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator
         /// <summary>
         /// Repeat argument on the pattern.
         /// </summary>
+        /// <param name="patternName"></param>
         /// <param name="argExpression"></param>
-        public static T Argument<T>(T argExpression)
+        public static T Argument<T>(string patternName, T argExpression)
         {
             return argExpression;
         }

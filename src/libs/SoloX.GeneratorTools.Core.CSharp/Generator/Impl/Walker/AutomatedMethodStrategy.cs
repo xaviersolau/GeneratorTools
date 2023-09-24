@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -24,7 +23,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
     {
         private readonly IMethodDeclaration pattern;
         private readonly IMethodDeclaration declaration;
-        private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
         private readonly IDeclarationResolver resolver;
         private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
         private readonly TextPatternHelper textReplaceHelper;
@@ -33,14 +31,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public AutomatedMethodStrategy(
             IMethodDeclaration pattern,
             IMethodDeclaration declaration,
-            IEnumerable<IReplacePatternHandler> replacePatternHandlers,
             IDeclarationResolver resolver,
             IGenericDeclaration<SyntaxNode> genericDeclaration,
             string patternPrefix, string patternSuffix)
         {
             this.pattern = pattern;
             this.declaration = declaration;
-            this.replacePatternHandlers = replacePatternHandlers;
             this.resolver = resolver;
             this.genericDeclaration = genericDeclaration;
 
@@ -54,17 +50,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.typeReplaceHelper = new TextPatternHelper(patternTypeName, declarationTypeName, patternPrefix, patternSuffix);
         }
 
-        public bool IsPackStatementEnabled => false;
+        public IReplacePatternHandler CreateReplacePatternHandler()
+        {
+            return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
 
-        public string ApplyPatternReplace(string text)
+        private string ApplyPatternReplace(string text)
         {
             var result = this.textReplaceHelper.ReplacePattern(text);
             result = this.typeReplaceHelper.ReplacePattern(result);
-
-            foreach (var replacePatternHandler in this.replacePatternHandlers)
-            {
-                result = replacePatternHandler.ApplyOn(result);
-            }
 
             return result;
         }
@@ -86,8 +80,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         public void RepeatDeclaration(AttributeSyntax repeatAttributeSyntax, Action<IAutomatedStrategy> callback)
         {
+            var patternNameExpression = repeatAttributeSyntax.ArgumentList.Arguments.First().Expression;
+
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.genericDeclaration);
-            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
+            var patternName = constEvaluator.Visit(patternNameExpression);
 
             var patternParameter = this.pattern.Parameters.Single(x => x.Name == patternName);
 
@@ -100,11 +96,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             var patternSuffix = patternSuffixExp != null ? constEvaluator.Visit(patternSuffixExp) : null;
 
 
-            foreach (var parameter in this.declaration.Parameters)
-            {
-                var strategy = new AutomatedParameterStrategy(patternParameter, parameter, this.replacePatternHandlers, patternPrefix, patternSuffix);
-                callback(strategy);
-            }
+            var strategy = new AutomatedParameterStrategy(patternParameter, this.declaration.Parameters, this.resolver, this.genericDeclaration, patternPrefix, patternSuffix);
+
+            strategy.TryMatchAndRepeatStatement(patternNameExpression, patternPrefixExp, patternSuffixExp, callback);
         }
 
         public void RepeatNameSpace(Action<string> nsCallback)
@@ -112,24 +106,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             throw new NotImplementedException();
         }
 
-        public bool TryMatchRepeatDeclaration(AttributeSyntax repeatAttributeSyntax, SyntaxNode expression)
+        public bool TryMatchAndRepeatStatement(
+            SyntaxNode? patternNameExpression,
+            SyntaxNode? patternPrefixExpression,
+            SyntaxNode? patternSuffixExpression,
+            Action<IAutomatedStrategy> callback)
         {
-            var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>(this.resolver, this.genericDeclaration);
-            var patternName = constEvaluator.Visit(repeatAttributeSyntax.ArgumentList.Arguments.First().Expression);
-
-            // get the property from the current pattern generic definition.
-            var repeatParameter = this.pattern.Parameters.First(p => p.Name == patternName);
-
-            //var expVisitor = new ExpressionVisitor(s => AutomatedParameterStrategy.Match(repeatParameter, s));
-
-            //return expVisitor.Visit(expression);
-
-            return AutomatedParameterStrategy.Match(repeatParameter, expression.ToFullString());
-        }
-
-        public void RepeatStatements(AttributeSyntax repeatStatementsAttributeSyntax, IAutomatedStrategy parentStrategy, Action<IAutomatedStrategy> callback)
-        {
-            throw new NotImplementedException();
+            return false;
         }
     }
 

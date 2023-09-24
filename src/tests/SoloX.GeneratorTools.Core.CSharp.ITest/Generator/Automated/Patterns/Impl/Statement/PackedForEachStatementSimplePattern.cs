@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 
@@ -21,13 +22,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
         public object PatternProperty { get; set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [RepeatStatements(Pattern = nameof(ISimplePattern.PatternProperty), PackStatement = true)]
         public void PatternMethodWithPackedForEachStatement(IEnumerable<object> withSomeArguments)
         {
-            foreach (var arg in withSomeArguments)
-            {
-                this.PatternProperty = default;
-            }
+            Repeat.Statements(nameof(ISimplePattern.PatternProperty),
+                () =>
+                {
+                    foreach (var arg in withSomeArguments)
+                    {
+                        this.PatternProperty = default;
+                    }
+                });
         }
     }
 }
