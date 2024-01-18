@@ -217,7 +217,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             }
         }
 
-        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(
+        private static List<IParameterDeclaration> LoadParameters(
             MetadataReader metadataReader,
             MethodDefinition methodDefinition,
             MethodSignature<IDeclarationUse<SyntaxNode>> methodSignature,
@@ -255,7 +255,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return parameterSet;
         }
 
-        private static IReadOnlyCollection<IGenericParameterDeclaration> LoadGenericParameters(
+        private static IGenericParameterDeclaration[] LoadGenericParameters(
             MetadataReader metadataReader, AGenericDeclaration<TNode> declaration, MethodDefinition methodDefinition, IDeclarationResolver resolver)
         {
             var parameterSet = new IGenericParameterDeclaration[methodDefinition.GetGenericParameters().Count];
@@ -462,7 +462,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
         }
 
-        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromTypeReference(MetadataReader metadataReader, TypeReferenceHandle typeReferenceHandle, IDeclarationResolver resolver)
+        private static GenericDeclarationUse LoadDeclarationUseFromTypeReference(MetadataReader metadataReader, TypeReferenceHandle typeReferenceHandle, IDeclarationResolver resolver)
         {
             var typeReference = metadataReader.GetTypeReference(typeReferenceHandle);
 
@@ -484,7 +484,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return genericDeclarationUse;
         }
 
-        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromTypeDefinition(
+        private static GenericDeclarationUse LoadDeclarationUseFromTypeDefinition(
             MetadataReader metadataReader,
             TypeDefinitionHandle typeDefinitionHandle,
             IDeclarationResolver resolver)

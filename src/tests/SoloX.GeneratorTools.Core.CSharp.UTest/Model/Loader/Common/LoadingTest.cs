@@ -247,7 +247,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 Assert.Equal(method.ReturnType.Name, methodDeclaration.ReturnType.Declaration.Name);
             }
 
-            if (method.GetParameters().Any())
+            if (method.GetParameters().Length > 0)
             {
                 Assert.NotEmpty(methodDeclaration.Parameters);
                 Assert.Equal(method.GetParameters().Length, methodDeclaration.Parameters.Count);

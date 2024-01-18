@@ -81,7 +81,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <inheritdoc/>
         public override string ToString()
         {
-            if (this.Extends?.Any() ?? false)
+            if (this.Extends?.Count > 0)
             {
                 return $"{base.ToString()}: {string.Join(", ", this.Extends?.Select(e => e.ToString()))}";
             }

@@ -70,7 +70,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
             attributesWalker.Visit(node);
 
-            var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+            var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
 
             this.memberList.Add(new PropertyDeclaration(
                 identifier,
@@ -108,7 +108,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                     }
                 }
 
-                var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+                var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
 
                 var returnAttributeList = new List<IAttributeUse>();
                 var returnAttributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, returnAttributeList);
@@ -152,7 +152,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
                     attributesWalker.Visit(node);
 
-                    var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+                    var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
 
                     this.memberList.Add(new ConstantDeclaration(
                         identifier,
@@ -184,7 +184,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
                     attributesWalker.Visit(parameter);
 
-                    var attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+                    var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
 
                     parameterDeclaration.Attributes = attributes;
 

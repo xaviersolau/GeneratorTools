@@ -240,7 +240,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             return resolver;
         }
 
-        private static IReadOnlyDictionary<Version, string> GetDotnetRunTimes()
+        private static Dictionary<Version, string> GetDotnetRunTimes()
         {
             var processStartInfo = new ProcessStartInfo(CSharpProject.DotNet, $"--list-runtimes")
             {
@@ -262,7 +262,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                         $"{rawError})");
                 }
 
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
                 var lines = stdOutput.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+#pragma warning restore CA1861 // Avoid constant arrays as arguments
 
                 var pathMap = lines
                     .Select(line => line.Split(' '))

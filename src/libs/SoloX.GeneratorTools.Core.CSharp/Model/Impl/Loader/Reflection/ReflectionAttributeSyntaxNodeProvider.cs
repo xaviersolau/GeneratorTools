@@ -29,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var attributeName = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(this.customAttribute.AttributeType.FullName);
 
             var genParamsArgs = string.Empty;
-            if (this.customAttribute.AttributeType.GenericTypeArguments.Any())
+            if (this.customAttribute.AttributeType.GenericTypeArguments.Length > 0)
             {
                 genParamsArgs = $"<{string.Join(",", this.customAttribute.AttributeType.GenericTypeArguments.Select(ComputeGenericTypeName))}>";
             }
@@ -55,7 +55,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var name = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(parameterType.FullName);
 
             var genParamsArgs = string.Empty;
-            if (parameterType.GenericTypeArguments.Any())
+            if (parameterType.GenericTypeArguments.Length > 0)
             {
                 genParamsArgs = $"<{string.Join(",", parameterType.GenericTypeArguments.Select(ComputeGenericTypeName))}>";
             }

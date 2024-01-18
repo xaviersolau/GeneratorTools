@@ -24,7 +24,6 @@ using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using Xunit;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using System.ComponentModel;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
@@ -355,7 +354,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
         }
 
-        private static ISelectorResolver CreateSelectorResolver()
+        private static DefaultSelectorResolver CreateSelectorResolver()
         {
             return new DefaultSelectorResolver(typeof(DescriptionAttribute));
         }

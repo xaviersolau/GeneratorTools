@@ -29,8 +29,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
             typeof(AllSelector),
         };
 
-        private readonly IReadOnlyDictionary<string, Type> typesByFullName;
-        private readonly IReadOnlyDictionary<string, Type> typesByName;
+        private readonly Dictionary<string, Type> typesByFullName;
+        private readonly Dictionary<string, Type> typesByName;
 
         /// <summary>
         /// Setup instance with the given types to be resolved.

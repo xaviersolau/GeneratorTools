@@ -204,7 +204,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             decl.SetData(type);
         }
 
-        private static IArraySpecification CreateArraySpecification(
+        private static ArraySpecification CreateArraySpecification(
             int arrayCount,
             ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
         {
@@ -258,7 +258,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             var paramInfos = method.GetParameters();
 
-            if (paramInfos != null && paramInfos.Any())
+            if (paramInfos != null && paramInfos.Length > 0)
             {
                 var parameterSet = new List<IParameterDeclaration>();
                 foreach (var pi in paramInfos)
@@ -319,7 +319,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         {
             var declarationType = declaration.GetData<Type>();
             var extendedInterfaces = declarationType.GetInterfaces();
-            if ((extendedInterfaces != null && extendedInterfaces.Any())
+            if ((extendedInterfaces != null && extendedInterfaces.Length > 0)
                 || (declarationType.BaseType != null && declarationType.BaseType != typeof(object)))
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
@@ -416,7 +416,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 this.logger?.LogWarning(e, $"Could not load properties from {declaration.GetData<Type>()}");
             }
 
-            declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
+            declaration.Members = memberList.Count > 0 ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }
 
         private static void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
@@ -424,7 +424,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             var declType = declaration.GetData<Type>();
             var attributeList = LoadCustomAttributes(resolver, declType.CustomAttributes);
 
-            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+            declaration.Attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
 
         private static List<IAttributeUse> LoadCustomAttributes(IDeclarationResolver resolver, IEnumerable<CustomAttributeData> customAttributes)
