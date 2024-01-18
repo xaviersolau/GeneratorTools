@@ -98,7 +98,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets
             }
         }
 
-        private IEnumerable<string> GetAllPackageDllItems(
+        private HashSet<string> GetAllPackageDllItems(
             ProjectAssets projectAssets,
             Func<TargetItemAssets, IEnumerable<string>> itemsGetter)
         {

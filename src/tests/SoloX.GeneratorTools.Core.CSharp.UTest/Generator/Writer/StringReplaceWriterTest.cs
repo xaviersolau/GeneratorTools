@@ -37,7 +37,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         [Fact]
         public void MultiPropertyWriterTest()
         {
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
             var srw = SetupStringReplaceWriter("PatternClassName", new[] { "NewClassString1", "NewClassString2" });
+#pragma warning restore CA1861 // Avoid constant arrays as arguments
 
             var implPatternPropNode = SyntaxTreeHelper.GetPropertyImplSyntax("object", "PatternClassName");
 

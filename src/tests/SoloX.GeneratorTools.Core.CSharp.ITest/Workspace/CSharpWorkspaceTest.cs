@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Microsoft.Extensions.Logging;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
@@ -22,7 +21,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
     public class CSharpWorkspaceTest : IDisposable
     {
         private readonly ITestOutputHelper testOutputHelper;
-        private readonly ILoggerFactory testLoggerFactory;
+        private readonly TestLoggerFactory testLoggerFactory;
 
         public CSharpWorkspaceTest(ITestOutputHelper testOutputHelper)
         {

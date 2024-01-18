@@ -144,7 +144,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 
             membersWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
 
-            declaration.Members = memberList.Any() ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
+            declaration.Members = memberList.Count > 0 ? memberList.ToArray() : Array.Empty<IMemberDeclaration<SyntaxNode>>();
         }
 
         private static void LoadAttributes(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
@@ -154,7 +154,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 
             attributesWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
 
-            declaration.Attributes = attributeList.Any() ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+            declaration.Attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
     }
 }

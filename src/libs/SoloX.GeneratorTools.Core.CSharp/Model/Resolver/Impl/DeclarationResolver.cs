@@ -156,7 +156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
         }
 
-        private IEnumerable<IDeclaration<SyntaxNode>> FindDeclarations(
+        private List<IDeclaration<SyntaxNode>> FindDeclarations(
             string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
             List<IDeclaration<SyntaxNode>> declarations;

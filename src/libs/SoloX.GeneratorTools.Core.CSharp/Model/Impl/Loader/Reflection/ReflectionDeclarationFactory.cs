@@ -67,7 +67,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return null;
         }
 
-        private IInterfaceDeclaration CreateInterfaceDeclaration(Type type)
+        private InterfaceDeclaration CreateInterfaceDeclaration(Type type)
         {
             var decl = new InterfaceDeclaration(
                 type.Namespace,
@@ -82,7 +82,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private IClassDeclaration CreateClassDeclaration(Type type)
+        private ClassDeclaration CreateClassDeclaration(Type type)
         {
             var decl = new ClassDeclaration(
                 type.Namespace,
@@ -97,7 +97,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private IRecordDeclaration CreateRecordDeclaration(Type type)
+        private RecordDeclaration CreateRecordDeclaration(Type type)
         {
             var decl = new RecordDeclaration(
                 type.Namespace,
@@ -112,7 +112,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private IRecordStructDeclaration CreateRecordStructDeclaration(Type type)
+        private RecordStructDeclaration CreateRecordStructDeclaration(Type type)
         {
             var decl = new RecordStructDeclaration(
                 type.Namespace,
@@ -127,7 +127,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private IStructDeclaration CreateStructDeclaration(Type type)
+        private StructDeclaration CreateStructDeclaration(Type type)
         {
             var decl = new StructDeclaration(
                 type.Namespace,
@@ -142,7 +142,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private static IEnumDeclaration CreateEnumDeclaration(Type type)
+        private static EnumDeclaration CreateEnumDeclaration(Type type)
         {
             var decl = new EnumDeclaration(
                 type.Namespace,

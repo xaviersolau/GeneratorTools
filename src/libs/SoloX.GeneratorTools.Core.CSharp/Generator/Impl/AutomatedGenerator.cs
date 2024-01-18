@@ -129,6 +129,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 
                         generatorWalker.Visit(this.pattern.SyntaxNodeProvider.SyntaxNode.SyntaxTree.GetRoot());
                     });
+
+                    generatedItems.Add(new GeneratedItem
+                    {
+                        Name = implName,
+                        Namespace = nameSpace,
+                    });
                 }
             }
             else
@@ -147,7 +153,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     this.ignoreUsingList,
                     this.selectorResolver);
 
-                this.writer.Generate(location, strategy.ComputeTargetName(), writer =>
+                var implName = strategy.ComputeTargetName();
+
+                this.writer.Generate(location, implName, writer =>
                 {
                     var generatorWalker = new AutomatedWalker(
                         writer,
@@ -155,6 +163,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                         strategy);
 
                     generatorWalker.Visit(this.pattern.SyntaxNodeProvider.SyntaxNode.SyntaxTree.GetRoot());
+                });
+
+                generatedItems.Add(new GeneratedItem
+                {
+                    Name = implName,
+                    Namespace = nameSpace,
                 });
             }
 

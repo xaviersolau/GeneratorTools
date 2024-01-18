@@ -87,7 +87,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return null;
         }
 
-        private IInterfaceDeclaration CreateInterfaceDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private InterfaceDeclaration CreateInterfaceDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new InterfaceDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
@@ -102,7 +102,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private IClassDeclaration CreateClassDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private ClassDeclaration CreateClassDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new ClassDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
@@ -117,7 +117,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private IRecordDeclaration CreateRecordDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private RecordDeclaration CreateRecordDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new RecordDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
@@ -132,7 +132,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private IRecordStructDeclaration CreateRecordStructDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private RecordStructDeclaration CreateRecordStructDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new RecordStructDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
@@ -147,7 +147,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private IStructDeclaration CreateStructDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private StructDeclaration CreateStructDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new StructDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
@@ -162,7 +162,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private static IEnumDeclaration CreateEnumDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private static EnumDeclaration CreateEnumDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new EnumDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),

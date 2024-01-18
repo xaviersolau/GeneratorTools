@@ -201,6 +201,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
                 return res;
             }
 
+            var fullName = type.Declaration.FullName;
+            if (fullName == "System.Runtime.Intrinsics.X86.FloatComparisonMode")
+            {
+                return PrimitiveTypeCode.Byte;
+            }
+
             return PrimitiveTypeCode.UInt32;
         }
 

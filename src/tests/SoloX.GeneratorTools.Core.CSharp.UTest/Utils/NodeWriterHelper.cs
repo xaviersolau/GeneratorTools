@@ -69,7 +69,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
             return Assert.IsType<T>(classMember);
         }
 
-        private static IReadOnlyList<T> AssertMultiMemberOfType<T>(StringBuilder output)
+        private static List<T> AssertMultiMemberOfType<T>(StringBuilder output)
             where T : SyntaxNode
         {
             var resultingNode = AReflectionSyntaxNodeProvider<SyntaxNode>

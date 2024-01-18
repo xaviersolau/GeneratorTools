@@ -170,7 +170,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 #pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 
-        private static readonly IReadOnlyDictionary<string, Type> PredefinedTypeMap =
+        private static readonly Dictionary<string, Type> PredefinedTypeMap =
             new Dictionary<string, Type>
             {
                 ["string"] = typeof(string),
@@ -182,7 +182,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
                 ["object"] = typeof(object),
             };
 
-        private static readonly IReadOnlyDictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>> TypeToLoaderMap =
+        private static readonly Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>> TypeToLoaderMap =
             new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>>
             {
                 [typeof(string)] = (l, i) => l.LoadArray<string>(i),

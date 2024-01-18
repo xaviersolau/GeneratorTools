@@ -194,7 +194,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             var propertiesArgs = string.Empty;
 
-            if (properties != null && properties.Any())
+            if (properties != null && properties.Count > 0)
             {
                 foreach (var property in properties)
                 {
