@@ -4,13 +4,13 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <Format>lcov</Format>
+          <format>cobertura</format>
           <SingleHit>false</SingleHit>
-          <UseSourceLink>true</UseSourceLink>
+          <UseSourceLink>false</UseSourceLink>
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <SkipAutoProps>true</SkipAutoProps>
-          <DeterministicReport>false</DeterministicReport>
-		  <Exclude>[SoloX.*.UTest]*,[SoloX.*.ITest]*,[SoloX.GeneratorTools.Core.Test.Helpers]*</Exclude>
+          <DeterministicReport>true</DeterministicReport>
+          <Exclude>[SoloX.*.UTest]*,[SoloX.*.ITest]*,[SoloX.GeneratorTools.Core.Test.Helpers]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>
