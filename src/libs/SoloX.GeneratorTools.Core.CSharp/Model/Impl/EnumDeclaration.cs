@@ -6,8 +6,11 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 {
@@ -16,6 +19,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// </summary>
     public class EnumDeclaration : ADeclaration<EnumDeclarationSyntax>, IEnumDeclaration
     {
+        private readonly AEnumDeclarationLoader loader;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EnumDeclaration"/> class.
         /// </summary>
@@ -24,20 +29,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         /// <param name="usingDirectives">The current using directive available for this enum.</param>
         /// <param name="location">The location of the declaration.</param>
+        /// <param name="loader">The loader to use when deep loading the declaration.</param>
         public EnumDeclaration(
             string nameSpace,
             string name,
             ISyntaxNodeProvider<EnumDeclarationSyntax> syntaxNodeProvider,
             IUsingDirectives usingDirectives,
-            string location)
+            string location,
+            AEnumDeclarationLoader loader)
             : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location, true)
         {
+            this.loader = loader;
         }
 
         /// <inheritdoc/>
         protected override void LoadImpl(IDeclarationResolver resolver)
         {
-            // Nothing to load...
+            this.loader.Load(this, resolver);
         }
+
+        /// <inheritdoc/>
+        public IDeclarationUse<SyntaxNode>? UnderlyingType { get; internal set; }
     }
 }

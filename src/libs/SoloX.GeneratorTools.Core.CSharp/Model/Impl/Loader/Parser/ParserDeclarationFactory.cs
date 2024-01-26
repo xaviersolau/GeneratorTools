@@ -19,17 +19,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         private readonly ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax;
         private readonly ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax;
         private readonly ParserGenericDeclarationLoader<RecordDeclarationSyntax> parserLoaderRecordDeclarationSyntax;
+        private readonly ParserEnumDeclarationLoader parserLoaderEnumDeclarationSyntax;
 
         public ParserDeclarationFactory(
             ParserGenericDeclarationLoader<InterfaceDeclarationSyntax> parserLoaderInterfaceDeclarationSyntax,
             ParserGenericDeclarationLoader<ClassDeclarationSyntax> parserLoaderClassDeclarationSyntax,
             ParserGenericDeclarationLoader<StructDeclarationSyntax> parserLoaderStructDeclarationSyntax,
-            ParserGenericDeclarationLoader<RecordDeclarationSyntax> parserLoaderRecordDeclarationSyntax)
+            ParserGenericDeclarationLoader<RecordDeclarationSyntax> parserLoaderRecordDeclarationSyntax,
+            ParserEnumDeclarationLoader parserLoaderEnumDeclarationSyntax)
         {
             this.parserLoaderInterfaceDeclarationSyntax = parserLoaderInterfaceDeclarationSyntax;
             this.parserLoaderClassDeclarationSyntax = parserLoaderClassDeclarationSyntax;
             this.parserLoaderStructDeclarationSyntax = parserLoaderStructDeclarationSyntax;
             this.parserLoaderRecordDeclarationSyntax = parserLoaderRecordDeclarationSyntax;
+            this.parserLoaderEnumDeclarationSyntax = parserLoaderEnumDeclarationSyntax;
         }
 
         /// <inheritdoc/>
@@ -92,7 +95,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
                 node.Identifier.Text,
                 new ParserSyntaxNodeProvider<EnumDeclarationSyntax>(node),
                 usingDirectives,
-                location);
+                location,
+                this.parserLoaderEnumDeclarationSyntax);
         }
 
         /// <inheritdoc/>

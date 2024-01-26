@@ -514,6 +514,30 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             methodParameter.Attributes.Should().ContainSingle();
         }
 
+        public void AssertEnumTypeLoaded(IEnumDeclaration enumDeclaration, Type type)
+        {
+            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
+
+            Assert.Equal(
+                className,
+                enumDeclaration.Name);
+
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
+            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+
+            var declarationResolver = this.SetupDeclarationResolver(
+                enumDeclaration);
+
+            enumDeclaration.DeepLoad(declarationResolver);
+
+            var underlyingType = type.GetEnumUnderlyingType();
+
+            if (underlyingType != typeof(int))
+            {
+                Assert.NotNull(enumDeclaration.UnderlyingType);
+            }
+        }
+
         private IDeclarationResolver SetupDeclarationResolver(
             IDeclaration<SyntaxNode> contextDeclaration,
             params Type[] classes)

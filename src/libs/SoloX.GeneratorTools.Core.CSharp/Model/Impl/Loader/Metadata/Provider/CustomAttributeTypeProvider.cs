@@ -201,10 +201,36 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
                 return res;
             }
 
-            var fullName = type.Declaration.FullName;
-            if (fullName == "System.Runtime.Intrinsics.X86.FloatComparisonMode")
+            if (type.Declaration is EnumDeclaration enumDeclaration)
             {
-                return PrimitiveTypeCode.Byte;
+                var underlyingType = enumDeclaration.UnderlyingType;
+                if (underlyingType != null)
+                {
+                    if (underlyingType is IPredefinedDeclarationUse predefinedDeclarationUse)
+                    {
+                        return predefinedDeclarationUse.Declaration.FullName switch
+                        {
+                            "byte" => PrimitiveTypeCode.Byte,
+                            "sbyte" => PrimitiveTypeCode.SByte,
+                            "short" => PrimitiveTypeCode.Int16,
+                            "ushort" => PrimitiveTypeCode.UInt16,
+                            "int" => PrimitiveTypeCode.Int32,
+                            "uint" => PrimitiveTypeCode.UInt32,
+                            "long" => PrimitiveTypeCode.Int64,
+                            "ulong" => PrimitiveTypeCode.UInt64,
+                            "double" => PrimitiveTypeCode.Double,
+                            "float" => PrimitiveTypeCode.Single,
+                            _ => throw new NotSupportedException($"Unsupported predefined type: {predefinedDeclarationUse.Declaration.FullName}"),
+                        };
+                    }
+
+                    if (Enum.TryParse<PrimitiveTypeCode>(underlyingType.Declaration.Name, out res) && underlyingType.Declaration.FullName == $"System.{res}")
+                    {
+                        return res;
+                    }
+                }
+
+                return PrimitiveTypeCode.UInt32;
             }
 
             return PrimitiveTypeCode.UInt32;
