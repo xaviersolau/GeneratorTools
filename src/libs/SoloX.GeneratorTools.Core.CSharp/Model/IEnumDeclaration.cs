@@ -6,7 +6,9 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
@@ -15,5 +17,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// </summary>
     public interface IEnumDeclaration : IDeclaration<EnumDeclarationSyntax>
     {
+        /// <summary>
+        /// Gets the underlying type. (default is int)
+        /// </summary>
+        IDeclarationUse<SyntaxNode>? UnderlyingType { get; }
     }
 }

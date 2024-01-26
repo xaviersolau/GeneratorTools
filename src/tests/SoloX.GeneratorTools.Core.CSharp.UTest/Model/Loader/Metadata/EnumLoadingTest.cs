@@ -19,32 +19,30 @@ using Xunit;
 using Xunit.Abstractions;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
     public class EnumLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
+        private readonly LoadingTest loadingTest;
 
         public EnumLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
+
+            this.loadingTest = new LoadingTest(testOutputHelper);
         }
 
         [Theory]
         [InlineData(typeof(SimpleEnum))]
+        [InlineData(typeof(EnumWithBaseType))]
         public void ItShouldLoadEnumType(Type type)
         {
             var enumDeclaration = LoadEnumDeclaration(type);
 
-            var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
-
-            Assert.Equal(
-                className,
-                enumDeclaration.Name);
-
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider);
-            Assert.NotNull(enumDeclaration.SyntaxNodeProvider.SyntaxNode);
+            this.loadingTest.AssertEnumTypeLoaded(enumDeclaration, type);
         }
 
         private IEnumDeclaration LoadEnumDeclaration(Type type)

@@ -398,7 +398,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             }
         }
 
-        private static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
+        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
             MetadataReader metadataReader,
             EntityHandle typeHandle,
             IDeclarationResolver resolver,
@@ -597,15 +597,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
             var sealedAttr = attributes & TypeAttributes.Sealed;
 
-            if (!baseTypeHandle.IsNil && baseTypeHandle.Kind == HandleKind.TypeReference
-                && classSemantics == TypeAttributes.Class && layout == TypeAttributes.AutoLayout && sealedAttr == TypeAttributes.Sealed)
+            if (!baseTypeHandle.IsNil)
             {
-                var typeRef = metadataReader.GetTypeReference((TypeReferenceHandle)baseTypeHandle);
+                if (typeDefinition.BaseType.Kind == HandleKind.TypeDefinition)
+                {
+                    var baseTypeDefinition = metadataReader.GetTypeDefinition((TypeDefinitionHandle)typeDefinition.BaseType);
 
-                var name = LoadString(metadataReader, typeRef.Name);
-                var ns = LoadString(metadataReader, typeRef.Namespace);
+                    var baseTypeName = MetadataGenericDeclarationLoader<SyntaxNode>.LoadString(metadataReader, baseTypeDefinition.Name);
 
-                return typeof(Enum).FullName == $"{ns}.{name}";
+                    var baseTypeNs = MetadataGenericDeclarationLoader<SyntaxNode>.LoadString(metadataReader, baseTypeDefinition.Namespace);
+
+                    return typeof(Enum).FullName == $"{baseTypeNs}.{baseTypeName}";
+                }
+                else if (typeDefinition.BaseType.Kind == HandleKind.TypeReference)
+                {
+                    var baseTypeReference = metadataReader.GetTypeReference((TypeReferenceHandle)typeDefinition.BaseType);
+
+                    var baseTypeName = MetadataGenericDeclarationLoader<SyntaxNode>.LoadString(metadataReader, baseTypeReference.Name);
+
+                    var baseTypeNs = MetadataGenericDeclarationLoader<SyntaxNode>.LoadString(metadataReader, baseTypeReference.Namespace);
+
+                    return typeof(Enum).FullName == $"{baseTypeNs}.{baseTypeName}";
+                }
             }
 
             return false;

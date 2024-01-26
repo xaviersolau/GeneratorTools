@@ -21,17 +21,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
         private readonly ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax;
         private readonly ReflectionGenericDeclarationLoader<StructDeclarationSyntax> reflectionLoaderStructDeclarationSyntax;
         private readonly ReflectionGenericDeclarationLoader<RecordDeclarationSyntax> reflectionLoaderRecordDeclarationSyntax;
+        private readonly ReflectionEnumDeclarationLoader reflectionLoaderEnumDeclarationSyntax;
 
         public ReflectionDeclarationFactory(
             ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax> reflectionLoaderInterfaceDeclarationSyntax,
             ReflectionGenericDeclarationLoader<ClassDeclarationSyntax> reflectionLoaderClassDeclarationSyntax,
             ReflectionGenericDeclarationLoader<StructDeclarationSyntax> reflectionLoaderStructDeclarationSyntax,
-            ReflectionGenericDeclarationLoader<RecordDeclarationSyntax> reflectionLoaderRecordDeclarationSyntax)
+            ReflectionGenericDeclarationLoader<RecordDeclarationSyntax> reflectionLoaderRecordDeclarationSyntax,
+            ReflectionEnumDeclarationLoader reflectionLoaderEnumDeclarationSyntax)
         {
             this.reflectionLoaderInterfaceDeclarationSyntax = reflectionLoaderInterfaceDeclarationSyntax;
             this.reflectionLoaderClassDeclarationSyntax = reflectionLoaderClassDeclarationSyntax;
             this.reflectionLoaderStructDeclarationSyntax = reflectionLoaderStructDeclarationSyntax;
             this.reflectionLoaderRecordDeclarationSyntax = reflectionLoaderRecordDeclarationSyntax;
+            this.reflectionLoaderEnumDeclarationSyntax = reflectionLoaderEnumDeclarationSyntax;
         }
 
         /// <inheritdoc/>
@@ -142,14 +145,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             return decl;
         }
 
-        private static EnumDeclaration CreateEnumDeclaration(Type type)
+        private EnumDeclaration CreateEnumDeclaration(Type type)
         {
             var decl = new EnumDeclaration(
                 type.Namespace,
                 ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name),
                 new ReflectionTypeSyntaxNodeProvider<EnumDeclarationSyntax>(type),
                 null,
-                type.Assembly.Location);
+                type.Assembly.Location,
+                this.reflectionLoaderEnumDeclarationSyntax);
+
+            ReflectionEnumDeclarationLoader.Setup(decl, type);
 
             return decl;
         }

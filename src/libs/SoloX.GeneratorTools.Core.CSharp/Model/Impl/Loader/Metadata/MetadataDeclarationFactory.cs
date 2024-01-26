@@ -23,17 +23,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
         private readonly MetadataGenericDeclarationLoader<ClassDeclarationSyntax> metadataLoaderClassDeclarationSyntax;
         private readonly MetadataGenericDeclarationLoader<StructDeclarationSyntax> metadataLoaderStructDeclarationSyntax;
         private readonly MetadataGenericDeclarationLoader<RecordDeclarationSyntax> metadataLoaderRecordDeclarationSyntax;
+        private readonly MetadataEnumDeclarationLoader metadataLoaderEnumDeclarationSyntax;
 
         public MetadataDeclarationFactory(
             MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax> metadataLoaderInterfaceDeclarationSyntax,
             MetadataGenericDeclarationLoader<ClassDeclarationSyntax> metadataLoaderClassDeclarationSyntax,
             MetadataGenericDeclarationLoader<StructDeclarationSyntax> metadataLoaderStructDeclarationSyntax,
-            MetadataGenericDeclarationLoader<RecordDeclarationSyntax> metadataLoaderRecordDeclarationSyntax)
+            MetadataGenericDeclarationLoader<RecordDeclarationSyntax> metadataLoaderRecordDeclarationSyntax,
+            MetadataEnumDeclarationLoader metadataLoaderEnumDeclarationSyntax)
         {
             this.metadataLoaderInterfaceDeclarationSyntax = metadataLoaderInterfaceDeclarationSyntax;
             this.metadataLoaderClassDeclarationSyntax = metadataLoaderClassDeclarationSyntax;
             this.metadataLoaderStructDeclarationSyntax = metadataLoaderStructDeclarationSyntax;
             this.metadataLoaderRecordDeclarationSyntax = metadataLoaderRecordDeclarationSyntax;
+            this.metadataLoaderEnumDeclarationSyntax = metadataLoaderEnumDeclarationSyntax;
         }
 
         /// <inheritdoc/>
@@ -162,14 +165,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return decl;
         }
 
-        private static EnumDeclaration CreateEnumDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        private EnumDeclaration CreateEnumDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var decl = new EnumDeclaration(
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNamespace(metadataReader, typeDefinitionHandle),
                 MetadataGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(metadataReader, typeDefinitionHandle),
                 new MetadataTypeSyntaxNodeProvider<EnumDeclarationSyntax>(metadataReader, typeDefinitionHandle),
                 null,
-                location);
+                location,
+                this.metadataLoaderEnumDeclarationSyntax);
+
+            MetadataEnumDeclarationLoader.Setup(decl, typeDefinitionHandle);
 
             return decl;
         }

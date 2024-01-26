@@ -116,7 +116,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
                 new ParserGenericDeclarationLoader<StructDeclarationSyntax>(
                     LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
                 new ParserGenericDeclarationLoader<RecordDeclarationSyntax>(
-                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
+                    LoggerHelper.CreateGeneratorLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)),
+                new ParserEnumDeclarationLoader(LoggerHelper.CreateGeneratorLogger<ParserEnumDeclarationLoader>(testOutputHelper)));
         }
 
         /// <summary>
@@ -134,7 +135,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
                 new MetadataGenericDeclarationLoader<StructDeclarationSyntax>(
                     LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
                 new MetadataGenericDeclarationLoader<RecordDeclarationSyntax>(
-                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
+                    LoggerHelper.CreateGeneratorLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)),
+                new MetadataEnumDeclarationLoader(LoggerHelper.CreateGeneratorLogger<MetadataEnumDeclarationLoader>(testOutputHelper)));
         }
 
         /// <summary>
@@ -152,7 +154,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
                 new ReflectionGenericDeclarationLoader<StructDeclarationSyntax>(
                     LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>(testOutputHelper)),
                 new ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>(
-                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)));
+                    LoggerHelper.CreateGeneratorLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>(testOutputHelper)),
+                new ReflectionEnumDeclarationLoader(LoggerHelper.CreateGeneratorLogger<ReflectionEnumDeclarationLoader>(testOutputHelper)));
         }
     }
 }

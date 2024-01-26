@@ -58,17 +58,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                     new ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
                     new ParserGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<ClassDeclarationSyntax>>()),
                     new ParserGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<StructDeclarationSyntax>>()),
-                    new ParserGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>())),
+                    new ParserGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ParserGenericDeclarationLoader<RecordDeclarationSyntax>>()),
+                    new ParserEnumDeclarationLoader(this.loggerFactory.CreateLogger<ParserEnumDeclarationLoader>())),
                 new ReflectionDeclarationFactory(
                     new ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
                     new ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<ClassDeclarationSyntax>>()),
                     new ReflectionGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<StructDeclarationSyntax>>()),
-                    new ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>())),
+                    new ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<ReflectionGenericDeclarationLoader<RecordDeclarationSyntax>>()),
+                    new ReflectionEnumDeclarationLoader(this.loggerFactory.CreateLogger<ReflectionEnumDeclarationLoader>())),
                 new MetadataDeclarationFactory(
                     new MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<InterfaceDeclarationSyntax>>()),
                     new MetadataGenericDeclarationLoader<ClassDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<ClassDeclarationSyntax>>()),
                     new MetadataGenericDeclarationLoader<StructDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<StructDeclarationSyntax>>()),
-                    new MetadataGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>())));
+                    new MetadataGenericDeclarationLoader<RecordDeclarationSyntax>(this.loggerFactory.CreateLogger<MetadataGenericDeclarationLoader<RecordDeclarationSyntax>>()),
+                    new MetadataEnumDeclarationLoader(this.loggerFactory.CreateLogger<MetadataEnumDeclarationLoader>())));
         }
     }
 }

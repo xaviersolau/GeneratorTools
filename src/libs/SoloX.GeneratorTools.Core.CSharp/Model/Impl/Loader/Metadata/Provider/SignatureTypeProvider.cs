@@ -115,11 +115,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
 
         public IDeclarationUse<SyntaxNode> GetPrimitiveType(PrimitiveTypeCode typeCode)
         {
-            if (typeCode == PrimitiveTypeCode.Int32)
+#pragma warning disable IDE0072 // Add missing cases
+            return typeCode switch
             {
-                return CreatePredefinedDeclarationUse("int");
-            }
+                PrimitiveTypeCode.Int32 => CreatePredefinedDeclarationUse("int"),
+                PrimitiveTypeCode.Int64 => CreatePredefinedDeclarationUse("long"),
+                PrimitiveTypeCode.Boolean => CreatePredefinedDeclarationUse("bool"),
+                PrimitiveTypeCode.Byte => CreatePredefinedDeclarationUse("byte"),
+                PrimitiveTypeCode.SByte => CreatePredefinedDeclarationUse("sbyte"),
+                PrimitiveTypeCode.Char => CreatePredefinedDeclarationUse("char"),
+                PrimitiveTypeCode.Int16 => CreatePredefinedDeclarationUse("short"),
+                PrimitiveTypeCode.UInt16 => CreatePredefinedDeclarationUse("ushort"),
+                PrimitiveTypeCode.UInt32 => CreatePredefinedDeclarationUse("uint"),
+                PrimitiveTypeCode.UInt64 => CreatePredefinedDeclarationUse("ulong"),
+                PrimitiveTypeCode.Single => CreatePredefinedDeclarationUse("single"),
+                PrimitiveTypeCode.Double => CreatePredefinedDeclarationUse("double"),
+                _ => CreateSystemDeclarationUse(typeCode),
+            };
+#pragma warning restore IDE0072 // Add missing cases
+        }
 
+        private GenericDeclarationUse CreateSystemDeclarationUse(PrimitiveTypeCode typeCode)
+        {
             var fullName = $"System.{typeCode}";
             var declaration = this.resolver.Resolve(fullName, null) ?? new UnknownDeclaration("System", typeCode.ToString());
 
