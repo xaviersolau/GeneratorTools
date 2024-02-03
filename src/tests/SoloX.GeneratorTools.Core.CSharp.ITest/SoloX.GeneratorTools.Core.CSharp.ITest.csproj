@@ -43,4 +43,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Generator\Automated\Patterns\Impl\SimpleMethod6Pattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>

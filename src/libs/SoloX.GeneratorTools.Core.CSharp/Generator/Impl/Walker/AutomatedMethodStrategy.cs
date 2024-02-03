@@ -16,6 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
@@ -25,6 +26,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IMethodDeclaration declaration;
         private readonly IDeclarationResolver resolver;
         private readonly IGenericDeclaration<SyntaxNode> genericDeclaration;
+        private readonly IReplacePatternResolver replacePatternResolver;
         private readonly TextPatternHelper textReplaceHelper;
         private readonly TextPatternHelper typeReplaceHelper;
 
@@ -33,13 +35,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IMethodDeclaration declaration,
             IDeclarationResolver resolver,
             IGenericDeclaration<SyntaxNode> genericDeclaration,
-            string patternPrefix, string patternSuffix)
+            string patternPrefix, string patternSuffix,
+            IReplacePatternResolver replacePatternResolver)
         {
             this.pattern = pattern;
             this.declaration = declaration;
             this.resolver = resolver;
             this.genericDeclaration = genericDeclaration;
-
+            this.replacePatternResolver = replacePatternResolver;
             var patternName = this.pattern.Name;
             var declarationName = this.declaration.Name;
 
@@ -53,6 +56,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         public IReplacePatternHandler CreateReplacePatternHandler()
         {
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
+
+        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        {
+            var replaceHandlerTypeExpression = replacePatternAttributeSyntax.ArgumentList.Arguments.First().Expression;
+
+            var constEvaluator = new ConstantExpressionSyntaxEvaluator<IDeclarationUse<SyntaxNode>>(this.resolver, this.genericDeclaration);
+            var typeUse = constEvaluator.Visit(replaceHandlerTypeExpression);
+
+            var factory = this.replacePatternResolver.GetHandlerFactory(typeUse);
+
+            return factory.Setup(this.pattern, this.declaration);
         }
 
         private string ApplyPatternReplace(string text)

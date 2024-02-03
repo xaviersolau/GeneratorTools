@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="DefaultSelectorResolver.cs" company="Xavier Solau">
+// <copyright file="DefaultReplacePatternResolver.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -7,40 +7,36 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using System;
 using System.Collections.Generic;
+using System;
+using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
 {
     /// <summary>
-    /// Default selector type resolver.
+    /// Default resolver for replace pattern handler factory.
     /// </summary>
-    public class DefaultSelectorResolver : AInstanceResolver, ISelectorResolver
+    public class DefaultReplacePatternResolver : AInstanceResolver, IReplacePatternResolver
     {
         private static readonly IEnumerable<Type> DefaultTypes = new[]
         {
-            typeof(AttributeSelector<>),
-            typeof(ReadOnlyPropertySelector),
-            typeof(ReadWritePropertySelector),
-            typeof(InterfaceBasedOnSelector<>),
-            typeof(AllSelector),
+            typeof(TaskValueTypeReplaceHandler),
         };
 
         /// <summary>
         /// Setup instance with the given types to be resolved.
         /// </summary>
         /// <param name="types">Types to be resolved in selectors.</param>
-        public DefaultSelectorResolver(params Type[] types)
+        public DefaultReplacePatternResolver(params Type[] types)
             : base(DefaultTypes, types)
         {
         }
 
         /// <inheritdoc/>
-        public ISelector GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse)
+        public IReplacePatternHandlerFactory GetHandlerFactory(IDeclarationUse<SyntaxNode> replacePatternHandlerTypeUse)
         {
-            return CreateInstance<ISelector>(selectorTypeUse);
+            return CreateInstance<IReplacePatternHandlerFactory>(replacePatternHandlerTypeUse);
         }
     }
 }

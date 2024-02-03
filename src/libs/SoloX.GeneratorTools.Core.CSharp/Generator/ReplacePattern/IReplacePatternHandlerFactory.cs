@@ -25,5 +25,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
         IReplacePatternHandler Setup(
             IGenericDeclaration<SyntaxNode> pattern,
             IGenericDeclaration<SyntaxNode> declaration);
+
+        /// <summary>
+        /// Setup replace handler.
+        /// </summary>
+        /// <param name="pattern">The method pattern.</param>
+        /// <param name="declaration">The method declaration.</param>
+        /// <returns></returns>
+        IReplacePatternHandler Setup(IMethodDeclaration pattern, IMethodDeclaration declaration);
     }
 }

@@ -140,6 +140,40 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleMethod6Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod6Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod6Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethod6Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
+        public void AutomatedAsyncMethodTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IAsyncMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/AsyncMethodPattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/IAsyncMethodSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(AsyncMethodPattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedAsyncMethodTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedSimpleWithCallTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
@@ -345,7 +379,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             var selectorResolver = CreateSelectorResolver();
 
             var implGenerator = new AutomatedGenerator(
-                snapshotGenerator, locator, resolver, patternType, selectorResolver, Mock.Of<IGeneratorLogger>());
+                snapshotGenerator, locator, resolver, patternType, Mock.Of<IGeneratorLogger>(), selectorResolver: selectorResolver);
 
             implGenerator.Generate(files);
 

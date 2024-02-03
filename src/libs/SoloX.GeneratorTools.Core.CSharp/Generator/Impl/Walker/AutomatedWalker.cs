@@ -1014,6 +1014,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private void WriteMethodDeclaration(MethodDeclarationSyntax node)
         {
+            IReplacePatternHandler replacePatternHandler = null;
+            if (node.AttributeLists.TryMatchAttributeName<ReplacePatternAttribute>(out var replaceAttributeSyntax))
+            {
+                replacePatternHandler = this.CurrentStrategy().CreateReplacePatternHandler(replaceAttributeSyntax);
+            }
+
             this.WriteAttributeLists(node.AttributeLists);
 
             this.Write(node.Modifiers.ToFullString());
@@ -1037,7 +1043,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                 });
             }
 
+            if (node.AttributeLists.TryMatchAttributeName<RepeatAttribute>(out var attributeSyntax, true))
+            {
+                CurrentStrategy().RepeatDeclaration(
+                    attributeSyntax,
+                    itemStrategy =>
+                    {
+                        PushStrategy(itemStrategy);
+                    });
+            }
+
             this.Visit(node.ParameterList);
+
+            if (replacePatternHandler != null)
+            {
+                this.strategiesReplacePatternHandlers.Push(replacePatternHandler);
+            }
 
             foreach (var constraintClauses in node.ConstraintClauses)
             {
@@ -1047,6 +1068,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.Visit(node.Body);
             this.Visit(node.ExpressionBody);
             this.Write(node.SemicolonToken.ToFullString());
+
+            if (replacePatternHandler != null)
+            {
+                PopReplacePatternHandlers();
+            }
 
             this.strategies = savedStrategies;
         }
