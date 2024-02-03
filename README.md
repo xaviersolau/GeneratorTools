@@ -26,17 +26,17 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.GeneratorTools.Core.CSharp -version 1.0.0-alpha.36
+Install-Package SoloX.GeneratorTools.Core.CSharp -version 1.0.0-alpha.37
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.36
+dotnet add package SoloX.GeneratorTools.Core.CSharp --version 1.0.0-alpha.37
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.36" />
+<PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.37" />
 ```
 
 ## The use case
