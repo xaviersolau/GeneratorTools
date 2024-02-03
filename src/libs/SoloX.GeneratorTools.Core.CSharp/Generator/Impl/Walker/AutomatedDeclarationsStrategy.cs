@@ -29,6 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories;
         private readonly IEnumerable<string> ignoreUsingList;
         private readonly ISelectorResolver selectorResolver;
+        private readonly IReplacePatternResolver replacePatternResolver;
 
         public AutomatedDeclarationsStrategy(
             IDeclaration<SyntaxNode> pattern,
@@ -38,7 +39,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IDeclarationResolver resolver,
             IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
             IEnumerable<string> ignoreUsingList,
-            ISelectorResolver selectorResolver)
+            ISelectorResolver selectorResolver,
+            IReplacePatternResolver replacePatternResolver)
         {
             this.targetName = name;
             this.currentNameSpace = nameSpace;
@@ -48,11 +50,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.replacePatternHandlerFactories = replacePatternHandlerFactories;
             this.ignoreUsingList = ignoreUsingList;
             this.selectorResolver = selectorResolver;
+            this.replacePatternResolver = replacePatternResolver;
         }
 
         public IReplacePatternHandler CreateReplacePatternHandler()
         {
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
+
+        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        {
+            throw new NotImplementedException();
         }
 
         private string ApplyPatternReplace(string text)
@@ -84,7 +92,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
                         this.resolver,
                         this.replacePatternHandlerFactories,
                         this.ignoreUsingList,
-                        this.selectorResolver));
+                        this.selectorResolver,
+                        this.replacePatternResolver));
             }
         }
 

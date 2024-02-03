@@ -25,16 +25,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         /// <typeparam name="TAttribute">Attribute type to match.</typeparam>
         /// <param name="attributeLists">The attribute syntax lists to test.</param>
         /// <param name="attributeSyntax">The attribute syntax node that match the attribute type.</param>
+        /// <param name="targetReturnValue">Tells if we are looking for a return value target attribute.</param>
         /// <returns>True if the attribute type name match one of the attribute syntax node.</returns>
         public static bool TryMatchAttributeName<TAttribute>(
             this SyntaxList<AttributeListSyntax> attributeLists,
-            out AttributeSyntax attributeSyntax)
+            out AttributeSyntax attributeSyntax,
+            bool targetReturnValue = false)
             where TAttribute : Attribute
         {
             attributeSyntax = null;
             foreach (var attributeList in attributeLists)
             {
-                if (attributeList.TryMatchAttributeName<TAttribute>(out attributeSyntax))
+                if (attributeList.TryMatchAttributeName<TAttribute>(out attributeSyntax, targetReturnValue))
                 {
                     return true;
                 }
@@ -77,14 +79,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
         /// <typeparam name="TAttribute">Attribute type to match.</typeparam>
         /// <param name="attributeLists">The attribute syntax lists to test.</param>
         /// <param name="matchingAttributeSyntax">The matching attribute syntax node.</param>
+        /// <param name="targetReturnValue">Tells if we are looking for a return value target attribute.</param>
         /// <returns>True if the attribute type name match one of the attribute syntax node.</returns>
         public static bool TryMatchAttributeName<TAttribute>(
             this AttributeListSyntax attributeLists,
-            out AttributeSyntax matchingAttributeSyntax)
+            out AttributeSyntax matchingAttributeSyntax,
+            bool targetReturnValue = false)
             where TAttribute : Attribute
         {
             matchingAttributeSyntax = null;
-            if (attributeLists != null)
+            if (attributeLists != null && ((!targetReturnValue && attributeLists.Target == null) || (targetReturnValue && attributeLists.Target != null)))
             {
                 foreach (var attributeSyntax in attributeLists.Attributes)
                 {

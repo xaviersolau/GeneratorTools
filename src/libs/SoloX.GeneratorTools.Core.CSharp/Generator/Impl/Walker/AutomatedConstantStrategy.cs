@@ -44,6 +44,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
         }
 
+        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        {
+            throw new NotImplementedException();
+        }
+
         private string ApplyPatternReplace(string text)
         {
             var result = this.textReplaceHelper.ReplacePattern(text);
@@ -84,6 +89,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             Action<IAutomatedStrategy> callback)
         {
             return false;
+        }
+
+        public void ReplaceDeclaration(AttributeSyntax repeatAttributeSyntax, Action<IAutomatedStrategy> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }

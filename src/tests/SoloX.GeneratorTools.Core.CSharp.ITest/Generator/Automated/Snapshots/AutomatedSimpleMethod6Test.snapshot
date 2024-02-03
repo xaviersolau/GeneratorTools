@@ -1,0 +1,93 @@
+---------------------
+SimpleMethod6Pattern
+---------------------
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+using System;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleMethod6Pattern : ISimpleMethodSample
+    {
+#pragma warning disable CA1034 // Nested types should not be visible
+        public class MethodPayload
+        {
+        }
+#pragma warning disable CA1034 // Nested types should not be visible
+        public class Method1Payload
+        {
+            public string Arg { get; set; }
+        }
+#pragma warning disable CA1034 // Nested types should not be visible
+        public class Method2Payload
+        {
+            public int Arg1 { get; set; }
+            public double Arg2 { get; set; }
+        }
+#pragma warning restore CA1034 // Nested types should not be visible
+
+
+
+        public int Method()
+        {
+            var payload = new MethodPayload
+            {
+            };
+
+            return ProcessMethodPayload(payload);
+        }
+#pragma warning restore CA1034 // Nested types should not be visible
+
+
+
+        public int Method1(string arg)
+        {
+            var payload = new Method1Payload
+            {
+                Arg = arg,
+            };
+
+            return ProcessMethod1Payload(payload);
+        }
+#pragma warning restore CA1034 // Nested types should not be visible
+
+
+
+        public double Method2(int arg1, double arg2)
+        {
+            var payload = new Method2Payload
+            {
+                Arg1 = arg1,
+                Arg2 = arg2,
+            };
+
+            return ProcessMethod2Payload(payload);
+        }
+
+        private int ProcessMethodPayload(MethodPayload payload)
+        {
+
+            return Process();
+        }
+
+        private int ProcessMethod1Payload(Method1Payload payload)
+        {
+            var arg = payload.Arg;
+
+            return Process(arg);
+        }
+
+        private double ProcessMethod2Payload(Method2Payload payload)
+        {
+            var arg1 = payload.Arg1;
+            var arg2 = payload.Arg2;
+
+            return Process(arg1, arg2);
+        }
+
+        private object Process(params object[] arguments)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+

@@ -30,6 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         private readonly IDeclarationResolver resolver;
         private readonly IEnumerable<string> ignoreUsingList;
         private readonly ISelectorResolver selectorResolver;
+        private readonly IReplacePatternResolver replacePatternResolver;
         private readonly string targetDeclarationName;
         private readonly string targetPatternName;
         private readonly IEnumerable<IReplacePatternHandler> replacePatternHandlers;
@@ -40,7 +41,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             IDeclarationResolver resolver,
             IEnumerable<IReplacePatternHandlerFactory> replacePatternHandlerFactories,
             IEnumerable<string> ignoreUsingList,
-            ISelectorResolver selectorResolver)
+            ISelectorResolver selectorResolver,
+            IReplacePatternResolver replacePatternResolver)
         {
             this.declaration = declaration;
             this.pattern = pattern;
@@ -49,13 +51,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.targetDeclarationName = GeneratorHelper.ComputeClassName(declaration.Name);
             this.targetPatternName = GeneratorHelper.ComputeClassName(pattern.Name);
             this.selectorResolver = selectorResolver;
-
+            this.replacePatternResolver = replacePatternResolver;
             this.replacePatternHandlers = replacePatternHandlerFactories.Select(f => f.Setup(pattern, declaration)).ToArray();
         }
 
         public IReplacePatternHandler CreateReplacePatternHandler()
         {
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
+        }
+
+        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        {
+            throw new NotImplementedException();
         }
 
         public string ApplyPatternReplace(string text)
@@ -152,7 +159,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
-                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix);
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix, this.replacePatternResolver);
 
                     callback(strategy);
                 }
@@ -255,7 +262,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             {
                 foreach (var methodDeclaration in selector.GetMethods(this.declaration))
                 {
-                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix);
+                    var strategy = new AutomatedMethodStrategy(repeatMethod, methodDeclaration, this.resolver, this.declaration, patternPrefix, patternSuffix, this.replacePatternResolver);
 
                     callback(strategy);
                 }

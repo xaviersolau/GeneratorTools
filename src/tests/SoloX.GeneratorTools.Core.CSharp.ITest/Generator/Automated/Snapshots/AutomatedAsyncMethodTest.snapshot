@@ -1,0 +1,37 @@
+---------------------
+AsyncMethodSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="AsyncMethodSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+using System.Threading.Tasks;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class AsyncMethodSample : IAsyncMethodSample
+    {
+        public Task<int> Method()
+        {
+            return Task.FromResult<int>(default);
+        }
+        public Task<char> Method1(string arg)
+        {
+            return Task.FromResult<char>(default);
+        }
+        public Task<double> Method2(int arg1, string arg2)
+        {
+            return Task.FromResult<double>(default);
+        }
+        public Task<IEnumerable<double>> Method3()
+        {
+            return Task.FromResult<IEnumerable<double>>(default);
+        }
+    }
+}
+

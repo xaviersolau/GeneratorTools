@@ -70,16 +70,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
             // Setup a locator that will tell the location where the generated classes must be written.
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
 
-            // Setup a selector resolver.
-            var selectorResolver = new DefaultSelectorResolver();
-
             // Create the automated generator.
             var generator = new AutomatedGenerator(
                 new FileWriter(".generated.cs"),
                 locator,
                 resolver,
                 typeof(ModelPattern),
-                selectorResolver,
                 new GeneratorLogger<ModelGeneratorExample>(this.logger));
 
             // Generate the files.

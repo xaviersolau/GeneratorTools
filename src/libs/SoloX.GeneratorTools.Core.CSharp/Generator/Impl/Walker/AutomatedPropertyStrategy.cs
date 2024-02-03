@@ -46,6 +46,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
         }
 
+        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        {
+            throw new NotImplementedException();
+        }
+
         private string ApplyPatternReplace(string text)
         {
             var result = this.textReplaceHelper.ReplacePattern(text);
