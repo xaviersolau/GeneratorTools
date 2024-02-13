@@ -36,7 +36,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         {
             var recordDeclaration = LoadRecordStructDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
         }
 
         private IRecordStructDeclaration LoadRecordStructDeclaration(Type type)

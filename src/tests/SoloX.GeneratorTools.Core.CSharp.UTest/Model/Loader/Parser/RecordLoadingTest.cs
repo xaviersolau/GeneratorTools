@@ -24,10 +24,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
     public class RecordLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
+        private readonly LoadingTest loadingTest;
 
         public RecordLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
+            this.loadingTest = new LoadingTest(testOutputHelper);
         }
 
         [Theory]
@@ -37,7 +39,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         {
             var recordDeclaration = LoadRecordDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType);
+            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
+        }
+
+        [Theory]
+        [InlineData(typeof(ConstructorRecord))]
+        public void ItShouldLoadRecordWithPrimaryConstructorType(Type type)
+        {
+            var recordDeclaration = LoadRecordDeclaration(type);
+
+            this.loadingTest.AssertRecordPropertyListLoaded(recordDeclaration, type);
         }
 
         private IRecordDeclaration LoadRecordDeclaration(Type type)

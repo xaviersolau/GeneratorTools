@@ -10,5 +10,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
 {
     public class SimpleClassWithBase : SimpleClass
     {
+        public SimpleClassWithBase(int parameter)
+            : base(parameter)
+        {
+        }
     }
 }

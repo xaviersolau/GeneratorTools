@@ -39,7 +39,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
                   usingDirectives,
                   location,
                   loader,
-                  false)
+                  false,
+                  true)
         {
         }
     }

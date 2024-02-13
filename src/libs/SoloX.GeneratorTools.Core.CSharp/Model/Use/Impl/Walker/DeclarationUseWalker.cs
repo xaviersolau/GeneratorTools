@@ -157,5 +157,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
 
             return declarationUse;
         }
+
+        public override IDeclarationUse<SyntaxNode> VisitPrimaryConstructorBaseType(PrimaryConstructorBaseTypeSyntax node)
+        {
+            return Visit(node.Type);
+        }
     }
 }

@@ -31,6 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
             this.Name = name;
 
             IsValueType = name != "object" && name != "string";
+            IsRecordType = false;
         }
 
         /// <inheritdoc/>
@@ -53,6 +54,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
 
         /// <inheritdoc/>
         public bool IsValueType { get; }
+
+        /// <inheritdoc/>
+        public bool IsRecordType { get; }
 
         /// <inheritdoc/>
         public IUsingDirectives UsingDirectives => NoUsingDirectives.Instance;
