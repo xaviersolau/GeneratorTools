@@ -62,13 +62,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="usingDirectives">The current using directive available for this class.</param>
         /// <param name="location">The location of the declaration.</param>
         /// <param name="isValueType">Tells if this is a valueType.</param>
+        /// <param name="isRecordType">Tells if this is a record type.</param>
         protected ADeclaration(
             string nameSpace,
             string name,
             ISyntaxNodeProvider<TNode> syntaxNodeProvider,
             IUsingDirectives usingDirectives,
             string location,
-            bool isValueType)
+            bool isValueType,
+            bool isRecordType)
         {
             DeclarationNameSpace = nameSpace;
             Name = name;
@@ -77,6 +79,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             FullName = GetFullName(nameSpace, name);
             Location = location;
             IsValueType = isValueType;
+            IsRecordType = isRecordType;
         }
 
         /// <inheritdoc/>
@@ -90,6 +93,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
 
         /// <inheritdoc/>
         public bool IsValueType { get; protected set; }
+
+        /// <inheritdoc/>
+        public bool IsRecordType { get; protected set; }
 
         /// <inheritdoc/>
         public ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }

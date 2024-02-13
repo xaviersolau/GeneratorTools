@@ -44,7 +44,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType);
+            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
+        }
+
+        [Theory]
+        [InlineData(typeof(SimpleConstructorClass), null)]
+        [InlineData(typeof(SimpleConstructorClassWithBase), typeof(SimpleConstructorClass))]
+        public void ItShouldLoadConstructorClassType(Type type, Type baseType)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
         }
 
         [Theory]

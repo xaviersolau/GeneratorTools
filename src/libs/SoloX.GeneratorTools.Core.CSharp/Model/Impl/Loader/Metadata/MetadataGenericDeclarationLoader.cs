@@ -204,16 +204,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
                 var attributeList = LoadCustomAttributes(metadataReader, declaration, resolver, customAttributeHandles);
 
-                var propertyType = propertySignature.ReturnType;
+                var compilerAttribute = attributeList.FirstOrDefault(attribute => attribute.DeclarationUse.Declaration.FullName == typeof(CompilerGeneratedAttribute).FullName);
 
-                memberList.Add(
-                    new PropertyDeclaration(
-                        propertyName,
-                        propertyType,
-                        new MetadataPropertySyntaxNodeProvider<PropertyDeclarationSyntax>(),
-                        attributeList,
-                        !getterHandle.IsNil,
-                        !setterHandle.IsNil));
+                if (compilerAttribute == null)
+                {
+                    var propertyType = propertySignature.ReturnType;
+
+                    memberList.Add(
+                        new PropertyDeclaration(
+                            propertyName,
+                            propertyType,
+                            new MetadataPropertySyntaxNodeProvider<PropertyDeclarationSyntax>(),
+                            attributeList,
+                            !getterHandle.IsNil,
+                            !setterHandle.IsNil));
+                }
             }
         }
 
@@ -327,13 +332,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 }
             }
 
+            var extendedInterfaceFilter = BuildExtendedInterfaceFilter(metadataReader, typeDefinition, declaration.IsValueType);
+
             foreach (var interfaceImplementation in typeDefinition.GetInterfaceImplementations())
             {
                 if (!interfaceImplementation.IsNil)
                 {
                     var interfaceDeclarationUse = GetDeclarationUseFrom(metadataReader, interfaceImplementation, resolver, declaration);
 
-                    if (interfaceDeclarationUse != null)
+                    if (interfaceDeclarationUse != null && extendedInterfaceFilter(interfaceDeclarationUse))
                     {
                         uses.Add(interfaceDeclarationUse);
                     }
@@ -342,6 +349,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
             declaration.Extends = uses;
         }
+
+        private static Func<IDeclarationUse<SyntaxNode>, bool> BuildExtendedInterfaceFilter(MetadataReader metadataReader, TypeDefinition typeDefinition, bool valueType)
+        {
+            if ((valueType && ProbeRecordStructType(metadataReader, typeDefinition)) || (!valueType && ProbeRecordType(metadataReader, typeDefinition)))
+            {
+                // IEquatable must be excluded since it is compiler generated on record type.
+                var equatableFullName = GetNameWithoutGeneric(typeof(IEquatable<>).FullName);
+                return t =>
+                {
+                    if (t.Declaration.FullName == equatableFullName)
+                    {
+                        return false;
+                    }
+                    return true;
+                };
+            }
+
+            return t => true;
+        }
+
 
         private static void LoadGenericParameters(MetadataReader metadataReader, AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {

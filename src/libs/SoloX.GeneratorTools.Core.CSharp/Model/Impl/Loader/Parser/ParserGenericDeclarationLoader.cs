@@ -33,10 +33,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
-            LoadGenericParameters(declaration);
-            LoadExtends(declaration, resolver);
-            LoadMembers(declaration, resolver);
-            LoadAttributes(declaration, resolver);
+            try
+            {
+                LoadGenericParameters(declaration);
+                LoadExtends(declaration, resolver);
+                LoadMembers(declaration, resolver);
+                LoadAttributes(declaration, resolver);
+            }
+            catch
+            {
+                // Make sure all collection are assigned.
+                declaration.GenericParameters ??= Array.Empty<IGenericParameterDeclaration>();
+                declaration.Extends ??= Array.Empty<IDeclarationUse<SyntaxNode>>();
+                declaration.Members ??= Array.Empty<IMemberDeclaration<SyntaxNode>>();
+                declaration.Attributes ??= Array.Empty<IAttributeUse>();
+
+                throw;
+            }
         }
 
         internal override ISyntaxNodeProvider<TypeParameterListSyntax> GetTypeParameterListSyntaxProvider(

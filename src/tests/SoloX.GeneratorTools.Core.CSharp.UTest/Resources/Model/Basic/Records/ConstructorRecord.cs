@@ -1,18 +1,14 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="GenericClassWithBase.cs" company="Xavier Solau">
+// <copyright file="ConstructorRecord.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes
+namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Records
 {
-    public class GenericClassWithBase<T> : SimpleClass
+    public record ConstructorRecord(int Property1, string Property2)
     {
-        public GenericClassWithBase(int parameter)
-            : base(parameter)
-        {
-        }
     }
 }

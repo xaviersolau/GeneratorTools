@@ -324,16 +324,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             {
                 var uses = new List<IDeclarationUse<SyntaxNode>>();
 
-                if (declarationType.BaseType != null)
+                if (declarationType.BaseType != null && declarationType.BaseType != typeof(object))
                 {
                     uses.Add(GetDeclarationUseFrom(declarationType.BaseType, resolver, null));
                 }
 
                 if (extendedInterfaces != null)
                 {
+                    var extendedInterfaceFilter = BuildExtendedInterfaceFilter(declarationType, declaration.IsValueType);
+
                     foreach (var extendedInterface in extendedInterfaces)
                     {
-                        uses.Add(GetDeclarationUseFrom(extendedInterface, resolver, null));
+                        if (extendedInterfaceFilter(extendedInterface))
+                        {
+                            uses.Add(GetDeclarationUseFrom(extendedInterface, resolver, null));
+                        }
                     }
                 }
 
@@ -343,6 +348,25 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             {
                 declaration.Extends = Array.Empty<IDeclarationUse<SyntaxNode>>();
             }
+        }
+
+        private static Func<Type, bool> BuildExtendedInterfaceFilter(Type declarationType, bool valueType)
+        {
+            if ((valueType && ProbeRecordStructType(declarationType)) || (!valueType && ProbeRecordType(declarationType)))
+            {
+                // IEquatable must be excluded since it is compiler generated on record type.
+                return t =>
+                {
+                    var genericType = t.GetGenericTypeDefinition();
+                    if (genericType != null && genericType == typeof(IEquatable<>))
+                    {
+                        return false;
+                    }
+                    return true;
+                };
+            }
+
+            return t => true;
         }
 
         /// <summary>
@@ -373,15 +397,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                 {
                     var attributes = LoadCustomAttributes(resolver, property.CustomAttributes);
 
-                    var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver, null);
-                    memberList.Add(
-                        new PropertyDeclaration(
-                            property.Name,
-                            propertyType,
-                            new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
-                            attributes,
-                            property.CanRead,
-                            property.CanWrite));
+                    var compilerAttribute = attributes.FirstOrDefault(attribute => attribute.DeclarationUse.Declaration.FullName == typeof(CompilerGeneratedAttribute).FullName);
+
+                    if (compilerAttribute == null)
+                    {
+                        var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver, null);
+                        memberList.Add(
+                            new PropertyDeclaration(
+                                property.Name,
+                                propertyType,
+                                new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
+                                attributes,
+                                property.CanRead,
+                                property.CanWrite));
+                    }
                 }
 
                 foreach (var method in declaration.GetData<Type>().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))

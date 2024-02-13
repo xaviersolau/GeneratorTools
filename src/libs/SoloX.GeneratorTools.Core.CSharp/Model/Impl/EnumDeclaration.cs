@@ -37,7 +37,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             IUsingDirectives usingDirectives,
             string location,
             AEnumDeclarationLoader loader)
-            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location, true)
+            : base(nameSpace, name, syntaxNodeProvider, usingDirectives, location, true, false)
         {
             this.loader = loader;
         }

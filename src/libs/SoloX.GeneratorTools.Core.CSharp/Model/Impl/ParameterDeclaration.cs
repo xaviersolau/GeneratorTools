@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="parameterType">The parameter type use declaration.</param>
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         public ParameterDeclaration(string name, IDeclarationUse<SyntaxNode> parameterType, ISyntaxNodeProvider<ParameterSyntax> syntaxNodeProvider)
-            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false)
+            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false, false)
         {
             this.ParameterType = parameterType;
         }

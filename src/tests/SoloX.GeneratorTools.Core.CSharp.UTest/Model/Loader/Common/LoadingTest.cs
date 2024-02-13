@@ -38,12 +38,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             this.testOutputHelper = testOutputHelper;
         }
 
-        public static void AssertGenericTypeLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, Type? baseType)
+        public static void AssertGenericTypeLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, Type? baseType, bool isRecord)
             where TSyntaxNode : SyntaxNode
         {
             Assert.Equal(
                 ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name),
                 declaration.Name);
+
+            declaration.IsRecordType.Should().Be(isRecord);
 
             Assert.NotNull(declaration.SyntaxNodeProvider);
             Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
@@ -146,6 +148,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
 
             Assert.Empty(classDeclaration.GenericParameters);
+
             Assert.Empty(classDeclaration.Extends);
 
             Assert.NotEmpty(classDeclaration.Members);
@@ -181,6 +184,48 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             {
                 Assert.Null(pClass.PropertyType.ArraySpecification);
                 Assert.Null(pInt.PropertyType.ArraySpecification);
+            }
+        }
+
+        public void AssertRecordPropertyListLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type recordType)
+            where TSyntaxNode : SyntaxNode
+        {
+            var declarationResolver = this.SetupDeclarationResolver(
+                declaration,
+                (mock) =>
+                {
+                    var nullableMock = new Mock<IGenericDeclaration<TSyntaxNode>>();
+                    nullableMock.Setup(d => d.Name).Returns("Nullable");
+
+                    mock
+                        .Setup(dr => dr.Resolve("System.Nullable", It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
+                        .Returns(nullableMock.Object);
+
+                    mock
+                        .Setup(dr => dr.Resolve(typeof(Nullable<int>)))
+                        .Returns(nullableMock.Object);
+                },
+                typeof(SimpleClass));
+
+            declaration.IsRecordType.Should().BeTrue();
+
+            declaration.DeepLoad(declarationResolver);
+
+            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+
+            Assert.Empty(classDeclaration.GenericParameters);
+
+            classDeclaration.Extends.Should().BeEmpty();
+
+            Assert.NotEmpty(classDeclaration.Members);
+
+            classDeclaration.Properties.Should().HaveCount(recordType.GetProperties().Length);
+
+            var props = new HashSet<string>(recordType.GetProperties().Select(p => p.Name));
+
+            foreach (var property in classDeclaration.Properties)
+            {
+                props.Contains(property.Name).Should().BeTrue();
             }
         }
 

@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="name">The declaration name.</param>
         /// <param name="syntaxNodeProvider">The declaration syntax node provider.</param>
         public GenericParameterDeclaration(string name, ISyntaxNodeProvider<TypeParameterSyntax> syntaxNodeProvider)
-            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false)
+            : base(string.Empty, name, syntaxNodeProvider, NoUsingDirectives.Instance, null, false, false)
         {
         }
 

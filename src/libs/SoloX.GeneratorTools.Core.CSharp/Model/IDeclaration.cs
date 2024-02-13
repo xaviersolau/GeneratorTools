@@ -41,6 +41,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         bool IsValueType { get; }
 
         /// <summary>
+        /// Tells if this is a record type.
+        /// </summary>
+        bool IsRecordType { get; }
+
+        /// <summary>
         /// Gets the declaration syntax node provider.
         /// </summary>
         ISyntaxNodeProvider<TNode> SyntaxNodeProvider { get; }

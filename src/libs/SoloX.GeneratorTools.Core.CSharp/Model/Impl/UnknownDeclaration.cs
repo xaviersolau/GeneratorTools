@@ -22,7 +22,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="nameSpace">The declaration name space.</param>
         /// <param name="name">The name of the unknown declaration.</param>
         public UnknownDeclaration(string nameSpace, string name)
-            : base(nameSpace, name, null, NoUsingDirectives.Instance, null, false)
+            : base(nameSpace, name, null, NoUsingDirectives.Instance, null, false, false)
         {
         }
 
@@ -31,7 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// </summary>
         /// <param name="name">The name of the unknown declaration.</param>
         public UnknownDeclaration(string name)
-            : base(string.Empty, name, null, NoUsingDirectives.Instance, null, false)
+            : base(string.Empty, name, null, NoUsingDirectives.Instance, null, false, false)
         {
         }
 

@@ -106,6 +106,12 @@
     <Compile Update="Resources\Model\Basic\Classes\RepeatAttributedClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\SimpleConstructorClassWithBase.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Classes\SimpleConstructorClass.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources\Model\Basic\Enums\EnumWithBaseType.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -125,6 +131,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Model\Basic\Enums\SimpleEnum.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Records\ConstructorRecord.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Resources\Model\Basic\Structs\SimpleStruct.cs">

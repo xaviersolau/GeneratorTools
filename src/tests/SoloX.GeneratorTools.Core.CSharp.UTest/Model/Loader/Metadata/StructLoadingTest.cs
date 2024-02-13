@@ -38,7 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         {
             var structDeclaration = LoadStructDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType);
+            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType, false);
         }
 
         private IStructDeclaration LoadStructDeclaration(Type type)

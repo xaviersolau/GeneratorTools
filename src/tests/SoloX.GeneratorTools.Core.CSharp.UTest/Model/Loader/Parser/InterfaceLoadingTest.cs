@@ -43,7 +43,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         {
             var declaration = LoadInterfaceDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(declaration, type, baseType);
+            LoadingTest.AssertGenericTypeLoaded(declaration, type, baseType, false);
         }
 
         [Theory]

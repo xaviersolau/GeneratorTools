@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using SoloX.GeneratorTools.Core.CSharp.Exceptions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -161,6 +162,64 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
                         attributes));
                 }
             }
+        }
+
+        public override void VisitRecordDeclaration(RecordDeclarationSyntax node)
+        {
+            this.Visit(node.ParameterList);
+        }
+
+        public override void VisitParameterList(ParameterListSyntax node)
+        {
+            foreach (var parameter in node.Parameters)
+            {
+                Visit(parameter);
+            }
+        }
+
+        public override void VisitParameter(ParameterSyntax node)
+        {
+            var identifier = node.Identifier.ToString();
+
+            var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+            var use = useWalker.Visit(node.Type);
+
+            if (use == null)
+            {
+                throw new ParserException("Unable to load Declaration use.", node.Type);
+            }
+
+            var canRead = true;
+            var canWrite = false;
+
+            var attributeList = new List<IAttributeUse>();
+            var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+
+            attributesWalker.Visit(node);
+
+            var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
+            this.memberList.Add(new PropertyDeclaration(
+                identifier,
+                use,
+                new ParserSyntaxNodeProvider<PropertyDeclarationSyntax>(GeneratePropertyDeclarationSyntax(node.Type.ToString(), identifier)),
+                attributes,
+                canRead,
+                canWrite));
+        }
+
+        private static PropertyDeclarationSyntax GeneratePropertyDeclarationSyntax(string typeText, string identifier)
+        {
+            var node = GetSyntaxNode($"public {typeText} {identifier} {{ get; }}");
+            return (PropertyDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single();
+        }
+
+        private static SyntaxNode GetSyntaxNode(string text)
+        {
+            var src = SourceText.From(text);
+            var syntaxTree = CSharpSyntaxTree.ParseText(src);
+
+            return syntaxTree.GetRoot();
         }
 
         private IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
