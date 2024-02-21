@@ -17,6 +17,7 @@ using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using System;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
+using Microsoft.Extensions.Logging;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Extensions
 {
@@ -29,8 +30,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
         /// Add dependency injections for the CSharp tools generator.
         /// </summary>
         /// <param name="services">The service collection where to setup dependencies.</param>
+        /// <param name="loggerFactory">Specific logger factory to use or null.</param>
         /// <returns>The input services once setup is done.</returns>
-        public static IServiceCollection AddCSharpToolsGenerator(this IServiceCollection services)
+        public static IServiceCollection AddCSharpToolsGenerator(this IServiceCollection services, ILoggerFactory loggerFactory = null)
         {
             if (services == null)
             {
@@ -72,7 +74,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
                 .AddSingleton<IParserDeclarationFactory, ParserDeclarationFactory>()
                 .AddSingleton<ICSharpWorkspaceItemFactory, CSharpWorkspaceItemFactory>()
                 .AddTransient<ICSharpWorkspaceFactory, CSharpWorkspaceFactory>()
-                .AddTransient<IGeneratorLoggerFactory, GeneratorLoggerFactory>();
+                .AddTransient<IGeneratorLoggerFactory>(
+                    r =>
+                    {
+                        if (loggerFactory != null)
+                        {
+                            return new GeneratorLoggerFactory(loggerFactory);
+                        }
+                        return new GeneratorLoggerFactory(r.GetRequiredService<ILoggerFactory>());
+                    });
         }
     }
 }

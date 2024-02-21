@@ -1,0 +1,39 @@
+---------------------
+AwaitStatementSimpleSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="AwaitStatementSimpleSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System.Threading.Tasks;
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class AwaitStatementSimpleSample : ISimpleSample
+    {
+        public int Property1 { get; set; }
+        public double Property2 { get; set; }
+
+        public static async Task Property1WithAwaitStatement(bool withSomeArguments)
+        {
+            if (withSomeArguments)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+            }
+        }
+
+        public static async Task Property2WithAwaitStatement(bool withSomeArguments)
+        {
+            if (withSomeArguments)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+            }
+        }
+    }
+}
+

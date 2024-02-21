@@ -47,6 +47,9 @@
     <Compile Update="Generator\Automated\Patterns\Impl\SimpleMethod6Pattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Generator\Automated\Patterns\Impl\Statement\TryStatementSimplePattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,38 @@
+---------------------
+SimpleSampleWithConstructor
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleSampleWithConstructor.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleSampleWithConstructor : PatternBaseClass, ISimpleSample
+    {
+        public SimpleSampleWithConstructor(int args)
+            : base(args)
+        {
+        }
+
+        public int Property1 { get; set; }
+
+        public double Property2 { get; set; }
+    }
+
+    public class PatternBaseClass
+    {
+        public PatternBaseClass(int args)
+        {
+            Args = args;
+        }
+
+        public int Args { get; }
+    }
+}
+

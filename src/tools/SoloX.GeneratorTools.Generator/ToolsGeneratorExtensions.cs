@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
 using SoloX.GeneratorTools.Generator.Impl;
 
@@ -21,8 +22,9 @@ namespace SoloX.GeneratorTools.Generator
         /// Add dependency injections for the state generator.
         /// </summary>
         /// <param name="services">The service collection where to setup dependencies.</param>
+        /// <param name="loggerFactory">Specific logger factory to use or null.</param>
         /// <returns>The input services once setup is done.</returns>
-        public static IServiceCollection AddToolsGenerator(this IServiceCollection services)
+        public static IServiceCollection AddToolsGenerator(this IServiceCollection services, ILoggerFactory loggerFactory = null)
         {
             return services
                 .AddCSharpToolsGenerator()

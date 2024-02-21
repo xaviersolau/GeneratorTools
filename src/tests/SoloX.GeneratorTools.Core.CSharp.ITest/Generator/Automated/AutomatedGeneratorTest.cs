@@ -191,6 +191,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleWithConstructorTest()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithConstructor.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimplePatternWithConstructor),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleWithConstructorTest),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedSimpleWithCreateTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
@@ -323,11 +340,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 
         [Theory]
         [InlineData("If")]
+        [InlineData("Try")]
+        [InlineData("Await")]
         [InlineData("PackedIf")]
         [InlineData("ForEach")]
         [InlineData("For")]
         [InlineData("PackedForEach")]
         [InlineData("Throw")]
+        [InlineData("Lambda")]
+        [InlineData("Lambda2")]
         public void GenerateStatementTest(string statement)
         {
             GenerateSimpleSample(statement, "Statement");

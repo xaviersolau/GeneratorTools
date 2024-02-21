@@ -1,0 +1,35 @@
+---------------------
+LambdaStatementSimpleSample
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="LambdaStatementSimpleSample.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class LambdaStatementSimpleSample : ISimpleSample
+    {
+        public int Property1 { get; set; }
+        public double Property2 { get; set; }
+
+        public int Property1WithLambdaStatement(ReadOnlyCollection<int> items)
+        {
+            return items.Count(i => i == Property1);
+        }
+
+        public int Property2WithLambdaStatement(ReadOnlyCollection<double> items)
+        {
+            return items.Count(i => i == Property2);
+        }
+    }
+}
+

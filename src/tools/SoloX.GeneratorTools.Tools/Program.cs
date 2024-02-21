@@ -6,10 +6,12 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System.Globalization;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using SoloX.GeneratorTools.Generator;
 
 namespace SoloX.GeneratorTools.Tools
@@ -30,11 +32,23 @@ namespace SoloX.GeneratorTools.Tools
         {
             this.configuration = configuration;
 
+            var fileLogger = new LoggerConfiguration()
+                .WriteTo
+                .File("logs.txt", formatProvider: CultureInfo.InvariantCulture)
+                .CreateLogger();
+
+            using var loggerFactory = LoggerFactory.Create(
+                b =>
+                {
+                    b.ClearProviders();
+                    b.AddSerilog(fileLogger);
+                });
+
             IServiceCollection sc = new ServiceCollection();
 
             sc.AddLogging(b => b.AddConsole());
             sc.AddSingleton(configuration);
-            sc.AddToolsGenerator();
+            sc.AddToolsGenerator(loggerFactory);
 
             this.Service = sc.BuildServiceProvider();
 
