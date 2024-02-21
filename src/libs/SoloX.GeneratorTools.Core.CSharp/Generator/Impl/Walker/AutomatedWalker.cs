@@ -522,6 +522,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             base.VisitInvocationExpression(node);
         }
 
+        public override void VisitAwaitExpression(AwaitExpressionSyntax node)
+        {
+            WriteToken(node.AwaitKeyword);
+            Visit(node.Expression);
+        }
+
         public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
         {
             if (!ProcessRepeatAffectation(node))
@@ -772,6 +778,92 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteNode(node);
         }
 
+        public override void VisitTryStatement(TryStatementSyntax node)
+        {
+            this.WriteToken(node.TryKeyword);
+            this.Visit(node.Block);
+
+            if (node.Catches != null)
+            {
+                foreach (var catche in node.Catches)
+                {
+                    this.Visit(catche);
+                }
+            }
+
+            if (node.Finally != null)
+            {
+                this.Visit(node.Finally);
+            }
+        }
+
+        public override void VisitCatchClause(CatchClauseSyntax node)
+        {
+            this.WriteToken(node.CatchKeyword);
+
+            if (node.Declaration != null)
+            {
+                this.Visit(node.Declaration);
+            }
+
+            this.Visit(node.Block);
+        }
+
+        public override void VisitCatchDeclaration(CatchDeclarationSyntax node)
+        {
+            this.WriteToken(node.OpenParenToken);
+
+            this.Visit(node.Type);
+
+            if (node.Identifier != null)
+            {
+                this.VisitToken(node.Identifier);
+            }
+
+            this.WriteToken(node.CloseParenToken);
+        }
+
+        public override void VisitQualifiedName(QualifiedNameSyntax node)
+        {
+            this.Visit(node.Left);
+            this.WriteToken(node.DotToken);
+            this.Visit(node.Right);
+        }
+
+        public override void VisitFinallyClause(FinallyClauseSyntax node)
+        {
+            this.WriteToken(node.FinallyKeyword);
+            this.Visit(node.Block);
+        }
+
+        public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
+        {
+            if (node.AsyncKeyword != null)
+            {
+                this.WriteToken(node.AsyncKeyword);
+            }
+
+            this.WriteParameter(node.Parameter);
+
+            this.WriteToken(node.ArrowToken);
+
+            this.Visit(node.Body);
+        }
+
+        public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
+        {
+            if (node.AsyncKeyword != null)
+            {
+                this.WriteToken(node.AsyncKeyword);
+            }
+
+            this.Visit(node.ParameterList);
+
+            this.WriteToken(node.ArrowToken);
+
+            this.Visit(node.Body);
+        }
+
         private bool ProcessRepeatAffectation(LocalDeclarationStatementSyntax node)
         {
             if (node.Declaration.Variables.Count > 1)
@@ -1009,6 +1101,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.Write(node.Modifiers.ToFullString());
             this.WriteToken(node.Identifier);
             this.WriteNode(node.ParameterList);
+
+            if (node.Initializer != null)
+            {
+                this.WriteToken(node.Initializer.ColonToken);
+                this.WriteToken(node.Initializer.ThisOrBaseKeyword);
+                this.Visit(node.Initializer.ArgumentList);
+            }
+
             this.Visit(node.Body);
         }
 
@@ -1142,7 +1242,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             this.WriteAttributeLists(node.AttributeLists);
 
             this.Write(node.Modifiers.ToFullString());
-            this.Write(node.Type.ToFullString());
+
+            if (node.Type != null)
+            {
+                this.Write(node.Type.ToFullString());
+            }
+
             this.Write(node.Identifier.ToFullString());
 
             if (node.Default != null)

@@ -1,0 +1,52 @@
+---------------------
+TryStatementSimpleSample
+---------------------
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class TryStatementSimpleSample : ISimpleSample
+    {
+        public int Property1 { get; set; }
+        public double Property2 { get; set; }
+
+        public void Property1Statement(bool withSomeArguments)
+        {
+            try
+            {
+                if (withSomeArguments)
+                {
+                    Property1 = default;
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+            }
+        }
+
+        public void Property2Statement(bool withSomeArguments)
+        {
+            try
+            {
+                if (withSomeArguments)
+                {
+                    Property2 = default;
+                }
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+            }
+        }
+    }
+}
+
