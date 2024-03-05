@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="IConstantDeclaration.cs" company="Xavier Solau">
+// <copyright file="INamedMemberDeclaration.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -7,19 +7,19 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model
 {
     /// <summary>
-    /// Property declaration interface.
+    /// Named member declaration base interface.
     /// </summary>
-    public interface IConstantDeclaration : INamedMemberDeclaration<VariableDeclaratorSyntax>
+    /// <typeparam name="TNode">Syntax Node type (based on SyntaxNode).</typeparam>
+    public interface INamedMemberDeclaration<out TNode> : IMemberDeclaration<TNode>
+        where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the property type.
+        /// Gets the member name.
         /// </summary>
-        IDeclarationUse<SyntaxNode> ConstantType { get; }
+        string Name { get; }
     }
 }

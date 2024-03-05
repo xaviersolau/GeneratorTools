@@ -20,11 +20,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         where TNode : SyntaxNode
     {
         /// <summary>
-        /// Gets the member name.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Gets the used declaration attributes.
         /// </summary>
         IReadOnlyList<IAttributeUse> Attributes { get; }

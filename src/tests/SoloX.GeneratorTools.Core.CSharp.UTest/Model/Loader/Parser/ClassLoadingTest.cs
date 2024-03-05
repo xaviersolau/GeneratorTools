@@ -79,6 +79,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         }
 
         [Theory]
+        [InlineData(typeof(ClassWithIndexer))]
+        public void ItShouldLoadIndexer(Type type)
+        {
+            var classDeclaration = LoadClassDeclaration(type);
+
+            this.loadingTest.AssertIndexerLoaded(classDeclaration);
+        }
+
+        [Theory]
         [InlineData(typeof(ClassWithConstants), 2, nameof(ClassWithConstants.ValueString))]
         [InlineData(typeof(ClassWithConstants), 2, nameof(ClassWithConstants.ValueInt))]
         public void ItShouldLoadConstantList(Type type, int nbConst, string nameOfConst)
