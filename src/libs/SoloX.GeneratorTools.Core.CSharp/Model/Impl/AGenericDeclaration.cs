@@ -81,6 +81,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             => this.Members.OfType<IConstantDeclaration>().ToArray();
 
         /// <inheritdoc/>
+        public IReadOnlyCollection<IIndexerDeclaration> Indexers
+            => this.Members.OfType<IIndexerDeclaration>().ToArray();
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<INamedMemberDeclaration<SyntaxNode>> NamedMembers
+            => this.Members.OfType<INamedMemberDeclaration<SyntaxNode>>().ToArray();
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             if (this.Extends?.Count > 0)

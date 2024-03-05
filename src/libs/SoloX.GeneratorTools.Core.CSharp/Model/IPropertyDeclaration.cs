@@ -15,7 +15,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
     /// <summary>
     /// Property declaration interface.
     /// </summary>
-    public interface IPropertyDeclaration : IMemberDeclaration<PropertyDeclarationSyntax>
+    public interface IPropertyDeclaration : INamedMemberDeclaration<PropertyDeclarationSyntax>
     {
         /// <summary>
         /// Gets the property type.

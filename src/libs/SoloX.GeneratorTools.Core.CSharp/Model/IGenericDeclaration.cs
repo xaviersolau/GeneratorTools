@@ -47,6 +47,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         IReadOnlyCollection<IMemberDeclaration<SyntaxNode>> Members { get; }
 
         /// <summary>
+        /// Gets the member list.
+        /// </summary>
+        IReadOnlyCollection<INamedMemberDeclaration<SyntaxNode>> NamedMembers { get; }
+
+        /// <summary>
         /// Gets the property list.
         /// </summary>
         IReadOnlyCollection<IPropertyDeclaration> Properties { get; }
@@ -60,5 +65,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model
         /// Gets the constant list.
         /// </summary>
         IReadOnlyCollection<IConstantDeclaration> Constants { get; }
+
+        /// <summary>
+        /// Gets the indexer list.
+        /// </summary>
+        IReadOnlyCollection<IIndexerDeclaration> Indexers { get; }
     }
 }

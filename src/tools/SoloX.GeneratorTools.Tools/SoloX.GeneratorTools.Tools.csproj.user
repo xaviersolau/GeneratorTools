@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>JsonLocalizer</ActiveDebugProfile>
+    <ActiveDebugProfile>BlazorJsonLocalization</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

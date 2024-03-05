@@ -28,7 +28,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         protected override MethodDeclarationSyntax Generate()
         {
-            var node = GetSyntaxNode($"public {this.methodTypeNodeProvider.SyntaxNode.ToString()} {this.method.Name} {{ get; set; }}");
+            var methodParameters = this.method.GetParameters();
+            var node = GetSyntaxNode($"public {this.methodTypeNodeProvider.SyntaxNode.ToString()} {this.method.Name}({string.Join(",", methodParameters.Select(x => x.ParameterType.FullName + " " + x.Name))}) {{}}");
             return (MethodDeclarationSyntax)((CompilationUnitSyntax)node).Members.Single();
         }
     }

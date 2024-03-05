@@ -16,7 +16,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
     /// <summary>
     /// Property declaration implementation.
     /// </summary>
-    public class PropertyDeclaration : AMemberDeclaration<PropertyDeclarationSyntax>, IPropertyDeclaration
+    public class PropertyDeclaration : ANamedMemberDeclaration<PropertyDeclarationSyntax>, IPropertyDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyDeclaration"/> class.

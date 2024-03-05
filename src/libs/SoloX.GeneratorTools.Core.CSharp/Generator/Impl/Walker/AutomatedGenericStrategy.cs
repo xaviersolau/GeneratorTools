@@ -130,8 +130,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
             // get the member from the current pattern generic definition.
             var repeatPatternMember = string.IsNullOrEmpty(patternName)
-                ? this.pattern.Members.Single()
-                : this.pattern.Members.First(p => p.Name == patternName);
+                ? this.pattern.NamedMembers.Single()
+                : this.pattern.NamedMembers.First(p => p.Name == patternName);
 
             ISelector selector;
 
@@ -228,8 +228,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
 
             var repeatPatternMember = string.IsNullOrEmpty(pName)
-                ? this.pattern.Members.SingleOrDefault()
-                : this.pattern.Members.FirstOrDefault(p => p.Name == pName);
+                ? this.pattern.NamedMembers.SingleOrDefault()
+                : this.pattern.NamedMembers.FirstOrDefault(p => p.Name == pName);
 
             if (repeatPatternMember == null)
             {

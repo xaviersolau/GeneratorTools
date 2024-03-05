@@ -210,14 +210,35 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                 {
                     var propertyType = propertySignature.ReturnType;
 
-                    memberList.Add(
-                        new PropertyDeclaration(
-                            propertyName,
-                            propertyType,
-                            new MetadataPropertySyntaxNodeProvider<PropertyDeclarationSyntax>(),
-                            attributeList,
-                            !getterHandle.IsNil,
-                            !setterHandle.IsNil));
+                    // check propertySignature with Arguments ==> Indexer
+                    if (propertySignature.ParameterTypes.Length > 0)
+                    {
+                        var methodDefinition = metadataReader.GetMethodDefinition(getterHandle);
+
+                        var parameters = LoadParameters(metadataReader, methodDefinition, propertySignature, declaration, resolver, out var returnAttributes);
+
+                        memberList.Add(
+                            new IndexerDeclaration(
+                                propertyType,
+                                new MetadataIndexerSyntaxNodeProvider<IndexerDeclarationSyntax>(),
+                                parameters,
+                                attributeList,
+                                returnAttributes,
+                                !getterHandle.IsNil,
+                                !setterHandle.IsNil));
+                    }
+                    else
+                    {
+
+                        memberList.Add(
+                            new PropertyDeclaration(
+                                propertyName,
+                                propertyType,
+                                new MetadataPropertySyntaxNodeProvider<PropertyDeclarationSyntax>(),
+                                attributeList,
+                                !getterHandle.IsNil,
+                                !setterHandle.IsNil));
+                    }
                 }
             }
         }

@@ -254,9 +254,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodInfo method, IDeclarationResolver resolver, IReadOnlyCollection<IGenericParameterDeclaration> methodGenericParameters)
         {
-            IReadOnlyCollection<IParameterDeclaration> parameters;
-
             var paramInfos = method.GetParameters();
+            return LoadParameters(paramInfos, resolver, methodGenericParameters);
+        }
+
+        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(PropertyInfo property, IDeclarationResolver resolver)
+        {
+            var paramInfos = property.GetIndexParameters();
+            return LoadParameters(paramInfos, resolver, Array.Empty<IGenericParameterDeclaration>());
+        }
+
+        private static IReadOnlyCollection<IParameterDeclaration> LoadParameters(ParameterInfo[] paramInfos, IDeclarationResolver resolver, IReadOnlyCollection<IGenericParameterDeclaration> methodGenericParameters)
+        {
+            IReadOnlyCollection<IParameterDeclaration> parameters;
 
             if (paramInfos != null && paramInfos.Length > 0)
             {
@@ -380,7 +390,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             try
             {
-                foreach (var field in declaration.GetData<Type>().GetFields().Where(f => f.IsStatic && f.IsLiteral))
+                var declarationType = declaration.GetData<Type>();
+
+                foreach (var field in declarationType.GetFields().Where(f => f.IsStatic && f.IsLiteral))
                 {
                     var attributes = LoadCustomAttributes(resolver, field.CustomAttributes);
 
@@ -393,7 +405,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                             attributes));
                 }
 
-                foreach (var property in declaration.GetData<Type>().GetProperties())
+                foreach (var property in declarationType.GetProperties())
                 {
                     var attributes = LoadCustomAttributes(resolver, property.CustomAttributes);
 
@@ -402,38 +414,64 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
                     if (compilerAttribute == null)
                     {
                         var propertyType = GetDeclarationUseFrom(property.PropertyType, resolver, null);
-                        memberList.Add(
-                            new PropertyDeclaration(
-                                property.Name,
-                                propertyType,
-                                new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
-                                attributes,
-                                property.CanRead,
-                                property.CanWrite));
+
+                        // check Indexer Property with Arguments
+                        var indexerParameters = property.GetIndexParameters();
+
+                        if (indexerParameters.Length > 0)
+                        {
+                            var parameters = LoadParameters(property, resolver);
+
+                            var returnAttributes = LoadCustomAttributes(resolver, property.PropertyType.CustomAttributes);
+
+                            memberList.Add(
+                                new IndexerDeclaration(
+                                    propertyType,
+                                    new ReflectionIndexerSyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
+                                    parameters,
+                                    attributes,
+                                    returnAttributes,
+                                    property.CanRead,
+                                    property.CanWrite));
+                        }
+                        else
+                        {
+                            memberList.Add(
+                                new PropertyDeclaration(
+                                    property.Name,
+                                    propertyType,
+                                    new ReflectionPropertySyntaxNodeProvider(property, propertyType.SyntaxNodeProvider),
+                                    attributes,
+                                    property.CanRead,
+                                    property.CanWrite));
+                        }
                     }
                 }
 
-                foreach (var method in declaration.GetData<Type>().GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+                foreach (var method in declarationType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
                 {
-                    var genericParameters = LoadGenericParameters(method);
+                    if (!method.IsSpecialName)
+                    {
+                        var genericParameters = LoadGenericParameters(method);
 
-                    var returnType = GetDeclarationUseFrom(method.ReturnType, resolver, genericParameters);
+                        var returnType = GetDeclarationUseFrom(method.ReturnType, resolver, genericParameters);
 
-                    var parameters = LoadParameters(method, resolver, genericParameters);
+                        var parameters = LoadParameters(method, resolver, genericParameters);
 
-                    var attributes = LoadCustomAttributes(resolver, method.CustomAttributes);
+                        var attributes = LoadCustomAttributes(resolver, method.CustomAttributes);
 
-                    var returnAttributes = LoadCustomAttributes(resolver, method.ReturnParameter.CustomAttributes);
+                        var returnAttributes = LoadCustomAttributes(resolver, method.ReturnParameter.CustomAttributes);
 
-                    memberList.Add(
-                        new MethodDeclaration(
-                            method.Name,
-                            returnType,
-                            new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider),
-                            genericParameters,
-                            parameters,
-                            attributes,
-                            returnAttributes));
+                        memberList.Add(
+                            new MethodDeclaration(
+                                method.Name,
+                                returnType,
+                                new ReflectionMethodSyntaxNodeProvider(method, returnType.SyntaxNodeProvider),
+                                genericParameters,
+                                parameters,
+                                attributes,
+                                returnAttributes));
+                    }
                 }
             }
             catch (TypeLoadException e)

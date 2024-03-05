@@ -177,6 +177,75 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
             }
         }
 
+        public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
+        {
+            if (node.Modifiers.All(m => m.Kind() != SyntaxKind.PrivateKeyword))
+            {
+                var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
+                var use = useWalker.Visit(node.Type);
+
+                if (use == null)
+                {
+                    throw new ParserException("Unable to load Declaration use.", node.Type);
+                }
+
+                var parameters = LoadParameters(node, useWalker);
+
+                var attributeList = new List<IAttributeUse>();
+                var attributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, attributeList);
+                foreach (var attributeItem in node.AttributeLists)
+                {
+                    if (attributeItem.Target == null)
+                    {
+                        attributesWalker.Visit(attributeItem);
+                    }
+                }
+
+                var attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
+
+                var returnAttributeList = new List<IAttributeUse>();
+                var returnAttributesWalker = new AttributesWalker(this.resolver, this.genericDeclaration, returnAttributeList);
+                foreach (var attributeItem in node.AttributeLists)
+                {
+                    if (attributeItem.Target != null)
+                    {
+                        returnAttributesWalker.Visit(attributeItem);
+                    }
+                }
+
+                var canRead = false;
+                var canWrite = false;
+
+                if (node.AccessorList != null)
+                {
+                    canRead = node.AccessorList.Accessors.FirstOrDefault(a => a.Kind() == SyntaxKind.GetAccessorDeclaration) != null;
+                    canWrite = node.AccessorList.Accessors.LastOrDefault(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) != null;
+                }
+                else if (node.ExpressionBody != null)
+                {
+                    canRead = true;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                this.memberList.Add(new IndexerDeclaration(
+                    use,
+                    new ParserSyntaxNodeProvider<IndexerDeclarationSyntax>(node),
+                    parameters,
+                    attributes,
+                    returnAttributeList,
+                    canRead,
+                    canWrite));
+            }
+        }
+
+        public override void VisitEventDeclaration(EventDeclarationSyntax node)
+        {
+            base.VisitEventDeclaration(node);
+        }
+
         public override void VisitParameter(ParameterSyntax node)
         {
             var identifier = node.Identifier.ToString();
@@ -224,8 +293,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker
 
         private IReadOnlyCollection<IParameterDeclaration> LoadParameters(MethodDeclarationSyntax node, DeclarationUseWalker useWalker)
         {
-            IReadOnlyCollection<IParameterDeclaration> parameters;
             var parameterList = node.ParameterList?.Parameters;
+            return LoadParameters(parameterList, useWalker);
+        }
+
+        private IReadOnlyCollection<IParameterDeclaration> LoadParameters(IndexerDeclarationSyntax node, DeclarationUseWalker useWalker)
+        {
+            var parameterList = node.ParameterList?.Parameters;
+            return LoadParameters(parameterList, useWalker);
+        }
+
+        private IReadOnlyCollection<IParameterDeclaration> LoadParameters(SeparatedSyntaxList<ParameterSyntax>? parameterList, DeclarationUseWalker useWalker)
+        {
+            IReadOnlyCollection<IParameterDeclaration> parameters;
             if (parameterList != null && parameterList.Value.Any())
             {
                 var parameterSet = new List<IParameterDeclaration>();
