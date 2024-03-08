@@ -39,7 +39,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Extensions
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.Add(ServiceDescriptor.Transient(typeof(IGeneratorLogger<>), typeof(GeneratorLogger<>)));
+            services.Add(ServiceDescriptor.Transient(typeof(IGeneratorLogger<>), typeof(InjectedGeneratorLogger<>)));
 
             return services
                 .AddSingleton<

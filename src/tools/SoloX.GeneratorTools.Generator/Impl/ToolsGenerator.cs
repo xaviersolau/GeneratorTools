@@ -42,14 +42,14 @@ namespace SoloX.GeneratorTools.Generator.Impl
         {
             var projectFolder = Path.GetDirectoryName(projectFile);
 
-            this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
+            this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}");
 
             var workspace = this.workspaceFactory.CreateWorkspace();
 
             var project = workspace.RegisterProject(projectFile);
 
             var locator = new RelativeLocator(projectFolder, project.RootNameSpace, suffix: "Impl");
-            var fileGenerator = new FileWriter(".generated.cs");
+            var fileGenerator = new FileWriter(".generated.cs", file => this.logger.LogInformation($"Generated file: {file}"));
 
             // Generate with a filter on current project interface declarations.
             this.Generate(
@@ -57,16 +57,24 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 locator,
                 fileGenerator,
                 project.Files);
+
+            this.logger.LogInformation($"Generation completed");
         }
 
         internal void Generate(ICSharpWorkspace workspace, RelativeLocator locator, IWriter fileGenerator, IEnumerable<ICSharpFile> files)
         {
+            this.logger.LogInformation($"Registering patterns");
+
             workspace.RegisterFile(GetContentFile("./Patterns/Itf/IObjectPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Itf/IFactoryPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/FactoryPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/ObjectPattern.cs"));
 
+            this.logger.LogInformation($"Deep loading");
+
             var resolver = workspace.DeepLoad();
+
+            this.logger.LogInformation($"Generating Factory interfaces");
 
             var generator1 = new AutomatedGenerator(
                 fileGenerator,
@@ -77,6 +85,8 @@ namespace SoloX.GeneratorTools.Generator.Impl
 
             var generatedItems1 = generator1.Generate(files);
 
+            this.logger.LogInformation($"Generating Factory implementations");
+
             var generator2 = new AutomatedGenerator(
                 fileGenerator,
                 locator,
@@ -85,6 +95,8 @@ namespace SoloX.GeneratorTools.Generator.Impl
                 this.logger);
 
             var generatedItems2 = generator2.Generate(files);
+
+            this.logger.LogInformation($"Generating Object implementations");
 
             var generator3 = new AutomatedGenerator(
                 fileGenerator,

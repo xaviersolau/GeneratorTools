@@ -22,6 +22,9 @@
             <param name="args">Tools arguments.</param>
             <returns>Error code.</returns>
         </member>
+        <member name="M:SoloX.GeneratorTools.Tools.Program.Dispose">
+            <inheritdoc/>
+        </member>
         <member name="M:SoloX.GeneratorTools.Tools.Program.Run">
             <summary>
             Run the tools command.

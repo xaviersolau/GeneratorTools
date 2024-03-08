@@ -27,7 +27,7 @@ namespace SoloX.GeneratorTools.Generator
         public static IServiceCollection AddToolsGenerator(this IServiceCollection services, ILoggerFactory loggerFactory = null)
         {
             return services
-                .AddCSharpToolsGenerator()
+                .AddCSharpToolsGenerator(loggerFactory)
                 .AddTransient<IToolsGenerator, ToolsGenerator>();
         }
     }

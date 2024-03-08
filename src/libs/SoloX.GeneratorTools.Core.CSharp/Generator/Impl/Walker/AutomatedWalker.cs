@@ -17,6 +17,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 {
@@ -26,7 +27,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private readonly TextWriter textWriter;
         private readonly IDeclaration<SyntaxNode> pattern;
-
+        private readonly IGeneratorLogger logger;
         private readonly Stack<IReplacePatternHandler> strategiesReplacePatternHandlers = new Stack<IReplacePatternHandler>();
 
         private class StrategyCount
@@ -50,13 +51,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// <param name="textWriter">The writer where to write generated code.</param>
         /// <param name="pattern">The pattern reference.</param>
         /// <param name="strategy">Automated strategy that manage repeat feature.</param>
+        /// <param name="logger">logger instance.</param>
         public AutomatedWalker(
             TextWriter textWriter,
             IDeclaration<SyntaxNode> pattern,
-            IAutomatedStrategy strategy)
+            IAutomatedStrategy strategy,
+            IGeneratorLogger logger)
         {
             this.textWriter = textWriter;
             this.pattern = pattern;
+            this.logger = logger;
             this.strategies = new Stack<StrategyCount>();
             this.strategies.Push(new StrategyCount(strategy));
 

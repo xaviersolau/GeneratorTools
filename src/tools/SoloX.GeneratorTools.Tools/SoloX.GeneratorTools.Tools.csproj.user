@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>BlazorJsonLocalization</ActiveDebugProfile>
+    <ActiveDebugProfile>SoloX.GeneratorTools.Tools</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

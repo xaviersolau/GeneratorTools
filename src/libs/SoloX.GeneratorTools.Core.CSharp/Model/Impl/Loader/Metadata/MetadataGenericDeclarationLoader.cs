@@ -52,6 +52,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
+            this.logger.LogDebug($"Loading {declaration.FullName} from assembly Metadata");
+
             var assemblyPath = declaration.Location;
 
             using var portableExecutableReader = new PEReader(File.OpenRead(assemblyPath));
