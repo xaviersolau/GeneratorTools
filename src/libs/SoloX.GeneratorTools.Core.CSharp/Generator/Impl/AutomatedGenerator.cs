@@ -130,7 +130,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                         var generatorWalker = new AutomatedWalker(
                             writer,
                             this.pattern,
-                            strategy);
+                            strategy,
+                            this.logger);
 
                         generatorWalker.Visit(this.pattern.SyntaxNodeProvider.SyntaxNode.SyntaxTree.GetRoot());
                     });
@@ -166,7 +167,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
                     var generatorWalker = new AutomatedWalker(
                         writer,
                         this.pattern,
-                        strategy);
+                        strategy,
+                        this.logger);
 
                     generatorWalker.Visit(this.pattern.SyntaxNodeProvider.SyntaxNode.SyntaxTree.GetRoot());
                 });

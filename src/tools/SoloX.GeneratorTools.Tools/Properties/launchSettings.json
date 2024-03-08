@@ -2,8 +2,8 @@
   "profiles": {
     "SoloX.GeneratorTools.Tools": {
       "commandName": "Project",
-      "commandLineArgs": "--project SoloX.GeneratorTools.Generator.Sample2.csproj",
-      "workingDirectory": "C:\\Work\\Net\\GeneratorTools\\src\\tools\\SoloX.GeneratorTools.Generator.Sample2"
+      "commandLineArgs": "--project SoloX.GeneratorTools.Generator.Sample.csproj",
+      "workingDirectory": "C:\\Work\\Net\\GeneratorTools\\src\\tools\\SoloX.GeneratorTools.Generator.Sample"
     },
     "JsonLocalizer": {
       "commandName": "Project",

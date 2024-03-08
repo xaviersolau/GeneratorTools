@@ -182,6 +182,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
         internal override void Load(AGenericDeclaration<TNode> declaration, IDeclarationResolver resolver)
         {
+            this.logger.LogDebug($"Loading {declaration.FullName} from reflection");
+
             LoadGenericParameters(declaration);
             LoadExtends(declaration, resolver);
             LoadMembers(declaration, resolver);

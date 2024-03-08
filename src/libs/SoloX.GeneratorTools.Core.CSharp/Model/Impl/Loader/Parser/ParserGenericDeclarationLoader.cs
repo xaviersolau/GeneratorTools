@@ -35,13 +35,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
         {
             try
             {
+                this.logger.LogDebug($"Loading {declaration.FullName} from source code");
+
                 LoadGenericParameters(declaration);
                 LoadExtends(declaration, resolver);
                 LoadMembers(declaration, resolver);
                 LoadAttributes(declaration, resolver);
             }
-            catch
+            catch (Exception ex)
             {
+                this.logger.LogError($"Error while loading {declaration.FullName}: {ex.Message}");
+
                 // Make sure all collection are assigned.
                 declaration.GenericParameters ??= Array.Empty<IGenericParameterDeclaration>();
                 declaration.Extends ??= Array.Empty<IDeclarationUse<SyntaxNode>>();

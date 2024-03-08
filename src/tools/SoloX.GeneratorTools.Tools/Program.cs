@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Globalization;
 using System.IO;
 using Microsoft.Extensions.Configuration;
@@ -19,10 +20,13 @@ namespace SoloX.GeneratorTools.Tools
     /// <summary>
     /// Program entry point class.
     /// </summary>
-    public class Program
+#pragma warning disable CA1063 // Implement IDisposable Correctly
+    public class Program : IDisposable
+#pragma warning restore CA1063 // Implement IDisposable Correctly
     {
         private readonly ILogger<Program> logger;
         private readonly IConfiguration configuration;
+        private readonly ILoggerFactory generatorLoggerFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Program"/> class.
@@ -34,21 +38,24 @@ namespace SoloX.GeneratorTools.Tools
 
             var fileLogger = new LoggerConfiguration()
                 .WriteTo
-                .File("logs.txt", formatProvider: CultureInfo.InvariantCulture)
+                .File("logs.txt", formatProvider: CultureInfo.InvariantCulture, rollOnFileSizeLimit: true, fileSizeLimitBytes: 5 * 1_024 * 1_024)
+                .MinimumLevel
+                .Debug()
                 .CreateLogger();
 
-            using var loggerFactory = LoggerFactory.Create(
+            generatorLoggerFactory = LoggerFactory.Create(
                 b =>
                 {
                     b.ClearProviders();
                     b.AddSerilog(fileLogger);
+                    b.SetMinimumLevel(LogLevel.Debug);
                 });
 
             IServiceCollection sc = new ServiceCollection();
 
             sc.AddLogging(b => b.AddConsole());
             sc.AddSingleton(configuration);
-            sc.AddToolsGenerator(loggerFactory);
+            sc.AddToolsGenerator(generatorLoggerFactory);
 
             this.Service = sc.BuildServiceProvider();
 
@@ -68,7 +75,19 @@ namespace SoloX.GeneratorTools.Tools
             builder.AddCommandLine(args);
             var config = builder.Build();
 
-            return new Program(config).Run();
+            using var program = new Program(config);
+
+            return program.Run();
+        }
+
+        /// <inheritdoc/>
+#pragma warning disable CA1063 // Implement IDisposable Correctly
+        public void Dispose()
+#pragma warning restore CA1063 // Implement IDisposable Correctly
+        {
+            generatorLoggerFactory.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>

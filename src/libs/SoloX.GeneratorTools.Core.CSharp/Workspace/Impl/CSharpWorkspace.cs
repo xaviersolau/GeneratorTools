@@ -69,6 +69,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public void RegisterCompilation(Compilation compilation)
         {
+            this.logger.LogDebug("Register Compilation");
+
             if (compilation == null)
             {
                 throw new ArgumentNullException(nameof(compilation));
@@ -115,6 +117,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public ICSharpFile RegisterFile(string file, IGlobalUsingDirectives? globalUsing)
         {
+            this.logger.LogDebug($"Register file {file}");
+
             if (globalUsing == null)
             {
                 globalUsing = new CSharpGlobalUsing();
@@ -138,6 +142,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public ICSharpProject RegisterProject(string projectFile)
         {
+            this.logger.LogDebug($"Register project {projectFile}");
+
             // Resolve the full path
             projectFile = Path.GetFullPath(projectFile);
             if (!this.projects.TryGetValue(projectFile, out var csProject))
@@ -160,6 +166,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             {
                 return null;
             }
+
+            this.logger.LogDebug($"Register assembly {assembly.FullName}");
 
             var assemblyFileName = Path.GetFileName(assembly.FullName);
 
@@ -184,6 +192,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 return null;
             }
 
+            this.logger.LogDebug($"Register types from assembly {assembly.FullName}");
+
             var assemblyFileName = Path.GetFileName(assembly.FullName);
 
             if (!this.assemblies.TryGetValue(assemblyFileName, out var csAssembly))
@@ -207,6 +217,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 return null;
             }
 
+            this.logger.LogDebug($"Register assembly file {assemblyFile}");
+
             var assemblyFileName = Path.GetFileName(assemblyFile);
 
             if (!this.metadataAssemblies.TryGetValue(assemblyFileName, out var csMetadataAssembly))
@@ -229,10 +241,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         /// <inheritdoc/>
         public IDeclarationResolver DeepLoad()
         {
+            this.logger.LogDebug($"Deep load workspace");
+
             var declarations = this.Assemblies.SelectMany(a => a.Declarations)
                 .Concat(this.MetadataAssemblies.SelectMany(f => f.Declarations))
                 .Concat(this.Files.SelectMany(f => f.Declarations))
                 .Concat(this.SyntaxTrees.SelectMany(s => s.Declarations));
+
             var resolver = new DeclarationResolver(declarations);
 
             resolver.Load(this.logger);
