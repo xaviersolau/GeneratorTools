@@ -18,6 +18,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 
             tmp3 = new string[] { "Any element"};
 
+            string[] tmp4 = ["Any element"];
+
             return string.Join(',', new string[] { "Any element"});
         }
         public int Method1(string arg)
@@ -31,6 +33,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
 
             tmp3 = new string[] { "Any element", arg.ToString()};
 
+            string[] tmp4 = ["Any element", arg.ToString()];
+
             return string.Join(',', new string[] { "Any element", arg.ToString()});
         }
         public double Method2(int arg1, double arg2)
@@ -43,6 +47,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
             string[] tmp3;
 
             tmp3 = new string[] { "Any element", arg1.ToString(), arg2.ToString()};
+
+            string[] tmp4 = ["Any element", arg1.ToString(), arg2.ToString()];
 
             return string.Join(',', new string[] { "Any element", arg1.ToString(), arg2.ToString()});
         }
