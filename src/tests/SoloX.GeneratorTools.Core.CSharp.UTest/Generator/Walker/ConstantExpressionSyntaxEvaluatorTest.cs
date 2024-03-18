@@ -16,7 +16,6 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
@@ -85,11 +84,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var array = walker.Visit(exp);
 
-            Assert.NotNull(array);
+            array.Should().NotBeNull();
 
-            Assert.Equal(2, array.Length);
-            Assert.Equal(textValue1, array[0]);
-            Assert.Equal(textValue2, array[1]);
+            array.Should().BeEquivalentTo([textValue1, textValue2]);
         }
 
         [Theory]
@@ -115,13 +112,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var arrayObject = walker.Visit(exp);
 
-            Assert.NotNull(arrayObject);
+            arrayObject.Should().NotBeNull();
 
             var array = arrayObject.Should().BeAssignableTo<IEnumerable<string>>().Subject;
 
-            Assert.Equal(2, array.Count());
-            Assert.Equal(textValue1, array.ElementAt(0));
-            Assert.Equal(textValue2, array.ElementAt(1));
+            array.Should().BeEquivalentTo([textValue1, textValue2]);
+        }
+
+        [Fact]
+        public void StringArrayConstEvaluatorWithTypeProbeTestWithoutNewStatement()
+        {
+            var resolver = Mock.Of<IDeclarationResolver>();
+            var genericDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
+
+            var textValue1 = "textValue1";
+            var textValue2 = "textValue2";
+            var textExp = $@"[ ""{textValue1}"", ""{textValue2}"" ]";
+
+            var walker = new ConstantExpressionSyntaxEvaluator<object>(resolver, genericDeclaration);
+            var exp = SyntaxTreeHelper.GetExpressionSyntax(textExp);
+
+            var arrayObject = walker.Visit(exp);
+
+            arrayObject.Should().NotBeNull();
+
+            var array = arrayObject.Should().BeAssignableTo<IEnumerable<string>>().Subject;
+
+            array.Should().BeEquivalentTo([textValue1, textValue2]);
         }
 
         [Theory]
@@ -141,13 +158,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var arrayObject = walker.Visit(exp);
 
-            Assert.NotNull(arrayObject);
+            arrayObject.Should().NotBeNull();
 
             var array = arrayObject.Should().BeAssignableTo<IEnumerable<int>>().Subject;
 
-            Assert.Equal(2, array.Count());
-            Assert.Equal(intValue1, array.ElementAt(0));
-            Assert.Equal(intValue2, array.ElementAt(1));
+            array.Should().BeEquivalentTo([intValue1, intValue2]);
         }
 
         [Theory]

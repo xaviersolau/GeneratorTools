@@ -145,7 +145,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         {
             if (node.Type.ElementType.Kind() == SyntaxKind.PredefinedType)
             {
-                return LoadFromArrayInitializerExpression(node.Initializer, node.Type.ElementType.ToString());
+                return LoadFromArrayInitializerExpression(node.Initializer.Expressions, node.Type.ElementType.ToString());
             }
             else
             {
@@ -154,11 +154,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 
                 if (decl != null)
                 {
-                    return LoadFromArrayInitializerExpression(node.Initializer, decl.FullName);
+                    return LoadFromArrayInitializerExpression(node.Initializer.Expressions, decl.FullName);
                 }
                 else
                 {
-                    return LoadFromArrayInitializerExpression(node.Initializer);
+                    return LoadFromArrayInitializerExpression(node.Initializer.Expressions);
                 }
             }
         }
@@ -166,7 +166,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         /// <inheritdoc/>
         public override T VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
         {
-            return LoadFromArrayInitializerExpression(node.Initializer);
+            return LoadFromArrayInitializerExpression(node.Initializer.Expressions);
+        }
+
+        /// <inheritdoc/>
+        public override T VisitCollectionExpression(CollectionExpressionSyntax node)
+        {
+            return LoadFromArrayInitializerExpression(node.Elements);
+        }
+
+        /// <inheritdoc/>
+        public override T VisitExpressionElement(ExpressionElementSyntax node)
+        {
+            return Visit(node.Expression);
         }
 #pragma warning restore CA1062 // Valider les arguments de méthodes publiques
 
@@ -182,8 +194,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
                 ["object"] = typeof(object),
             };
 
-        private static readonly Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>> TypeToLoaderMap =
-            new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, InitializerExpressionSyntax, T>>
+        private static readonly Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T>> TypeToLoaderMap =
+            new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T>>
             {
                 [typeof(string)] = (l, i) => l.LoadArray<string>(i),
                 [typeof(char)] = (l, i) => l.LoadArray<char>(i),
@@ -193,33 +205,33 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
                 [typeof(object)] = (l, i) => l.LoadArray<object>(i),
             };
 
-        private T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer, string typeName)
+        private T LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions, string typeName)
         {
             if (PredefinedTypeMap.TryGetValue(typeName, out var type))
             {
-                return LoadArray(initializer, type);
+                return LoadArray(expressions, type);
             }
 
             return default;
         }
 
-        private T LoadFromArrayInitializerExpression(InitializerExpressionSyntax initializer)
+        private T LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions)
         {
             if (typeof(T) == typeof(object))
             {
                 // Prob
-                var size = initializer.Expressions.Count;
+                var size = expressions.Count;
                 if (size == 0)
                 {
                     return ConvertToT(Array.Empty<object>());
                 }
                 else
                 {
-                    var first = Visit(initializer.Expressions[0]);
+                    var first = Visit(expressions[0]);
 
                     if (first != null)
                     {
-                        return LoadArray(initializer, first.GetType());
+                        return LoadArray(expressions, first.GetType());
                     }
                 }
             }
@@ -228,31 +240,31 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             {
                 if (IsTArrayOfType(typeItem.Key))
                 {
-                    return typeItem.Value(this, initializer);
+                    return typeItem.Value(this, expressions);
                 }
             }
 
             return default;
         }
 
-        private T LoadArray(InitializerExpressionSyntax initializer, Type eltType)
+        private T LoadArray(IReadOnlyList<CSharpSyntaxNode> expressions, Type eltType)
         {
             if (TypeToLoaderMap.TryGetValue(eltType, out var func))
             {
-                return func(this, initializer);
+                return func(this, expressions);
             }
 
             return default;
         }
 
-        private T LoadArray<TItem>(InitializerExpressionSyntax initializer)
+        private T LoadArray<TItem>(IReadOnlyList<CSharpSyntaxNode> expressions)
         {
-            var size = initializer.Expressions.Count;
+            var size = expressions.Count;
             var values = new TItem[size];
 
             var evaluator = new ConstantExpressionSyntaxEvaluator<TItem>(this.resolver, this.genericDeclaration);
             var idx = 0;
-            foreach (var expression in initializer.Expressions)
+            foreach (var expression in expressions)
             {
                 var value = evaluator.Visit(expression);
                 values[idx++] = value;

@@ -28,6 +28,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Im
 
             tmp3 = new string[] { "Any element", Repeat.Argument("someArgument", someArgument.ToString()) };
 
+            string[] tmp4 = ["Any element", Repeat.Argument("someArgument", someArgument.ToString())];
+
             return string.Join(',', new string[] { "Any element", Repeat.Argument("someArgument", someArgument.ToString()) });
         }
     }

@@ -714,6 +714,44 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             }
         }
 
+        public override void VisitCollectionExpression(CollectionExpressionSyntax node)
+        {
+            WriteToken(node.OpenBracketToken);
+
+            var isFirst = true;
+
+            foreach (var element in node.Elements)
+            {
+                var writeComma = () =>
+                {
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        this.Write(", ");
+                    }
+                };
+
+                if (element is ExpressionElementSyntax expression)
+                {
+                    if (!ProcessRepeatArgument(expression.Expression, writeComma))
+                    {
+                        writeComma();
+                        Visit(expression.Expression);
+                    }
+                }
+                else
+                {
+                    writeComma();
+                    Visit(element);
+                }
+            }
+
+            WriteToken(node.CloseBracketToken);
+        }
+
         public override void VisitArrayRankSpecifier(ArrayRankSpecifierSyntax node)
         {
             WriteNode(node);
