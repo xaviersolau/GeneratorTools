@@ -11,7 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Utils;
@@ -202,28 +204,65 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 }
             }
 
-            var processStartInfo = new ProcessStartInfo(DotNet, $"msbuild -t:{target} {propertiesArgs} -nologo")
+            using (var process = new Process())
             {
-                WorkingDirectory = this.ProjectPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-            };
-            using (var process = Process.Start(processStartInfo))
-            {
-                process.WaitForExit();
-                var stdOutput = process.StandardOutput.ReadToEnd();
-                if (process.ExitCode != 0)
-                {
-                    var rawError = process.StandardError.ReadToEnd();
-                    throw new FormatException(
-                        $"Unable to load project file: dotnet exit code is {process.ExitCode}\n" +
-                        $"Standard output:\n" +
-                        $"{stdOutput})\n" +
-                        $"Standard error:\n" +
-                        $"{rawError})");
-                }
+                var output = new StringBuilder();
+                var error = new StringBuilder();
 
-                return stdOutput;
+                using (var outputWaitHandle = new AutoResetEvent(false))
+                using (var errorWaitHandle = new AutoResetEvent(false))
+                {
+                    process.OutputDataReceived += (sender, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            outputWaitHandle.Set();
+                        }
+                        else
+                        {
+                            output.AppendLine(e.Data);
+                        }
+                    };
+                    process.ErrorDataReceived += (sender, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            errorWaitHandle.Set();
+                        }
+                        else
+                        {
+                            error.AppendLine(e.Data);
+                        }
+                    };
+
+                    process.StartInfo.FileName = DotNet;
+                    process.StartInfo.Arguments = $"msbuild -t:{target} {propertiesArgs} -nologo";
+                    process.StartInfo.WorkingDirectory = this.ProjectPath;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
+                    process.WaitForExit();
+                    outputWaitHandle.WaitOne();
+                    errorWaitHandle.WaitOne();
+
+                    var stdOutput = output.ToString();
+                    if (process.ExitCode != 0)
+                    {
+                        var rawError = error.ToString();
+                        throw new FormatException(
+                            $"Unable to load project file: dotnet exit code is {process.ExitCode}\n" +
+                            $"Standard output:\n" +
+                            $"{stdOutput})\n" +
+                            $"Standard error:\n" +
+                            $"{rawError})");
+                    }
+
+                    return stdOutput;
+                }
             }
         }
 
