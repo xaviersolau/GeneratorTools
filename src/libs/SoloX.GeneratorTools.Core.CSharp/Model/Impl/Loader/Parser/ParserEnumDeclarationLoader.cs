@@ -14,6 +14,9 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
+using System.Xml.Linq;
+using System;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 {
@@ -54,6 +57,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser
 
                 declaration.UnderlyingType = uses.Single();
             }
+            LoadAttributes(declaration, resolver);
+        }
+
+        private static void LoadAttributes(EnumDeclaration declaration, IDeclarationResolver resolver)
+        {
+            var attributeList = new List<IAttributeUse>();
+            var attributesWalker = new AttributesWalker(resolver, null, attributeList);
+
+            attributesWalker.Visit(declaration.SyntaxNodeProvider.SyntaxNode);
+
+            declaration.Attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
     }
 }

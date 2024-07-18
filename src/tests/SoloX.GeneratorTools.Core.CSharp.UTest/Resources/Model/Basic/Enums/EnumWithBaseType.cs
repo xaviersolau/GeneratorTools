@@ -6,11 +6,14 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
+
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums
 {
 #pragma warning disable CA1008 // Enums should have zero value
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 #pragma warning disable CA1028 // Enum Storage should be Int32
+    [Flags]
     public enum EnumWithBaseType : byte
     {
     }

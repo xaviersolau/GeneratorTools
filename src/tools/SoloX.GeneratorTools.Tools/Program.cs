@@ -43,7 +43,7 @@ namespace SoloX.GeneratorTools.Tools
                 .Debug()
                 .CreateLogger();
 
-            generatorLoggerFactory = LoggerFactory.Create(
+            this.generatorLoggerFactory = LoggerFactory.Create(
                 b =>
                 {
                     b.ClearProviders();
@@ -55,7 +55,7 @@ namespace SoloX.GeneratorTools.Tools
 
             sc.AddLogging(b => b.AddConsole());
             sc.AddSingleton(configuration);
-            sc.AddToolsGenerator(generatorLoggerFactory);
+            sc.AddToolsGenerator(this.generatorLoggerFactory);
 
             this.Service = sc.BuildServiceProvider();
 
@@ -85,7 +85,7 @@ namespace SoloX.GeneratorTools.Tools
         public void Dispose()
 #pragma warning restore CA1063 // Implement IDisposable Correctly
         {
-            generatorLoggerFactory.Dispose();
+            this.generatorLoggerFactory.Dispose();
 
             GC.SuppressFinalize(this);
         }
