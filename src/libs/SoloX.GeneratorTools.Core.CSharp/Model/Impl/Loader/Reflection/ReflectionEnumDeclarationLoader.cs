@@ -8,6 +8,7 @@
 
 using Microsoft.CodeAnalysis;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.Utils;
 using System;
 
@@ -32,6 +33,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
                 declaration.UnderlyingType = use;
             }
+
+            LoadAttributes(declaration, resolver);
+        }
+
+        private static void LoadAttributes(EnumDeclaration declaration, IDeclarationResolver resolver)
+        {
+            var declType = declaration.GetData<Type>();
+            var attributeList = ReflectionGenericDeclarationLoader<SyntaxNode>.LoadCustomAttributes(resolver, declType.CustomAttributes);
+
+            declaration.Attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
 
         /// <summary>

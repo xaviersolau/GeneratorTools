@@ -6,10 +6,13 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
+
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums
 {
 #pragma warning disable CA1008 // Enums should have zero value
 #pragma warning disable CA1711 // Identifiers should not have incorrect suffix
+    [Flags]
     public enum SimpleEnum
     {
     }

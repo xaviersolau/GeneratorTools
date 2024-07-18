@@ -621,6 +621,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             {
                 Assert.NotNull(enumDeclaration.UnderlyingType);
             }
+
+            enumDeclaration.Attributes.Should().NotBeNullOrEmpty();
         }
 
         private IDeclarationResolver SetupDeclarationResolver(

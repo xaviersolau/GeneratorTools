@@ -89,7 +89,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             var identifier = node.Identifier.Text;
             var fullIdentifier = MakeFullQualifiedName(identifier);
 
-            IDeclaration<SyntaxNode> declaration = this.genericDeclaration.GenericParameters
+            IDeclaration<SyntaxNode> declaration = this.genericDeclaration?.GenericParameters
                 .FirstOrDefault(p => p.Name == fullIdentifier);
             if (declaration != null)
             {

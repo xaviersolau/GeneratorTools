@@ -496,7 +496,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             declaration.Attributes = attributeList.Count > 0 ? attributeList.ToArray() : Array.Empty<IAttributeUse>();
         }
 
-        private static List<IAttributeUse> LoadCustomAttributes(IDeclarationResolver resolver, IEnumerable<CustomAttributeData> customAttributes)
+        internal static List<IAttributeUse> LoadCustomAttributes(IDeclarationResolver resolver, IEnumerable<CustomAttributeData> customAttributes)
         {
             var attributeList = new List<IAttributeUse>();
             foreach (var customAttribute in customAttributes)

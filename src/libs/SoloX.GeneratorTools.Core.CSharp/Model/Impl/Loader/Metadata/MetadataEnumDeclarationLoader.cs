@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Xml.Linq;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {
@@ -102,6 +103,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
                     declaration.UnderlyingType = sig;
                 }
             }
+            LoadAttributes(metadataReader, declaration, resolver);
+        }
+
+        private static void LoadAttributes(MetadataReader metadataReader, EnumDeclaration declaration, IDeclarationResolver resolver)
+        {
+            var typeDefinitionHandle = declaration.GetData<TypeDefinitionHandle>();
+
+            var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
+
+            var customAttributeHandles = typeDefinition.GetCustomAttributes();
+
+            var attributeList = MetadataGenericDeclarationLoader<SyntaxNode>.LoadCustomAttributes(metadataReader, null, resolver, customAttributeHandles);
+
+            declaration.Attributes = attributeList;
         }
     }
 }
