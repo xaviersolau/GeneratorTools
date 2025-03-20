@@ -118,6 +118,12 @@
     <Compile Update="Resources\Model\Basic\Enums\EnumWithBaseType.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Resources\Model\Basic\Enums\EnumWithValues.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Resources\Model\Basic\Enums\PatternAttributedEnum.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Resources\Model\Basic\Interfaces\GenericInterface.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
