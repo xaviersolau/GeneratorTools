@@ -16,7 +16,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
-using System.Xml.Linq;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {

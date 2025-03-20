@@ -15,7 +15,6 @@ using SoloX.GeneratorTools.Core.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Walker;
-using System.Xml.Linq;
 using System;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser

@@ -20,6 +20,8 @@ using Xunit.Abstractions;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
@@ -38,11 +40,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [Theory]
         [InlineData(typeof(SimpleEnum))]
         [InlineData(typeof(EnumWithBaseType))]
+        [InlineData(typeof(EnumWithValues))]
         public void ItShouldLoadEnumType(Type type)
         {
             var enumDeclaration = LoadEnumDeclaration(type);
 
             this.loadingTest.AssertEnumTypeLoaded(enumDeclaration, type);
+        }
+
+        [Theory]
+        [InlineData(typeof(PatternAttributedEnum), typeof(PatternAttribute<AttributeSelector<Attribute>>))]
+        public void ItShouldLoadClassAttributes(Type type, Type attributeType)
+        {
+            var enumDeclaration = LoadEnumDeclaration(type);
+
+            this.loadingTest.AssertClassAttributeLoaded(enumDeclaration, attributeType);
         }
 
         private IEnumDeclaration LoadEnumDeclaration(Type type)
