@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
 {
@@ -21,6 +23,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
         private readonly string optionalSuffix;
 
         private readonly Func<string, string> replaceDelegate;
+
+        private static readonly Dictionary<string, string> ReservedPatternNameMap = new Dictionary<string, string>()
+        {
+            ["object"] = nameof(Object),
+            ["string"] = nameof(String),
+        };
 
         /// <summary>
         /// Setup the text pattern.
@@ -107,10 +115,28 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
             }
             else
             {
-                this.replaceDelegate = text =>
+                if (declaration[0] >= 'A'
+                    && declaration[0] <= 'Z'
+                    && ReservedPatternNameMap.TryGetValue(pattern, out var patternMapValue))
                 {
-                    return ReplacePattern(pattern, declaration, text);
-                };
+
+                    this.replaceDelegate = text =>
+                    {
+                        if (text.Contains(pattern))
+                        {
+                            text = text.Replace(pattern, patternMapValue);
+                        }
+
+                        return ReplacePattern(patternMapValue, declaration, text);
+                    };
+                }
+                else
+                {
+                    this.replaceDelegate = text =>
+                    {
+                        return ReplacePattern(pattern, declaration, text);
+                    };
+                }
             }
         }
 

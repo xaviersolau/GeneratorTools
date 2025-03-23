@@ -72,6 +72,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
+        public void AutomatedSimpleMethodWithDateTime1Test()
+        {
+            var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
+            var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod1Pattern.cs";
+            var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodWithDateTimeSample.cs";
+            var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
+
+            GenerateAndAssertSnapshot(
+                typeof(SimpleMethod1Pattern),
+                patternInterfaceFile,
+                patternImplementationFile,
+                targetNameSpace,
+                nameof(this.AutomatedSimpleMethodWithDateTime1Test),
+                declarationInterfaceFile);
+        }
+
+        [Fact]
         public void AutomatedSimpleMethod2Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";

@@ -1,0 +1,20 @@
+---------------------
+SimpleMethod1Pattern
+---------------------
+using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples;
+using System;
+
+namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Samples
+{
+    public class SimpleMethod1Pattern : ISimpleMethodWithDateTimeSample
+    {
+        public DateTime Method(DateTime arg)
+            => this.ProcessReturns<DateTime>(arg);
+
+        private T ProcessReturns<T>(params object[] objects)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
