@@ -32,6 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns
                     || d.Name == nameof(IRepeatSample)
                     || d.Name == nameof(IAttributeSelectorSample)
                     || d.Name == nameof(ISimpleMethodSample)
+                    || d.Name == nameof(ISimpleMethodWithDateTimeSample)
                     || d.Name == nameof(IAsyncMethodSample));
         }
 
