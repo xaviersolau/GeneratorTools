@@ -82,9 +82,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 {
                     var assemblyReference = metadataReader.GetAssemblyReference(assemblyReferenceHandle);
 
-                    var assemblyname = metadataReader.GetString(assemblyReference.Name);
+                    var assemblyName = metadataReader.GetString(assemblyReference.Name);
+                    var assemblyFile = $"{assemblyName}.dll";
 
-                    workspace.RegisterMetadataAssembly($"{assemblyname}.dll");
+                    try
+                    {
+                        workspace.RegisterMetadataAssembly(assemblyFile);
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        this.logger?.LogWarning(e, $"Could not load types from {assemblyFile}");
+                    }
                 }
 
                 foreach (var typeDefinitionHandle in metadataReader.TypeDefinitions)

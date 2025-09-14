@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\SharedProperties.props" />
+
+	<PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="..\SoloX.GeneratorTools.Core.CSharp.Sample3\SampleUsingLocalizerAssembly.cs" Link="Resources\SampleUsingLocalizerAssembly.cs">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.2" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.3.6" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.3.6" />
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.3.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp.Extensions\SoloX.GeneratorTools.Core.CSharp.Extensions.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp\SoloX.GeneratorTools.Core.CSharp.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.Test.Helpers.XUnit\SoloX.GeneratorTools.Core.Test.Helpers.XUnit.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,13 +4,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-
-    <PackageId>SoloX.GeneratorTools.Core.Test.Helpers</PackageId>
+  
+    <PackageId>SoloX.GeneratorTools.Core.Test.Helpers.XUnit</PackageId>
 
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
     <PackageTags>code generation, parse, netstandard, pattern, test</PackageTags>
-    <PackageReleaseNotes>- Provide generators test helpers.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Provide generators test helpers with XUnit.</PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Description>GeneratorTools is a project that helps you to automate C# code generation based on a source code pattern.</Description>
 
@@ -23,16 +23,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
     <PackageReference Include="SoloX.CodeQuality.Test" Version="2.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core.CSharp.Extensions\SoloX.GeneratorTools.Core.CSharp.Extensions.csproj" />
-    <ProjectReference Include="..\..\libs\SoloX.GeneratorTools.Core\SoloX.GeneratorTools.Core.csproj" />
+    <ProjectReference Include="..\SoloX.GeneratorTools.Core.Test.Helpers\SoloX.GeneratorTools.Core.Test.Helpers.csproj" />
   </ItemGroup>
 
+	
 </Project>

@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
 {
