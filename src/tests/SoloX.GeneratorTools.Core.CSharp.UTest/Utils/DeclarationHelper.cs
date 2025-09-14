@@ -17,7 +17,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Parser;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using SoloX.GeneratorTools.Core.Test.Helpers;
+using SoloX.GeneratorTools.Core.Test.Helpers.XUnit;
 using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils

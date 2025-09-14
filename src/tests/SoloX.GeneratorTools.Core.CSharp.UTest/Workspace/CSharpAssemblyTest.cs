@@ -14,7 +14,7 @@ using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
-using SoloX.GeneratorTools.Core.Test.Helpers;
+using SoloX.GeneratorTools.Core.Test.Helpers.XUnit;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -11,7 +11,7 @@ using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.Utils;
 using Xunit.Abstractions;
 
-namespace SoloX.GeneratorTools.Core.Test.Helpers
+namespace SoloX.GeneratorTools.Core.Test.Helpers.XUnit
 {
     public static class LoggerHelper
     {

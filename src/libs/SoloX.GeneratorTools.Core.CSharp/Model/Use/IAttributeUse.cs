@@ -35,11 +35,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use
         /// <summary>
         /// Attribute named arguments.
         /// </summary>
-        public IReadOnlyDictionary<string, object> NamedArguments { get; }
+        IReadOnlyDictionary<string, object> NamedArguments { get; }
 
         /// <summary>
         /// Attribute constructor arguments.
         /// </summary>
-        public IReadOnlyCollection<object> ConstructorArguments { get; }
+        IReadOnlyCollection<object> ConstructorArguments { get; }
     }
 }
