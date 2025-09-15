@@ -29,6 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.GeneratorTools.Core.U
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E26ED9AD-6A62-438B-B7EE-8D63C77CE9C2}"
 	ProjectSection(SolutionItems) = preProject
+		coverlet.runsettings = coverlet.runsettings
 		LICENSE = LICENSE
 		README.md = README.md
 		src\SharedProperties.props = src\SharedProperties.props

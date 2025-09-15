@@ -18,7 +18,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Impl
     /// </summary>
     [Pattern<InterfaceBasedOnSelector<IModelBase>>]
     [Repeat(Pattern = nameof(IModelPattern), Prefix = "I")]
+#pragma warning disable CA1515 // Consider making public types internal
     public class ModelPattern : IModelPattern
+#pragma warning restore CA1515 // Consider making public types internal
     {
         [Repeat]
         private object propertyPattern;

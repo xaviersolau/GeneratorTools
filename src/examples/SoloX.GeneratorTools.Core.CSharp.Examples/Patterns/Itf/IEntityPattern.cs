@@ -13,7 +13,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf
     /// <summary>
     /// Entity pattern interface used by the Entity pattern implementation.
     /// </summary>
-    public interface IEntityPattern : IEntityBase
+    internal interface IEntityPattern : IEntityBase
     {
         /// <summary>
         /// Gets or sets property declaration pattern.

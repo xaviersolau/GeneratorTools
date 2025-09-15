@@ -13,7 +13,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples.Patterns.Itf
     /// <summary>
     /// Model pattern interface used by the Model pattern implementation.
     /// </summary>
-    public interface IModelPattern : IModelBase
+    internal interface IModelPattern : IModelBase
     {
         /// <summary>
         /// Gets or sets property declaration pattern.

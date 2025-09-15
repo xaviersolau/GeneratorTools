@@ -23,7 +23,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     /// <summary>
     /// The model example generator.
     /// </summary>
+#pragma warning disable CA1515 // Consider making public types internal
     public class ModelGeneratorExample
+#pragma warning restore CA1515 // Consider making public types internal
     {
         private readonly ILogger<ModelGeneratorExample> logger;
         private readonly ICSharpWorkspaceFactory workspaceFactory;

@@ -17,7 +17,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     /// <summary>
     /// Example program entry point.
     /// </summary>
-    public sealed class Program : IDisposable
+    internal sealed class Program : IDisposable
     {
         private readonly ILogger<Program> logger;
 
