@@ -23,7 +23,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
     /// <summary>
     /// Entity generator example class to show a simple use case of a pattern based class generator.
     /// </summary>
+#pragma warning disable CA1515 // Consider making public types internal
     public class EntityGeneratorExample
+#pragma warning restore CA1515 // Consider making public types internal
     {
         private readonly ILogger<EntityGeneratorExample> logger;
         private readonly ICSharpWorkspaceFactory workspaceFactory;

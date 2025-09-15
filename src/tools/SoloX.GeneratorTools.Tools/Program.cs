@@ -21,7 +21,9 @@ namespace SoloX.GeneratorTools.Tools
     /// Program entry point class.
     /// </summary>
 #pragma warning disable CA1063 // Implement IDisposable Correctly
+#pragma warning disable CA1515 // Consider making public types internal
     public class Program : IDisposable
+#pragma warning restore CA1515 // Consider making public types internal
 #pragma warning restore CA1063 // Implement IDisposable Correctly
     {
         private readonly ILogger<Program> logger;

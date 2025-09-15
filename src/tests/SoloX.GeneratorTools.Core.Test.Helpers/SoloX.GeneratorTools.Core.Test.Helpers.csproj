@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.1.0">
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.3.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
