@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
@@ -84,9 +84,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var array = walker.Visit(exp);
 
-            array.Should().NotBeNull();
+            array.ShouldNotBeNull();
 
-            array.Should().BeEquivalentTo([textValue1, textValue2]);
+            array.ShouldBe([textValue1, textValue2], ignoreOrder: true);
         }
 
         [Theory]
@@ -112,11 +112,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var arrayObject = walker.Visit(exp);
 
-            arrayObject.Should().NotBeNull();
+            arrayObject.ShouldNotBeNull();
 
-            var array = arrayObject.Should().BeAssignableTo<IEnumerable<string>>().Subject;
+            var array = arrayObject.ShouldBeAssignableTo<IEnumerable<string>>();
 
-            array.Should().BeEquivalentTo([textValue1, textValue2]);
+            array.ShouldBe([textValue1, textValue2], ignoreOrder: true);
         }
 
         [Fact]
@@ -134,11 +134,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var arrayObject = walker.Visit(exp);
 
-            arrayObject.Should().NotBeNull();
+            arrayObject.ShouldNotBeNull();
 
-            var array = arrayObject.Should().BeAssignableTo<IEnumerable<string>>().Subject;
+            var array = arrayObject.ShouldBeAssignableTo<IEnumerable<string>>();
 
-            array.Should().BeEquivalentTo([textValue1, textValue2]);
+            array.ShouldBe([textValue1, textValue2], ignoreOrder: true);
         }
 
         [Theory]
@@ -158,11 +158,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var arrayObject = walker.Visit(exp);
 
-            arrayObject.Should().NotBeNull();
+            arrayObject.ShouldNotBeNull();
 
-            var array = arrayObject.Should().BeAssignableTo<IEnumerable<int>>().Subject;
+            var array = arrayObject.ShouldBeAssignableTo<IEnumerable<int>>();
 
-            array.Should().BeEquivalentTo([intValue1, intValue2]);
+            array.ShouldBe([intValue1, intValue2], ignoreOrder: true);
         }
 
         [Theory]
@@ -194,8 +194,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Walker
 
             var value = walker.Visit(exp);
 
-            var typeDeclarationUse = value.Should().BeAssignableTo<IDeclarationUse<SyntaxNode>>().Subject;
-            typeDeclarationUse.Declaration.Name.Should().Be(textExpression);
+            var typeDeclarationUse = value.ShouldBeAssignableTo<IDeclarationUse<SyntaxNode>>();
+            typeDeclarationUse.Declaration.Name.ShouldBe(textExpression);
         }
 
         [Theory]

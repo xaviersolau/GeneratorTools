@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
-using FluentAssertions;
+using Shouldly;
 using System.ComponentModel;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
@@ -45,7 +45,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name),
                 declaration.Name);
 
-            declaration.IsRecordType.Should().Be(isRecord);
+            declaration.IsRecordType.ShouldBe(isRecord);
 
             Assert.NotNull(declaration.SyntaxNodeProvider);
             Assert.NotNull(declaration.SyntaxNodeProvider.SyntaxNode);
@@ -64,7 +64,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             if (type.IsGenericTypeDefinition)
             {
-                Assert.NotEmpty(classDeclaration.GenericParameters);
+                classDeclaration.GenericParameters.ShouldNotBeEmpty();
 
                 var typeParams = type.GetTypeInfo().GenericTypeParameters;
                 Assert.Equal(typeParams.Length, classDeclaration.GenericParameters.Count);
@@ -151,7 +151,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             Assert.Empty(classDeclaration.Extends);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
             Assert.Equal(2, classDeclaration.Properties.Count);
 
             Assert.Empty(classDeclaration.Methods);
@@ -217,7 +217,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             Assert.Empty(classDeclaration.Extends);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
             Assert.Empty(classDeclaration.Properties);
 
@@ -247,7 +247,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 },
                 typeof(SimpleClass));
 
-            declaration.IsRecordType.Should().BeTrue();
+            declaration.IsRecordType.ShouldBeTrue();
 
             declaration.DeepLoad(declarationResolver);
 
@@ -255,17 +255,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             Assert.Empty(classDeclaration.GenericParameters);
 
-            classDeclaration.Extends.Should().BeEmpty();
+            classDeclaration.Extends.ShouldBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            classDeclaration.Properties.Should().HaveCount(recordType.GetProperties().Length);
+            classDeclaration.Properties.Count.ShouldBe(recordType.GetProperties().Length);
 
             var props = new HashSet<string>(recordType.GetProperties().Select(p => p.Name));
 
             foreach (var property in classDeclaration.Properties)
             {
-                props.Contains(property.Name).Should().BeTrue();
+                props.Contains(property.Name).ShouldBeTrue();
             }
         }
 
@@ -286,14 +286,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             Assert.Empty(classDeclaration.GenericParameters);
             Assert.Empty(classDeclaration.Extends);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
             Assert.Equal(nbConst, classDeclaration.Constants.Count);
 
             var constNameDecl = classDeclaration.Constants.SingleOrDefault(c => c.Name == nameOfConst);
 
-            constNameDecl.Should().NotBeNull();
-            constNameDecl.SyntaxNodeProvider.Should().NotBeNull();
-            constNameDecl.SyntaxNodeProvider.SyntaxNode.Should().NotBeNull();
+            constNameDecl.ShouldNotBeNull();
+            constNameDecl.SyntaxNodeProvider.ShouldNotBeNull();
+            constNameDecl.SyntaxNodeProvider.SyntaxNode.ShouldNotBeNull();
         }
 
         public void AssertMethodLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName)
@@ -314,7 +314,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             Assert.Empty(classDeclaration.GenericParameters);
             Assert.Empty(classDeclaration.Extends);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
             var method = type.GetMethod(methodName);
 
@@ -378,7 +378,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             declaration.DeepLoad(declarationResolver);
 
-            Assert.NotEmpty(classDeclaration.Properties);
+            classDeclaration.Properties.ShouldNotBeEmpty();
 
             var m = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
             var p = Assert.IsType<PropertyDeclaration>(m);
@@ -409,9 +409,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Properties);
+            classDeclaration.Properties.ShouldNotBeEmpty();
 
             var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
             var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
@@ -438,22 +438,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             declaration.DeepLoad(declarationResolver);
 
-            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+            var classDeclaration = declaration.ShouldBeAssignableTo<IGenericDeclaration<TSyntaxNode>>();
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Properties);
+            classDeclaration.Properties.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
-            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == propertyName).ShouldHaveSingleItem();
+            var pDeclaration = mDeclaration.ShouldBeOfType<PropertyDeclaration>();
 
-            pDeclaration.Attributes.Should().NotBeNullOrEmpty();
+            pDeclaration.Attributes.ShouldNotBeNull();
+            pDeclaration.Attributes.ShouldNotBeEmpty();
 
-            var attributeUse = pDeclaration.Attributes.Should().ContainSingle().Subject;
+            var attributeUse = pDeclaration.Attributes.ShouldHaveSingleItem();
 
-            attributeUse.Name.Should().Be(nameof(DescriptionAttribute));
+            attributeUse.Name.ShouldBe(nameof(DescriptionAttribute));
 
-            attributeUse.ConstructorArguments.Should().ContainSingle().Subject.Should().Be(descriptionArgument);
+            attributeUse.ConstructorArguments.ShouldHaveSingleItem().ShouldBe(descriptionArgument);
         }
 
         public void AssertPropertyTestAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName, string typeName, bool named, string attributeName)
@@ -468,34 +469,42 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                     resolver
                         .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
                         .Returns(attributeDeclaration.Object);
+
+                    var objectDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
+                    objectDeclaration.Setup(d => d.Name).Returns("object");
+
+                    resolver
+                        .Setup(r => r.Resolve("System.Object", It.IsAny<IDeclaration<SyntaxNode>>()))
+                        .Returns(objectDeclaration.Object);
                 });
 
             declaration.DeepLoad(declarationResolver);
 
-            var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
+            var classDeclaration = declaration.ShouldBeAssignableTo<IGenericDeclaration<TSyntaxNode>>();
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Properties);
+            classDeclaration.Properties.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
-            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == propertyName).ShouldHaveSingleItem();
+            var pDeclaration = mDeclaration.ShouldBeOfType<PropertyDeclaration>();
 
-            pDeclaration.Attributes.Should().NotBeNullOrEmpty();
+            pDeclaration.Attributes.ShouldNotBeNull();
+            pDeclaration.Attributes.ShouldNotBeEmpty();
 
-            var attributeUse = pDeclaration.Attributes.Should().ContainSingle().Subject;
+            var attributeUse = pDeclaration.Attributes.ShouldHaveSingleItem();
 
-            attributeUse.Name.Should().Be(attributeName);
+            attributeUse.Name.ShouldBe(attributeName);
 
             var arg = named
-                ? attributeUse.NamedArguments.Should().ContainSingle().Subject.Value
-                : attributeUse.ConstructorArguments.Should().ContainSingle().Subject;
+                ? attributeUse.NamedArguments.ShouldHaveSingleItem().Value
+                : attributeUse.ConstructorArguments.ShouldHaveSingleItem();
 
-            arg.Should().NotBeNull();
+            arg.ShouldNotBeNull();
 
-            var use = arg.Should().BeAssignableTo<IDeclarationUse<SyntaxNode>>().Subject;
+            var use = arg.ShouldBeAssignableTo<IDeclarationUse<SyntaxNode>>();
 
-            use.Declaration.Name.Should().BeEquivalentTo(typeName);
+            use.Declaration.Name.ShouldBeEquivalentTo(typeName);
         }
 
         public void AssertPropertyTestGenericAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string propertyName, string attributeName)
@@ -516,18 +525,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Properties);
+            classDeclaration.Properties.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
-            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == propertyName).ShouldHaveSingleItem();
+            var pDeclaration = mDeclaration.ShouldBeOfType<PropertyDeclaration>();
 
-            pDeclaration.Attributes.Should().NotBeNullOrEmpty();
+            pDeclaration.Attributes.ShouldNotBeNull();
+            pDeclaration.Attributes.ShouldNotBeEmpty();
 
-            var attributeUse = pDeclaration.Attributes.Should().ContainSingle().Subject;
+            var attributeUse = pDeclaration.Attributes.ShouldHaveSingleItem();
 
-            attributeUse.Name.Should().Be(attributeName);
+            attributeUse.Name.ShouldBe(attributeName);
         }
 
         public void AssertMethodAttributesLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, string methodName, bool returnAttribute)
@@ -548,22 +558,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Methods);
+            classDeclaration.Methods.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == methodName));
-            var methodDeclaration = Assert.IsType<MethodDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == methodName).ShouldHaveSingleItem();
+            var methodDeclaration = mDeclaration.ShouldBeOfType<MethodDeclaration>();
 
             if (returnAttribute)
             {
-                methodDeclaration.ReturnAttributes.Should().NotBeNullOrEmpty();
-                methodDeclaration.ReturnAttributes.Should().ContainSingle();
+                methodDeclaration.ReturnAttributes.ShouldNotBeNull();
+                methodDeclaration.ReturnAttributes.ShouldNotBeEmpty();
+                methodDeclaration.ReturnAttributes.ShouldHaveSingleItem();
             }
             else
             {
-                methodDeclaration.Attributes.Should().NotBeNullOrEmpty();
-                methodDeclaration.Attributes.Should().ContainSingle();
+                methodDeclaration.Attributes.ShouldNotBeNull();
+                methodDeclaration.Attributes.ShouldNotBeEmpty();
+                methodDeclaration.Attributes.ShouldHaveSingleItem();
             }
         }
 
@@ -585,18 +597,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var classDeclaration = Assert.IsAssignableFrom<IGenericDeclaration<TSyntaxNode>>(declaration);
 
-            Assert.NotEmpty(classDeclaration.Members);
+            classDeclaration.Members.ShouldNotBeEmpty();
 
-            Assert.NotEmpty(classDeclaration.Methods);
+            classDeclaration.Methods.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == methodName));
-            var methodDeclaration = Assert.IsType<MethodDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == methodName).ShouldHaveSingleItem();
+            var methodDeclaration = mDeclaration.ShouldBeOfType<MethodDeclaration>();
 
-            methodDeclaration.Parameters.Count.Should().BeGreaterThan(argumentIndex);
+            methodDeclaration.Parameters.Count.ShouldBeGreaterThan(argumentIndex);
 
             var methodParameter = methodDeclaration.Parameters.ElementAt(argumentIndex);
-            methodParameter.Attributes.Should().NotBeNullOrEmpty();
-            methodParameter.Attributes.Should().ContainSingle();
+            methodParameter.Attributes.ShouldNotBeNull();
+            methodParameter.Attributes.ShouldNotBeEmpty();
+            methodParameter.Attributes.ShouldHaveSingleItem();
         }
 
         public void AssertEnumTypeLoaded(IEnumDeclaration enumDeclaration, Type type)
@@ -624,7 +637,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             if (type.CustomAttributes.Any())
             {
-                enumDeclaration.Attributes.Should().NotBeNullOrEmpty();
+                enumDeclaration.Attributes.ShouldNotBeNull();
+                enumDeclaration.Attributes.ShouldNotBeEmpty();
             }
         }
 

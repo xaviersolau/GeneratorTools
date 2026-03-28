@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern;
 using Xunit;
 
@@ -32,7 +32,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.ReplacePattern
 
             var replacedText = textPatternHelper.ReplacePattern(text);
 
-            replacedText.Should().Be(expected);
+            replacedText.ShouldBe(expected);
         }
     }
 }
