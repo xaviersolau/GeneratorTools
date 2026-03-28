@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Solution;
 using Xunit.Abstractions;
@@ -65,7 +65,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.E2ETest
             {
                 var processResult = solution.Build(configuration: configurationName);
 
-                processResult.ExitCode.Should().Be(0);
+                processResult.ExitCode.ShouldBe(0);
 
                 var assemblyFile = Path.Combine(root, solutionName, projectName, $"bin/{configurationName}/{framework}/{projectName}.dll");
 
@@ -73,7 +73,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.E2ETest
                 {
                     var generatedDecl = decResolver.Find("SampleProject.SampleUsingLocalizerAssembly");
 
-                    generatedDecl.Should().NotBeNull();
+                    generatedDecl.ShouldNotBeNull();
                 });
             }
             finally

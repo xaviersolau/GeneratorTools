@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -52,13 +52,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Selectors
 
             if (selectionExpected)
             {
-                var selectedItem = selected.Should().ContainSingle().Subject;
+                var selectedItem = selected.ShouldHaveSingleItem();
 
-                selectedItem.Name.Should().Be(type.Name);
+                selectedItem.Name.ShouldBe(type.Name);
             }
             else
             {
-                selected.Should().BeEmpty();
+                selected.ShouldBeEmpty();
             }
         }
     }
