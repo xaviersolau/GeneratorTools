@@ -16,7 +16,6 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using System;
 using Xunit;
-using Xunit.Abstractions;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Enums;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;

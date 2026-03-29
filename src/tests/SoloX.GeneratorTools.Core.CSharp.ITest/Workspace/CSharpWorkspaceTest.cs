@@ -7,14 +7,13 @@
 // ----------------------------------------------------------------------
 
 using System;
-using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.V3.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Workspace
 {

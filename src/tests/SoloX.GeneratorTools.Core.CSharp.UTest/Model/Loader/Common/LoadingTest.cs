@@ -21,7 +21,6 @@ using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System.Collections.Generic;
-using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 using Shouldly;

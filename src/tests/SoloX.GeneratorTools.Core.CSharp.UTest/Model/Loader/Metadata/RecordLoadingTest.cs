@@ -9,7 +9,6 @@
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using System;
 using Xunit;
-using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 using Microsoft.CodeAnalysis;
 using Moq;

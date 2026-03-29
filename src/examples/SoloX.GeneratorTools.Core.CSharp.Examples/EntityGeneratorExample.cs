@@ -47,7 +47,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Examples
         /// <param name="projectFile">The project file to work from.</param>
         public void Generate(string projectFile)
         {
-            this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
+            if (this.logger.IsEnabled(LogLevel.Information))
+            {
+                this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
+            }
 
             var projectFolder = Path.GetDirectoryName(projectFile);
 

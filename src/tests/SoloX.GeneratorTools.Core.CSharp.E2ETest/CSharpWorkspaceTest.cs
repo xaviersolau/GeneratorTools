@@ -9,7 +9,6 @@
 using Shouldly;
 using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Solution;
-using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.Test.Helpers;
 
 namespace SoloX.GeneratorTools.Core.CSharp.E2ETest
