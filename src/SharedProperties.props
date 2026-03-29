@@ -1,9 +1,9 @@
 <Project>
-
   <PropertyGroup>
     <Version>1.0.0-alpha.46</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2021-2026 Xavier Solau</Copyright>
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/GeneratorTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/GeneratorTools.git</RepositoryUrl>
@@ -19,6 +19,6 @@
     <CodeQualityLoggerUseDisabled>true</CodeQualityLoggerUseDisabled>
 
     <LangVersion>latest</LangVersion>
-  </PropertyGroup>
 
+  </PropertyGroup>
 </Project>

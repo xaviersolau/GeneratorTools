@@ -353,3 +353,5 @@ pattern selector to get all interfaces to generate.
     generator.Generate(project.Files);
 ```
 
+
+q
