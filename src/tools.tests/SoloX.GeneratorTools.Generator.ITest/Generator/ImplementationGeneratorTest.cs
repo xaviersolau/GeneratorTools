@@ -9,8 +9,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.CodeQuality.Test.Helpers.Snapshot;
+using SoloX.CodeQuality.Test.Helpers.XUnit.V3;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -19,7 +21,6 @@ using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Generator.Impl;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace SoloX.GeneratorTools.Generator.ITest.Generator
 {
@@ -34,15 +35,15 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
 
         [Theory]
         [InlineData(@"Resources/Data/ISimpleObject.cs")]
-        public void GenerateSimpleTest(string interfaceFile)
+        public async Task GenerateSimpleTest(string interfaceFile)
         {
             var snapshotName = nameof(this.GenerateSimpleTest)
                 + Path.GetFileNameWithoutExtension(interfaceFile);
 
-            this.GenerateSnapshot(snapshotName, interfaceFile);
+            await GenerateSnapshot(snapshotName, interfaceFile);
         }
 
-        private void GenerateSnapshot(string snapshotName, params string[] files)
+        private async Task GenerateSnapshot(string snapshotName, params string[] files)
         {
             var sc = new ServiceCollection();
             sc.AddTestLogging(this.testOutputHelper);
@@ -74,8 +75,13 @@ namespace SoloX.GeneratorTools.Generator.ITest.Generator
 
                 generator.Generate(workspace, locator, snapshotGenerator, workspace.Files);
 
-                var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
-                SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+                var snapshotTest = SnapshotTestBuilder
+                    .Create()
+                    .WithThisFilePathLocation()
+                    .WithTextStrategy()
+                    .Build();
+
+                await snapshotTest.CompareSnapshotAsync(snapshotName, snapshotGenerator.GetAllGenerated(), forceReplaceSnapshot: false).ConfigureAwait(false);
             }
         }
     }

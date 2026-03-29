@@ -7,9 +7,9 @@
 // ----------------------------------------------------------------------
 
 using System;
-using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.CodeQuality.Test.Helpers.XUnit.V3;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace SoloX.GeneratorTools.Core.Test.Helpers.XUnit
 {

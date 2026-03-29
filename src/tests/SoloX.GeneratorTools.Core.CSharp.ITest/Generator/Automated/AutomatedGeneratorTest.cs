@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.CodeQuality.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -22,9 +22,9 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using Xunit;
-using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Itf;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 {
@@ -38,14 +38,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleTest()
+        public async Task AutomatedSimpleTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimplePattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -55,14 +55,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod1Test()
+        public async Task AutomatedSimpleMethod1Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod1Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod1Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -72,14 +72,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethodWithDateTime1Test()
+        public async Task AutomatedSimpleMethodWithDateTime1Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod1Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodWithDateTimeSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod1Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -89,14 +89,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod2Test()
+        public async Task AutomatedSimpleMethod2Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod2Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod2Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -106,14 +106,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod3Test()
+        public async Task AutomatedSimpleMethod3Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod3Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod3Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -123,14 +123,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod4Test()
+        public async Task AutomatedSimpleMethod4Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod4Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod4Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -140,14 +140,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod5Test()
+        public async Task AutomatedSimpleMethod5Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod5Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod5Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -157,14 +157,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleMethod6Test()
+        public async Task AutomatedSimpleMethod6Test()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimpleMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimpleMethod6Pattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimpleMethod6Pattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -174,14 +174,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedAsyncMethodTest()
+        public async Task AutomatedAsyncMethodTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IAsyncMethodPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/AsyncMethodPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/IAsyncMethodSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(AsyncMethodPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -191,14 +191,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleWithCallTest()
+        public async Task AutomatedSimpleWithCallTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithCall.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimplePatternWithCall),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -208,14 +208,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleWithConstructorTest()
+        public async Task AutomatedSimpleWithConstructorTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithConstructor.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimplePatternWithConstructor),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -225,14 +225,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedSimpleWithCreateTest()
+        public async Task AutomatedSimpleWithCreateTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/SimplePatternWithCreate.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(SimplePatternWithCreate),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -242,14 +242,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedRepeatStatementInProperty()
+        public async Task AutomatedRepeatStatementInProperty()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatStatementInPropertyPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(RepeatStatementInPropertyPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -259,14 +259,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedRepeatStatementInConstructor()
+        public async Task AutomatedRepeatStatementInConstructor()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatStatementInConstructorPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/ISimpleSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(RepeatStatementInConstructorPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -276,14 +276,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedConstTest()
+        public async Task AutomatedConstTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IConstPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/ConstPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/IConstSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(ConstPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -293,14 +293,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedAttributeSelectorTest()
+        public async Task AutomatedAttributeSelectorTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IAttributeSelectorPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/AttributeSelectorPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/IAttributeSelectorSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(AttributeSelectorPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -310,14 +310,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedBothRepeatAndRepeatStatementTest()
+        public async Task AutomatedBothRepeatAndRepeatStatementTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/IRepeatPattern.cs";
             var patternImplementationFile = @"Generator/Automated/Patterns/Impl/RepeatPattern.cs";
             var declarationInterfaceFile = @"Generator/Automated/Samples/IRepeatSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(RepeatPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -327,7 +327,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         }
 
         [Fact]
-        public void AutomatedIMethodPatternTest()
+        public async Task AutomatedIMethodPatternTest()
         {
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
 
@@ -337,7 +337,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             var declarationInterfaceFile2 = @"Generator/Automated/Samples/IOtherSample.cs";
             var targetNameSpace = "SoloX.GeneratorTools.Core.CSharp.ITest";
 
-            GenerateAndAssertSnapshot(
+            await GenerateAndAssertSnapshot(
                 typeof(IMethodPattern),
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -350,9 +350,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         [Theory]
         [InlineData("Simple")]
         [InlineData("TypeNameReplace")]
-        public void GenerateMethodTest(string method)
+        public async Task GenerateMethodTest(string method)
         {
-            GenerateSimpleSample(method, "Method");
+            await GenerateSimpleSample(method, "Method");
         }
 
         [Theory]
@@ -366,12 +366,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
         [InlineData("Throw")]
         [InlineData("Lambda")]
         [InlineData("Lambda2")]
-        public void GenerateStatementTest(string statement)
+        public async Task GenerateStatementTest(string statement)
         {
-            GenerateSimpleSample(statement, "Statement");
+            await GenerateSimpleSample(statement, "Statement");
         }
 
-        private void GenerateSimpleSample(string name, string group)
+        private Task GenerateSimpleSample(string name, string group)
         {
             var code = $"{name}{group}";
             var patternInterfaceFile = @"Generator/Automated/Patterns/Itf/ISimplePattern.cs";
@@ -382,7 +382,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             var patternImplementationTypeName = $"SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl.{group}.{code}SimplePattern";
             var patternImplementationType = Type.GetType(patternImplementationTypeName);
 
-            GenerateAndAssertSnapshot(
+            return GenerateAndAssertSnapshot(
                 patternImplementationType,
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -391,7 +391,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
                 declarationInterfaceFile);
         }
 
-        private void GenerateAndAssertSnapshot(
+        private async Task GenerateAndAssertSnapshot(
             Type patternType,
             string patternInterfaceFile,
             string patternImplementationFile,
@@ -399,8 +399,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             string snapshotName,
             params string[] declarationInterfaceFiles)
         {
-            SnapshotHelper.IsOverwriteEnable = true;
-
             var resolver = LoadWorkSpace(
                 patternInterfaceFile,
                 patternImplementationFile,
@@ -421,9 +419,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
 
             implGenerator.Generate(files);
 
-            var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot("Generator/Automated");
+            var snapshotTest = SnapshotTestBuilder
+                .Create()
+                .WithThisFilePathLocation()
+                .WithTextStrategy()
+                .Build();
 
-            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+            await snapshotTest.CompareSnapshotAsync(snapshotName, snapshotGenerator.GetAllGenerated(), forceReplaceSnapshot: false).ConfigureAwait(false);
         }
 
         private static DefaultSelectorResolver CreateSelectorResolver()

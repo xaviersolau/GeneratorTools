@@ -19,7 +19,6 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using Xunit;
-using Xunit.Abstractions;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 

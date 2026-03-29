@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="[4.8.0,)" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.3.6">
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -6,10 +6,10 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.V3.Logger;
 using SoloX.GeneratorTools.Core.CSharp.Extensions.Utils;
 using SoloX.GeneratorTools.Core.Utils;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace SoloX.GeneratorTools.Core.Test.Helpers.XUnit
 {
