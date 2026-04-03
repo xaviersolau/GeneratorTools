@@ -10,7 +10,7 @@ Don't hesitate to post issue, pull request on the project or to fork and improve
 ## Project dashboard
 
 [![Build - CI](https://github.com/xaviersolau/GeneratorTools/actions/workflows/build-ci.yml/badge.svg)](https://github.com/xaviersolau/GeneratorTools/actions/workflows/build-ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/GeneratorTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/GeneratorTools?branch=master)
+[![codecov](https://codecov.io/github/xaviersolau/GeneratorTools/graph/badge.svg?token=2BIPC0IYGL)](https://codecov.io/github/xaviersolau/GeneratorTools)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.GeneratorTools.Core.CSharp.svg)](https://www.nuget.org/packages/SoloX.GeneratorTools.Core.CSharp)
 
