@@ -206,7 +206,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
             decl.SetData(type);
         }
 
-        private static ArraySpecification CreateArraySpecification(
+        private static ArraySpecification? CreateArraySpecification(
             int arrayCount,
             ISyntaxNodeProvider<SyntaxNode> syntaxNodeProvider)
         {

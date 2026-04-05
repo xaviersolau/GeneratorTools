@@ -23,6 +23,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
         /// <param name="typeDefinitionHandle">Type definition.</param>
         /// <param name="location">Location of the declaration.</param>
         /// <returns></returns>
-        IDeclaration<SyntaxNode> CreateDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
+        IDeclaration<SyntaxNode>? CreateDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location);
     }
 }

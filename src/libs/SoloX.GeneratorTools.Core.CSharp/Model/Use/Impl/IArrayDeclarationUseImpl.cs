@@ -16,6 +16,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         /// <summary>
         /// Gets or sets array specification.
         /// </summary>
-        IArraySpecification ArraySpecification { get; set; }
+        IArraySpecification? ArraySpecification { get; set; }
     }
 }

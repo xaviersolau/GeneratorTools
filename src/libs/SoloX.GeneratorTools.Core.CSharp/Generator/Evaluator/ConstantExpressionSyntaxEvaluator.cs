@@ -44,20 +44,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 
 #pragma warning disable CA1062 // Valider les arguments de méthodes publiques
         /// <inheritdoc/>
-        public override T VisitInvocationExpression(InvocationExpressionSyntax node)
+        public override T? VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             if (node.Expression is IdentifierNameSyntax identifier && identifier.Identifier.Text == "nameof")
             {
                 var arg = node.ArgumentList.Arguments.Single();
 
-                return ConvertToT(NameOfEvaluator.Visit(arg));
+                var evaluatedObject = NameOfEvaluator.Visit(arg);
+
+                if (evaluatedObject == null)
+                {
+                    throw new ParserException($"Unable to evaluate nameof expression.", arg);
+                }
+
+                return ConvertToT(evaluatedObject);
             }
 
             return base.VisitInvocationExpression(node);
         }
 
         /// <inheritdoc/>
-        public override T VisitTypeOfExpression(TypeOfExpressionSyntax node)
+        public override T? VisitTypeOfExpression(TypeOfExpressionSyntax node)
         {
             var useWalker = new DeclarationUseWalker(this.resolver, this.genericDeclaration);
             var use = useWalker.Visit(node.Type);
@@ -78,8 +85,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 
         /// <inheritdoc/>
-        public override T VisitLiteralExpression(LiteralExpressionSyntax node)
+        public override T? VisitLiteralExpression(LiteralExpressionSyntax node)
         {
+            if (node.Token.Value == null)
+            {
+                throw new ParserException("Unable to evaluate literal expression.", node);
+            }
+
             return ConvertToT(node.Token.Value);
         }
 
@@ -117,7 +129,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
 
             var constant = this.genericDeclaration.Constants.SingleOrDefault(c => c.Name == identifier);
 
+            if (constant.SyntaxNodeProvider.SyntaxNode.Initializer == null)
+            {
+                return default;
+            }
+
             var value = Visit(constant.SyntaxNodeProvider.SyntaxNode.Initializer.Value);
+
+            if (value == null)
+            {
+                return default;
+            }
 
             return ConvertToT(value);
         }
@@ -141,8 +163,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 
         /// <inheritdoc/>
-        public override T VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        public override T? VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
         {
+            if (node.Initializer == null)
+            {
+                return default;
+            }
+
             if (node.Type.ElementType.Kind() == SyntaxKind.PredefinedType)
             {
                 return LoadFromArrayInitializerExpression(node.Initializer.Expressions, node.Type.ElementType.ToString());
@@ -164,19 +191,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
         }
 
         /// <inheritdoc/>
-        public override T VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
+        public override T? VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
         {
             return LoadFromArrayInitializerExpression(node.Initializer.Expressions);
         }
 
         /// <inheritdoc/>
-        public override T VisitCollectionExpression(CollectionExpressionSyntax node)
+        public override T? VisitCollectionExpression(CollectionExpressionSyntax node)
         {
             return LoadFromArrayInitializerExpression(node.Elements);
         }
 
         /// <inheritdoc/>
-        public override T VisitExpressionElement(ExpressionElementSyntax node)
+        public override T? VisitExpressionElement(ExpressionElementSyntax node)
         {
             return Visit(node.Expression);
         }
@@ -194,8 +221,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
                 ["object"] = typeof(object),
             };
 
-        private static readonly Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T>> TypeToLoaderMap =
-            new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T>>
+        private static readonly Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T?>> TypeToLoaderMap =
+            new Dictionary<Type, Func<ConstantExpressionSyntaxEvaluator<T>, IReadOnlyList<CSharpSyntaxNode>, T?>>
             {
                 [typeof(string)] = (l, i) => l.LoadArray<string>(i),
                 [typeof(char)] = (l, i) => l.LoadArray<char>(i),
@@ -205,7 +232,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
                 [typeof(object)] = (l, i) => l.LoadArray<object>(i),
             };
 
-        private T LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions, string typeName)
+        private T? LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions, string typeName)
         {
             if (PredefinedTypeMap.TryGetValue(typeName, out var type))
             {
@@ -215,7 +242,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             return default;
         }
 
-        private T LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions)
+        private T? LoadFromArrayInitializerExpression(IReadOnlyList<CSharpSyntaxNode> expressions)
         {
             if (typeof(T) == typeof(object))
             {
@@ -247,7 +274,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             return default;
         }
 
-        private T LoadArray(IReadOnlyList<CSharpSyntaxNode> expressions, Type eltType)
+        private T? LoadArray(IReadOnlyList<CSharpSyntaxNode> expressions, Type eltType)
         {
             if (TypeToLoaderMap.TryGetValue(eltType, out var func))
             {
@@ -257,7 +284,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             return default;
         }
 
-        private T LoadArray<TItem>(IReadOnlyList<CSharpSyntaxNode> expressions)
+        private T? LoadArray<TItem>(IReadOnlyList<CSharpSyntaxNode> expressions)
         {
             var size = expressions.Count;
             var values = new TItem[size];
@@ -267,13 +294,19 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator
             foreach (var expression in expressions)
             {
                 var value = evaluator.Visit(expression);
+
+                if (value == null)
+                {
+                    throw new ParserException("Unable to evaluate array initializer item expression.", expression);
+                }
+
                 values[idx++] = value;
             }
 
             return ConvertToT(values);
         }
 
-        private static T ConvertToT(object value)
+        private static T? ConvertToT(object value)
         {
             return (value is T t) ? t : default;
         }

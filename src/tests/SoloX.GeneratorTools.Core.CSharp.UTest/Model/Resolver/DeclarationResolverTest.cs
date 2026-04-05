@@ -9,6 +9,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 using Moq;
+using Shouldly;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
@@ -29,7 +30,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
             var fundDecl = Assert.Single(declResolver.Find(declaration.FullName));
             Assert.Same(declaration, fundDecl);
 
-            Assert.Null(declResolver.Find("unknown"));
+            declResolver.Find("unknown").ShouldBeEmpty();
         }
 
         [Theory]

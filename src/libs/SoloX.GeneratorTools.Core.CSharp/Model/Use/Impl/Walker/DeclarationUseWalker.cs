@@ -30,12 +30,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             this.genericDeclaration = genericDeclaration;
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitSimpleBaseType(SimpleBaseTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitSimpleBaseType(SimpleBaseTypeSyntax node)
         {
             return this.Visit(node.Type);
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitGenericName(GenericNameSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitGenericName(GenericNameSyntax node)
         {
             var identifier = node.Identifier.Text;
             var fullIdentifier = MakeFullQualifiedName(identifier);
@@ -69,7 +69,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 : this.currentQualifiedName + '.' + identifier;
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitQualifiedName(QualifiedNameSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitQualifiedName(QualifiedNameSyntax node)
         {
             var left = node.Left;
 
@@ -84,7 +84,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return use;
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitIdentifierName(IdentifierNameSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitIdentifierName(IdentifierNameSyntax node)
         {
             var identifier = node.Identifier.Text;
             var fullIdentifier = MakeFullQualifiedName(identifier);
@@ -120,7 +120,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
                 new UnknownDeclaration(this.currentQualifiedName, identifier));
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitArrayType(ArrayTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitArrayType(ArrayTypeSyntax node)
         {
             var elementDeclarationUse = this.Visit(node.ElementType);
 
@@ -131,14 +131,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return elementDeclarationUse;
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitPredefinedType(PredefinedTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitPredefinedType(PredefinedTypeSyntax node)
         {
             return new PredefinedDeclarationUse(
                 new ParserSyntaxNodeProvider<PredefinedTypeSyntax>(node),
                 node.Keyword.Text);
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitNullableType(NullableTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitNullableType(NullableTypeSyntax node)
         {
             var declarationUse = this.Visit(node.ElementType);
 
@@ -158,7 +158,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl.Walker
             return declarationUse;
         }
 
-        public override IDeclarationUse<SyntaxNode> VisitPrimaryConstructorBaseType(PrimaryConstructorBaseTypeSyntax node)
+        public override IDeclarationUse<SyntaxNode>? VisitPrimaryConstructorBaseType(PrimaryConstructorBaseTypeSyntax node)
         {
             return Visit(node.Type);
         }

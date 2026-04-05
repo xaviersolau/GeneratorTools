@@ -29,7 +29,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <inheritdoc/>
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
-            return declaration?.Properties.Where(p => p.HasGetter && p.HasSetter);
+            if (declaration == null)
+            {
+                throw new ArgumentNullException(nameof(declaration));
+            }
+
+            return declaration.Properties.Where(p => p.HasGetter && p.HasSetter);
         }
 
         /// <inheritdoc/>

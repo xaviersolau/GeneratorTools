@@ -34,7 +34,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         }
 
         /// <inheritdoc/>
-        public IReplacePatternHandlerFactory GetHandlerFactory(IDeclarationUse<SyntaxNode> replacePatternHandlerTypeUse)
+        public IReplacePatternHandlerFactory? GetHandlerFactory(IDeclarationUse<SyntaxNode> replacePatternHandlerTypeUse)
         {
             return CreateInstance<IReplacePatternHandlerFactory>(replacePatternHandlerTypeUse);
         }

@@ -31,7 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl
             this.data.Add(typeof(T), data);
         }
 
-        internal T GetData<T>()
+        internal T? GetData<T>()
         {
             if (this.data != null && this.data.TryGetValue(typeof(T), out var value))
             {

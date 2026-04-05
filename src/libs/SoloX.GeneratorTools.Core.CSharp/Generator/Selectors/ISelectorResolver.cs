@@ -21,6 +21,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// </summary>
         /// <param name="selectorTypeUse"></param>
         /// <returns></returns>
-        ISelector GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse);
+        ISelector? GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse);
     }
 }
