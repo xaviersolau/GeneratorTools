@@ -44,7 +44,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl
         public IDeclaration<SyntaxNode> Declaration => this;
 
         /// <inheritdoc/>
-        public IArraySpecification ArraySpecification { get; set; }
+        public IArraySpecification? ArraySpecification { get; set; }
 
         /// <inheritdoc/>
         public string Name { get; }

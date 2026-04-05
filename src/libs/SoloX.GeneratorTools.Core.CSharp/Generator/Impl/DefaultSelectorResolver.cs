@@ -38,7 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         }
 
         /// <inheritdoc/>
-        public ISelector GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse)
+        public ISelector? GetSelector(IDeclarationUse<SyntaxNode> selectorTypeUse)
         {
             return CreateInstance<ISelector>(selectorTypeUse);
         }

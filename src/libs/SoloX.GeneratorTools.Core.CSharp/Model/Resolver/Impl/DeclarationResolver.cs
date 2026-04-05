@@ -41,7 +41,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IGenericDeclaration<SyntaxNode> Resolve(
+        public IGenericDeclaration<SyntaxNode>? Resolve(
             string identifier, IReadOnlyList<IDeclarationUse<SyntaxNode>> genericParameters, IDeclaration<SyntaxNode> declarationContext)
         {
             var declarations = this.FindDeclarations(identifier, declarationContext);
@@ -65,7 +65,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IGenericDeclaration<SyntaxNode> Resolve(Type type)
+        public IGenericDeclaration<SyntaxNode>? Resolve(Type type)
         {
             if (type == null)
             {
@@ -101,7 +101,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         }
 
         /// <inheritdoc/>
-        public IDeclaration<SyntaxNode> Resolve(string identifier, IDeclaration<SyntaxNode> declarationContext)
+        public IDeclaration<SyntaxNode>? Resolve(string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
             var declarations = this.FindDeclarations(identifier, declarationContext);
             if (declarations != null)
@@ -131,7 +131,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
         /// <inheritdoc/>
         public IEnumerable<IDeclaration<SyntaxNode>> Find(string fullName)
         {
-            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : null;
+            return this.declarationMap.TryGetValue(fullName, out var declarations) ? declarations : Array.Empty<IDeclaration<SyntaxNode>>();
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl
             }
         }
 
-        private List<IDeclaration<SyntaxNode>> FindDeclarations(
+        private List<IDeclaration<SyntaxNode>>? FindDeclarations(
             string identifier, IDeclaration<SyntaxNode> declarationContext)
         {
             List<IDeclaration<SyntaxNode>> declarations;

@@ -25,8 +25,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.Utils
             var nameSpace = declarationNameSpace;
             while (!string.IsNullOrEmpty(nameSpace))
             {
-                yield return nameSpace;
-                var index = nameSpace.LastIndexOf('.');
+                yield return nameSpace!;
+
+                var index = nameSpace!.LastIndexOf('.');
+
                 nameSpace = index >= 0 ? nameSpace.Substring(0, index) : null;
             }
         }

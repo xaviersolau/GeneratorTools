@@ -82,11 +82,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
                 {
                     var assemblyFile = externalReference.Display;
 
+                    if (assemblyFile == null)
+                    {
+                        throw new InvalidOperationException($"Unable to get assembly file from external reference");
+                    }
+
                     var assemblyFileName = Path.GetFileName(assemblyFile);
 
                     if (!this.metadataAssemblies.TryGetValue(assemblyFileName, out var csMetadataAssembly))
                     {
                         var csMetadataAssemblyLoader = this.CreateMetadataAssembly(assemblyFile);
+
+                        if (csMetadataAssemblyLoader == null)
+                        {
+                            throw new InvalidOperationException($"Unable to create MetadataAssembly from {assemblyFile}");
+                        }
 
                         this.metadataAssemblies.Add(assemblyFileName, csMetadataAssemblyLoader.WorkspaceItem);
                     }
@@ -164,7 +174,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (assembly == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(assembly));
             }
 
             this.logger.LogDebug($"Register assembly {assembly.FullName}");
@@ -189,7 +199,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (assembly == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(assembly));
             }
 
             this.logger.LogDebug($"Register types from assembly {assembly.FullName}");
@@ -214,7 +224,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
         {
             if (assemblyFile == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(assemblyFile));
             }
 
             this.logger.LogDebug($"Register assembly file {assemblyFile}");
@@ -324,7 +334,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl
             return this.runTimePath;
         }
 
-        private ICSharpWorkspaceItemLoader<ICSharpMetadataAssembly> CreateMetadataAssembly(string assemblyFile)
+        private ICSharpWorkspaceItemLoader<ICSharpMetadataAssembly>? CreateMetadataAssembly(string assemblyFile)
         {
             if (!File.Exists(assemblyFile))
             {

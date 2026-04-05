@@ -20,8 +20,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
     /// </summary>
     public class TaskValueTypeReplaceHandler : IReplacePatternHandlerFactory, IReplacePatternHandler
     {
-        private string patternName;
-        private string declarationName;
+        private string? patternName;
+        private string? declarationName;
 
         /// <inheritdoc/>
         public string ApplyOn(string patternText)
@@ -35,13 +35,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
         }
 
         /// <inheritdoc/>
-        public IReplacePatternHandler Setup(IGenericDeclaration<SyntaxNode> pattern, IGenericDeclaration<SyntaxNode> declaration)
+        public IReplacePatternHandler? Setup(IGenericDeclaration<SyntaxNode> pattern, IGenericDeclaration<SyntaxNode> declaration)
         {
             throw new System.NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public IReplacePatternHandler Setup(IMethodDeclaration pattern, IMethodDeclaration declaration)
+        public IReplacePatternHandler? Setup(IMethodDeclaration pattern, IMethodDeclaration declaration)
         {
             if (pattern == null)
             {

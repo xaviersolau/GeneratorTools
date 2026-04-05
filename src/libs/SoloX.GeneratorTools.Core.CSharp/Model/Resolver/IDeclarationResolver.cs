@@ -25,7 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver
         /// <param name="genericParameters">The generic parameter list.</param>
         /// <param name="declarationContext">The declaration context.</param>
         /// <returns>The matching generic declaration or null if no match.</returns>
-        IGenericDeclaration<SyntaxNode> Resolve(
+        IGenericDeclaration<SyntaxNode>? Resolve(
             string identifier,
             IReadOnlyList<IDeclarationUse<SyntaxNode>> genericParameters,
             IDeclaration<SyntaxNode> declarationContext);
@@ -35,7 +35,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver
         /// </summary>
         /// <param name="type">The type to resolve.</param>
         /// <returns>The matching generic declaration or null if no match.</returns>
-        IGenericDeclaration<SyntaxNode> Resolve(Type type);
+        IGenericDeclaration<SyntaxNode>? Resolve(Type type);
 
         /// <summary>
         /// Resolve identifier as a declaration.
@@ -43,7 +43,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver
         /// <param name="identifier">The identifier to resolve.</param>
         /// <param name="declarationContext">The declaration context.</param>
         /// <returns>The matching declaration or null if no match.</returns>
-        IDeclaration<SyntaxNode> Resolve(string identifier, IDeclaration<SyntaxNode> declarationContext);
+        IDeclaration<SyntaxNode>? Resolve(string identifier, IDeclaration<SyntaxNode> declarationContext);
 
         /// <summary>
         /// Find all declarations matching the given lookup name.

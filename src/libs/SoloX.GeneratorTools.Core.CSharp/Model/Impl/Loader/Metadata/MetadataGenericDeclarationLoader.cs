@@ -6,13 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider;
-using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
-using SoloX.GeneratorTools.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +14,13 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
 {
@@ -448,7 +448,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             }
         }
 
-        internal static IDeclarationUse<SyntaxNode> GetDeclarationUseFrom(
+        internal static IDeclarationUse<SyntaxNode>? GetDeclarationUseFrom(
             MetadataReader metadataReader,
             EntityHandle typeHandle,
             IDeclarationResolver resolver,
@@ -479,7 +479,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return null;
         }
 
-        private static IDeclarationUse<SyntaxNode> LoadDeclarationUseFromInterfaceImplementation(
+        private static IDeclarationUse<SyntaxNode>? LoadDeclarationUseFromInterfaceImplementation(
             MetadataReader metadataReader,
             InterfaceImplementationHandle interfaceImplementationHandle,
             IDeclarationResolver resolver,
@@ -561,7 +561,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return genericDeclarationUse;
         }
 
-        internal static string GetNamespace(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle)
+        internal static string? GetNamespace(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle)
         {
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
 
@@ -575,6 +575,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
 
             var name = LoadString(metadataReader, typeDefinition.Name);
+
+            if (name == null)
+            {
+                throw new InvalidOperationException("Type name should not be null or empty");
+            }
 
             return name;
         }
@@ -595,7 +600,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
             return name;
         }
 
-        internal static string LoadString(MetadataReader metadataReader, StringHandle stringHandle)
+        internal static string? LoadString(MetadataReader metadataReader, StringHandle stringHandle)
         {
             return stringHandle.IsNil ? null : metadataReader.GetString(stringHandle);
         }

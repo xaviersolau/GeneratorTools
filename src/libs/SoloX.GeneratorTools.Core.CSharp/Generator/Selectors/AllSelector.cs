@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -28,19 +29,34 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Selectors
         /// <inheritdoc/>
         public IEnumerable<IPropertyDeclaration> GetProperties(IGenericDeclaration<SyntaxNode> declaration)
         {
-            return declaration?.Properties;
+            if (declaration == null)
+            {
+                throw new ArgumentNullException(nameof(declaration));
+            }
+
+            return declaration.Properties;
         }
 
         /// <inheritdoc/>
         public IEnumerable<IMethodDeclaration> GetMethods(IGenericDeclaration<SyntaxNode> declaration)
         {
-            return declaration?.Methods;
+            if (declaration == null)
+            {
+                throw new ArgumentNullException(nameof(declaration));
+            }
+
+            return declaration.Methods;
         }
 
         /// <inheritdoc/>
         public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
         {
-            return declaration?.Constants;
+            if (declaration == null)
+            {
+                throw new ArgumentNullException(nameof(declaration));
+            }
+
+            return declaration.Constants;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata
         }
 
         /// <inheritdoc/>
-        public IDeclaration<SyntaxNode> CreateDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
+        public IDeclaration<SyntaxNode>? CreateDeclaration(MetadataReader metadataReader, TypeDefinitionHandle typeDefinitionHandle, string location)
         {
             var typeDefinition = metadataReader.GetTypeDefinition(typeDefinitionHandle);
 

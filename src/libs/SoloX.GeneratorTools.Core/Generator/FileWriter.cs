@@ -17,14 +17,14 @@ namespace SoloX.GeneratorTools.Core.Generator
     public class FileWriter : IWriter
     {
         private readonly string fileSufix;
-        private readonly Action<string> generateCallBack;
+        private readonly Action<string>? generateCallBack;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileWriter"/> class.
         /// </summary>
         /// <param name="fileSufix">The file suffix to use (like '.cs' or '.generated.cs').</param>
         /// <param name="generateCallBack">The callback to use once a new file is generated.</param>
-        public FileWriter(string fileSufix, Action<string> generateCallBack = null)
+        public FileWriter(string fileSufix, Action<string>? generateCallBack = null)
         {
             this.fileSufix = fileSufix;
             this.generateCallBack = generateCallBack;
