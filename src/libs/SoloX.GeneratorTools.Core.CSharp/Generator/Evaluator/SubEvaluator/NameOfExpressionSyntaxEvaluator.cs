@@ -13,12 +13,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator.SubEvaluator
 {
     internal class NameOfExpressionSyntaxEvaluator : CSharpSyntaxVisitor<string>
     {
-        public override string VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        public override string? VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             return this.Visit(node.Name);
         }
 
-        public override string VisitArgument(ArgumentSyntax node)
+        public override string? VisitArgument(ArgumentSyntax node)
         {
             return this.Visit(node.Expression);
         }

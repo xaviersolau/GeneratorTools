@@ -21,6 +21,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.ReplacePattern
         /// </summary>
         /// <param name="replacePatternHandlerTypeUse"></param>
         /// <returns></returns>
-        IReplacePatternHandlerFactory GetHandlerFactory(IDeclarationUse<SyntaxNode> replacePatternHandlerTypeUse);
+        IReplacePatternHandlerFactory? GetHandlerFactory(IDeclarationUse<SyntaxNode> replacePatternHandlerTypeUse);
     }
 }

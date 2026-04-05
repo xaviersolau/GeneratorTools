@@ -25,6 +25,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl
         /// <summary>
         /// Setup instance with the given types to be resolved.
         /// </summary>
+        /// <param name="defaultTypes">Default type list</param>
         /// <param name="types">Types to be resolved in selectors.</param>
         protected AInstanceResolver(IEnumerable<Type> defaultTypes, params Type[] types)
         {

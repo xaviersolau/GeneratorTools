@@ -23,6 +23,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// <param name="replacePatternHandlerType">The type of the replace pattern handler factory type to use.</param>
         public ReplacePatternAttribute(Type replacePatternHandlerType)
         {
+            this.ReplacePatternHandlerType = replacePatternHandlerType;
             this.ReplacePatternHandlerFactory = (IReplacePatternHandlerFactory)Activator.CreateInstance(replacePatternHandlerType);
         }
 

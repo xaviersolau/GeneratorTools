@@ -32,12 +32,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         }
 
         [Theory]
-        [InlineData(typeof(SimpleStruct), null)]
-        public void ItShouldLoadStructType(Type type, Type baseType)
+        [InlineData(typeof(SimpleStruct))]
+        public void ItShouldLoadStructType(Type type)
         {
             var structDeclaration = LoadStructDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, baseType, false);
+            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, null, false);
         }
 
         private IStructDeclaration LoadStructDeclaration(Type type)

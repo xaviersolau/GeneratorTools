@@ -58,16 +58,23 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
             return new StrategyReplacePatternHandler(ApplyPatternReplace);
         }
 
-        public IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
+        public IReplacePatternHandler? CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax)
         {
             var replaceHandlerTypeExpression = replacePatternAttributeSyntax.ArgumentList.Arguments.First().Expression;
 
             var constEvaluator = new ConstantExpressionSyntaxEvaluator<IDeclarationUse<SyntaxNode>>(this.resolver, this.genericDeclaration);
             var typeUse = constEvaluator.Visit(replaceHandlerTypeExpression);
 
+            if (typeUse == null)
+            {
+                throw new InvalidOperationException($"Unable to evaluate type for replace pattern handler from expression {replaceHandlerTypeExpression}");
+            }
+
             var factory = this.replacePatternResolver.GetHandlerFactory(typeUse);
 
-            return factory.Setup(this.pattern, this.declaration);
+            var handler = factory?.Setup(this.pattern, this.declaration);
+
+            return handler;
         }
 
         private string ApplyPatternReplace(string text)

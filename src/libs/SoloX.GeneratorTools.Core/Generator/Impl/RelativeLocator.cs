@@ -18,9 +18,9 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
     {
         private readonly string baseFolder;
         private readonly string baseNameSpace;
-        private readonly string suffix;
-        private readonly string suffixPath;
-        private readonly string fallBackSubNameSpace;
+        private readonly string? suffix;
+        private readonly string? suffixPath;
+        private readonly string? fallBackSubNameSpace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RelativeLocator"/> class.
@@ -29,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
         /// <param name="baseNameSpace">The base name space.</param>
         /// <param name="suffix">NameSpace suffix.</param>
         /// <param name="fallBackSubNameSpace">The fall back name space.</param>
-        public RelativeLocator(string baseFolder, string baseNameSpace, string suffix = null, string fallBackSubNameSpace = null)
+        public RelativeLocator(string baseFolder, string baseNameSpace, string? suffix = null, string? fallBackSubNameSpace = null)
         {
             this.baseFolder = string.IsNullOrEmpty(baseFolder) ? "." : baseFolder;
             this.baseNameSpace = baseNameSpace;
@@ -83,7 +83,7 @@ namespace SoloX.GeneratorTools.Core.Generator.Impl
                     return (Path.Combine(this.baseFolder, this.suffixPath), $"{this.baseNameSpace}.{this.suffix}");
                 }
 
-                var subPath = this.fallBackSubNameSpace.Replace('.', Path.DirectorySeparatorChar);
+                var subPath = this.fallBackSubNameSpace!.Replace('.', Path.DirectorySeparatorChar);
 
                 if (string.IsNullOrEmpty(this.suffix))
                 {

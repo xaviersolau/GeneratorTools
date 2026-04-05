@@ -19,7 +19,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Attributes
         /// <summary>
         /// Gets the selector.
         /// </summary>
-        public ISelector Selector { get; protected set; }
+        public ISelector Selector { get; protected set; } = default!;
     }
 
     /// <summary>

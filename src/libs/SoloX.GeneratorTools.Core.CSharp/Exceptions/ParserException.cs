@@ -28,15 +28,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.Exceptions
         }
 
         /// <summary>
+        /// 
         /// Setup instance.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="syntaxNode"></param>
         /// <param name="innerException"></param>
-        public ParserException(string message, SyntaxNode syntaxNode, Exception innerException)
+        public ParserException(string message, SyntaxNode syntaxNode, Exception? innerException)
             : base(syntaxNode == null ? message : $"{message}{Environment.NewLine}{syntaxNode.ToFullString()}", innerException)
         {
-            SyntaxNode = syntaxNode;
+            SyntaxNode = syntaxNode!;
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
         /// </summary>
         /// <param name="replacePatternAttributeSyntax">ReplacePatternAttribute node</param>
         /// <returns></returns>
-        IReplacePatternHandler CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax);
+        IReplacePatternHandler? CreateReplacePatternHandler(AttributeSyntax replacePatternAttributeSyntax);
 
         /// <summary>
         /// Create the IReplacePatternHandler from the current strategy.

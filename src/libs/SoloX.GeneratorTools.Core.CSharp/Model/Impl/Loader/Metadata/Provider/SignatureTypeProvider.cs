@@ -71,7 +71,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata.Provider
         {
             // TODO
             //throw new NotImplementedException();
-            return null;
+            return default!;
         }
 
         public IDeclarationUse<SyntaxNode> GetGenericInstantiation(IDeclarationUse<SyntaxNode> genericType, ImmutableArray<IDeclarationUse<SyntaxNode>> typeArguments)

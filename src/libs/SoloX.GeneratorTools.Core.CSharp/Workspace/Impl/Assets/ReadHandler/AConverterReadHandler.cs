@@ -29,7 +29,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Workspace.Impl.Assets.ReadHandler
         /// Handle Converter Read operation.
         /// </summary>
         /// <returns>The next Converter Read Handler.</returns>
-        internal AConverterReadHandler Handle(ref Utf8JsonReader reader)
+        internal AConverterReadHandler? Handle(ref Utf8JsonReader reader)
         {
             var tknType = reader.TokenType;
             var res = this.Handle(ref reader, tknType);

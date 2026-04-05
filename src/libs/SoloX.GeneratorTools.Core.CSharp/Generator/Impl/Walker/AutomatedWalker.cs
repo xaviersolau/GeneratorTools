@@ -1156,7 +1156,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Impl.Walker
 
         private void WriteMethodDeclaration(MethodDeclarationSyntax node)
         {
-            IReplacePatternHandler replacePatternHandler = null;
+            IReplacePatternHandler? replacePatternHandler = null;
             if (node.AttributeLists.TryMatchAttributeName<ReplacePatternAttribute>(out var replaceAttributeSyntax))
             {
                 replacePatternHandler = this.CurrentStrategy().CreateReplacePatternHandler(replaceAttributeSyntax);
