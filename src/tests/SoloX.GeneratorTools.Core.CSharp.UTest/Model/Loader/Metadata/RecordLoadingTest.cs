@@ -11,7 +11,7 @@ using System;
 using Xunit;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -19,6 +19,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Records;
+using Shouldly;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
@@ -36,11 +37,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [Theory]
         [InlineData(typeof(SimpleRecord), null)]
         [InlineData(typeof(SimpleRecordWithBase), typeof(SimpleRecord))]
-        public void ItShouldLoadRecordType(Type type, Type baseType)
+        public void ItShouldLoadRecordType(Type type, Type? baseType)
         {
             var recordDeclaration = LoadRecordDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
+            this.loadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
         }
 
         [Theory]
@@ -59,13 +60,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var assemblyPath = type.Assembly.Location;
 
             var assemblyLoader = new CSharpMetadataAssembly(
-                Mock.Of<IGeneratorLogger<CSharpMetadataAssembly>>(),
+                Substitute.For<IGeneratorLogger<CSharpMetadataAssembly>>(),
                 DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper),
                 assemblyPath);
 
-            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
+            assemblyLoader.Load(Substitute.For<ICSharpWorkspace>());
 
-            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
+            var declaration = assemblyLoader.Declarations.Where(x => x.Name == className).ShouldHaveSingleItem();
 
             var recordDeclaration = Assert.IsAssignableFrom<IRecordDeclaration>(declaration);
             return recordDeclaration;

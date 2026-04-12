@@ -9,7 +9,7 @@
 using System;
 using System.IO;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -37,21 +37,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             var workingDir = Path.GetFullPath(Environment.CurrentDirectory);
 
-            var projectLoader1 = new Mock<ICSharpWorkspaceItemLoader<ICSharpProject>>();
-            var projectLoader2 = new Mock<ICSharpWorkspaceItemLoader<ICSharpProject>>();
+            var projectLoader1 = Substitute.For<ICSharpWorkspaceItemLoader<ICSharpProject>>();
+            var projectLoader2 = Substitute.For<ICSharpWorkspaceItemLoader<ICSharpProject>>();
 
-            var factoryMock = new Mock<ICSharpWorkspaceItemFactory>();
-            factoryMock.Setup(f => f.CreateProject(Path.GetFullPath(projectName1)))
-                .Returns(projectLoader1.Object);
-            factoryMock.Setup(f => f.CreateProject(Path.GetFullPath(projectName2)))
-                .Returns(projectLoader2.Object);
+            var factoryMock = Substitute.For<ICSharpWorkspaceItemFactory>();
+            factoryMock.CreateProject(Path.GetFullPath(projectName1))
+                .Returns(projectLoader1);
+            factoryMock.CreateProject(Path.GetFullPath(projectName2))
+                .Returns(projectLoader2);
 
-            projectLoader1.SetupGet(x => x.WorkspaceItem).Returns(Mock.Of<ICSharpProject>());
-            projectLoader2.SetupGet(x => x.WorkspaceItem).Returns(Mock.Of<ICSharpProject>());
+            projectLoader1.WorkspaceItem.Returns(Substitute.For<ICSharpProject>());
+            projectLoader2.WorkspaceItem.Returns(Substitute.For<ICSharpProject>());
 
             var workspace = new CSharpWorkspace(
                 LoggerHelper.CreateGeneratorLogger<CSharpWorkspace>(this.testOutputHelper),
-                factoryMock.Object);
+                factoryMock);
 
             var project1 = workspace.RegisterProject(projectName1);
             var project2 = workspace.RegisterProject(projectName1);
@@ -62,39 +62,38 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
 
             Assert.NotSame(project1, project3);
 
-            factoryMock.Verify(f => f.CreateProject(Path.Combine(workingDir, projectName1)));
-            factoryMock.Verify(f => f.CreateProject(Path.Combine(workingDir, projectName2)));
+            factoryMock.Received().CreateProject(Path.Combine(workingDir, projectName1));
+            factoryMock.Received().CreateProject(Path.Combine(workingDir, projectName2));
 
-            projectLoader1.Verify(l => l.Load(workspace));
-            projectLoader2.Verify(l => l.Load(workspace));
+            projectLoader1.Received().Load(workspace);
+            projectLoader2.Received().Load(workspace);
         }
 
         [Fact]
         public void DeepLoadTest()
         {
-            var factoryMock = new Mock<ICSharpWorkspaceItemFactory>();
+            var factoryMock = Substitute.For<ICSharpWorkspaceItemFactory>();
 
             var workspace = new CSharpWorkspace(
                 LoggerHelper.CreateGeneratorLogger<CSharpWorkspace>(this.testOutputHelper),
-                factoryMock.Object);
+                factoryMock);
 
-            var fileloaderMock = new Mock<ICSharpWorkspaceItemLoader<ICSharpFile>>();
-            var fileMock = new Mock<ICSharpFile>();
+            var fileloaderMock = Substitute.For<ICSharpWorkspaceItemLoader<ICSharpFile>>();
+            var fileMock = Substitute.For<ICSharpFile>();
 
-            fileloaderMock.SetupGet(x => x.WorkspaceItem).Returns(fileMock.Object);
+            fileloaderMock.WorkspaceItem.Returns(fileMock);
 
             var declaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>("nameSpace", "name");
 
-            fileMock.SetupGet(f => f.Declarations).Returns(new IDeclaration<SyntaxNode>[] { declaration });
-
-            factoryMock.Setup(f => f.CreateFile(It.IsAny<string>(), It.IsAny<IGlobalUsingDirectives>()))
-                .Returns(fileloaderMock.Object);
+            fileMock.Declarations.Returns(new IDeclaration<SyntaxNode>[] { declaration });
+            factoryMock.CreateFile(Arg.Any<string>(), Arg.Any<IGlobalUsingDirectives>())
+                .Returns(fileloaderMock);
 
             workspace.RegisterFile("Test", null);
 
             workspace.DeepLoad();
 
-            Mock.Get(declaration).Verify(declaration => declaration.DeepLoad(It.IsAny<IDeclarationResolver>()));
+            declaration.Received().DeepLoad(Arg.Any<IDeclarationResolver>());
         }
     }
 }

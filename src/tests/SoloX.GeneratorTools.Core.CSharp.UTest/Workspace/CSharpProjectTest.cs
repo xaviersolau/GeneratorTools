@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Linq;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
@@ -30,21 +30,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
         {
             var projectFile = @"../../../../SoloX.GeneratorTools.Core.CSharp.Sample2/SoloX.GeneratorTools.Core.CSharp.Sample2.csproj";
 
-            var workspaceMock = new Mock<ICSharpWorkspace>();
+            var workspaceMock = Substitute.For<ICSharpWorkspace>();
 
             workspaceMock
-                .Setup(ws => ws.RegisterProject(It.IsAny<string>()))
-                .Returns<string>(p => new CSharpProject(p));
+                .RegisterProject(Arg.Any<string>())
+                .Returns(ci => new CSharpProject(ci.Arg<string>()));
 
             workspaceMock
-                .Setup(ws => ws.RegisterFile(It.IsAny<string>(), It.IsAny<IGlobalUsingDirectives>()))
-                .Returns<string, IGlobalUsingDirectives>((p, gud) => new CSharpFile(
-                    p,
+                .RegisterFile(Arg.Any<string>(), Arg.Any<IGlobalUsingDirectives>())
+                .Returns(ci => new CSharpFile(
+                    ci.Arg<string>(),
                     DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                    gud));
+                    ci.Arg<IGlobalUsingDirectives>()));
 
             var project = new CSharpProject(projectFile);
-            project.Load(workspaceMock.Object);
+            project.Load(workspaceMock);
 
             Assert.Single(project.ProjectReferences);
 

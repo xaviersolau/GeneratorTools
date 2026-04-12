@@ -9,7 +9,7 @@
 using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
@@ -21,6 +21,7 @@ using SoloX.GeneratorTools.Core.Utils;
 using Xunit;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using Shouldly;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
 {
@@ -42,21 +43,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
         [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
-        public void ItShouldLoadClassType(Type type, Type baseType)
+        public void ItShouldLoadClassType(Type type, Type? baseType)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
+            this.loadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
         }
 
         [Theory]
         [InlineData(typeof(SimpleConstructorClass), null)]
         [InlineData(typeof(SimpleConstructorClassWithBase), typeof(SimpleConstructorClass))]
-        public void ItShouldLoadConstructorClassType(Type type, Type baseType)
+        public void ItShouldLoadConstructorClassType(Type type, Type? baseType)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
+            this.loadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
         }
 
         [Theory]
@@ -190,13 +191,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
             var className = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(type.Name);
 
             var assemblyLoader = new CSharpAssembly(
-                Mock.Of<IGeneratorLogger<CSharpAssembly>>(),
+                Substitute.For<IGeneratorLogger<CSharpAssembly>>(),
                 DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
                 type.Assembly);
 
-            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
+            assemblyLoader.Load(Substitute.For<ICSharpWorkspace>());
 
-            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
+            var declaration = assemblyLoader.Declarations.Where(x => x.Name == className).ShouldHaveSingleItem();
 
             var classDeclaration = Assert.IsAssignableFrom<IClassDeclaration>(declaration);
             return classDeclaration;

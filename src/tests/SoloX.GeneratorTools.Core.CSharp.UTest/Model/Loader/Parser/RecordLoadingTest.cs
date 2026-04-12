@@ -8,7 +8,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
@@ -34,11 +34,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [Theory]
         [InlineData(typeof(SimpleRecord), null)]
         [InlineData(typeof(SimpleRecordWithBase), typeof(SimpleRecord))]
-        public void ItShouldLoadRecordType(Type type, Type baseType)
+        public void ItShouldLoadRecordType(Type type, Type? baseType)
         {
             var recordDeclaration = LoadRecordDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
+            this.loadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
         }
 
         [Theory]
@@ -58,9 +58,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
-            csFile.Load(Mock.Of<ICSharpWorkspace>());
+            csFile.Load(Substitute.For<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 

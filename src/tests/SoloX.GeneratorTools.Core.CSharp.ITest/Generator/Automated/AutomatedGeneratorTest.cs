@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using SoloX.CodeQuality.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated.Patterns.Impl;
@@ -415,7 +415,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             var selectorResolver = CreateSelectorResolver();
 
             var implGenerator = new AutomatedGenerator(
-                snapshotGenerator, locator, resolver, patternType, Mock.Of<IGeneratorLogger>(), selectorResolver: selectorResolver);
+                snapshotGenerator, locator, resolver, patternType, Substitute.For<IGeneratorLogger>(), selectorResolver: selectorResolver);
 
             implGenerator.Generate(files);
 
@@ -443,9 +443,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.ITest.Generator.Automated
             params string[] declarationInterfaceFiles)
         {
             var ws = new CSharpWorkspace(
-                Mock.Of<IGeneratorLogger<CSharpWorkspace>>(),
+                Substitute.For<IGeneratorLogger<CSharpWorkspace>>(),
                 new CSharpWorkspaceItemFactory(
-                    Mock.Of<IGeneratorLoggerFactory>(),
+                    Substitute.For<IGeneratorLoggerFactory>(),
                     DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
                     DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
                     DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper)));

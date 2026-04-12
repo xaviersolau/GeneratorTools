@@ -8,7 +8,8 @@
 
 using System;
 using System.Linq;
-using Moq;
+using NSubstitute;
+using Shouldly;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -37,10 +38,10 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
                 DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper),
                 assembly);
 
-            csAssembly.Load(Mock.Of<ICSharpWorkspace>());
+            csAssembly.Load(Substitute.For<ICSharpWorkspace>());
 
             Assert.Same(assembly, csAssembly.Assembly);
-            var decl = Assert.Single(csAssembly.Declarations.Where(d => d.Name == nameof(IBasicInterface)));
+            var decl = csAssembly.Declarations.Where(d => d.Name == nameof(IBasicInterface)).ShouldHaveSingleItem();
 
             var typeItfDecl = Assert.IsType<InterfaceDeclaration>(decl);
 

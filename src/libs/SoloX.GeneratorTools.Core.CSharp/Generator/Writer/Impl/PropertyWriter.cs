@@ -26,8 +26,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         private readonly IReadOnlyCollection<IPropertyDeclaration> declarationProperties;
         private readonly IPropertyDeclaration itfPatternProperty;
 
-        private Action<string> write;
         private readonly Func<string, string> typeTextExtractor;
+
+        private Action<string> write;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyWriter"/> class.
@@ -38,12 +39,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         public PropertyWriter(
             IPropertyDeclaration itfPatternProperty,
             IReadOnlyCollection<IPropertyDeclaration> itfDeclarationProperties,
-            Func<string, string> typeTextExtractor = null)
+            Func<string, string>? typeTextExtractor = null)
         {
             this.declarationProperties = itfDeclarationProperties;
             this.itfPatternProperty = itfPatternProperty;
 
             this.typeTextExtractor = typeTextExtractor ?? IdentityExtract;
+
+            this.write = s => { };
         }
 
         /// <inheritdoc/>
@@ -51,7 +54,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Generator.Writer.Impl
         {
             this.write = write;
             var res = this.Visit(node);
-            this.write = null;
+            this.write = s => { };
             return res;
         }
 

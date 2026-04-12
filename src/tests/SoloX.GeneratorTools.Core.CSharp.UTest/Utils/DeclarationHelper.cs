@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Metadata;
@@ -32,19 +32,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// </summary>
         /// <param name="nameSpace">The declaration name space.</param>
         /// <param name="name">The declaration name.</param>
-        /// <param name="setup">The action delegate to do additional setup on the mock.</param>
         /// <returns>The mocked declaration.</returns>
-        public static TDeclaration SetupDeclaration<TDeclaration>(string nameSpace, string name, Action<Mock<TDeclaration>> setup = null)
+        public static TDeclaration SetupDeclaration<TDeclaration>(string nameSpace, string name)
             where TDeclaration : class, IDeclaration<SyntaxNode>
         {
-            var declarationMock = new Mock<TDeclaration>();
-            declarationMock.SetupGet(d => d.Name).Returns(name);
-            declarationMock.SetupGet(d => d.DeclarationNameSpace).Returns(nameSpace);
-            declarationMock.SetupGet(d => d.FullName).Returns(ADeclaration<SyntaxNode>.GetFullName(nameSpace, name));
+            var declarationMock = Substitute.For<TDeclaration>();
+            declarationMock.Name.Returns(name);
+            declarationMock.DeclarationNameSpace.Returns(nameSpace);
+            declarationMock.FullName.Returns(ADeclaration<SyntaxNode>.GetFullName(nameSpace, name));
 
-            setup?.Invoke(declarationMock);
-
-            return declarationMock.Object;
+            return declarationMock;
         }
 
         /// <summary>
@@ -53,11 +50,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <returns></returns>
         public static IUsingDirectives SetupUsingDirectives(IReadOnlyList<string> usings)
         {
-            var usingDirectivesMock = new Mock<IUsingDirectives>();
+            var usingDirectivesMock = Substitute.For<IUsingDirectives>();
 
-            usingDirectivesMock.SetupGet(u => u.Usings).Returns(usings);
+            usingDirectivesMock.Usings.Returns(usings);
 
-            return usingDirectivesMock.Object;
+            return usingDirectivesMock;
         }
 
         /// <summary>
@@ -67,21 +64,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="typeSourceCode">The type source code.</param>
         /// <param name="setup">The action delegate to do additional setup on the mock.</param>
         /// <returns>The mocked declaration use.</returns>
-        public static TDeclarationUse SetupDeclarationUse<TDeclarationUse>(IDeclaration<SyntaxNode> declaration, string typeSourceCode = null, Action<Mock<TDeclarationUse>> setup = null)
+        public static TDeclarationUse SetupDeclarationUse<TDeclarationUse>(
+            IDeclaration<SyntaxNode> declaration,
+            string? typeSourceCode = null,
+            Action<TDeclarationUse>? setup = null)
             where TDeclarationUse : class, IDeclarationUse<SyntaxNode>
         {
-            var propertyTypeMock = new Mock<TDeclarationUse>();
-            propertyTypeMock.Setup(t => t.Declaration).Returns(declaration);
+            var propertyTypeMock = Substitute.For<TDeclarationUse>();
+            propertyTypeMock.Declaration.Returns(declaration);
             if (typeSourceCode != null)
             {
                 var typeNode = SyntaxTreeHelper.GetTypeSyntax(typeSourceCode);
                 var nodeProvider = SyntaxTreeHelper.GetSyntaxNodeProvider(typeNode);
-                propertyTypeMock.Setup(t => t.SyntaxNodeProvider).Returns(nodeProvider);
+                propertyTypeMock.SyntaxNodeProvider.Returns(nodeProvider);
             }
 
             setup?.Invoke(propertyTypeMock);
 
-            return propertyTypeMock.Object;
+            return propertyTypeMock;
         }
 
         /// <summary>
@@ -92,13 +92,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <returns>The mocked property declaration.</returns>
         public static IPropertyDeclaration SetupPropertyDeclaration(string type, string name)
         {
-            var propertyType = DeclarationHelper.SetupDeclarationUse<IDeclarationUse<SyntaxNode>>(Mock.Of<IDeclaration<SyntaxNode>>(), type);
+            var propertyType = DeclarationHelper.SetupDeclarationUse<IDeclarationUse<SyntaxNode>>(Substitute.For<IDeclaration<SyntaxNode>>(), type);
 
-            var itfDeclPropMock = new Mock<IPropertyDeclaration>();
-            itfDeclPropMock.SetupGet(d => d.Name).Returns(name);
-            itfDeclPropMock.SetupGet(d => d.PropertyType).Returns(propertyType);
+            var itfDeclPropMock = Substitute.For<IPropertyDeclaration>();
+            itfDeclPropMock.Name.Returns(name);
+            itfDeclPropMock.PropertyType.Returns(propertyType);
 
-            return itfDeclPropMock.Object;
+            return itfDeclPropMock;
         }
 
         /// <summary>

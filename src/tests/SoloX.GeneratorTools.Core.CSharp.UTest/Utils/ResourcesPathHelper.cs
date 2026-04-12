@@ -79,6 +79,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// Convert the given class name to the Resources/Model/Basic/??? path.
         /// </summary>
         /// <param name="className">The class name.</param>
+        /// <param name="path">The subpath in Resources/Model/Basic.</param>
         /// <returns>The class file path in Resources/Model/Basic/???.</returns>
         public static string ToBasicPath(this string className, string path)
         {

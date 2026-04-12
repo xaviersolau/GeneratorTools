@@ -242,7 +242,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Writer
         private static PropertyWriter SetupPropertyWriter(
             string itfPatternPropertyType,
             string itfPatternPropertyName,
-            Func<string, string> typeTextExtractor,
+            Func<string, string>? typeTextExtractor,
             params (string propertyType, string propertyName)[] itfDeclarations)
         {
             var itfPatternProp = DeclarationHelper.SetupPropertyDeclaration(itfPatternPropertyType, itfPatternPropertyName);

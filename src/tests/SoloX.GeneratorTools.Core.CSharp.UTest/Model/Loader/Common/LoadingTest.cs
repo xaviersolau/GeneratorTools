@@ -6,25 +6,25 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.CodeAnalysis;
-using Moq;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
-using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
-using Xunit;
 using System;
-using System.Reflection;
-using System.Linq;
-using SoloX.GeneratorTools.Core.CSharp.Model;
-using SoloX.GeneratorTools.Core.CSharp.Model.Use;
-using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
-using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
+using NSubstitute;
+using Shouldly;
+using SoloX.GeneratorTools.Core.CSharp.Model;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
+using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
+using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Classes;
-using Shouldly;
-using System.ComponentModel;
+using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
+using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using Xunit;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 {
@@ -37,7 +37,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             this.testOutputHelper = testOutputHelper;
         }
 
-        public static void AssertGenericTypeLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, Type? baseType, bool isRecord)
+        public void AssertGenericTypeLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, Type type, Type? baseType, bool isRecord)
             where TSyntaxNode : SyntaxNode
         {
             Assert.Equal(
@@ -55,7 +55,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             Assert.Null(classDeclaration.Extends);
             Assert.Null(classDeclaration.Members);
 
-            classDeclaration.DeepLoad(Mock.Of<IDeclarationResolver>());
+            var declarationResolver = SetupDeclarationResolver(declaration);
+
+            classDeclaration.DeepLoad(declarationResolver);
 
             Assert.NotNull(classDeclaration.GenericParameters);
             Assert.NotNull(classDeclaration.Extends);
@@ -82,7 +84,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
                 var extendNames = classDeclaration.Extends.Select(x => x.Declaration.Name);
 
-                Assert.Single(extendNames.Where(x => x == baseClassName));
+                extendNames.Where(x => x == baseClassName).ShouldHaveSingleItem();
             }
         }
 
@@ -91,20 +93,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
         {
             var attributeName = ReflectionGenericDeclarationLoader<SyntaxNode>.GetNameWithoutGeneric(attributeType.Name);
 
-            var declarationResolver = SetupDeclarationResolver(declaration,
-                mock =>
-                {
-                    var attributeMock = new Mock<IGenericDeclaration<TSyntaxNode>>();
-                    attributeMock.SetupGet(x => x.Name).Returns(attributeName);
-
-                    mock
-                        .Setup(dr => dr.Resolve(attributeName, It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
-                        .Returns(attributeMock.Object);
-
-                    mock
-                        .Setup(dr => dr.Resolve(attributeType))
-                        .Returns(attributeMock.Object);
-                });
+            var declarationResolver = SetupDeclarationResolver(declaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -127,20 +116,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
         {
             var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
-                (mock) =>
-                {
-                    var nullableMock = new Mock<IGenericDeclaration<TSyntaxNode>>();
-                    nullableMock.Setup(d => d.Name).Returns("Nullable");
-
-                    mock
-                        .Setup(dr => dr.Resolve("System.Nullable", It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
-                        .Returns(nullableMock.Object);
-
-                    mock
-                        .Setup(dr => dr.Resolve(typeof(Nullable<int>)))
-                        .Returns(nullableMock.Object);
-                },
                 typeof(SimpleClass));
+
+            var nullableMock = Substitute.For<IGenericDeclaration<TSyntaxNode>>();
+            nullableMock.Name.Returns("Nullable");
+
+            declarationResolver
+                .Resolve("System.Nullable", Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration)
+                .Returns(nullableMock);
+
+            declarationResolver
+                .Resolve(typeof(Nullable<int>))
+                .Returns(nullableMock);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -155,12 +142,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             Assert.Empty(classDeclaration.Methods);
 
-            var mClass = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == nameof(ClassWithProperties.PropertyClass)));
+            var mClass = classDeclaration.NamedMembers
+                .Where(m => m.Name == nameof(ClassWithProperties.PropertyClass))
+                .ShouldHaveSingleItem();
             var pClass = Assert.IsType<PropertyDeclaration>(mClass);
             Assert.IsType<GenericDeclarationUse>(pClass.PropertyType);
             Assert.Equal(nameof(SimpleClass), pClass.PropertyType.Declaration.Name);
 
-            var mInt = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == nameof(ClassWithProperties.PropertyInt)));
+            var mInt = classDeclaration.NamedMembers
+                .Where(m => m.Name == nameof(ClassWithProperties.PropertyInt))
+                .ShouldHaveSingleItem();
             var pInt = Assert.IsType<PropertyDeclaration>(mInt);
 
             var propertyType = pInt.PropertyType;
@@ -193,20 +184,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
         {
             var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
-                (mock) =>
-                {
-                    var nullableMock = new Mock<IGenericDeclaration<TSyntaxNode>>();
-                    nullableMock.Setup(d => d.Name).Returns("Nullable");
-
-                    mock
-                        .Setup(dr => dr.Resolve("System.Nullable", It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
-                        .Returns(nullableMock.Object);
-
-                    mock
-                        .Setup(dr => dr.Resolve(typeof(Nullable<int>)))
-                        .Returns(nullableMock.Object);
-                },
                 typeof(SimpleClass));
+
+            var nullableMock = Substitute.For<IGenericDeclaration<TSyntaxNode>>();
+            nullableMock.Name.Returns("Nullable");
+
+            declarationResolver
+                .Resolve("System.Nullable", Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration)
+                .Returns(nullableMock);
+
+            declarationResolver
+                .Resolve(typeof(Nullable<int>))
+                .Returns(nullableMock);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -231,20 +220,18 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
         {
             var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
-                (mock) =>
-                {
-                    var nullableMock = new Mock<IGenericDeclaration<TSyntaxNode>>();
-                    nullableMock.Setup(d => d.Name).Returns("Nullable");
-
-                    mock
-                        .Setup(dr => dr.Resolve("System.Nullable", It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration))
-                        .Returns(nullableMock.Object);
-
-                    mock
-                        .Setup(dr => dr.Resolve(typeof(Nullable<int>)))
-                        .Returns(nullableMock.Object);
-                },
                 typeof(SimpleClass));
+
+            var nullableMock = Substitute.For<IGenericDeclaration<TSyntaxNode>>();
+            nullableMock.Name.Returns("Nullable");
+
+            declarationResolver
+                .Resolve("System.Nullable", Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), declaration)
+                .Returns(nullableMock);
+
+            declarationResolver
+                .Resolve(typeof(Nullable<int>))
+                .Returns(nullableMock);
 
             declaration.IsRecordType.ShouldBeTrue();
 
@@ -271,12 +258,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
         public void AssertConstantListLoaded<TSyntaxNode>(IDeclaration<TSyntaxNode> declaration, int nbConst, string nameOfConst)
             where TSyntaxNode : SyntaxNode
         {
-            var declarationResolver = this.SetupDeclarationResolver(
-                declaration,
-                (mock) =>
-                {
-                    // nothing
-                });
+            var declarationResolver = this.SetupDeclarationResolver(declaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -302,11 +284,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var declarationResolver = this.SetupDeclarationResolver(
                 declaration,
-                mock =>
-                {
-                    mock.Setup(r => r.Resolve(type)).Returns(classDeclaration);
-                },
                 typeof(SimpleClass));
+
+            declarationResolver.Resolve(type).Returns(classDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -317,7 +297,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             var method = type.GetMethod(methodName);
 
-            var memberDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == methodName));
+            var memberDeclaration = classDeclaration.NamedMembers
+                .Where(m => m.Name == methodName)
+                .ShouldHaveSingleItem();
             var methodDeclaration = Assert.IsAssignableFrom<IMethodDeclaration>(memberDeclaration);
 
             if (method.ReturnType == typeof(int))
@@ -359,27 +341,27 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             var classDeclaration = Assert.IsAssignableFrom<AGenericDeclaration<TSyntaxNode>>(declaration);
 
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration,
-                mock =>
-                {
-                    foreach (var parameter in type.GetTypeInfo().GenericTypeParameters)
-                    {
-                        var parameterDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                        parameterDeclaration.Setup(d => d.Name).Returns(parameter.Name);
+                declaration);
 
-                        mock
-                            .Setup(dr => dr.Resolve(parameter))
-                            .Returns(parameterDeclaration.Object);
-                    }
+            foreach (var parameter in type.GetTypeInfo().GenericTypeParameters)
+            {
+                var parameterDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+                parameterDeclaration.Name.Returns(parameter.Name);
 
-                    mock.Setup(r => r.Resolve(type)).Returns(classDeclaration);
-                });
+                declarationResolver
+                    .Resolve(parameter)
+                    .Returns(parameterDeclaration);
+            }
+
+            declarationResolver.Resolve(type).Returns(classDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
             classDeclaration.Properties.ShouldNotBeEmpty();
 
-            var m = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
+            var m = classDeclaration.NamedMembers
+                .Where(m => m.Name == propertyName)
+                .ShouldHaveSingleItem();
             var p = Assert.IsType<PropertyDeclaration>(m);
 
             Assert.IsType<GenericParameterDeclarationUse>(p.PropertyType);
@@ -412,8 +394,8 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
 
             classDeclaration.Properties.ShouldNotBeEmpty();
 
-            var mDeclaration = Assert.Single(classDeclaration.NamedMembers.Where(m => m.Name == propertyName));
-            var pDeclaration = Assert.IsType<PropertyDeclaration>(mDeclaration);
+            var mDeclaration = classDeclaration.NamedMembers.Where(m => m.Name == propertyName).ShouldHaveSingleItem();
+            var pDeclaration = mDeclaration.ShouldBeOfType<PropertyDeclaration>();
 
             var property = type.GetProperty(propertyName);
 
@@ -425,15 +407,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration, resolver =>
-                {
-                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+                declaration);
 
-                    resolver
-                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(attributeDeclaration.Object);
-                });
+            var attributeDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            attributeDeclaration.Name.Returns(nameof(DescriptionAttribute));
+
+            declarationResolver
+                .Resolve(nameof(DescriptionAttribute), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(attributeDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -460,22 +441,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration, resolver =>
-                {
-                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+                declaration);
 
-                    resolver
-                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(attributeDeclaration.Object);
+            var attributeDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            attributeDeclaration.Name.Returns(nameof(DescriptionAttribute));
 
-                    var objectDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    objectDeclaration.Setup(d => d.Name).Returns("object");
+            declarationResolver
+                .Resolve(nameof(DescriptionAttribute), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(attributeDeclaration);
 
-                    resolver
-                        .Setup(r => r.Resolve("System.Object", It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(objectDeclaration.Object);
-                });
+            var objectDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            objectDeclaration.Name.Returns("object");
+
+            declarationResolver
+                .Resolve("System.Object", Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(objectDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -510,15 +490,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration, resolver =>
-                {
-                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+                declaration);
 
-                    resolver
-                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(attributeDeclaration.Object);
-                });
+            var attributeDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            attributeDeclaration.Name.Returns(nameof(DescriptionAttribute));
+
+            declarationResolver
+                .Resolve(nameof(DescriptionAttribute), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(attributeDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -543,15 +522,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration, resolver =>
-                {
-                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+                declaration);
 
-                    resolver
-                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(attributeDeclaration.Object);
-                });
+            var attributeDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            attributeDeclaration.Name.Returns(nameof(DescriptionAttribute));
+
+            declarationResolver
+                .Resolve(nameof(DescriptionAttribute), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(attributeDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -582,15 +560,14 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             where TSyntaxNode : SyntaxNode
         {
             var declarationResolver = this.SetupDeclarationResolver(
-                declaration, resolver =>
-                {
-                    var attributeDeclaration = new Mock<IGenericDeclaration<SyntaxNode>>();
-                    attributeDeclaration.Setup(d => d.Name).Returns(nameof(DescriptionAttribute));
+                declaration);
 
-                    resolver
-                        .Setup(r => r.Resolve(nameof(DescriptionAttribute), Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(attributeDeclaration.Object);
-                });
+            var attributeDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            attributeDeclaration.Name.Returns(nameof(DescriptionAttribute));
+
+            declarationResolver
+                .Resolve(nameof(DescriptionAttribute), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns(attributeDeclaration);
 
             declaration.DeepLoad(declarationResolver);
 
@@ -645,15 +622,20 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
             IDeclaration<SyntaxNode> contextDeclaration,
             params Type[] classes)
         {
-            return SetupDeclarationResolver(contextDeclaration, (_) => { }, classes);
-        }
+            var declarationResolverMock = Substitute.For<IDeclarationResolver>();
 
-        private IDeclarationResolver SetupDeclarationResolver(
-            IDeclaration<SyntaxNode> contextDeclaration,
-            Action<Mock<IDeclarationResolver>> setup,
-            params Type[] classes)
-        {
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            declarationResolverMock
+                .Resolve(Arg.Any<string>(), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns((IGenericDeclaration<SyntaxNode>?)null);
+
+            declarationResolverMock
+                .Resolve(Arg.Any<string>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns((IDeclaration<SyntaxNode>?)null);
+
+            declarationResolverMock
+                .Resolve(Arg.Any<Type>())
+                .Returns((IGenericDeclaration<SyntaxNode>?)null);
+
             foreach (var classItem in classes)
             {
                 var className = classItem.Name;
@@ -661,38 +643,36 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common
                 var classFile = new CSharpFile(
                     className.ToBasicClassesPath(),
                     DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                    Mock.Of<IGlobalUsingDirectives>());
-                classFile.Load(Mock.Of<ICSharpWorkspace>());
+                    Substitute.For<IGlobalUsingDirectives>());
+                classFile.Load(Substitute.For<ICSharpWorkspace>());
                 var classDeclarationSingle = Assert.Single(classFile.Declarations);
                 if (classDeclarationSingle is IGenericDeclaration<SyntaxNode> genericDeclaration)
                 {
                     if (genericDeclaration.TypeParameterListSyntaxProvider.SyntaxNode != null)
                     {
                         declarationResolverMock
-                            .Setup(dr => dr.Resolve(genericDeclaration.Name, It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), contextDeclaration))
+                            .Resolve(genericDeclaration.Name, Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), contextDeclaration)
                             .Returns(genericDeclaration);
                     }
                     else
                     {
                         declarationResolverMock
-                            .Setup(dr => dr.Resolve(classDeclarationSingle.Name, contextDeclaration))
+                            .Resolve(classDeclarationSingle.Name, contextDeclaration)
                             .Returns(classDeclarationSingle);
                         declarationResolverMock
-                            .Setup(dr => dr.Resolve(classItem))
+                            .Resolve(classItem)
                             .Returns(genericDeclaration);
                     }
                 }
                 else
                 {
                     declarationResolverMock
-                            .Setup(dr => dr.Resolve(classDeclarationSingle.Name, contextDeclaration))
+                            .Resolve(classDeclarationSingle.Name, contextDeclaration)
                             .Returns(classDeclarationSingle);
                 }
             }
 
-            setup(declarationResolverMock);
-
-            return declarationResolverMock.Object;
+            return declarationResolverMock;
         }
     }
 }

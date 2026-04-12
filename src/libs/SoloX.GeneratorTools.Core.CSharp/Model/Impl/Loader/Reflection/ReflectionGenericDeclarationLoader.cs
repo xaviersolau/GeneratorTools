@@ -113,8 +113,6 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection
 
             if (type.IsGenericParameter)
             {
-                var genType = resolver.Find(type.Name);
-
                 var declType = resolver.Resolve(type.DeclaringType);
 
                 GenericParameterDeclarationUse genTypeUse;

@@ -8,7 +8,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.Generator.Writer;
 using SoloX.GeneratorTools.Core.Generator.Writer.Impl;
 using Xunit;
@@ -56,17 +56,25 @@ namespace SoloX.GeneratorTools.Core.UTest.Generator
 
         private static INodeWriter SetupNodeWriter(bool enable, string textToWrite)
         {
-            var nodeWriterMock = new Mock<INodeWriter>();
-            nodeWriterMock.Setup(w => w.Write(It.IsAny<SyntaxNode>(), It.IsAny<Action<string>>()))
-                .Callback((SyntaxNode n, Action<string> a) =>
+            var nodeWriterMock = Substitute.For<INodeWriter>();
+
+            nodeWriterMock
+                .Write(Arg.Any<SyntaxNode>(), Arg.Any<Action<string>>())
+                .Returns(enable);
+
+            nodeWriterMock.When(w => w.Write(Arg.Any<SyntaxNode>(), Arg.Any<Action<string>>()))
+                .Do(ci =>
                 {
+                    var n = ci.Arg<SyntaxNode>();
+                    var a = ci.Arg<Action<string>>();
+
                     if (enable)
                     {
                         a(textToWrite);
                     }
-                })
-                .Returns(enable);
-            return nodeWriterMock.Object;
+                });
+
+            return nodeWriterMock;
         }
     }
 }
