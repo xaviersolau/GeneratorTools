@@ -6,13 +6,15 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
+using Microsoft.CodeAnalysis;
+using NSubstitute;
 using Shouldly;
-using Moq;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
-using System;
 using Xunit;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Selectors
@@ -34,21 +36,22 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Generator.Selectors
         {
             var declarationFactory = DeclarationHelper.CreateReflectionDeclarationFactory(this.testOutputHelper);
 
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
+            var declarationResolverMock = Substitute.For<IDeclarationResolver>();
+
+            declarationResolverMock.Resolve(typeof(ITestSelector)).Returns((IGenericDeclaration<SyntaxNode>?)null);
 
             var declaration2 = declarationFactory
                 .CreateDeclaration(type);
 
-            declaration2.DeepLoad(declarationResolverMock.Object);
+            declaration2.DeepLoad(declarationResolverMock);
 
-            var fileMock = new Mock<ICSharpFile>();
+            var fileMock = Substitute.For<ICSharpFile>();
 
-            fileMock.Setup(file => file.Declarations).Returns(new[] { declaration2 });
+            fileMock.Declarations.Returns(new[] { declaration2 });
 
             var selector = new InterfaceBasedOnSelector<ITestSelector>();
 
-            var selected = selector.GetDeclarations(new[] { fileMock.Object });
-
+            var selected = selector.GetDeclarations(new[] { fileMock });
             if (selectionExpected)
             {
                 var selectedItem = selected.ShouldHaveSingleItem();

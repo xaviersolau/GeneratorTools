@@ -31,7 +31,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.Model.Resolver
             IDeclaration<SyntaxNode> declarationContext);
 
         /// <summary>
-        /// Resolve identifier as a generic declaration.
+        /// Resolve type as a generic declaration.
         /// </summary>
         /// <param name="type">The type to resolve.</param>
         /// <returns>The matching generic declaration or null if no match.</returns>

@@ -11,7 +11,7 @@ using System;
 using Xunit;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
@@ -19,25 +19,28 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Utils;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.RecordStructs;
+using Shouldly;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
     public class RecordStructLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
+        private readonly LoadingTest loadingTest;
 
         public RecordStructLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
+            this.loadingTest = new LoadingTest(testOutputHelper);
         }
 
         [Theory]
         [InlineData(typeof(SimpleRecordStruct), null)]
-        public void ItShouldLoadRecordStructType(Type type, Type baseType)
+        public void ItShouldLoadRecordStructType(Type type, Type? baseType)
         {
             var recordDeclaration = LoadRecordStructDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
+            this.loadingTest.AssertGenericTypeLoaded(recordDeclaration, type, baseType, true);
         }
 
         private IRecordStructDeclaration LoadRecordStructDeclaration(Type type)
@@ -47,13 +50,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var assemblyPath = type.Assembly.Location;
 
             var assemblyLoader = new CSharpMetadataAssembly(
-                Mock.Of<IGeneratorLogger<CSharpMetadataAssembly>>(),
+                Substitute.For<IGeneratorLogger<CSharpMetadataAssembly>>(),
                 DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper),
                 assemblyPath);
 
-            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
+            assemblyLoader.Load(Substitute.For<ICSharpWorkspace>());
 
-            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
+            var declaration = assemblyLoader.Declarations.Where(x => x.Name == className).ShouldHaveSingleItem();
 
             var recordDeclaration = Assert.IsAssignableFrom<IRecordStructDeclaration>(declaration);
             return recordDeclaration;

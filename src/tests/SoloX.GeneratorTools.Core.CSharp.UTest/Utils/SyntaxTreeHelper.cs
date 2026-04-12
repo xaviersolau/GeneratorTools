@@ -9,7 +9,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 
@@ -102,6 +102,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// </summary>
         /// <param name="type">The variable type.</param>
         /// <param name="name">The variable name.</param>
+        /// <param name="init">The variable initializer.</param>
         /// <returns>The VariableDeclarationSyntax node.</returns>
         public static LocalDeclarationStatementSyntax GetLocalDeclarationStatementSyntax(string type, string name, string init)
         {
@@ -132,6 +133,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         /// <param name="type">The method return type.</param>
         /// <param name="name">The method name.</param>
         /// <param name="argument">The argument name.</param>
+        /// <param name="otherArguments">The other arguments.</param>
         /// <returns>The MethodDeclarationSyntax node.</returns>
         public static MethodDeclarationSyntax GetMethodSyntax(string type, string name, string argument, string otherArguments)
         {
@@ -149,9 +151,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Utils
         public static ISyntaxNodeProvider<TNode> GetSyntaxNodeProvider<TNode>(TNode node)
             where TNode : SyntaxNode
         {
-            var nodeProviderMock = new Mock<ISyntaxNodeProvider<TNode>>();
-            nodeProviderMock.Setup(p => p.SyntaxNode).Returns(node);
-            return nodeProviderMock.Object;
+            var nodeProviderMock = Substitute.For<ISyntaxNodeProvider<TNode>>();
+            nodeProviderMock.SyntaxNode.Returns(node);
+            return nodeProviderMock;
         }
     }
 }

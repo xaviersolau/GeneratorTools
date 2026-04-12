@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -63,12 +63,12 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         [InlineData("AName", "[][]", 2)]
         public void ArrayDeclarationUseLoadingTest(string declarationName, string arrayText, int dimCount)
         {
-            var declaration = Mock.Of<IClassDeclaration>();
+            var declaration = Substitute.For<IClassDeclaration>();
 
             var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
             {
                 resolver
-                    .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration<SyntaxNode>>()))
+                    .Resolve(declarationName, Arg.Any<IDeclaration<SyntaxNode>>())
                     .Returns(declaration);
             });
 
@@ -91,24 +91,24 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         [InlineData("AName", "<int, double>", 2)]
         public void GenericDeclarationUseLoadingTest(string declarationName, string genericParametersText, int genericParams)
         {
-            var declarationMock = new Mock<IClassDeclaration>();
+            var declarationMock = Substitute.For<IClassDeclaration>();
 
             var walker = SetupDeclarationUseWalker(resolverSetup: resolver =>
             {
                 if (genericParams == 0)
                 {
                     resolver
-                        .Setup(r => r.Resolve(declarationName, It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(declarationMock.Object);
+                        .Resolve(declarationName, Arg.Any<IDeclaration<SyntaxNode>>())
+                        .Returns(declarationMock);
                     resolver
-                        .Setup(r => r.Resolve(declarationName, Array.Empty<IDeclarationUse<SyntaxNode>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(declarationMock.Object);
+                        .Resolve(declarationName, Array.Empty<IDeclarationUse<SyntaxNode>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                        .Returns(declarationMock);
                 }
                 else
                 {
                     resolver
-                        .Setup(r => r.Resolve(declarationName, It.IsAny<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), It.IsAny<IDeclaration<SyntaxNode>>()))
-                        .Returns(declarationMock.Object);
+                        .Resolve(declarationName, Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                        .Returns(declarationMock);
                 }
             });
 
@@ -117,7 +117,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
             var declarationUse = walker.Visit(node);
 
             Assert.NotNull(declarationUse);
-            Assert.Same(declarationMock.Object, declarationUse.Declaration);
+            Assert.Same(declarationMock, declarationUse.Declaration);
 
             var genericDeclarationUse = Assert.IsType<GenericDeclarationUse>(declarationUse);
             Assert.NotNull(genericDeclarationUse.GenericParameters);
@@ -130,13 +130,26 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         }
 
         private static DeclarationUseWalker SetupDeclarationUseWalker(
-            Action<Mock<IGenericDeclaration<SyntaxNode>>> contextSetup = null,
-            Action<Mock<IDeclarationResolver>> resolverSetup = null)
+            Action<IGenericDeclaration<SyntaxNode>> contextSetup = null,
+            Action<IDeclarationResolver> resolverSetup = null)
         {
-            var resolverMock = new Mock<IDeclarationResolver>();
+            var resolverMock = Substitute.For<IDeclarationResolver>();
+
+            resolverMock
+                .Resolve(Arg.Any<string>(), Arg.Any<IReadOnlyList<IDeclarationUse<SyntaxNode>>>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns((IGenericDeclaration<SyntaxNode>?)null);
+
+            resolverMock
+                .Resolve(Arg.Any<string>(), Arg.Any<IDeclaration<SyntaxNode>>())
+                .Returns((IDeclaration<SyntaxNode>?)null);
+
+            resolverMock
+                .Resolve(Arg.Any<Type>())
+                .Returns((IGenericDeclaration<SyntaxNode>?)null);
+
             resolverSetup?.Invoke(resolverMock);
 
-            var declarationContextMock = new Mock<IGenericDeclaration<SyntaxNode>>();
+            var declarationContextMock = Substitute.For<IGenericDeclaration<SyntaxNode>>();
             if (contextSetup != null)
             {
                 contextSetup(declarationContextMock);
@@ -146,29 +159,29 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
                 SetupGenericParameterDeclaration(declarationContextMock, null);
             }
 
-            return new DeclarationUseWalker(resolverMock.Object, declarationContextMock.Object);
+            return new DeclarationUseWalker(resolverMock, declarationContextMock);
         }
 
         /// <summary>
         /// Setup a IGenericParameterDeclaration on the given generic declaration mock.
         /// </summary>
-        private static IGenericParameterDeclaration SetupGenericParameterDeclaration(Mock<IGenericDeclaration<SyntaxNode>> genericDeclarationMock, string parameterName)
+        private static IGenericParameterDeclaration? SetupGenericParameterDeclaration(IGenericDeclaration<SyntaxNode> genericDeclarationMock, string parameterName)
         {
             if (parameterName != null)
             {
-                var genericParameterDeclarationMock = new Mock<IGenericParameterDeclaration>();
+                var genericParameterDeclarationMock = Substitute.For<IGenericParameterDeclaration>();
                 genericParameterDeclarationMock
-                    .SetupGet(d => d.Name)
+                    .Name
                     .Returns(parameterName);
 
                 genericDeclarationMock
-                    .SetupGet(d => d.GenericParameters)
-                    .Returns(new[] { genericParameterDeclarationMock.Object });
-                return genericParameterDeclarationMock.Object;
+                    .GenericParameters
+                    .Returns(new[] { genericParameterDeclarationMock });
+                return genericParameterDeclarationMock;
             }
 
             genericDeclarationMock
-                .SetupGet(d => d.GenericParameters)
+                .GenericParameters
                 .Returns(Array.Empty<IGenericParameterDeclaration>());
 
             return null;

@@ -8,7 +8,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
@@ -39,21 +39,21 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
         [InlineData(typeof(GenericClassWithStructConstraint<>), null)]
         [InlineData(typeof(GenericClassWithBase<>), typeof(SimpleClass))]
         [InlineData(typeof(GenericClassWithGenericBase<>), typeof(GenericClass<>))]
-        public void ItShouldLoadClassType(Type type, Type baseType)
+        public void ItShouldLoadClassType(Type type, Type? baseType)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
+            this.loadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
         }
 
         [Theory]
         [InlineData(typeof(SimpleConstructorClass), null)]
         [InlineData(typeof(SimpleConstructorClassWithBase), typeof(SimpleConstructorClass))]
-        public void ItShouldLoadConstructorClassType(Type type, Type baseType)
+        public void ItShouldLoadConstructorClassType(Type type, Type? baseType)
         {
             var classDeclaration = LoadClassDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
+            this.loadingTest.AssertGenericTypeLoaded(classDeclaration, type, baseType, false);
         }
 
         [Theory]
@@ -190,9 +190,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
-            csFile.Load(Mock.Of<ICSharpWorkspace>());
+            csFile.Load(Substitute.For<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 

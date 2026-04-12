@@ -9,7 +9,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using Moq;
+using NSubstitute;
+using Shouldly;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace;
@@ -37,7 +38,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
             Assert.Equal(Path.GetFileName(file), csFile.FileName);
             Assert.Equal(Path.GetDirectoryName(file), csFile.FilePath);
@@ -53,9 +54,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var csFile = new CSharpFile(
                 declarationFile,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
-            csFile.Load(Mock.Of<ICSharpWorkspace>());
+            csFile.Load(Substitute.For<ICSharpWorkspace>());
 
             Assert.Single(csFile.Declarations);
             var decl = csFile.Declarations.Single();
@@ -72,15 +73,15 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Workspace
             var csFile = new CSharpFile(
                 file,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
-            csFile.Load(Mock.Of<ICSharpWorkspace>());
+            csFile.Load(Substitute.For<ICSharpWorkspace>());
 
             Assert.Equal(3, csFile.Declarations.Count);
 
-            Assert.Single(csFile.Declarations.Where(d => string.IsNullOrEmpty(d.DeclarationNameSpace)));
-            Assert.Single(csFile.Declarations.Where(d => d.DeclarationNameSpace == "SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace"));
-            Assert.Single(csFile.Declarations.Where(d => d.DeclarationNameSpace == "SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace.Test"));
+            csFile.Declarations.Where(d => string.IsNullOrEmpty(d.DeclarationNameSpace)).ShouldHaveSingleItem();
+            csFile.Declarations.Where(d => d.DeclarationNameSpace == "SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace").ShouldHaveSingleItem();
+            csFile.Declarations.Where(d => d.DeclarationNameSpace == "SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Workspace.Test").ShouldHaveSingleItem();
         }
     }
 }

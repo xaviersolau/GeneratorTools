@@ -8,7 +8,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver.Impl;
@@ -43,15 +43,17 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         [InlineData("a.b.c", "name", "ctxNameSpace", "a.b.c", "unknown", false)]
         [InlineData("ctxNameSpace", "name", "ctxNameSpace.a", null, "name", true)]
         public void ResolveDeclarationTest(
-            string nameSpace, string name, string ctxNameSpace, string usingNameSpace, string nameToResolve, bool expectedMatch)
+            string nameSpace, string name, string ctxNameSpace, string? usingNameSpace, string nameToResolve, bool expectedMatch)
         {
             var declaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(nameSpace, name);
 
-            var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName", m =>
-            {
-                var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
-                m.SetupGet(d => d.UsingDirectives).Returns(DeclarationHelper.SetupUsingDirectives(usings));
-            });
+            var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName");
+
+            var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
+
+            var usingDirectives = DeclarationHelper.SetupUsingDirectives(usings);
+
+            contextDeclaration.UsingDirectives.Returns(usingDirectives);
 
             var declResolver = new DeclarationResolver(new[] { declaration });
 
@@ -78,19 +80,16 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Resolver
         [InlineData("a.b.c", "name", "paramName", "ctxNameSpace", "a.b.c", "unknown", false)]
         [InlineData("ctxNameSpace", "name", "paramName", "ctxNameSpace.a", null, "name", true)]
         public void ResolveGenericDeclarationTest(
-            string nameSpace, string name, string nameParam, string ctxNameSpace, string usingNameSpace, string nameToResolve, bool expectedMatch)
+            string nameSpace, string name, string nameParam, string ctxNameSpace, string? usingNameSpace, string nameToResolve, bool expectedMatch)
         {
-            var genericParameter = Mock.Of<IGenericParameterDeclaration>();
-            var genericDeclaration = DeclarationHelper.SetupDeclaration<IGenericDeclaration<SyntaxNode>>(nameSpace, name, mock =>
-            {
-                mock.SetupGet(x => x.GenericParameters).Returns(new[] { genericParameter });
-            });
+            var genericParameter = Substitute.For<IGenericParameterDeclaration>();
+            var genericDeclaration = DeclarationHelper.SetupDeclaration<IGenericDeclaration<SyntaxNode>>(nameSpace, name);
+            genericDeclaration.GenericParameters.Returns(new[] { genericParameter });
 
-            var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName", m =>
-            {
-                var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
-                m.SetupGet(d => d.UsingDirectives).Returns(DeclarationHelper.SetupUsingDirectives(usings));
-            });
+            var contextDeclaration = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(ctxNameSpace, "ctxName");
+            var usings = string.IsNullOrEmpty(usingNameSpace) ? Array.Empty<string>() : new[] { usingNameSpace };
+            var usingDirectives = DeclarationHelper.SetupUsingDirectives(usings);
+            contextDeclaration.UsingDirectives.Returns(usingDirectives);
 
             var declarationParam = DeclarationHelper.SetupDeclaration<IDeclaration<SyntaxNode>>(nameSpace, nameParam);
             var declarationParamUse1 = DeclarationHelper.SetupDeclarationUse<IDeclarationUse<SyntaxNode>>(declarationParam);

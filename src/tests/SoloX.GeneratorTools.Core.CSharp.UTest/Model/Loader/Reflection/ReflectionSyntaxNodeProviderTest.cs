@@ -7,8 +7,10 @@
 // ----------------------------------------------------------------------
 
 using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Moq;
+using NSubstitute;
+using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -107,8 +109,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Reflection
                 .CreateDeclaration(type);
 
             var classDeclaration = Assert.IsType<ClassDeclaration>(declaration);
-            var declarationResolverMock = new Mock<IDeclarationResolver>();
-            classDeclaration.DeepLoad(declarationResolverMock.Object);
+            var declarationResolverMock = Substitute.For<IDeclarationResolver>();
+
+            declarationResolverMock
+                .Resolve(Arg.Any<Type>())
+                .Returns((IGenericDeclaration<SyntaxNode>?)null);
+
+            classDeclaration.DeepLoad(declarationResolverMock);
             return classDeclaration;
         }
     }

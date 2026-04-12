@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
@@ -21,6 +21,7 @@ using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Interfaces;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using Shouldly;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
@@ -40,11 +41,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         [InlineData(typeof(SimpleInterfaceWithBase), typeof(SimpleInterface))]
         [InlineData(typeof(SimpleInterfaceWithGenericBase), typeof(GenericInterface<>))]
         [InlineData(typeof(GenericInterface<>), null)]
-        public void ItShouldLoadInterfaceType(Type type, Type baseType)
+        public void ItShouldLoadInterfaceType(Type type, Type? baseType)
         {
             var declaration = LoadInterfaceDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(declaration, type, baseType, false);
+            this.loadingTest.AssertGenericTypeLoaded(declaration, type, baseType, false);
         }
 
         [Theory]
@@ -64,13 +65,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var assemblyPath = type.Assembly.Location;
 
             var assemblyLoader = new CSharpMetadataAssembly(
-                Mock.Of<IGeneratorLogger<CSharpMetadataAssembly>>(),
+                Substitute.For<IGeneratorLogger<CSharpMetadataAssembly>>(),
                 DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper),
                 assemblyPath);
 
-            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
+            assemblyLoader.Load(Substitute.For<ICSharpWorkspace>());
 
-            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
+            var declaration = assemblyLoader.Declarations.Where(x => x.Name == className).ShouldHaveSingleItem();
 
             var interfaceDeclaration = Assert.IsAssignableFrom<IInterfaceDeclaration>(declaration);
             return interfaceDeclaration;

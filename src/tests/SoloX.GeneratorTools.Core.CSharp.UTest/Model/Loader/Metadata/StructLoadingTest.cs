@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Common;
@@ -19,16 +19,19 @@ using System;
 using Xunit;
 using System.Linq;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Resources.Model.Basic.Structs;
+using Shouldly;
 
 namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
 {
     public class StructLoadingTest
     {
         private readonly ITestOutputHelper testOutputHelper;
+        private readonly LoadingTest loadingTest;
 
         public StructLoadingTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
+            this.loadingTest = new LoadingTest(testOutputHelper);
         }
 
         [Theory]
@@ -37,7 +40,7 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
         {
             var structDeclaration = LoadStructDeclaration(type);
 
-            LoadingTest.AssertGenericTypeLoaded(structDeclaration, type, null, false);
+            this.loadingTest.AssertGenericTypeLoaded(structDeclaration, type, null, false);
         }
 
         private IStructDeclaration LoadStructDeclaration(Type type)
@@ -47,13 +50,13 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Metadata
             var assemblyPath = type.Assembly.Location;
 
             var assemblyLoader = new CSharpMetadataAssembly(
-                Mock.Of<IGeneratorLogger<CSharpMetadataAssembly>>(),
+                Substitute.For<IGeneratorLogger<CSharpMetadataAssembly>>(),
                 DeclarationHelper.CreateMetadataDeclarationFactory(this.testOutputHelper),
                 assemblyPath);
 
-            assemblyLoader.Load(Mock.Of<ICSharpWorkspace>());
+            assemblyLoader.Load(Substitute.For<ICSharpWorkspace>());
 
-            var declaration = Assert.Single(assemblyLoader.Declarations.Where(x => x.Name == className));
+            var declaration = assemblyLoader.Declarations.Where(x => x.Name == className).ShouldHaveSingleItem();
 
             var structDeclaration = Assert.IsAssignableFrom<IStructDeclaration>(declaration);
             return structDeclaration;

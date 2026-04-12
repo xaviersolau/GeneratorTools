@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.UTest.Utils;
@@ -62,9 +62,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Loader.Parser
             var csFile = new CSharpFile(
                 location,
                 DeclarationHelper.CreateParserDeclarationFactory(this.testOutputHelper),
-                Mock.Of<IGlobalUsingDirectives>());
+                Substitute.For<IGlobalUsingDirectives>());
 
-            csFile.Load(Mock.Of<ICSharpWorkspace>());
+            csFile.Load(Substitute.For<ICSharpWorkspace>());
 
             var declaration = Assert.Single(csFile.Declarations);
 

@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Moq;
+using NSubstitute;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Impl.Loader.Reflection;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -33,9 +33,9 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         [InlineData(typeof(char), "char")]
         public void PredefinedTypeDeclarationUseTest(Type type, string typeName)
         {
-            var resolverMock = new Mock<IDeclarationResolver>();
+            var resolverMock = Substitute.For<IDeclarationResolver>();
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -48,9 +48,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         public void UnknownTypeDeclarationUseTest()
         {
             var type = typeof(List<object>);
-            var resolverMock = new Mock<IDeclarationResolver>();
+            var resolverMock = Substitute.For<IDeclarationResolver>();
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
+            resolverMock.Resolve(Arg.Any<Type>()).Returns((IGenericDeclaration<SyntaxNode>?)null);
+
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
@@ -63,11 +65,11 @@ namespace SoloX.GeneratorTools.Core.CSharp.UTest.Model.Use
         public void ResolvedTypeDeclarationUseTest()
         {
             var type = typeof(TypeGenericDeclarationUseTest);
-            var resolvedDeclaration = Mock.Of<IGenericDeclaration<SyntaxNode>>();
-            var resolverMock = new Mock<IDeclarationResolver>();
-            resolverMock.Setup(r => r.Resolve(type)).Returns(resolvedDeclaration);
+            var resolvedDeclaration = Substitute.For<IGenericDeclaration<SyntaxNode>>();
+            var resolverMock = Substitute.For<IDeclarationResolver>();
+            resolverMock.Resolve(type).Returns(resolvedDeclaration);
 
-            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock.Object, null);
+            var use = ReflectionGenericDeclarationLoader<SyntaxNode>.GetDeclarationUseFrom(type, resolverMock, null);
 
             Assert.NotNull(use);
             Assert.NotNull(use.Declaration);
